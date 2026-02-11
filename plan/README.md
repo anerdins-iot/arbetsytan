@@ -1,7 +1,7 @@
 # Byggplan — ArbetsYtan (AY)
 
 > **INSTRUKTION FÖR AGENTER:** Läs denna fil FÖRST. Läs sedan din tilldelade fas-fil (t.ex. `fas-01.md`).
-> Läs ALLTID relevant `/docs/*.md` innan du skriver kod. Se `AGENTS.md` för projektregler.
+> Läs ALLTID relevant `/workspace/docs/*.md` innan du skriver kod. Se `AGENTS.md` för projektregler. **OBS** - docs ligger i `/workspace/docs/`.
 
 ## Projektöversikt
 
@@ -12,60 +12,43 @@ Se `PROJEKT.md` för fullständig beskrivning, `AI.md` för AI-arkitektur, `UI.m
 
 Alla regler i `AGENTS.md` gäller — läs den först. Här kompletteras med plan-specifika regler:
 
-- **Inga rollbacks eller workarounds**: Problem ska lösas i grunden — aldrig kringgås. Upptäcker en agent fel från en tidigare fas ska det dokumenteras i `DEVLOG.md` och åtgärdas innan arbetet fortsätter. Fel får aldrig skjutas framåt.
+- **Inga fallbacks eller workarounds**: Problem ska lösas i grunden — aldrig kringgås. Upptäcker du fel från en tidigare fas ska det dokumenteras i `DEVLOG.md` och rapporteras tillbaka. Fel får aldrig skjutas framåt.
 - **Fel ska vara fel**: Tysta aldrig fel med fallbacks, try/catch som sväljer errors, eller default-värden som döljer problem. Om något går fel ska det synas tydligt — som ett explicit felmeddelande, ett build-fel eller en krasch. Inga tysta fallbacks som maskerar det verkliga problemet.
+- **Rapportera tillbaka vid oklarheter**: Om du upptäcker avvikelser, konflikter mellan filer, eller oklarheter — avbryt och rapportera. Gissa aldrig.
 
-## Modellval per uppgiftstyp
+## Verifieringskrav
 
-| Uppgiftstyp | Provider / Modell | Fallback | Notering |
-|---|---|---|---|
-| Frontend och UI | Claude `opus` | Cursor `gpt-5.3-codex` | Komponenter, sidor, styling, layout |
-| Backend, API och databas | Cursor `auto` | Gemini `gemini-3-flash-preview` | Server Actions, Prisma-queries, API-routes |
-| Analys och research | Cursor `auto` | — | Parallella agenter för kodanalys innan implementation |
-| Verifiering och granskning | Gemini `gemini-3-flash-preview` | Cursor `auto` | Kontrollerar build, TypeScript, krav |
-| Felsökning (analys) | Gemini `gemini-3-flash-preview` + Cursor `auto` | — | Parallella agenter som analyserar utan att ändra |
-| Felsökning (fix) | Cursor `auto` | — | Separat agent som fixar baserat på analysen |
-| Test (Playwright) | Claude `haiku` | — | MCP Playwright-navigering med screenshots |
+Följande ska kontrolleras innan ett block anses klart:
 
-## Arbetsflöde per agentblock
+### Build och TypeScript
+- Koden bygger utan fel (`npm run build`)
+- Inga TypeScript-fel (`npx tsc --noEmit`)
 
-Varje agentblock genomförs i fyra steg:
+### Dev-server och Playwright-tester
+- **Agenten som kör Playwright-tester ansvarar för att starta OCH stoppa dev-servern**
+- Starta: `cd /workspace/web && npm run dev &` och vänta tills servern svarar
+- Stoppa: `pkill -f "next-server"` eller `kill` på process-ID när testerna är klara
+- Lämna ALDRIG servern igång efter testet — det blockerar framtida agenter
+- Om servern redan körs (port upptagen): rapportera felet, försök INTE döda andras processer
 
-### 1. Analys
-- Spawna 1-2 forskningsagenter (Cursor `auto`) som analyserar relevanta filer, scheman och existerande kod
-- Resultatet ger implementationsagenten den kontext den behöver
+### Dataisolering
+- Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt
+- Alla projektoperationer validerar åtkomst via `requireProject()`
+- AI-konversationer: personlig AI scopad till `userId`, projekt-AI scopad via `requireProject()`
 
-### 2. Implementation
-- Bedöm blockets karaktär och välj modell enligt tabellen ovan (frontend → Claude Opus, backend → Cursor Auto, etc.)
-- Agenten får blockets specifikation, input-filer och analysresultat
+### Socket.IO (om blocket berör realtid)
+- Autentisering vid anslutning — ogiltig session/JWT avvisas
+- Rum hanteras av servern — klienten kan inte joina rum själv
+- Emit sker till specifika rum — aldrig broadcast
+- All data filtreras i backend innan emit — klienten får aldrig ofiltrerad data
 
-### 3. Verifiering
-- Spawna verifieringsagent (Gemini `gemini-3-flash-preview`, fallback Cursor `auto`) som kontrollerar:
-  - Koden bygger utan fel (`npm run build`)
-  - Inga TypeScript-fel (`npx tsc --noEmit`)
-  - Funktionaliteten matchar kraven i blockets specifikation
-  - **Dataisolering:**
-    - Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt
-    - Sök i koden efter otillåten användning av global `prisma` för tenant-data (grep/granskning)
-    - Alla projektoperationer validerar åtkomst via `requireProject()`
-    - AI-konversationer: personlig AI scopad till `userId`, projekt-AI scopad via `requireProject()`
-  - **Socket.IO (om blocket berör realtid):**
-    - Autentisering vid anslutning — ogiltig session/JWT avvisas
-    - Rum hanteras av servern — klienten kan inte joina rum själv
-    - Emit sker till specifika rum — aldrig broadcast
-    - All data filtreras i backend innan emit — klienten får aldrig ofiltrerad data
-  - Alla UI-texter går via `next-intl` — inga hårdkodade strängar
-  - Inga hårdkodade färger — alla via CSS-variabler/Tailwind
-  - Inga säkerhetshål (auth-check i alla Server Actions)
+### UI och internationalisering
+- Alla UI-texter går via `next-intl` — inga hårdkodade strängar
+- Inga hårdkodade färger — alla via CSS-variabler/Tailwind
 
-### 4. Test
-- Spawna testagent (Claude `haiku`) som kör MCP Playwright-tester
-- Navigera genom blockets sidor och flöden, ta screenshots vid varje steg
-- Spara screenshots i `screenshots/fas-XX/block-X.X/` med namngivning: `01-steg.png`, `02-steg.png`, etc.
-- **Åtkomsttester (från Fas 2+):** Verifiera att oautentiserade requests redirectar, att en användare inte kan nå en annan tenants data eller ett projekt den inte är medlem i
-- Tidiga faser (1-2): Fokus på build, API-svar, routing
-- Mellanfaser (3-9): Fullständig navigering med screenshots + åtkomsttester
-- Sena faser (10-12): Visuell kontroll och responsivitet
+### Säkerhet
+- Auth-check i alla Server Actions
+- Inga säkerhetshål
 
 ## Handoff mellan block
 
@@ -73,9 +56,9 @@ Varje agentblock genomförs i fyra steg:
 - **Output**: Vad blocket levererar (filer, funktioner, endpoints)
 - **Verifiering**: Specifika kontroller som måste passera
 
-Nästa block kan **inte** starta innan föregående blocks checkboxar är avbockade i fas-filen. Om en checkbox inte är ifylld är steget inte klart. Kontrollera alltid fas-filen innan du börjar ett nytt block. Om verifieringen misslyckas: åtgärda och verifiera igen.
+Nästa block kan **inte** starta innan föregående blocks checkboxar är avbockade i fas-filen.
 
-**Upptäckta fel från tidigare block/faser** ska dokumenteras i `DEVLOG.md` och åtgärdas omedelbart — innan det aktuella blocket fortsätter. Fel får aldrig ignoreras eller kringgås.
+**Upptäckta fel från tidigare block/faser** ska dokumenteras i `DEVLOG.md` och rapporteras omedelbart.
 
 ## Faser
 

@@ -7,6 +7,12 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ---
 
+### Auth.js proxy: importera endast auth.config (Block 2.1)
+**Problem:** proxy.ts ska importera endast från auth.config (ej auth.ts) enligt Next.js 16-mönster, men behöva kombinera med next-intl.
+**Orsak:** Edge-kompatibilitet kräver att proxy inte laddar Prisma/DB; auth.config innehåller inga DB-imports.
+**Lösning:** proxy.ts importerar NextAuth och authConfig från auth.config, kör NextAuth(authConfig) lokalt och exporterar default auth((req) => intlMiddleware(req)). API och getSession använder auth.ts (PrismaAdapter, Credentials).
+**Lärdom:** Splitta config (auth.config.ts) och full instans (auth.ts). Proxy använder endast config för att undvika DB på edge.
+
 ### Expo stödjer inte httpOnly cookies
 **Problem:** Antagande att Expo/React Native stödjer httpOnly cookies för autentisering.
 **Orsak:** React Native har ingen webbläsare med inbyggt cookie-stöd. httpOnly cookies kräver en browser-kontext.
@@ -39,18 +45,24 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ### Verifieringsagent flaggade falskt problem (middleware.ts)
 **Problem:** Cursor-agent flaggade att proxy.ts borde heta middleware.ts, men i Next.js 16 är proxy.ts korrekt.
-**Orsak:** Agenten läste inte /docs/nextjs.md innan den flaggade avvikelser.
-**Lösning:** Orchestratorn måste alltid inkludera "Läs relevanta /docs/*.md först" i verifieringsprompts.
+**Orsak:** Agenten läste inte /workspace/docs/nextjs.md innan den flaggade avvikelser.
+**Lösning:** Orchestratorn måste alltid inkludera "Läs relevanta /workspace/docs/*.md först" i verifieringsprompts.
 **Lärdom:** Verifieringsagenter ska alltid läsa projektdokumentation innan de flaggar problem som avvikelser.
 
-### Agenter hittar inte /docs/
-**Problem:** Sub-agenter söker efter docs i fel katalog (t.ex. /workspace/web/docs/ eller /workspace/docs/web/).
+### Agenter hittar inte docs
+**Problem:** Sub-agenter söker efter docs i fel katalog (t.ex. /workspace/web/docs/ eller /docs/).
 **Orsak:** Orchestratorn angav inte fullständig sökväg till dokumentationen.
-**Lösning:** Alltid ange `/docs/` explicit som absolut sökväg i workspace root, t.ex. "Läs `/docs/nextjs.md` (ligger i workspace root, inte i web/)".
-**Lärdom:** Ange alltid fullständiga sökvägar till dokumentation. Specificera att /docs/ ligger i workspace root, utanför web/.
+**Lösning:** Alltid ange `/workspace/docs/` explicit som absolut sökväg, t.ex. "Läs `/workspace/docs/nextjs.md`".
+**Lärdom:** Ange alltid fullständiga sökvägar till dokumentation. Docs ligger i `/workspace/docs/`.
 
 ### Parallella testagenter krockar på dev-server
 **Problem:** Två testagenter spawnas parallellt och båda försöker starta `npm run dev` på samma port.
 **Orsak:** Orchestratorn koordinerade inte delad resurs (dev-server) mellan testagenter.
 **Lösning:** Antingen starta dev-servern själv innan testagenter spawnas, kör testagenter sekventiellt, eller instruera att använda samma körande server.
 **Lärdom:** Testagenter som behöver samma tjänst (dev-server, databas) måste dela resursen. Orkestern ansvarar för att starta delade tjänster före agenter.
+
+### Testagenter måste äga hela server-livscykeln
+**Problem:** Agenter startar dev-server men kan inte döda den. Servern hänger sig, blockerar framtida agenter.
+**Orsak:** Processer startade av en agent kan inte dödas av orkestern eller andra agenter i sandbox-miljön.
+**Lösning:** Agenten som kör Playwright-tester ansvarar för att STARTA och STOPPA servern inom samma session. Orkestern startar aldrig servern åt agenter. Servern får aldrig lämnas igång efter test.
+**Lärdom:** Den som startar en process äger den. Testagent = startar server → kör tester → stoppar server. Allt i samma agent.
