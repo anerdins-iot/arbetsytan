@@ -26,8 +26,11 @@ Följande ska kontrolleras innan ett block anses klart:
 
 ### Dev-server och Playwright-tester
 - **Agenten som kör Playwright-tester ansvarar för att starta OCH stoppa dev-servern**
-- Starta: `cd /workspace/web && npm run dev &` och vänta tills servern svarar
-- Stoppa: `pkill -f "next-server"` eller `kill` på process-ID när testerna är klara
+- **Starta:** Spara PID så att bara servern stoppas (aldrig pkill — det kan döda agentens egen process):
+  - `cd /workspace/web && npm run dev & echo $! > .dev-server.pid`
+  - Vänta tills servern svarar (t.ex. curl till localhost:3000)
+- **Stoppa:** Döda endast den sparade processen (aldrig `pkill -f`):
+  - `kill -TERM $(cat /workspace/web/.dev-server.pid) 2>/dev/null; rm -f /workspace/web/.dev-server.pid`
 - Lämna ALDRIG servern igång efter testet — det blockerar framtida agenter
 - Om servern redan körs (port upptagen): rapportera felet, försök INTE döda andras processer
 

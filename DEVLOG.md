@@ -66,3 +66,21 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Processer startade av en agent kan inte dödas av orkestern eller andra agenter i sandbox-miljön.
 **Lösning:** Agenten som kör Playwright-tester ansvarar för att STARTA och STOPPA servern inom samma session. Orkestern startar aldrig servern åt agenter. Servern får aldrig lämnas igång efter test.
 **Lärdom:** Den som startar en process äger den. Testagent = startar server → kör tester → stoppar server. Allt i samma agent.
+
+### pkill dödar agenten tillsammans med dev-servern
+**Problem:** När agenten stoppar dev-servern med `pkill -f "next-server"` (eller liknande) dör agentens egen process också — webbappen och agenten avslutas.
+**Orsak:** `pkill -f` matchar processer på kommandoradens text; i sandbox kan agentens process eller processgrupp matcha eller påverkas när barnprocesser dödas.
+**Lösning:** Använd aldrig pkill. Vid start: spara PID i fil (`npm run dev & echo $! > .dev-server.pid`). Vid stopp: döda endast den PID:en (`kill -TERM $(cat /workspace/web/.dev-server.pid)`). Se plan/README.md under "Dev-server och Playwright-tester".
+**Lärdom:** Stoppa dev-server alltid med PID-baserad kill (sparad i .dev-server.pid), aldrig med pkill eller killall.
+
+### Låst konto-hantering saknades i implementation (Block 2.2)
+**Problem:** Block 2.2 implementerade UI för låst konto men backend saknades helt.
+**Orsak:** Planen hade "låst konto" som en punkt men specificerade inte databasschema eller logik.
+**Lösning:** Uppdaterat `plan/fas-02.md` med explicit krav: lägg till `lockedAt DateTime?` och `failedLoginAttempts Int @default(0)` i User-modellen, lås konto efter 5 misslyckade försök.
+**Lärdom:** Avvikelser från planen ska resultera i planuppdatering, inte bara en TODO. Om något saknas i backend måste det specificeras i planen och implementeras.
+
+### Orkestern sa "kan läggas till senare" istället för att uppdatera planen
+**Problem:** Vid verifiering flaggades att låst konto-backend saknades. Orkestern noterade det som "icke-blockerande avvikelse" och skrev en TODO i DEVLOG istället för att uppdatera planen.
+**Orsak:** Orkestern förstod inte att avvikelser alltid kräver planuppdatering — inte framskjutning.
+**Lösning:** Aldrig säga "kan läggas till senare" eller skapa TODOs för saknade funktioner. Om något i planen inte implementerades: uppdatera planen med explicit krav och implementera det direkt.
+**Lärdom:** "Kan läggas till senare" är inte tillåtet. Avvikelser = planuppdatering + implementation. Inga TODOs för saknad funktionalitet.

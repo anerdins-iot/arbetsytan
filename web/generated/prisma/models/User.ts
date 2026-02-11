@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  failedLoginAttempts: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  failedLoginAttempts: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -34,6 +44,8 @@ export type UserMinAggregateOutputType = {
   isSuperAdmin: boolean | null
   locale: string | null
   pushToken: string | null
+  lockedAt: Date | null
+  failedLoginAttempts: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +60,8 @@ export type UserMaxAggregateOutputType = {
   isSuperAdmin: boolean | null
   locale: string | null
   pushToken: string | null
+  lockedAt: Date | null
+  failedLoginAttempts: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,11 +76,21 @@ export type UserCountAggregateOutputType = {
   isSuperAdmin: number
   locale: number
   pushToken: number
+  lockedAt: number
+  failedLoginAttempts: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  failedLoginAttempts?: true
+}
+
+export type UserSumAggregateInputType = {
+  failedLoginAttempts?: true
+}
 
 export type UserMinAggregateInputType = {
   id?: true
@@ -78,6 +102,8 @@ export type UserMinAggregateInputType = {
   isSuperAdmin?: true
   locale?: true
   pushToken?: true
+  lockedAt?: true
+  failedLoginAttempts?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -92,6 +118,8 @@ export type UserMaxAggregateInputType = {
   isSuperAdmin?: true
   locale?: true
   pushToken?: true
+  lockedAt?: true
+  failedLoginAttempts?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -106,6 +134,8 @@ export type UserCountAggregateInputType = {
   isSuperAdmin?: true
   locale?: true
   pushToken?: true
+  lockedAt?: true
+  failedLoginAttempts?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -149,6 +179,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -179,6 +221,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -193,9 +237,13 @@ export type UserGroupByOutputType = {
   isSuperAdmin: boolean
   locale: string
   pushToken: string | null
+  lockedAt: Date | null
+  failedLoginAttempts: number
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -228,6 +276,8 @@ export type UserWhereInput = {
   isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
   locale?: Prisma.StringFilter<"User"> | string
   pushToken?: Prisma.StringNullableFilter<"User"> | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   memberships?: Prisma.MembershipListRelationFilter
@@ -248,6 +298,8 @@ export type UserOrderByWithRelationInput = {
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   pushToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   memberships?: Prisma.MembershipOrderByRelationAggregateInput
@@ -271,6 +323,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
   locale?: Prisma.StringFilter<"User"> | string
   pushToken?: Prisma.StringNullableFilter<"User"> | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  failedLoginAttempts?: Prisma.IntFilter<"User"> | number
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   memberships?: Prisma.MembershipListRelationFilter
@@ -291,11 +345,15 @@ export type UserOrderByWithAggregationInput = {
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   pushToken?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -311,6 +369,8 @@ export type UserScalarWhereWithAggregatesInput = {
   isSuperAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   locale?: Prisma.StringWithAggregatesFilter<"User"> | string
   pushToken?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  lockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  failedLoginAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -325,6 +385,8 @@ export type UserCreateInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -345,6 +407,8 @@ export type UserUncheckedCreateInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -365,6 +429,8 @@ export type UserUpdateInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -385,6 +451,8 @@ export type UserUncheckedUpdateInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -405,6 +473,8 @@ export type UserCreateManyInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -419,6 +489,8 @@ export type UserUpdateManyMutationInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -433,6 +505,8 @@ export type UserUncheckedUpdateManyInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -447,8 +521,14 @@ export type UserCountOrderByAggregateInput = {
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   pushToken?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  failedLoginAttempts?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -461,6 +541,8 @@ export type UserMaxOrderByAggregateInput = {
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   pushToken?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -475,8 +557,14 @@ export type UserMinOrderByAggregateInput = {
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
   pushToken?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
+  failedLoginAttempts?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  failedLoginAttempts?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -490,6 +578,14 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type UserCreateNestedOneWithoutMembershipsInput = {
@@ -586,6 +682,8 @@ export type UserCreateWithoutMembershipsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -605,6 +703,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -640,6 +740,8 @@ export type UserUpdateWithoutMembershipsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -659,6 +761,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -678,6 +782,8 @@ export type UserCreateWithoutAccountsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -697,6 +803,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -732,6 +840,8 @@ export type UserUpdateWithoutAccountsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -751,6 +861,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -770,6 +882,8 @@ export type UserCreateWithoutSessionsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -789,6 +903,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -824,6 +940,8 @@ export type UserUpdateWithoutSessionsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -843,6 +961,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -862,6 +982,8 @@ export type UserCreateWithoutConversationsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -881,6 +1003,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -916,6 +1040,8 @@ export type UserUpdateWithoutConversationsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -935,6 +1061,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -954,6 +1082,8 @@ export type UserCreateWithoutAiMessagesInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -973,6 +1103,8 @@ export type UserUncheckedCreateWithoutAiMessagesInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1008,6 +1140,8 @@ export type UserUpdateWithoutAiMessagesInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -1027,6 +1161,8 @@ export type UserUncheckedUpdateWithoutAiMessagesInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1046,6 +1182,8 @@ export type UserCreateWithoutNotificationsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
@@ -1065,6 +1203,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   isSuperAdmin?: boolean
   locale?: string
   pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
@@ -1100,6 +1240,8 @@ export type UserUpdateWithoutNotificationsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
@@ -1119,6 +1261,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
@@ -1214,6 +1358,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   isSuperAdmin?: boolean
   locale?: boolean
   pushToken?: boolean
+  lockedAt?: boolean
+  failedLoginAttempts?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
@@ -1235,6 +1381,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isSuperAdmin?: boolean
   locale?: boolean
   pushToken?: boolean
+  lockedAt?: boolean
+  failedLoginAttempts?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1249,6 +1397,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   isSuperAdmin?: boolean
   locale?: boolean
   pushToken?: boolean
+  lockedAt?: boolean
+  failedLoginAttempts?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -1263,11 +1413,13 @@ export type UserSelectScalar = {
   isSuperAdmin?: boolean
   locale?: boolean
   pushToken?: boolean
+  lockedAt?: boolean
+  failedLoginAttempts?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "password" | "isSuperAdmin" | "locale" | "pushToken" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "password" | "isSuperAdmin" | "locale" | "pushToken" | "lockedAt" | "failedLoginAttempts" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1300,6 +1452,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isSuperAdmin: boolean
     locale: string
     pushToken: string | null
+    lockedAt: Date | null
+    failedLoginAttempts: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1740,6 +1894,8 @@ export interface UserFieldRefs {
   readonly isSuperAdmin: Prisma.FieldRef<"User", 'Boolean'>
   readonly locale: Prisma.FieldRef<"User", 'String'>
   readonly pushToken: Prisma.FieldRef<"User", 'String'>
+  readonly lockedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly failedLoginAttempts: Prisma.FieldRef<"User", 'Int'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

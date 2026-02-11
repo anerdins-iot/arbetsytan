@@ -111,6 +111,8 @@ export const UserScalarFieldEnum = {
   isSuperAdmin: 'isSuperAdmin',
   locale: 'locale',
   pushToken: 'pushToken',
+  lockedAt: 'lockedAt',
+  failedLoginAttempts: 'failedLoginAttempts',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

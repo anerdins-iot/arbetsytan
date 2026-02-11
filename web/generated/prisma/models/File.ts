@@ -547,14 +547,6 @@ export type FileUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type FileCreateNestedOneWithoutChunksInput = {
   create?: Prisma.XOR<Prisma.FileCreateWithoutChunksInput, Prisma.FileUncheckedCreateWithoutChunksInput>
   connectOrCreate?: Prisma.FileCreateOrConnectWithoutChunksInput

@@ -26,17 +26,19 @@ model Tenant {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  isSuperAdmin  Boolean   @default(false)
-  locale        String    @default("sv")
-  pushToken     String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                   String    @id @default(cuid())
+  name                 String?
+  email                String    @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String?
+  isSuperAdmin         Boolean   @default(false)
+  locale               String    @default("sv")
+  pushToken            String?
+  lockedAt             DateTime?
+  failedLoginAttempts  Int       @default(0)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   memberships      Membership[]
   accounts         Account[]

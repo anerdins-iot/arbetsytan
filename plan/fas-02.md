@@ -1,10 +1,10 @@
 # Fas 2 — Autentisering och multi-tenant
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 2.1: Auth.js-konfiguration
-**Input:** Fas 1 klar, `/docs/auth.md`
+**Input:** Fas 1 klar, `/workspace/docs/auth.md`
 **Output:** Fungerande Auth.js med session-hantering
 
 - [ ] Installera och konfigurera Auth.js v5 med Credentials-provider
@@ -29,7 +29,8 @@
 - [ ] Redirect till dashboard
 - [ ] Bygga inloggningssida med e-post och lösenord
 - [ ] Skapa Server Action `loginUser` med Zod-validering
-- [ ] Felhantering: felaktiga uppgifter, låst konto
+- [ ] Felhantering: felaktiga uppgifter
+- [ ] Felhantering: låst konto — lägg till `lockedAt DateTime?` och `failedLoginAttempts Int @default(0)` i User-modellen, lås konto efter 5 misslyckade försök
 - [ ] Redirect till dashboard efter lyckad inloggning
 - [ ] "Glömt lösenord"-länk (placeholder — implementeras i Block 2.4)
 
