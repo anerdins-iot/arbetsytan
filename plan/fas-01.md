@@ -58,12 +58,12 @@
 **Input:** Block 1.1A + Block 1.2 klara (Next.js + i18n)
 **Output:** Grundläggande applikationslayout med navigation
 
-- [ ] Skapa root layout med Inter-typsnitt och temavariabler
-- [ ] Skapa `(auth)`-grupp med layout för login/register
-- [ ] Skapa `(dashboard)`-grupp med layout: sidmeny, topbar, innehåll
-- [ ] Bygga sidmeny med navigation: Dashboard, Projekt, Inställningar
-- [ ] Bygga topbar med användarinfo och notifikationsikon
-- [ ] Implementera responsiv layout — sidmeny kollapsar på mobil
-- [ ] Implementera dark mode-toggle som växlar CSS-variablerna
+- [x] Skapa root layout med Inter-typsnitt och temavariabler
+- [x] Skapa `(auth)`-grupp med layout för login/register
+- [x] Skapa `(dashboard)`-grupp med layout: sidmeny, topbar, innehåll
+- [x] Bygga sidmeny med navigation: Dashboard, Projekt, Inställningar
+- [x] Bygga topbar med användarinfo och notifikationsikon
+- [x] Implementera responsiv layout — sidmeny kollapsar på mobil
+- [x] Implementera dark mode-toggle som växlar CSS-variablerna
 
 **Verifiering:** Layout renderas korrekt, responsiv design fungerar, dark mode togglar, `npm run build` OK

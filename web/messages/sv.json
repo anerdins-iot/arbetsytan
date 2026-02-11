@@ -17,6 +17,43 @@
     "close": "Stäng",
     "loading": "Laddar..."
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Välkommen till ArbetsYtan"
+  },
+  "projects": {
+    "title": "Projekt",
+    "empty": "Inga projekt ännu"
+  },
+  "settings": {
+    "title": "Inställningar",
+    "description": "Hantera ditt konto och företagsinställningar"
+  },
+  "sidebar": {
+    "brand": "ArbetsYtan",
+    "collapse": "Dölj meny",
+    "expand": "Visa meny"
+  },
+  "topbar": {
+    "notifications": "Notifikationer",
+    "user": "Användare",
+    "openMenu": "Öppna meny"
+  },
+  "theme": {
+    "toggle": "Byt tema",
+    "light": "Ljust",
+    "dark": "Mörkt",
+    "system": "System"
+  },
+  "auth": {
+    "login": "Logga in",
+    "register": "Registrera",
+    "loginTitle": "Logga in på ArbetsYtan",
+    "loginDescription": "Ange dina uppgifter för att logga in",
+    "registerTitle": "Skapa konto",
+    "registerDescription": "Kom igång med ArbetsYtan gratis",
+    "backToHome": "Tillbaka till startsidan"
+  },
   "errors": {
     "generic": "Något gick fel. Försök igen.",
     "unauthorized": "Du har inte behörighet att utföra denna åtgärd.",

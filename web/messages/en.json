@@ -17,6 +17,43 @@
     "close": "Close",
     "loading": "Loading..."
   },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to ArbetsYtan"
+  },
+  "projects": {
+    "title": "Projects",
+    "empty": "No projects yet"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Manage your account and company settings"
+  },
+  "sidebar": {
+    "brand": "ArbetsYtan",
+    "collapse": "Collapse menu",
+    "expand": "Expand menu"
+  },
+  "topbar": {
+    "notifications": "Notifications",
+    "user": "User",
+    "openMenu": "Open menu"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "auth": {
+    "login": "Log in",
+    "register": "Register",
+    "loginTitle": "Log in to ArbetsYtan",
+    "loginDescription": "Enter your credentials to log in",
+    "registerTitle": "Create account",
+    "registerDescription": "Get started with ArbetsYtan for free",
+    "backToHome": "Back to home"
+  },
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "unauthorized": "You are not authorized to perform this action.",

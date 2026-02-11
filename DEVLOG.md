@@ -42,3 +42,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Agenten läste inte /docs/nextjs.md innan den flaggade avvikelser.
 **Lösning:** Orchestratorn måste alltid inkludera "Läs relevanta /docs/*.md först" i verifieringsprompts.
 **Lärdom:** Verifieringsagenter ska alltid läsa projektdokumentation innan de flaggar problem som avvikelser.
+
+### Agenter hittar inte /docs/
+**Problem:** Sub-agenter söker efter docs i fel katalog (t.ex. /workspace/web/docs/ eller /workspace/docs/web/).
+**Orsak:** Orchestratorn angav inte fullständig sökväg till dokumentationen.
+**Lösning:** Alltid ange `/docs/` explicit som absolut sökväg i workspace root, t.ex. "Läs `/docs/nextjs.md` (ligger i workspace root, inte i web/)".
+**Lärdom:** Ange alltid fullständiga sökvägar till dokumentation. Specificera att /docs/ ligger i workspace root, utanför web/.
