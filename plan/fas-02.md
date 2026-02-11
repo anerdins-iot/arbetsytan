@@ -40,6 +40,7 @@
 - [ ] Skapa `getSession`-hjälpfunktion som returnerar user, tenantId, role
 - [ ] Skapa `requireAuth`-wrapper för Server Actions som kontrollerar session och returnerar verifierat `tenantId`
 - [ ] Skapa `requireRole`-wrapper som kräver specifik roll (ADMIN, PROJECT_MANAGER)
+- [ ] Skapa `requireProject(tenantId, projectId, userId)`-funktion som verifierar att projektet tillhör rätt tenant och att användaren har åtkomst (projektmedlem eller Admin-roll). Returnerar projektet eller kastar fel.
 - [ ] Skapa tenant-scoped Prisma-klient i `src/lib/db.ts` med Prisma client extension:
   - `tenantDb(tenantId)` — returnerar en Prisma-klient som automatiskt injicerar `WHERE tenantId = ?` på alla queries (find, update, delete, count, aggregate)
   - `tenantDb(tenantId)` ska även automatiskt sätta `tenantId` vid `create`-operationer
@@ -47,7 +48,7 @@
 - [ ] Alla dashboard-sidor kontrollerar session — redirect till login om ej autentiserad
 - [ ] Alla Server Actions kontrollerar auth med `requireAuth`, hämtar `tenantId` därifrån, och använder `tenantDb(tenantId)` för databasåtkomst
 
-**Verifiering:** Oautentiserad request redirectar till login, `requireAuth` och `requireRole` fungerar, `tenantDb()` injicerar tenantId på alla queries, det är omöjligt att göra tenant-databasfrågor utan `tenantDb()`, `npm run build` OK
+**Verifiering:** Oautentiserad request redirectar till login, `requireAuth` och `requireRole` fungerar, `requireProject()` validerar projektåtkomst, `tenantDb()` injicerar tenantId på alla queries, det är omöjligt att göra tenant-databasfrågor utan `tenantDb()`, `npm run build` OK
 
 ### Block 2.4: Lösenordsåterställning
 **Input:** Block 2.2 + 2.3 klara, Resend-konto

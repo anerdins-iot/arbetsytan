@@ -45,6 +45,7 @@ Varje agentblock genomförs i fyra steg:
   - Inga TypeScript-fel (`npx tsc --noEmit`)
   - Funktionaliteten matchar kraven i blockets specifikation
   - Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt
+  - Alla projektoperationer validerar åtkomst via `requireProject()` — användaren måste vara projektmedlem eller Admin
   - Alla UI-texter går via `next-intl` — inga hårdkodade strängar
   - Inga hårdkodade färger — alla via CSS-variabler/Tailwind
   - Inga säkerhetshål (auth-check i alla Server Actions)
@@ -72,7 +73,7 @@ Nästa block kan **inte** starta innan föregående blocks checkboxar är avbock
 | Fas | Fil | Beskrivning | Steg | Block |
 |-----|-----|-------------|------|-------|
 | 1 | `fas-01.md` | Projektsetup och infrastruktur | 29 | 4 |
-| 2 | `fas-02.md` | Autentisering och multi-tenant | 34 | 5 |
+| 2 | `fas-02.md` | Autentisering och multi-tenant | 35 | 5 |
 | 3 | `fas-03.md` | Dashboard, projekt, kanban, team, aktivitetslogg, sökning | 50 | 9 |
 | 4 | `fas-04.md` | Filhantering | 29 | 4 |
 | 5 | `fas-05.md` | AI-assistenter | 42 | 7 |
@@ -83,7 +84,7 @@ Nästa block kan **inte** starta innan föregående blocks checkboxar är avbock
 | 10 | `fas-10.md` | Landningssida | 8 | 1 |
 | 11 | `fas-11.md` | Mobilapp (Expo) | 19 | 4 |
 | 12 | `fas-12.md` | Deploy och produktion | 13 | 2 |
-| **Totalt** | | | **287** | **47** |
+| **Totalt** | | | **288** | **47** |
 
 ## Fasordning och beroenden
 

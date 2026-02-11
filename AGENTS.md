@@ -74,6 +74,7 @@ messages/
 - Prisma-extensionen i `src/lib/db.ts` exporterar:
   - `prisma` — global klient, ENBART för plattformsoperationer (superadmin, cron-jobb, auth-flöden utan tenant-kontext)
   - `tenantDb(tenantId)` — tenant-scoped klient som injicerar `WHERE tenantId = ?` på alla operationer
+- **Projektåtkomst:** Alla operationer som tar `projectId` som input ska verifiera att användaren har tillgång till projektet via `requireProject(tenantId, projectId, userId)`. Denna funktion kontrollerar att projektet tillhör rätt tenant och att användaren är medlem i projektet (eller har Admin-roll). Returnerar projektet eller kastar ett fel.
 - Roller per tenant: Admin, Projektledare, Montör
 - Superadmin är plattformsnivå — separerad från tenant-roller
 - Rättigheter är konfigurerbara per roll och tenant
@@ -116,6 +117,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Mock-data i UI (all data från DB)
 - Databasfrågor utan `tenantId`-filter
 - Direkt användning av `prisma` (global klient) för tenant-data — använd alltid `tenantDb(tenantId)`
+- Projektoperationer utan `requireProject()`-validering — verifiera alltid att användaren har åtkomst
 - Direkt åtkomst till annan tenants data
 - Committa `.env.local` eller hemligheter
 - API-nycklar i klientkod
