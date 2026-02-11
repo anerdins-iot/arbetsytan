@@ -49,5 +49,9 @@ docker/data/
 # MinIO
 minio-data/
 
+# Sandbox / Logs
+.agent-sandbox/
+logs/
+
 # Misc
 *.pem
