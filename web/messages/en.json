@@ -19,11 +19,88 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Welcome to ArbetsYtan"
+    "welcome": "Welcome to ArbetsYtan",
+    "sections": {
+      "tasks": "My tasks",
+      "activity": "Recent activity",
+      "notifications": "Notifications"
+    },
+    "tasks": {
+      "empty": "You have no assigned tasks",
+      "emptyToday": "No tasks to do today",
+      "status": {
+        "TODO": "To do",
+        "IN_PROGRESS": "In progress",
+        "DONE": "Done"
+      },
+      "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "deadline": "Deadline",
+      "noDeadline": "No deadline",
+      "overdue": "Overdue",
+      "today": "Today",
+      "project": "Project"
+    },
+    "activity": {
+      "empty": "No activity yet",
+      "actions": {
+        "created": "created",
+        "updated": "updated",
+        "deleted": "deleted",
+        "completed": "marked as done",
+        "assigned": "assigned",
+        "commented": "commented on",
+        "uploaded": "uploaded",
+        "statusChanged": "changed status of"
+      },
+      "entities": {
+        "task": "task",
+        "project": "project",
+        "file": "file",
+        "comment": "comment",
+        "member": "member"
+      },
+      "in": "in"
+    },
+    "notifications": {
+      "empty": "No notifications",
+      "markAllRead": "Mark all as read",
+      "unread": "Unread"
+    },
+    "worker": {
+      "title": "My tasks today",
+      "greeting": "Hi, {name}!"
+    }
   },
   "projects": {
     "title": "Projects",
-    "empty": "No projects yet"
+    "description": "Manage your projects and tasks",
+    "empty": "No projects yet",
+    "emptyDescription": "Create your first project to get started.",
+    "createProject": "New project",
+    "createProjectTitle": "Create new project",
+    "createProjectDescription": "Fill in the details to create a new project.",
+    "name": "Project name",
+    "namePlaceholder": "E.g. Renovation Main Street 12",
+    "projectDescription": "Description",
+    "descriptionPlaceholder": "Describe the project...",
+    "address": "Address",
+    "addressPlaceholder": "Project address",
+    "creating": "Creating...",
+    "searchPlaceholder": "Search projects...",
+    "filterStatus": "Status",
+    "filterAll": "All",
+    "statusActive": "Active",
+    "statusPaused": "Paused",
+    "statusCompleted": "Completed",
+    "statusArchived": "Archived",
+    "tasks": "{count, plural, =0 {No tasks} =1 {1 task} other {# tasks}}",
+    "lastUpdated": "Last updated",
+    "errorGeneric": "Something went wrong. Please try again."
   },
   "settings": {
     "title": "Settings",

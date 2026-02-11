@@ -1,22 +1,47 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
-import { getTranslations } from "next-intl/server";
+import { getProjects } from "@/actions/projects";
+import { ProjectList } from "@/components/projects/project-list";
+import type { ProjectStatus } from "../../../../../generated/prisma/client";
 
 type Props = {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ search?: string; status?: string }>;
 };
 
-export default async function ProjectsPage({ params }: Props) {
+async function ProjectsContent({
+  search,
+  status,
+}: {
+  search?: string;
+  status?: string;
+}) {
+  const options: { search?: string; status?: ProjectStatus } = {};
+  if (search?.trim()) {
+    options.search = search;
+  }
+  if (status && status !== "ALL") {
+    options.status = status as ProjectStatus;
+  }
+  const { projects } = await getProjects(options);
+  return <ProjectList projects={projects} />;
+}
+
+export default async function ProjectsPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: "projects" });
+
+  const { search, status } = await searchParams;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">{t("title")}</h1>
-        <p className="mt-1 text-muted-foreground">{t("empty")}</p>
-      </div>
-      {/* Project list will be implemented in Block 3.2 */}
-    </div>
+    <Suspense
+      fallback={
+        <div className="flex h-64 items-center justify-center">
+          <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+        </div>
+      }
+    >
+      <ProjectsContent search={search} status={status} />
+    </Suspense>
   );
 }

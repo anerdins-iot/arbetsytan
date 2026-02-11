@@ -1,18 +1,18 @@
 # Fas 3 — Dashboard och projekt
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 3.1: Dashboard
 **Input:** Fas 1 + Fas 2 klara
 **Output:** Fungerande dashboard-sida
 
-- [ ] Bygga dashboard-sida med tre sektioner: uppgifter, aktivitet, notifikationer
-- [ ] Hämta "mina uppgifter" via Server Action filtrerat på membership + tenantId
-- [ ] Visa uppgifter som lista med status, deadline och projektkoppling
-- [ ] Hämta senaste aktiviteten i användarens projekt
-- [ ] Visa notifikationer (olästa markerade)
-- [ ] Montörs-vy: förenklad dashboard med enbart "mina uppgifter idag"
+- [x] Bygga dashboard-sida med tre sektioner: uppgifter, aktivitet, notifikationer
+- [x] Hämta "mina uppgifter" via Server Action filtrerat på membership + tenantId
+- [x] Visa uppgifter som lista med status, deadline och projektkoppling
+- [x] Hämta senaste aktiviteten i användarens projekt
+- [x] Visa notifikationer (olästa markerade)
+- [x] Montörs-vy: förenklad dashboard med enbart "mina uppgifter idag"
 
 **Verifiering:** Dashboard renderas, `tenantDb(tenantId)` på alla queries, montörs-vy visas för rätt roll, `npm run build` OK
 
@@ -20,12 +20,12 @@
 **Input:** Fas 1 (layout) + Fas 2 (auth) klara
 **Output:** Projektlista-sida med CRUD
 
-- [ ] Bygga projektlista-sida med kort för varje projekt
-- [ ] Server Action `getProjects` filtrerat på tenantId
-- [ ] Visa namn, status, antal uppgifter, senaste aktivitet per projekt
-- [ ] "Skapa nytt projekt"-knapp och modal/sida
-- [ ] Server Action `createProject` med Zod-validering + tenantId
-- [ ] Sökfunktion och statusfilter (aktiv, pausad, klar, arkiverad)
+- [x] Bygga projektlista-sida med kort för varje projekt
+- [x] Server Action `getProjects` filtrerat på tenantId
+- [x] Visa namn, status, antal uppgifter, senaste aktivitet per projekt
+- [x] "Skapa nytt projekt"-knapp och modal/sida
+- [x] Server Action `createProject` med Zod-validering + tenantId
+- [x] Sökfunktion och statusfilter (aktiv, pausad, klar, arkiverad)
 
 **Verifiering:** Projektlista visar data, filter fungerar, skapande fungerar, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 

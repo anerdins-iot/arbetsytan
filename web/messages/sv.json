@@ -19,11 +19,88 @@
   },
   "dashboard": {
     "title": "Dashboard",
-    "welcome": "Välkommen till ArbetsYtan"
+    "welcome": "Välkommen till ArbetsYtan",
+    "sections": {
+      "tasks": "Mina uppgifter",
+      "activity": "Senaste aktivitet",
+      "notifications": "Notifikationer"
+    },
+    "tasks": {
+      "empty": "Du har inga tilldelade uppgifter",
+      "emptyToday": "Inga uppgifter att göra idag",
+      "status": {
+        "TODO": "Att göra",
+        "IN_PROGRESS": "Pågående",
+        "DONE": "Klar"
+      },
+      "priority": {
+        "LOW": "Låg",
+        "MEDIUM": "Medium",
+        "HIGH": "Hög",
+        "URGENT": "Brådskande"
+      },
+      "deadline": "Deadline",
+      "noDeadline": "Ingen deadline",
+      "overdue": "Försenad",
+      "today": "Idag",
+      "project": "Projekt"
+    },
+    "activity": {
+      "empty": "Ingen aktivitet ännu",
+      "actions": {
+        "created": "skapade",
+        "updated": "uppdaterade",
+        "deleted": "tog bort",
+        "completed": "markerade som klar",
+        "assigned": "tilldelade",
+        "commented": "kommenterade på",
+        "uploaded": "laddade upp",
+        "statusChanged": "ändrade status på"
+      },
+      "entities": {
+        "task": "uppgift",
+        "project": "projekt",
+        "file": "fil",
+        "comment": "kommentar",
+        "member": "medlem"
+      },
+      "in": "i"
+    },
+    "notifications": {
+      "empty": "Inga notifikationer",
+      "markAllRead": "Markera alla som lästa",
+      "unread": "Oläst"
+    },
+    "worker": {
+      "title": "Mina uppgifter idag",
+      "greeting": "Hej, {name}!"
+    }
   },
   "projects": {
     "title": "Projekt",
-    "empty": "Inga projekt ännu"
+    "description": "Hantera dina projekt och uppgifter",
+    "empty": "Inga projekt ännu",
+    "emptyDescription": "Skapa ditt första projekt för att komma igång.",
+    "createProject": "Nytt projekt",
+    "createProjectTitle": "Skapa nytt projekt",
+    "createProjectDescription": "Fyll i uppgifterna för att skapa ett nytt projekt.",
+    "name": "Projektnamn",
+    "namePlaceholder": "T.ex. Renovering Storgatan 12",
+    "projectDescription": "Beskrivning",
+    "descriptionPlaceholder": "Beskriv projektet...",
+    "address": "Adress",
+    "addressPlaceholder": "Projektadress",
+    "creating": "Skapar...",
+    "searchPlaceholder": "Sök projekt...",
+    "filterStatus": "Status",
+    "filterAll": "Alla",
+    "statusActive": "Aktiv",
+    "statusPaused": "Pausad",
+    "statusCompleted": "Klar",
+    "statusArchived": "Arkiverad",
+    "tasks": "{count, plural, =0 {Inga uppgifter} =1 {1 uppgift} other {# uppgifter}}",
+    "lastUpdated": "Senast uppdaterad",
+    "errorGeneric": "Något gick fel. Försök igen."
   },
   "settings": {
     "title": "Inställningar",

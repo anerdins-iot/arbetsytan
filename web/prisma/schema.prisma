@@ -46,6 +46,7 @@ model User {
   conversations    Conversation[]
   aiMessages       AIMessage[]
   notifications    Notification[]
+  activityLogs     ActivityLog[]
 }
 
 model Membership {
@@ -380,6 +381,7 @@ model ActivityLog {
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   actorId   String
+  actor     User    @relation(fields: [actorId], references: [id], onDelete: Restrict)
 }
 
 // ─────────────────────────────────────────

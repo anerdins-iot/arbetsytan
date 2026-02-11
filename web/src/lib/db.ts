@@ -19,25 +19,41 @@ if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = basePrisma;
 }
 
-/** Models that have tenantId and are scoped by tenantDb. */
-const TENANT_MODELS = [
+/** Models that have a direct tenantId column. */
+const DIRECT_TENANT_MODELS = [
   "project",
   "membership",
   "invitation",
   "subscription",
 ] as const;
 
+/** Models that are scoped via a relation to Project. */
+const RELATIONAL_TENANT_MODELS = [
+  "task",
+  "activityLog",
+  "notification",
+  "file",
+  "documentChunk",
+  "timeEntry",
+  "comment",
+] as const;
+
 function mergeWhereTenantId<T extends { where?: unknown }>(
   args: T,
-  tenantId: string
+  tenantId: string,
+  relationPath?: string
 ): T {
+  const filter = relationPath 
+    ? { [relationPath]: { tenantId } } 
+    : { tenantId };
+
   return {
     ...args,
     where: {
       ...(typeof args.where === "object" && args.where !== null
         ? args.where
         : {}),
-      tenantId,
+      ...filter,
     },
   } as T;
 }
@@ -63,7 +79,8 @@ function createTenantExtension(tenantId: string) {
     >
   >;
 
-  for (const model of TENANT_MODELS) {
+  // 1. Handle models with direct tenantId
+  for (const model of DIRECT_TENANT_MODELS) {
     query[model] = {
       findMany: ({ args, query: run }) =>
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId)),
@@ -72,12 +89,8 @@ function createTenantExtension(tenantId: string) {
       findFirstOrThrow: ({ args, query: run }) =>
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId)),
       findUnique: ({ args, query: run }) => {
-        // findUnique uses where with unique fields; we still need to restrict by tenantId
         const a = args as { where: { id?: string } };
-        return run({
-          ...a,
-          where: { ...a.where, tenantId },
-        });
+        return run({ ...a, where: { ...a.where, tenantId } });
       },
       findUniqueOrThrow: ({ args, query: run }) => {
         const a = args as { where: { id?: string } };
@@ -113,52 +126,87 @@ function createTenantExtension(tenantId: string) {
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId)),
       groupBy: ({ args, query: run }) =>
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId)),
-      createManyAndReturn: ({ args, query: run }) => {
-        const a = args as { data: unknown[] | object };
-        const data = Array.isArray(a.data)
-          ? a.data.map((row) =>
-              typeof row === "object" && row !== null
-                ? { ...row, tenantId }
-                : { tenantId }
-            )
-          : mergeDataTenantId(
-              { data: a.data as object } as { data: object },
-              tenantId
-            ).data;
-        return run({ ...a, data });
-      },
-      updateManyAndReturn: ({ args, query: run }) =>
-        run(mergeWhereTenantId(args as { where?: unknown }, tenantId)),
       upsert: ({ args, query: run }) => {
-        const a = args as {
-          where?: unknown;
-          create?: unknown;
-          update?: unknown;
-        };
+        const a = args as { where?: unknown; create?: unknown; update?: unknown };
         const create = mergeDataTenantId(
           { data: a.create ?? {} } as { data: object },
           tenantId
         ).data;
-        return run({
-          ...a,
-          where: { ...(a.where as object), tenantId },
-          create,
-        });
+        return run({ ...a, where: { ...(a.where as object), tenantId }, create });
       },
     };
   }
+
+  // 2. Handle models with project relation
+  for (const model of RELATIONAL_TENANT_MODELS) {
+    query[model] = {
+      findMany: ({ args, query: run }) =>
+        run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+      findFirst: ({ args, query: run }) =>
+        run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+      findFirstOrThrow: ({ args, query: run }) =>
+        run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+      findUnique: ({ args, query: run }) => {
+        const a = args as { where: { id?: string } };
+        return run({ ...a, where: { ...a.where, project: { tenantId } } });
+      },
+      findUniqueOrThrow: ({ args, query: run }) => {
+        const a = args as { where: { id?: string } };
+        return run({ ...a, where: { ...a.where, project: { tenantId } } });
+      },
+      // Note: create/update for these models doesn't automatically inject relation, 
+      // but they are usually created connected to a project that is already tenant-checked.
+    };
+  }
+
+  // 3. Handle TaskAssignment (nested relation: task -> project -> tenantId)
+  query.taskAssignment = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
+    findUnique: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
+    },
+    findUniqueOrThrow: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
+    },
+  };
 
   return { query };
 }
 
 export type TenantScopedClient = Omit<
   PrismaClient,
-  "project" | "membership" | "invitation" | "subscription"
+  | "project"
+  | "membership"
+  | "invitation"
+  | "subscription"
+  | "task"
+  | "activityLog"
+  | "notification"
+  | "file"
+  | "documentChunk"
+  | "timeEntry"
+  | "comment"
+  | "taskAssignment"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
   invitation: PrismaClient["invitation"];
   subscription: PrismaClient["subscription"];
+  task: PrismaClient["task"];
+  activityLog: PrismaClient["activityLog"];
+  notification: PrismaClient["notification"];
+  file: PrismaClient["file"];
+  documentChunk: PrismaClient["documentChunk"];
+  timeEntry: PrismaClient["timeEntry"];
+  comment: PrismaClient["comment"];
+  taskAssignment: PrismaClient["taskAssignment"];
 };
 
 /**

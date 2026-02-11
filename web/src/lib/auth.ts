@@ -8,7 +8,7 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import bcrypt from "bcrypt";
 import { authConfig } from "./auth.config";
-import { prisma } from "./db";
+import { prisma, tenantDb } from "./db";
 import type { Role } from "../../generated/prisma/client";
 
 export type SessionUser = {
@@ -97,14 +97,15 @@ export async function requireProject(
   projectId: string,
   userId: string
 ): Promise<ProjectWithTenant> {
-  const project = await prisma.project.findUnique({
+  const db = tenantDb(tenantId);
+  const project = await db.project.findUnique({
     where: { id: projectId },
   });
-  if (!project || project.tenantId !== tenantId) {
+  if (!project) {
     throw new Error("PROJECT_NOT_FOUND");
   }
-  const membership = await prisma.membership.findFirst({
-    where: { userId, tenantId },
+  const membership = await db.membership.findFirst({
+    where: { userId },
   });
   if (!membership) {
     throw new Error("FORBIDDEN");

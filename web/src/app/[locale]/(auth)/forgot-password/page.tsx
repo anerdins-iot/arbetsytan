@@ -1,7 +1,7 @@
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { ForgotPasswordForm } from "@/components/auth/forgot-password-form";
-import { Link } from "@/i18n/routing";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -22,7 +22,9 @@ export default async function ForgotPasswordPage({ params }: Props) {
           {t("forgotPasswordDescription")}
         </p>
       </div>
-      <ForgotPasswordForm />
+      <Suspense fallback={<div className="h-[280px] animate-pulse rounded-md bg-muted" />}>
+        <ForgotPasswordForm />
+      </Suspense>
     </div>
   );
 }
