@@ -27,24 +27,36 @@ const DIRECT_TENANT_MODELS = [
   "subscription",
 ] as const;
 
-/** Models that are scoped via a relation to Project. */
-const RELATIONAL_TENANT_MODELS = [
+/** Models scoped via direct project relation. */
+const PROJECT_SCOPED_MODELS = [
   "task",
   "activityLog",
   "notification",
   "file",
   "documentChunk",
   "timeEntry",
-  "comment",
 ] as const;
+
+/** Comment is scoped via task.project (no direct project relation). */
+const COMMENT_MODEL = "comment" as const;
+
+/** Build nested where key from dot path, e.g. "task.project" -> { task: { project: { tenantId } } }. */
+function nestedTenantFilter(relationPath: string, tenantId: string): Record<string, unknown> {
+  const parts = relationPath.split(".");
+  let current: Record<string, unknown> = { tenantId };
+  for (let i = parts.length - 1; i >= 0; i--) {
+    current = { [parts[i]]: current };
+  }
+  return current;
+}
 
 function mergeWhereTenantId<T extends { where?: unknown }>(
   args: T,
   tenantId: string,
   relationPath?: string
 ): T {
-  const filter = relationPath 
-    ? { [relationPath]: { tenantId } } 
+  const filter = relationPath
+    ? nestedTenantFilter(relationPath, tenantId)
     : { tenantId };
 
   return {
@@ -137,8 +149,8 @@ function createTenantExtension(tenantId: string) {
     };
   }
 
-  // 2. Handle models with project relation
-  for (const model of RELATIONAL_TENANT_MODELS) {
+  // 2. Handle models with direct project relation
+  for (const model of PROJECT_SCOPED_MODELS) {
     query[model] = {
       findMany: ({ args, query: run }) =>
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
@@ -154,10 +166,28 @@ function createTenantExtension(tenantId: string) {
         const a = args as { where: { id?: string } };
         return run({ ...a, where: { ...a.where, project: { tenantId } } });
       },
-      // Note: create/update for these models doesn't automatically inject relation, 
+      // Note: create/update for these models doesn't automatically inject relation,
       // but they are usually created connected to a project that is already tenant-checked.
     };
   }
+
+  // 2b. Comment is scoped via task.project (no direct project relation)
+  query[COMMENT_MODEL] = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
+    findUnique: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
+    },
+    findUniqueOrThrow: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
+    },
+  };
 
   // 3. Handle ProjectMember (scoped via project)
   query.projectMember = {

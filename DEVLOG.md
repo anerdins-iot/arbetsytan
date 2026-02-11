@@ -114,3 +114,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** `src/lib/activity-log.ts` markerades med `"use server"` men exporterade även action/entity-konstanter.
 **Lösning:** Tog bort `"use server"` från helper-filen och behöll endast async-anropet till `tenantDb()` i funktionen.
 **Lärdom:** Använd `"use server"` endast i filer som enbart exporterar async Server Actions; vanliga helpers med konstanter ska inte markeras.
+
+### Tenant-extension: nästlad where och Comment-modell (Block 3.10)
+**Problem:** Dashboard och projektvy kraschade med PrismaClientValidationError: "Unknown argument `task.project`" / ogiltig filter på Comment.
+**Orsak:** mergeWhereTenantId använde relationPath som literal nyckel (`"task.project": { tenantId }`) istället för nästlat objekt. Comment har ingen direkt project-relation utan task.project.
+**Lösning:** Introducerade nestedTenantFilter() som bygger `task: { project: { tenantId } }` från "task.project". Separerat Comment i egen extension med path "task.project".
+**Lärdom:** Nästlade Prisma-filtren måste vara objekt, inte punktnotation som nyckel. Modeller med indirekt tenant-koppling (Comment → Task → Project) behöver egen relationPath.

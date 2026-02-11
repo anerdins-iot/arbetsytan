@@ -1,7 +1,10 @@
 import "dotenv/config";
+import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/db";
 
 async function main() {
+  /** Shared test password for seed users: admin@example.com, pm@example.com, montor@example.com → "password123" */
+  const testPasswordHash = await bcrypt.hash("password123", 12);
   const tenant = await prisma.tenant.upsert({
     where: { id: "seed-tenant-1" },
     update: {},
@@ -14,31 +17,34 @@ async function main() {
 
   const adminUser = await prisma.user.upsert({
     where: { email: "admin@example.com" },
-    update: {},
+    update: { password: testPasswordHash },
     create: {
       name: "Anna Admin",
       email: "admin@example.com",
       locale: "sv",
+      password: testPasswordHash,
     },
   });
 
   const pmUser = await prisma.user.upsert({
     where: { email: "pm@example.com" },
-    update: {},
+    update: { password: testPasswordHash },
     create: {
       name: "Per Projektledare",
       email: "pm@example.com",
       locale: "sv",
+      password: testPasswordHash,
     },
   });
 
   const workerUser = await prisma.user.upsert({
     where: { email: "montor@example.com" },
-    update: {},
+    update: { password: testPasswordHash },
     create: {
       name: "Maja Montör",
       email: "montor@example.com",
       locale: "sv",
+      password: testPasswordHash,
     },
   });
 

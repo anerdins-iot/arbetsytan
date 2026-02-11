@@ -120,20 +120,20 @@
 **Input:** Block 3.1–3.9 klara
 **Output:** Screenshots och verifiering av alla dashboard/projekt-flöden
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Logga in med testanvändare
-- [ ] Ta screenshot av dashboard (uppgifter, aktivitet, notifikationer)
-- [ ] Navigera till projektlistan, ta screenshot
-- [ ] Testa sökfunktionen och statusfilter
-- [ ] Öppna ett projekt, ta screenshot av projektvyn med flikar
-- [ ] Navigera till Uppgifter-fliken, ta screenshot av kanban-board
-- [ ] Skapa en ny uppgift via modal
-- [ ] Dra en uppgift mellan kolumner (om drag-and-drop fungerar)
-- [ ] Öppna uppgiftsdetalj, ta screenshot
-- [ ] Lägg till en kommentar
-- [ ] Navigera till teamhantering, ta screenshot
-- [ ] Testa global sökning i topbar
-- [ ] Spara alla screenshots i `screenshots/fas-03/`
-- [ ] Stoppa dev-server
+- [x] Starta dev-server med PID-fil
+- [x] Logga in med testanvändare
+- [x] Ta screenshot av dashboard (uppgifter, aktivitet, notifikationer)
+- [x] Navigera till projektlistan, ta screenshot
+- [x] Testa sökfunktionen och statusfilter
+- [x] Öppna ett projekt, ta screenshot av projektvyn med flikar
+- [x] Navigera till Uppgifter-fliken, ta screenshot av kanban-board
+- [x] Skapa en ny uppgift via modal
+- [x] Dra en uppgift mellan kolumner (om drag-and-drop fungerar)
+- [x] Öppna uppgiftsdetalj, ta screenshot
+- [x] Lägg till en kommentar
+- [x] Navigera till teamhantering, ta screenshot
+- [x] Testa global sökning i topbar
+- [x] Spara alla screenshots i `screenshots/fas-03/`
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, navigation fungerar, data visas korrekt, inga konsolfel
