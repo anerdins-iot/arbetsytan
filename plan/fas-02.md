@@ -7,14 +7,14 @@
 **Input:** Fas 1 klar, `/workspace/docs/auth.md`
 **Output:** Fungerande Auth.js med session-hantering
 
-- [ ] Installera och konfigurera Auth.js v5 med Credentials-provider
-- [ ] Skapa `web/src/lib/auth.config.ts` (edge-kompatibel, inga DB-imports) — exporterar providers och callbacks
-- [ ] Skapa `web/src/lib/auth.ts` med full konfiguration (PrismaAdapter + auth.config)
-- [ ] Skapa `web/proxy.ts` som importerar ENDAST från auth.config (ej auth.ts) enligt Next.js 16-mönster
-- [ ] Implementera lösenordshashning med bcrypt vid registrering
-- [ ] Konfigurera session-strategi (cookies för webb)
-- [ ] Lägga till `tenantId` och `role` i session via callbacks
-- [ ] Konfigurera JWT-strategi för mobil: kort access token (15 min) + refresh token (30 dagar), signerad med server-secret
+- [x] Installera och konfigurera Auth.js v5 med Credentials-provider
+- [x] Skapa `web/src/lib/auth.config.ts` (edge-kompatibel, inga DB-imports) — exporterar providers och callbacks
+- [x] Skapa `web/src/lib/auth.ts` med full konfiguration (PrismaAdapter + auth.config)
+- [x] Skapa `web/proxy.ts` som importerar ENDAST från auth.config (ej auth.ts) enligt Next.js 16-mönster
+- [x] Implementera lösenordshashning med bcrypt vid registrering
+- [x] Konfigurera session-strategi (cookies för webb)
+- [x] Lägga till `tenantId` och `role` i session via callbacks
+- [x] Konfigurera JWT-strategi för mobil: kort access token (15 min) + refresh token (30 dagar), signerad med server-secret
 
 **Verifiering:** Auth-config laddar utan fel, session-callbacks returnerar tenantId/role, `npm run build` OK
 
@@ -22,17 +22,17 @@
 **Input:** Block 2.1 klart
 **Output:** Fungerande registrering och inloggningssidor
 
-- [ ] Bygga registreringssida med formulär: namn, e-post, lösenord, företagsnamn
-- [ ] Skapa Server Action `registerUser` — validering med Zod, skapa User + Tenant + Membership(ADMIN)
-- [ ] Hantera felmeddelanden på svenska (e-post redan registrerad, valideringsfel)
-- [ ] Automatisk inloggning efter registrering
-- [ ] Redirect till dashboard
-- [ ] Bygga inloggningssida med e-post och lösenord
-- [ ] Skapa Server Action `loginUser` med Zod-validering
-- [ ] Felhantering: felaktiga uppgifter
-- [ ] Felhantering: låst konto — lägg till `lockedAt DateTime?` och `failedLoginAttempts Int @default(0)` i User-modellen, lås konto efter 5 misslyckade försök
-- [ ] Redirect till dashboard efter lyckad inloggning
-- [ ] "Glömt lösenord"-länk (placeholder — implementeras i Block 2.4)
+- [x] Bygga registreringssida med formulär: namn, e-post, lösenord, företagsnamn
+- [x] Skapa Server Action `registerUser` — validering med Zod, skapa User + Tenant + Membership(ADMIN)
+- [x] Hantera felmeddelanden på svenska (e-post redan registrerad, valideringsfel)
+- [x] Automatisk inloggning efter registrering
+- [x] Redirect till dashboard
+- [x] Bygga inloggningssida med e-post och lösenord
+- [x] Skapa Server Action `loginUser` med Zod-validering
+- [x] Felhantering: felaktiga uppgifter
+- [x] Felhantering: låst konto — lägg till `lockedAt DateTime?` och `failedLoginAttempts Int @default(0)` i User-modellen, lås konto efter 5 misslyckade försök
+- [x] Redirect till dashboard efter lyckad inloggning
+- [x] "Glömt lösenord"-länk (placeholder — implementeras i Block 2.4)
 
 **Verifiering:** Registrering skapar User+Tenant+Membership, inloggning fungerar, redirect till dashboard, alla texter via i18n, `npm run build` OK
 
@@ -69,12 +69,12 @@
 **Input:** Block 2.2 + 2.3 + 2.4 klara (auth + Resend)
 **Output:** Fungerande inbjudningsflöde
 
-- [ ] Bygga inbjudningsformulär i inställningar (e-post + roll)
-- [ ] Skapa Server Action `inviteUser` — skapar Invitation med token och expiresAt
-- [ ] Skicka inbjudningsmail via Resend med unik länk
-- [ ] Bygga accepteringssida — skapa konto och Membership med vald roll
-- [ ] Hantera redan registrerade användare (koppla till befintlig User)
-- [ ] Visa listan med aktiva och väntande inbjudningar i inställningar
-- [ ] Server Action för att avbryta inbjudan
+- [x] Bygga inbjudningsformulär i inställningar (e-post + roll)
+- [x] Skapa Server Action `inviteUser` — skapar Invitation med token och expiresAt
+- [x] Skicka inbjudningsmail via Resend med unik länk
+- [x] Bygga accepteringssida — skapa konto och Membership med vald roll
+- [x] Hantera redan registrerade användare (koppla till befintlig User)
+- [x] Visa listan med aktiva och väntande inbjudningar i inställningar
+- [x] Server Action för att avbryta inbjudan
 
 **Verifiering:** Inbjudan skickas via e-post, acceptering skapar Membership, `tenantDb(tenantId)` på alla queries, `npm run build` OK

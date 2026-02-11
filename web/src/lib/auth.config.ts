@@ -19,12 +19,15 @@ export const authConfig = {
     },
     authorized({ auth, request }) {
       const path = request.nextUrl.pathname;
-      const isAuthPage =
+      const isPublicPage =
         path.includes("/login") ||
         path.includes("/register") ||
+        path.includes("/invite/") ||
+        path.includes("/forgot-password") ||
+        path.includes("/reset-password") ||
         path === "/" ||
         /^\/[a-z]{2}\/?$/.test(path);
-      if (isAuthPage) return true;
+      if (isPublicPage) return true;
       return !!auth;
     },
   },

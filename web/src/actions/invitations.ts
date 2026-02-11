@@ -1,0 +1,430 @@
+"use server";
+
+import crypto from "node:crypto";
+import { z } from "zod";
+import bcrypt from "bcrypt";
+import { requireRole, requireAuth, getSession } from "@/lib/auth";
+import { tenantDb, prisma } from "@/lib/db";
+import { sendEmail } from "@/lib/email";
+import { signIn } from "@/lib/auth";
+import type { Role, InvitationStatus } from "../../generated/prisma/client";
+
+// ─── Schemas ───────────────────────────────────────────
+
+const inviteSchema = z.object({
+  email: z.string().email().max(255),
+  role: z.enum(["ADMIN", "PROJECT_MANAGER", "WORKER"]),
+});
+
+const cancelInvitationSchema = z.object({
+  invitationId: z.string().min(1),
+});
+
+const acceptInvitationSchema = z.object({
+  token: z.string().min(1),
+});
+
+const acceptWithRegistrationSchema = z.object({
+  token: z.string().min(1),
+  name: z.string().min(2).max(100),
+  email: z.string().email().max(255),
+  password: z.string().min(8).max(128),
+});
+
+// ─── Types ─────────────────────────────────────────────
+
+export type InvitationActionResult = {
+  success: boolean;
+  error?: string;
+  fieldErrors?: Record<string, string[]>;
+};
+
+export type InvitationItem = {
+  id: string;
+  email: string;
+  role: Role;
+  status: InvitationStatus;
+  expiresAt: Date;
+  createdAt: Date;
+};
+
+export type InvitationInfo = {
+  email: string;
+  tenantName: string;
+  inviterName: string | null;
+  role: Role;
+  expired: boolean;
+  alreadyAccepted: boolean;
+  existingUser: boolean;
+  currentUserMatch: boolean;
+};
+
+// ─── Invite User (ADMIN only) ─────────────────────────
+
+/** Invitation expiry: 7 days */
+const INVITATION_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
+
+export async function inviteUser(
+  formData: FormData
+): Promise<InvitationActionResult> {
+  const { userId, tenantId } = await requireRole(["ADMIN"]);
+
+  const raw = {
+    email: formData.get("email"),
+    role: formData.get("role"),
+  };
+
+  const result = inviteSchema.safeParse(raw);
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: result.error.flatten().fieldErrors as Record<
+        string,
+        string[]
+      >,
+    };
+  }
+
+  const { email, role } = result.data;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const db = tenantDb(tenantId);
+
+  // Check if user is already a member of this tenant
+  const existingMembership = await db.membership.findFirst({
+    where: {
+      user: { email: normalizedEmail },
+    },
+  });
+
+  if (existingMembership) {
+    return {
+      success: false,
+      error: "ALREADY_MEMBER",
+    };
+  }
+
+  // Check if there's already a pending invitation for this email+tenant
+  const existingInvitation = await db.invitation.findFirst({
+    where: {
+      email: normalizedEmail,
+      status: "PENDING",
+    },
+  });
+
+  if (existingInvitation) {
+    return {
+      success: false,
+      error: "ALREADY_INVITED",
+    };
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiresAt = new Date(Date.now() + INVITATION_EXPIRY_MS);
+
+  await db.invitation.create({
+    data: {
+      email: normalizedEmail,
+      role: role as Role,
+      token,
+      expiresAt,
+      invitedById: userId,
+      tenant: { connect: { id: tenantId } },
+    },
+  });
+
+  // Send invitation email
+  const baseUrl =
+    process.env.APP_URL?.replace(/\/$/, "") ??
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+    "http://localhost:3000";
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: tenantId },
+  });
+
+  const inviteUrl = `${baseUrl}/sv/invite/${token}`;
+
+  const { getTranslations } = await import("next-intl/server");
+  const t = await getTranslations({ locale: "sv", namespace: "invitations" });
+
+  const subject = t("emailSubject", { tenantName: tenant?.name ?? "" });
+  const html = t("emailBody", {
+    tenantName: tenant?.name ?? "",
+    inviteUrl,
+  });
+
+  const sendResult = await sendEmail({
+    to: normalizedEmail,
+    subject,
+    html,
+  });
+
+  if (!sendResult.success) {
+    return {
+      success: false,
+      error: "EMAIL_SEND_FAILED",
+    };
+  }
+
+  return { success: true };
+}
+
+// ─── Get Invitations (ADMIN) ──────────────────────────
+
+export async function getInvitations(): Promise<InvitationItem[]> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const invitations = await db.invitation.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
+  return invitations.map((inv) => ({
+    id: inv.id,
+    email: inv.email,
+    role: inv.role,
+    status: inv.status,
+    expiresAt: inv.expiresAt,
+    createdAt: inv.createdAt,
+  }));
+}
+
+// ─── Cancel Invitation (ADMIN) ────────────────────────
+
+export async function cancelInvitation(
+  formData: FormData
+): Promise<InvitationActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+
+  const raw = { invitationId: formData.get("invitationId") };
+  const result = cancelInvitationSchema.safeParse(raw);
+  if (!result.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const db = tenantDb(tenantId);
+
+  const invitation = await db.invitation.findUnique({
+    where: { id: result.data.invitationId },
+  });
+
+  if (!invitation) {
+    return { success: false, error: "NOT_FOUND" };
+  }
+
+  if (invitation.status !== "PENDING") {
+    return { success: false, error: "NOT_PENDING" };
+  }
+
+  await db.invitation.delete({
+    where: { id: result.data.invitationId },
+  });
+
+  return { success: true };
+}
+
+// ─── Get Invitation Info (public, by token) ───────────
+
+export async function getInvitationInfo(
+  token: string
+): Promise<InvitationInfo | null> {
+  const invitation = await prisma.invitation.findUnique({
+    where: { token },
+    include: {
+      tenant: { select: { name: true } },
+    },
+  });
+
+  if (!invitation) return null;
+
+  const inviter = await prisma.user.findUnique({
+    where: { id: invitation.invitedById },
+    select: { name: true },
+  });
+
+  const existingUser = await prisma.user.findUnique({
+    where: { email: invitation.email },
+  });
+
+  // Check if current user matches invitation
+  const session = await getSession();
+  const currentUserMatch =
+    !!session && !!existingUser && session.user.id === existingUser.id;
+
+  return {
+    email: invitation.email,
+    tenantName: invitation.tenant.name,
+    inviterName: inviter?.name ?? null,
+    role: invitation.role,
+    expired: invitation.expiresAt < new Date(),
+    alreadyAccepted: invitation.status === "ACCEPTED",
+    existingUser: !!existingUser,
+    currentUserMatch,
+  };
+}
+
+// ─── Accept Invitation (logged-in user) ───────────────
+
+export async function acceptInvitation(
+  formData: FormData
+): Promise<InvitationActionResult> {
+  const { userId } = await requireAuth();
+
+  const raw = { token: formData.get("token") };
+  const result = acceptInvitationSchema.safeParse(raw);
+  if (!result.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const invitation = await prisma.invitation.findUnique({
+    where: { token: result.data.token },
+  });
+
+  if (!invitation) {
+    return { success: false, error: "INVALID_TOKEN" };
+  }
+
+  if (invitation.status !== "PENDING") {
+    return { success: false, error: "ALREADY_ACCEPTED" };
+  }
+
+  if (invitation.expiresAt < new Date()) {
+    return { success: false, error: "EXPIRED" };
+  }
+
+  // Verify the logged-in user's email matches the invitation
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+  });
+
+  if (!user || user.email !== invitation.email) {
+    return { success: false, error: "EMAIL_MISMATCH" };
+  }
+
+  // Check if already a member
+  const existingMembership = await prisma.membership.findFirst({
+    where: { userId, tenantId: invitation.tenantId },
+  });
+
+  if (existingMembership) {
+    // Already a member, just mark invitation as accepted
+    await prisma.invitation.update({
+      where: { id: invitation.id },
+      data: { status: "ACCEPTED" },
+    });
+    return { success: true };
+  }
+
+  // Create membership and mark invitation as accepted
+  await prisma.$transaction([
+    prisma.membership.create({
+      data: {
+        userId,
+        tenantId: invitation.tenantId,
+        role: invitation.role,
+      },
+    }),
+    prisma.invitation.update({
+      where: { id: invitation.id },
+      data: { status: "ACCEPTED" },
+    }),
+  ]);
+
+  return { success: true };
+}
+
+// ─── Accept Invitation with Registration (new user) ───
+
+export async function acceptInvitationWithRegistration(
+  formData: FormData
+): Promise<InvitationActionResult> {
+  const raw = {
+    token: formData.get("token"),
+    name: formData.get("name"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
+
+  const result = acceptWithRegistrationSchema.safeParse(raw);
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: result.error.flatten().fieldErrors as Record<
+        string,
+        string[]
+      >,
+    };
+  }
+
+  const { token, name, email, password } = result.data;
+  const normalizedEmail = email.trim().toLowerCase();
+
+  const invitation = await prisma.invitation.findUnique({
+    where: { token },
+  });
+
+  if (!invitation) {
+    return { success: false, error: "INVALID_TOKEN" };
+  }
+
+  if (invitation.status !== "PENDING") {
+    return { success: false, error: "ALREADY_ACCEPTED" };
+  }
+
+  if (invitation.expiresAt < new Date()) {
+    return { success: false, error: "EXPIRED" };
+  }
+
+  // Verify email matches invitation
+  if (normalizedEmail !== invitation.email) {
+    return { success: false, error: "EMAIL_MISMATCH" };
+  }
+
+  // Check if user already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email: normalizedEmail },
+  });
+
+  if (existingUser) {
+    return { success: false, error: "EMAIL_EXISTS" };
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  await prisma.$transaction(async (tx) => {
+    const user = await tx.user.create({
+      data: {
+        name,
+        email: normalizedEmail,
+        password: hashedPassword,
+      },
+    });
+
+    await tx.membership.create({
+      data: {
+        userId: user.id,
+        tenantId: invitation.tenantId,
+        role: invitation.role,
+      },
+    });
+
+    await tx.invitation.update({
+      where: { id: invitation.id },
+      data: { status: "ACCEPTED" },
+    });
+  });
+
+  // Auto sign in
+  try {
+    await signIn("credentials", {
+      email: normalizedEmail,
+      password,
+      redirect: false,
+    });
+  } catch {
+    // Sign-in after registration failed — user can log in manually
+  }
+
+  return { success: true };
+}
