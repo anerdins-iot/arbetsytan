@@ -11,11 +11,12 @@
 - [ ] Konfigurera Expo Router v6 för navigation
 - [ ] Implementera JWT-autentisering med expo-secure-store
 - [ ] Skapa API-klient som skickar Bearer token
-- [ ] Skapa JWT-endpoint `src/app/api/auth/mobile/route.ts` — tar e-post+lösenord, returnerar JWT
+- [ ] Skapa JWT-endpoint `src/app/api/auth/mobile/route.ts` — tar e-post+lösenord, returnerar JWT med `tenantId`, `userId`, `role`
+- [ ] Konfigurera JWT-livslängd och refresh-token-strategi (kort access token + längre refresh token)
 - [ ] Skapa JWT-verifieringslogik i `src/lib/auth-mobile.ts`
 - [ ] Inloggningsskärm
 
-**Verifiering:** App startar, inloggning fungerar mot backend, token sparas säkert
+**Verifiering:** App startar, inloggning fungerar mot backend, token sparas säkert, JWT innehåller `tenantId`/`userId`/`role`, refresh fungerar
 
 ### Block 11.2: Grundläggande skärmar
 **Input:** Block 11.1 + Fas 3 + Fas 4 + Fas 5 klara
@@ -27,7 +28,7 @@
 - [ ] AI-chatt (personlig + projekt)
 - [ ] Inställningar
 
-**Verifiering:** Alla skärmar renderas, data hämtas från API, navigation fungerar
+**Verifiering:** Alla skärmar renderas, data hämtas från API med JWT, API-endpoints använder `tenantDb(tenantId)` och `requireProject()`, AI-chatt skyddas med JWT + tenantId, navigation fungerar
 
 ### Block 11.3: Mobilspecifikt
 **Input:** Block 11.2 klart
@@ -38,7 +39,7 @@
 - [ ] Kamera-integration för bilduppladdning direkt
 - [ ] Offline-stöd för uppgiftslistan (cache)
 
-**Verifiering:** Socket.IO fungerar i appen, push-notifikationer fungerar, kamera laddar upp bilder, offline-cache fungerar
+**Verifiering:** Socket.IO fungerar i appen med JWT-auth, push-notifikationer fungerar, kamera laddar upp bilder, offline-cache fungerar, `tenantDb(tenantId)` på alla API-endpoints
 
 ### Block 11.4: Build och distribution
 **Input:** Block 11.2 + 11.3 klara

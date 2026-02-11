@@ -13,7 +13,8 @@
 - [ ] Konfigurera Coolify med GitHub-integration
 - [ ] Konfigurera PostgreSQL som separat tjänst i Coolify
 - [ ] Konfigurera MinIO som separat tjänst
-- [ ] Konfigurera Redis som separat tjänst
+- [ ] Konfigurera Redis som separat tjänst (session-cache + Socket.IO-adapter)
+- [ ] Konfigurera Socket.IO Redis-adapter (`@socket.io/redis-adapter`) för multi-instans-stöd
 - [ ] Sätta miljövariabler i Coolify
 - [ ] Konfigurera domän och SSL
 - [ ] Verifiera automatisk deploy vid push till main

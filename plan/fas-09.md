@@ -14,7 +14,7 @@
 - [ ] Spara stripeCustomerId på Tenant
 - [ ] Skapa Subscription-post i DB
 
-**Verifiering:** Webhook tar emot events, trial skapas vid registrering, Subscription sparas i DB, `npm run build` OK
+**Verifiering:** Webhook tar emot events, webhook validerar och kopplar events till rätt tenant via `stripeCustomerId` (ingen cross-tenant-läckage), trial skapas vid registrering, Subscription sparas i DB, `npm run build` OK
 
 ### Block 9.2: Prenumerationshantering
 **Input:** Block 9.1 klart
@@ -29,4 +29,4 @@
 - [ ] Uppdatera Stripe-prenumeration vid tillägg/borttagning av användare
 - [ ] Visa kostnad per användare i inställningar
 
-**Verifiering:** Faktureringssida visar korrekt info, Customer Portal öppnas, användare räknas korrekt, `npm run build` OK
+**Verifiering:** Faktureringssida visar korrekt info, Customer Portal öppnas, användare räknas korrekt, `tenantDb(tenantId)` på alla queries, `npm run build` OK

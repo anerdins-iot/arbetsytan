@@ -15,7 +15,7 @@
 - [ ] Ta bort användare (avsluta membership)
 - [ ] Visa inbjudningar (aktiva, väntande, utgångna)
 
-**Verifiering:** Inställningar sparas, rollcheck fungerar, admin-only åtkomst, tenantId-filter, `npm run build` OK
+**Verifiering:** Inställningar sparas, rollcheck fungerar, admin-only åtkomst, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 
 ### Block 7.2: Rättighetshantering
 **Input:** Block 7.1 klart
@@ -26,10 +26,10 @@
 - [ ] Spara i Membership.permissions (JSON)
 - [ ] Alla Server Actions respekterar permissions
 
-**Verifiering:** Rättigheter sparas och respekteras, alla Server Actions kontrollerar permissions, `npm run build` OK
+**Verifiering:** Rättigheter sparas och respekteras, alla Server Actions kontrollerar permissions, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 
 ### Block 7.3: Personliga inställningar
-**Input:** Fas 2 klar (auth), Block 6.2 klart (notifikationskanaler)
+**Input:** Block 7.1 klart, Block 6.2 klart (notifikationskanaler)
 **Output:** Profil- och preferenssida
 
 - [ ] Profilsida: namn, e-post, profilbild

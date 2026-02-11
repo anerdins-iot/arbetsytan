@@ -92,6 +92,6 @@
 - [ ] AI-verktyg: generera Word-dokument
 - [ ] Sparade dokument syns i projektets fillista
 
-**Verifiering:** Dokument genereras korrekt, sparas i MinIO, visas i fillistan, `npm run build` OK
+**Verifiering:** Dokument genereras korrekt, sparas i MinIO, visas i fillistan, alla verktyg använder `tenantDb(tenantId)` + `requireProject()`, `npm run build` OK
 
 ---

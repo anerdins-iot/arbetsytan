@@ -7,7 +7,7 @@
 **Input:** Fas 2 klar (auth), Fas 3 klar (dashboard)
 **Output:** Fungerande notifikationssystem med Socket.IO
 
-- [ ] Installera och konfigurera `socket.io` (server) och `socket.io-client` (klient)
+- [ ] Konfigurera `socket.io` (server) och `socket.io-client` (klient) — redan installerade i Block 1.1A
 - [ ] Skapa Socket.IO-server i `src/lib/socket.ts` med säkerhetsmodell enligt `AI.md`:
   - Autentisering vid anslutning: validera session (webb) eller JWT (mobil), avvisa ogiltiga
   - Extrahera `tenantId`, `userId`, `role` vid anslutning — lagra på socket-objektet
@@ -47,7 +47,7 @@
 - [ ] Socket.IO-events för projektstatusändringar
 - [ ] Klienten lyssnar och uppdaterar UI i realtid
 
-**Verifiering:** UI uppdateras vid ändringar från annan användare, events emittas till rätt rum (projekt/tenant), data filtreras i backend, `npm run build` OK
+**Verifiering:** UI uppdateras vid ändringar från annan användare, events emittas till rätt rum (projekt/tenant), data hämtas via `tenantDb(tenantId)` innan emit, `npm run build` OK
 
 ### Block 6.4: Påminnelser vid inaktivitet
 **Input:** Block 6.1 + 6.2 klara
@@ -58,6 +58,6 @@
 - [ ] Skicka påminnelse till tilldelad person via notifikationssystemet
 - [ ] Regelbaserad kanalval: in-app alltid, push vid < 24h till deadline, e-post vid < 12h
 
-**Verifiering:** Påminnelser triggas vid inaktivitet, rätt kanal väljs, tenantId-filter, `npm run build` OK
+**Verifiering:** Påminnelser triggas vid inaktivitet, rätt kanal väljs, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 
 ---

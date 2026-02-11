@@ -122,6 +122,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Socket.IO broadcast utan rum — emit alltid till specifika rum (`tenant:`, `project:`, `user:`), aldrig till alla
 - Socket.IO-filtrering i frontend — all data filtreras i backend innan emit
 - Klient-styrd rumshantering — servern bestämmer vilka rum klienten joinar
+- Socket.IO-emit baserat på klient-angivet `projectId`/`tenantId` utan server-side `requireProject()`/`tenantDb()`-validering
 - Direkt åtkomst till annan tenants data
 - Committa `.env.local` eller hemligheter
 - API-nycklar i klientkod

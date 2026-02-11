@@ -18,7 +18,7 @@
 - [ ] Stöd för filtyper: PDF, bilder (JPG/PNG/WEBP), dokument (DOCX, XLSX)
 - [ ] Maxstorlek per fil och per tenant
 
-**Verifiering:** Filer laddas upp till MinIO, metadata sparas i DB, presigned URLs fungerar, tenantId-filter, `npm run build` OK
+**Verifiering:** Filer laddas upp till MinIO, metadata sparas i DB, presigned URLs fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 4.2: Fillista och förhandsgranskning
 **Input:** Block 4.1 klart
@@ -31,7 +31,7 @@
 - [ ] Nedladdningslänk via presigned URL
 - [ ] Server Action `deleteFile` — radera från MinIO och DB
 
-**Verifiering:** Filer visas, förhandsgranskning fungerar, radering rensar MinIO + DB, tenantId-filter, `npm run build` OK
+**Verifiering:** Filer visas, förhandsgranskning fungerar, radering rensar MinIO + DB, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 4.3: OCR-pipeline
 **Input:** Block 4.1 klart, Mistral API-nyckel
@@ -58,6 +58,6 @@
 - [ ] Bakgrundsbearbetning — använd queue eller async job (ej blockera upload)
 - [ ] Utöka `globalSearch` (från Block 3.9) med sökning i filnamn och dokumentinnehåll via embeddings
 
-**Verifiering:** Embeddings genereras, vektorsökning returnerar relevanta resultat, tenantId-filter, `npm run build` OK
+**Verifiering:** Embeddings genereras, vektorsökning returnerar relevanta resultat, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ---

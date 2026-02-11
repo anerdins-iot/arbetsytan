@@ -46,6 +46,7 @@ Varje agentblock genomförs i fyra steg:
   - Funktionaliteten matchar kraven i blockets specifikation
   - **Dataisolering:**
     - Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt
+    - Sök i koden efter otillåten användning av global `prisma` för tenant-data (grep/granskning)
     - Alla projektoperationer validerar åtkomst via `requireProject()`
     - AI-konversationer: personlig AI scopad till `userId`, projekt-AI scopad via `requireProject()`
   - **Socket.IO (om blocket berör realtid):**
@@ -78,45 +79,44 @@ Nästa block kan **inte** starta innan föregående blocks checkboxar är avbock
 
 ## Faser
 
-| Fas | Fil | Beskrivning | Steg | Block |
-|-----|-----|-------------|------|-------|
-| 1 | `fas-01.md` | Projektsetup och infrastruktur | 29 | 4 |
-| 2 | `fas-02.md` | Autentisering och multi-tenant | 35 | 5 |
-| 3 | `fas-03.md` | Dashboard, projekt, kanban, team, aktivitetslogg, sökning | 50 | 9 |
-| 4 | `fas-04.md` | Filhantering | 29 | 4 |
-| 5 | `fas-05.md` | AI-assistenter | 42 | 7 |
-| 6 | `fas-06.md` | Notifikationer, realtid och påminnelser | 23 | 4 |
-| 7 | `fas-07.md` | Inställningar och administration | 16 | 3 |
-| 8 | `fas-08.md` | Tidrapportering och export | 12 | 2 |
-| 9 | `fas-09.md` | Betalning (Stripe) | 14 | 2 |
-| 10 | `fas-10.md` | Landningssida | 8 | 1 |
-| 11 | `fas-11.md` | Mobilapp (Expo) | 19 | 4 |
-| 12 | `fas-12.md` | Deploy och produktion | 13 | 2 |
-| **Totalt** | | | **290** | **47** |
+| Fas | Fil | Beskrivning | Block |
+|-----|-----|-------------|-------|
+| 1 | `fas-01.md` | Projektsetup och infrastruktur | 4 |
+| 2 | `fas-02.md` | Autentisering och multi-tenant | 5 |
+| 3 | `fas-03.md` | Dashboard, projekt, kanban, team, aktivitetslogg, sökning | 9 |
+| 4 | `fas-04.md` | Filhantering | 4 |
+| 5 | `fas-05.md` | AI-assistenter | 7 |
+| 6 | `fas-06.md` | Notifikationer, realtid och påminnelser | 4 |
+| 7 | `fas-07.md` | Inställningar och administration | 3 |
+| 8 | `fas-08.md` | Tidrapportering och export | 2 |
+| 9 | `fas-09.md` | Betalning (Stripe) | 2 |
+| 10 | `fas-10.md` | Landningssida | 1 |
+| 11 | `fas-11.md` | Mobilapp (Expo) | 4 |
+| 12 | `fas-12.md` | Deploy och produktion | 2 |
 
 ## Fasordning och beroenden
 
 ```
-Fas 1 (Setup) ──→ Fas 2 (Auth) ──→ Fas 3 (Dashboard/Projekt)
-                       │                    │
-                       │              ┌─────┼─────┬─────┐
-                       │              ▼     ▼     ▼     ▼
-                       │           Fas 4  Fas 6  Fas 7  Fas 9
-                       │           (Filer) (Notis) (Inställn.) (Stripe)
-                       │              │     │
-                       │              ▼     │
-                       │           Fas 5    │
-                       │           (AI)     │
-                       │              │     │
-                       │         ┌────┴─────┘
-                       │         ▼
-                       │      Fas 8 (Tidsrapp)
-                       │
-                       ├──→ Fas 10 (Landing)
-                       │
-                       ├──→ Fas 11 (Mobil)
-                       │
-                       └──→ Fas 12 (Deploy) ← alla andra faser klara
+Fas 1 (Setup) ──┬──→ Fas 2 (Auth) ──→ Fas 3 (Dashboard/Projekt)
+                 │         │                    │
+                 │         │              ┌─────┼─────┬─────┐
+                 │         │              ▼     ▼     ▼     ▼
+                 │         │           Fas 4  Fas 6  Fas 7  Fas 9
+                 │         │           (Filer) (Notis) (Inställn.) (Stripe)
+                 │         │              │     │
+                 │         │              ▼     │
+                 │         │           Fas 5    │
+                 │         │           (AI)     │
+                 │         │              │     │
+                 │         │         ┌────┴─────┘
+                 │         │         ▼
+                 │         │      Fas 8 (Tidsrapp)
+                 │         │
+                 │         ├──→ Fas 11 (Mobil)
+                 │         │
+                 │         └──→ Fas 12 (Deploy) ← alla andra faser klara
+                 │
+                 └──→ Fas 10 (Landing)
 ```
 
 > **Not:** Diagrammet visar övergripande fasberoenden. Exakta beroenden per block anges i varje blocks **Input**-rad i fas-filerna.

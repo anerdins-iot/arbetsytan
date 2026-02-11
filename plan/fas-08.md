@@ -15,7 +15,7 @@
 - [ ] Server Action `updateTimeEntry` och `deleteTimeEntry` (bara egna poster)
 - [ ] Summering: totalt per projekt, per uppgift, per person
 
-**Verifiering:** Tider registreras/uppdateras/raderas, summering korrekt, tenantId-filter, `npm run build` OK
+**Verifiering:** Tider registreras/uppdateras/raderas, summering korrekt, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 8.2: Export och rapporter
 **Input:** Block 8.1 + Fas 4 + Fas 5 klara (tidsdata + MinIO + AI-verktyg)
@@ -27,4 +27,4 @@
 - [ ] AI-verktyg: generera sammanfattande projektrapport (text + data)
 - [ ] Nedladdning via presigned URL från MinIO (genererade filer sparas)
 
-**Verifiering:** PDF och Excel genereras korrekt, nedladdning fungerar, tenantId-filter, `npm run build` OK
+**Verifiering:** PDF och Excel genereras korrekt, nedladdning fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK

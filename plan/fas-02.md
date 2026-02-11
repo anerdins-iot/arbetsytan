@@ -13,6 +13,7 @@
 - [ ] Implementera lösenordshashning med bcrypt vid registrering
 - [ ] Konfigurera session-strategi (cookies för webb)
 - [ ] Lägga till `tenantId` och `role` i session via callbacks
+- [ ] Konfigurera JWT-strategi för mobil: kort access token (15 min) + refresh token (30 dagar), signerad med server-secret
 
 **Verifiering:** Auth-config laddar utan fel, session-callbacks returnerar tenantId/role, `npm run build` OK
 
@@ -74,4 +75,4 @@
 - [ ] Visa listan med aktiva och väntande inbjudningar i inställningar
 - [ ] Server Action för att avbryta inbjudan
 
-**Verifiering:** Inbjudan skickas via e-post, acceptering skapar Membership, tenant-filter på alla queries, `npm run build` OK
+**Verifiering:** Inbjudan skickas via e-post, acceptering skapar Membership, `tenantDb(tenantId)` på alla queries, `npm run build` OK

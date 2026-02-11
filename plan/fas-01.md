@@ -10,7 +10,7 @@
 - [ ] Initiera Next.js 16-projekt med App Router och TypeScript
 - [ ] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/docs/tailwind.md`
 - [ ] Installera och konfigurera shadcn/ui med tema enligt `UI.md`
-- [ ] Installera `socket.io` och `socket.io-client` för realtidskommunikation
+- [ ] Installera `socket.io` och `socket.io-client` (konfigurering i Block 6.1)
 - [ ] Skapa `docker-compose.yml` med PostgreSQL, MinIO och Redis
 - [ ] Skapa `.env.local.example` med alla nödvändiga miljövariabler
 - [ ] Verifiera att `npm run dev`, `npm run build` och `docker-compose up -d` fungerar
@@ -22,9 +22,16 @@
 **Output:** Migrerad databas med seed-data
 
 - [ ] Skapa `prisma/schema.prisma` med hela datamodellen enligt `PROJEKT.md` och `AI.md`
-- [ ] Konfigurera Prisma 7 med `prisma-client` provider och output
-- [ ] Köra `prisma migrate dev` med hela schemat från `schema.prisma`
-- [ ] Verifiera att hela schemat i `schema.prisma` migreras korrekt
+- [ ] Konfigurera Prisma 7 enligt `/docs/prisma.md`:
+  - Generator: `prisma-client` provider med `output = "./generated/prisma"`
+  - Datasource: utan `url` (hanteras av `prisma.config.ts`)
+  - `package.json`: `"type": "module"` (ESM obligatoriskt)
+- [ ] Skapa `prisma.config.ts` i projekt-root med `defineConfig()`: schema-path, migrations-path, seed-kommando och `datasource.url` från env
+- [ ] Installera `@prisma/adapter-pg` och `pg` — driver adapter obligatoriskt i Prisma 7
+- [ ] Skapa `src/lib/db.ts` med PrismaPg-adapter och PrismaClient-instans (singleton-pattern)
+- [ ] Köra `npx prisma generate` för att generera klienten
+- [ ] Köra `prisma migrate dev` med hela schemat
+- [ ] Verifiera att hela schemat migreras korrekt
 - [ ] Skapa raw SQL-migrering för pgvector-extension (`CREATE EXTENSION vector`)
 - [ ] Skapa raw SQL för embedding-kolumn på DocumentChunk
 - [ ] Skapa `prisma/seed.ts` med testdata: tenant, användare, memberships, projekt, uppgifter

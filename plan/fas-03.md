@@ -14,10 +14,10 @@
 - [ ] Visa notifikationer (olästa markerade)
 - [ ] Montörs-vy: förenklad dashboard med enbart "mina uppgifter idag"
 
-**Verifiering:** Dashboard renderas, data filtreras på tenantId, montörs-vy visas för rätt roll, `npm run build` OK
+**Verifiering:** Dashboard renderas, `tenantDb(tenantId)` på alla queries, montörs-vy visas för rätt roll, `npm run build` OK
 
 ### Block 3.2: Projektlista och skapande
-**Input:** Fas 2 klar (auth + layout)
+**Input:** Fas 1 (layout) + Fas 2 (auth) klara
 **Output:** Projektlista-sida med CRUD
 
 - [ ] Bygga projektlista-sida med kort för varje projekt
@@ -27,7 +27,7 @@
 - [ ] Server Action `createProject` med Zod-validering + tenantId
 - [ ] Sökfunktion och statusfilter (aktiv, pausad, klar, arkiverad)
 
-**Verifiering:** Projektlista visar data, filter fungerar, skapande fungerar, tenantId-filter på alla queries, `npm run build` OK
+**Verifiering:** Projektlista visar data, filter fungerar, skapande fungerar, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 
 ### Block 3.3: Projektvy — Översikt
 **Input:** Block 3.2 klart
@@ -41,7 +41,7 @@
 - [ ] Möjlighet att redigera projektinfo (namn, adress, status, beskrivning)
 - [ ] Server Action `updateProject` med auth + tenant-check
 
-**Verifiering:** Projektvy renderas, fliknavigation fungerar, redigering sparas, tenantId-filter, `npm run build` OK
+**Verifiering:** Projektvy renderas, fliknavigation fungerar, redigering sparas, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 3.4: Kanban-board
 **Input:** Block 3.3 klart
@@ -56,7 +56,7 @@
 - [ ] Tilldela uppgift till projektmedlem
 - [ ] Server Action `assignTask` som skapar TaskAssignment
 
-**Verifiering:** Kanban renderas, drag-and-drop fungerar, uppgifter skapas/uppdateras, tenantId-filter, `npm run build` OK
+**Verifiering:** Kanban renderas, drag-and-drop fungerar, uppgifter skapas/uppdateras, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 3.5: Uppgiftsdetalj och filtrering
 **Input:** Block 3.4 klart
@@ -66,7 +66,7 @@
 - [ ] Server Action `updateTask` och `deleteTask`
 - [ ] Filtrera uppgifter på tilldelad person, prioritet, status
 
-**Verifiering:** Detaljvy renderas, redigering sparar, filtrering fungerar, `npm run build` OK
+**Verifiering:** Detaljvy renderas, redigering sparar, filtrering fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 3.6: Kommentarer
 **Input:** Block 3.5 klart (uppgiftsdetalj finns)
@@ -76,9 +76,9 @@
 - [ ] Server Action `createComment` med Zod-validering + auth
 - [ ] Visa kommentarer kronologiskt med författare och tid
 - [ ] Server Action `updateComment` och `deleteComment` (bara egen kommentar)
-- [ ] Trigga notis till tilldelade personer vid ny kommentar
+- [ ] Förbered notis-hook: anropa `createNotification()` vid ny kommentar (funktionen implementeras i Block 6.1 — skapa placeholder som loggar tills dess)
 
-**Verifiering:** Kommentarer skapas/visas/raderas, auth-check, tenantId-filter, `npm run build` OK
+**Verifiering:** Kommentarer skapas/visas/raderas, auth-check, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 3.7: Teamhantering
 **Input:** Block 3.3 klart (projektvy finns)
@@ -89,7 +89,7 @@
 - [ ] Ta bort medlem från projekt
 - [ ] Server Actions med roller-check (bara admin/projektledare kan hantera)
 
-**Verifiering:** Medlemmar visas/läggs till/tas bort, rollcheck fungerar, `npm run build` OK
+**Verifiering:** Medlemmar visas/läggs till/tas bort, rollcheck fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 3.8: Aktivitetslogg
 **Input:** Block 3.3 + 3.4 klara (projektvy + uppgifter)
@@ -101,7 +101,7 @@
 - [ ] Server Action `getActivityLog` filtrerat på projectId + tenantId
 - [ ] Inkludera aktör (vem), action, entity och metadata i varje post
 
-**Verifiering:** Händelser loggas vid alla CRUD-operationer, paginering fungerar, tenantId-filter, `npm run build` OK
+**Verifiering:** Händelser loggas vid alla CRUD-operationer, paginering fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 3.9: Global sökning
 **Input:** Block 3.2 + 3.4 klara (projekt + uppgifter)
@@ -114,4 +114,4 @@
 - [ ] Visa sökresultat grupperat per typ (projekt, uppgifter) med djuplänkar
 - [ ] Debounce och minst 2 tecken innan sökning triggas
 
-**Verifiering:** Sökning returnerar resultat grupperade per typ, tenantId-filter, debounce fungerar, `npm run build` OK
+**Verifiering:** Sökning returnerar resultat grupperade per typ, `tenantDb(tenantId)` på alla queries, debounce fungerar, `npm run build` OK
