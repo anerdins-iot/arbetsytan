@@ -5,6 +5,7 @@ import { getProject } from "@/actions/projects";
 import { getTasks } from "@/actions/tasks";
 import { getCommentsByTask } from "@/actions/comments";
 import { getActivityLog } from "@/actions/activity-log";
+import { getProjectFiles } from "@/actions/files";
 import { getSession } from "@/lib/auth";
 import { ProjectView } from "@/components/projects/project-view";
 
@@ -22,11 +23,12 @@ async function ProjectContent({
   initialTab?: "overview" | "tasks" | "files" | "ai";
   initialTaskId?: string;
 }) {
-  const [projectResult, tasksResult, session, activityResult] = await Promise.all([
+  const [projectResult, tasksResult, session, activityResult, filesResult] = await Promise.all([
     getProject(projectId),
     getTasks(projectId),
     getSession(),
     getActivityLog(projectId, { page: 1, pageSize: 5 }),
+    getProjectFiles(projectId),
   ]);
 
   if (!projectResult.success || !session) {
@@ -49,6 +51,7 @@ async function ProjectContent({
       currentUserId={session.user.id}
       commentsByTaskId={commentsByTaskId}
       recentActivity={activityResult.success ? activityResult.items : []}
+      files={filesResult.success ? filesResult.files : []}
       initialTab={initialTab}
       initialTaskId={initialTaskId}
     />

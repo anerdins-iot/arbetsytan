@@ -118,6 +118,26 @@
       "files": "Filer",
       "ai": "AI"
     },
+    "files": {
+      "title": "Ladda upp filer",
+      "dropzone": "Dra och släpp filer här, eller välj filer",
+      "allowedTypes": "Tillåtna typer: PDF, JPG, PNG, WEBP, DOCX, XLSX",
+      "maxSize": "Maxstorlek per fil: 50 MB",
+      "chooseFiles": "Välj filer",
+      "statusQueued": "I kö",
+      "statusUploading": "Laddar upp",
+      "statusSaving": "Sparar",
+      "statusDone": "Klar",
+      "statusError": "Fel",
+      "uploadedFilesTitle": "Uppladdade filer",
+      "empty": "Inga filer uppladdade ännu.",
+      "errorValidation": "Ogiltig uppladdningsdata.",
+      "errorFileTooLarge": "Filen är för stor. Max 50 MB per fil.",
+      "errorFileType": "Filtypen stöds inte.",
+      "errorTenantLimit": "Tenantens lagringsgräns är uppnådd.",
+      "errorStorage": "Kunde inte ladda upp till lagringen.",
+      "errorGeneric": "Något gick fel vid uppladdning. Försök igen."
+    },
     "overview": {
       "projectInfo": "Projektinfo",
       "taskStats": "Uppgifter",

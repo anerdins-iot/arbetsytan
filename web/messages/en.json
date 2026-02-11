@@ -118,6 +118,26 @@
       "files": "Files",
       "ai": "AI"
     },
+    "files": {
+      "title": "Upload files",
+      "dropzone": "Drag and drop files here, or choose files",
+      "allowedTypes": "Allowed types: PDF, JPG, PNG, WEBP, DOCX, XLSX",
+      "maxSize": "Max size per file: 50 MB",
+      "chooseFiles": "Choose files",
+      "statusQueued": "Queued",
+      "statusUploading": "Uploading",
+      "statusSaving": "Saving",
+      "statusDone": "Done",
+      "statusError": "Error",
+      "uploadedFilesTitle": "Uploaded files",
+      "empty": "No files uploaded yet.",
+      "errorValidation": "Invalid upload data.",
+      "errorFileTooLarge": "File is too large. Max 50 MB per file.",
+      "errorFileType": "File type is not supported.",
+      "errorTenantLimit": "Tenant storage limit has been reached.",
+      "errorStorage": "Could not upload to storage.",
+      "errorGeneric": "Something went wrong during upload. Please try again."
+    },
     "overview": {
       "projectInfo": "Project info",
       "taskStats": "Tasks",

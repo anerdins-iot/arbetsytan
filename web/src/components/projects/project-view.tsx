@@ -7,10 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProjectOverview } from "./project-overview";
 import { KanbanBoard } from "./kanban-board";
+import { ProjectFilesUpload } from "./project-files-upload";
 import type { ProjectDetail } from "@/actions/projects";
 import type { TaskItem } from "@/actions/tasks";
 import type { CommentItem } from "@/actions/comments";
 import type { ActivityLogItem } from "@/actions/activity-log";
+import type { FileItem } from "@/actions/files";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -18,6 +20,7 @@ type ProjectViewProps = {
   currentUserId: string;
   commentsByTaskId: Record<string, CommentItem[]>;
   recentActivity: ActivityLogItem[];
+  files: FileItem[];
   initialTab?: "overview" | "tasks" | "files" | "ai";
   initialTaskId?: string;
 };
@@ -28,6 +31,7 @@ export function ProjectView({
   currentUserId,
   commentsByTaskId,
   recentActivity,
+  files,
   initialTab = "overview",
   initialTaskId,
 }: ProjectViewProps) {
@@ -72,9 +76,7 @@ export function ProjectView({
         </TabsContent>
 
         <TabsContent value="files" className="mt-6">
-          <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-border">
-            <p className="text-muted-foreground">{t("tabs.files")}</p>
-          </div>
+          <ProjectFilesUpload projectId={project.id} initialFiles={files} />
         </TabsContent>
 
         <TabsContent value="ai" className="mt-6">
