@@ -81,11 +81,12 @@ Instruera agenten att:
 3. Navigera genom alla relevanta sidor och flöden för blocket
 4. Ta screenshots vid varje steg och spara i `screenshots/fas-XX/block-X.X/`
 5. Namnge screenshots med steg: `01-login.png`, `02-dashboard.png`, etc.
-6. Rapportera godkänt/underkänt med screenshots som bevis
+6. **Testa åtkomstkontroll** (från Fas 2+): Verifiera att oautentiserade requests avvisas, att en användare inte kan nå annan tenants data, och att projektdata kräver rätt membership
+7. Rapportera godkänt/underkänt med screenshots som bevis
 
 **Anpassning per fas:**
-- Tidiga faser (1-2): Fokusera på build, API-svar och grundläggande routing
-- Mellanfaser (3-9): Fullständig Playwright-navigering med screenshots
+- Tidiga faser (1-2): Fokusera på build, API-svar, grundläggande routing och att auth avvisar korrekt
+- Mellanfaser (3-9): Fullständig Playwright-navigering med screenshots + åtkomsttester (tenant-isolering, projektåtkomst, Socket.IO-rum)
 - Sena faser (10-12): Visuell kontroll, responsivitet, deploy-verifiering
 
 ## Regler

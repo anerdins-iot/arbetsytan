@@ -44,8 +44,15 @@ Varje agentblock genomförs i fyra steg:
   - Koden bygger utan fel (`npm run build`)
   - Inga TypeScript-fel (`npx tsc --noEmit`)
   - Funktionaliteten matchar kraven i blockets specifikation
-  - Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt
-  - Alla projektoperationer validerar åtkomst via `requireProject()` — användaren måste vara projektmedlem eller Admin
+  - **Dataisolering:**
+    - Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt
+    - Alla projektoperationer validerar åtkomst via `requireProject()`
+    - AI-konversationer: personlig AI scopad till `userId`, projekt-AI scopad via `requireProject()`
+  - **Socket.IO (om blocket berör realtid):**
+    - Autentisering vid anslutning — ogiltig session/JWT avvisas
+    - Rum hanteras av servern — klienten kan inte joina rum själv
+    - Emit sker till specifika rum — aldrig broadcast
+    - All data filtreras i backend innan emit — klienten får aldrig ofiltrerad data
   - Alla UI-texter går via `next-intl` — inga hårdkodade strängar
   - Inga hårdkodade färger — alla via CSS-variabler/Tailwind
   - Inga säkerhetshål (auth-check i alla Server Actions)
@@ -54,8 +61,9 @@ Varje agentblock genomförs i fyra steg:
 - Spawna testagent (Claude `haiku`) som kör MCP Playwright-tester
 - Navigera genom blockets sidor och flöden, ta screenshots vid varje steg
 - Spara screenshots i `screenshots/fas-XX/block-X.X/` med namngivning: `01-steg.png`, `02-steg.png`, etc.
+- **Åtkomsttester (från Fas 2+):** Verifiera att oautentiserade requests redirectar, att en användare inte kan nå en annan tenants data eller ett projekt den inte är medlem i
 - Tidiga faser (1-2): Fokus på build, API-svar, routing
-- Mellanfaser (3-9): Fullständig navigering med screenshots
+- Mellanfaser (3-9): Fullständig navigering med screenshots + åtkomsttester
 - Sena faser (10-12): Visuell kontroll och responsivitet
 
 ## Handoff mellan block
