@@ -1,0 +1,174 @@
+{
+  "metadata": {
+    "title": "ArbetsYtan — Project Management for Craftspeople",
+    "description": "Project management with AI assistance for craftspeople. Manage projects, files and teams in one place."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects",
+    "settings": "Settings"
+  },
+  "common": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "loading": "Loading..."
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "notFound": "The page could not be found."
+  },
+  "landing": {
+    "header": {
+      "brand": "ArbetsYtan",
+      "login": "Log in",
+      "getStarted": "Get started free"
+    },
+    "hero": {
+      "badge": "Project management for craftspeople",
+      "title": "Smarter project management for your craft business",
+      "description": "Bring projects, files, team and AI assistance together in one place. ArbetsYtan is built for electricians, plumbers, painters, builders and all other craftspeople.",
+      "cta": "Get started free",
+      "ctaSecondary": "See how it works",
+      "trial": "14-day free trial — no credit card required"
+    },
+    "features": {
+      "title": "Everything you need to run your business",
+      "description": "ArbetsYtan brings together the tools that make your workday easier.",
+      "projectManagement": {
+        "title": "Project Management",
+        "description": "Kanban board with drag and drop. Keep track of all tasks, deadlines and statuses across your projects."
+      },
+      "fileManagement": {
+        "title": "File Management",
+        "description": "Upload blueprints, documents and images. Everything organized and collected per project."
+      },
+      "aiAssistant": {
+        "title": "AI Assistant",
+        "description": "Read blueprints, summarize documents, write quotes and get help with most things — right in the app."
+      },
+      "teamCollaboration": {
+        "title": "Team Collaboration",
+        "description": "Invite your team, assign tasks and follow up on work. Each role sees what is relevant."
+      },
+      "timeTracking": {
+        "title": "Time Tracking",
+        "description": "Track time per task and project. Export as PDF or Excel for easy invoicing."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "description": "Automatic reminders for inactivity and real-time updates so nothing falls through the cracks."
+      }
+    },
+    "howItWorks": {
+      "title": "Get started in three steps",
+      "description": "It only takes a few minutes to get going.",
+      "step1": {
+        "title": "Sign up",
+        "description": "Create your account for free. No credit card required."
+      },
+      "step2": {
+        "title": "Create your first project",
+        "description": "Add project details, tasks and upload relevant files."
+      },
+      "step3": {
+        "title": "Invite your team",
+        "description": "Send invitations to your colleagues and start collaborating right away."
+      }
+    },
+    "pricing": {
+      "title": "Simple and transparent pricing",
+      "description": "Start for free and upgrade when you need to.",
+      "monthly": "/mo",
+      "perUser": "per user",
+      "trial": "14-day free trial",
+      "cta": "Get started free",
+      "ctaPopular": "Get started free",
+      "popular": "Most popular",
+      "starter": {
+        "name": "Starter",
+        "price": "$0",
+        "description": "Perfect for trying out ArbetsYtan.",
+        "features": [
+          "Up to 2 users",
+          "3 active projects",
+          "1 GB file storage",
+          "Basic AI assistant"
+        ]
+      },
+      "professional": {
+        "name": "Professional",
+        "price": "$15",
+        "description": "For established craft businesses.",
+        "features": [
+          "Up to 10 users",
+          "Unlimited projects",
+          "20 GB file storage",
+          "Full AI assistant",
+          "Time tracking and export",
+          "Priority support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "price": "Contact us",
+        "description": "For large organizations with special needs.",
+        "features": [
+          "Unlimited users",
+          "Unlimited projects",
+          "100 GB file storage",
+          "Dedicated AI assistant",
+          "Custom integrations",
+          "Dedicated account manager"
+        ]
+      }
+    },
+    "socialProof": {
+      "title": "Craftspeople already using ArbetsYtan",
+      "description": "See what our customers say about the platform.",
+      "testimonials": [
+        {
+          "quote": "ArbetsYtan has completely changed how we manage our projects. Everything is in one place and the AI assistant saves us hours every week.",
+          "name": "Erik Johansson",
+          "role": "Electrician, EJ Elteknik AB"
+        },
+        {
+          "quote": "Finally a project management app that understands how we craftspeople work. Easy to use and the team got started right away.",
+          "name": "Maria Lindström",
+          "role": "Plumber, Lindströms Rör"
+        },
+        {
+          "quote": "We are still testing but already see how much time we save by having blueprints, tasks and communication in one place.",
+          "name": "Anders Bergqvist",
+          "role": "Construction Manager, Bergqvist Bygg"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to streamline your craft business?",
+      "description": "Get started for free today. No credit card required.",
+      "button": "Create free account"
+    },
+    "footer": {
+      "brand": "ArbetsYtan",
+      "tagline": "Project management with AI assistance for craftspeople.",
+      "product": "Product",
+      "features": "Features",
+      "pricingLink": "Pricing",
+      "security": "Security",
+      "company": "Company",
+      "about": "About",
+      "contact": "Contact",
+      "blog": "Blog",
+      "legal": "Legal",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookies",
+      "copyright": "© {year} ArbetsYtan. All rights reserved."
+    }
+  }
+}

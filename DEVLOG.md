@@ -30,3 +30,15 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Prisma jämför schemat med databasen och ser kolumnen som "drift" som ska tas bort.
 **Lösning:** Deklarera kolumnen i schemat med `embedding Unsupported("vector(1536)")?`. Prisma inkluderar kolumnen i sin diffberäkning utan att försöka hantera den som en vanlig typ. Vektorsökningar görs fortfarande via `$queryRaw`.
 **Lärdom:** Använd alltid `Unsupported("typ")` för databastyper som Prisma inte stödjer nativt (t.ex. pgvector). Hantera aldrig sådana kolumner enbart via raw SQL-migrationer — det skapar schema-drift.
+
+### Landningssida saknade bilder i planen
+**Problem:** Block 10.1 (Landningssida) specificerade sektioner men glömde bort bildgenerering.
+**Orsak:** Fokus på struktur och innehåll, men visuella assets förbisågs.
+**Lösning:** La till punkter för AI-bildgenerering med `generate_image` och integration i komponenter.
+**Lärdom:** Inkludera alltid visuella assets (bilder, ikoner, illustrationer) i planering av UI-block. En landningssida utan bilder är ofullständig.
+
+### Verifieringsagent flaggade falskt problem (middleware.ts)
+**Problem:** Cursor-agent flaggade att proxy.ts borde heta middleware.ts, men i Next.js 16 är proxy.ts korrekt.
+**Orsak:** Agenten läste inte /docs/nextjs.md innan den flaggade avvikelser.
+**Lösning:** Orchestratorn måste alltid inkludera "Läs relevanta /docs/*.md först" i verifieringsprompts.
+**Lärdom:** Verifieringsagenter ska alltid läsa projektdokumentation innan de flaggar problem som avvikelser.

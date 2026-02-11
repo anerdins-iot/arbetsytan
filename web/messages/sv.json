@@ -1,0 +1,174 @@
+{
+  "metadata": {
+    "title": "ArbetsYtan — Projektledning för hantverkare",
+    "description": "Projekthantering med AI-assistans för hantverkare. Hantera projekt, filer och team på ett ställe."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projekt",
+    "settings": "Inställningar"
+  },
+  "common": {
+    "submit": "Skicka",
+    "cancel": "Avbryt",
+    "save": "Spara",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "close": "Stäng",
+    "loading": "Laddar..."
+  },
+  "errors": {
+    "generic": "Något gick fel. Försök igen.",
+    "unauthorized": "Du har inte behörighet att utföra denna åtgärd.",
+    "notFound": "Sidan kunde inte hittas."
+  },
+  "landing": {
+    "header": {
+      "brand": "ArbetsYtan",
+      "login": "Logga in",
+      "getStarted": "Kom igång gratis"
+    },
+    "hero": {
+      "badge": "Projektledning för hantverkare",
+      "title": "Smartare projektledning för ditt hantverksföretag",
+      "description": "Samla projekt, filer, team och AI-assistans på ett ställe. ArbetsYtan är byggt för elektriker, VVS, målare, byggare och alla andra hantverkare.",
+      "cta": "Kom igång gratis",
+      "ctaSecondary": "Se hur det fungerar",
+      "trial": "14 dagars gratis provperiod — inget kort krävs"
+    },
+    "features": {
+      "title": "Allt du behöver för att driva ditt företag",
+      "description": "ArbetsYtan samlar verktygen som gör din arbetsdag enklare.",
+      "projectManagement": {
+        "title": "Projekthantering",
+        "description": "Kanban-tavla med drag-och-släpp. Håll koll på alla uppgifter, deadlines och statusar i dina projekt."
+      },
+      "fileManagement": {
+        "title": "Filhantering",
+        "description": "Ladda upp ritningar, dokument och bilder. Allt samlat och organiserat per projekt."
+      },
+      "aiAssistant": {
+        "title": "AI-assistent",
+        "description": "Läs ritningar, sammanfatta dokument, skriv offerter och få hjälp med det mesta — direkt i appen."
+      },
+      "teamCollaboration": {
+        "title": "Teamsamarbete",
+        "description": "Bjud in ditt team, tilldela uppgifter och följ upp arbetet. Varje roll ser det som är relevant."
+      },
+      "timeTracking": {
+        "title": "Tidrapportering",
+        "description": "Rapportera tid per uppgift och projekt. Exportera som PDF eller Excel för enkel fakturering."
+      },
+      "notifications": {
+        "title": "Notifikationer",
+        "description": "Automatiska påminnelser vid inaktivitet och realtidsuppdateringar så att inget faller mellan stolarna."
+      }
+    },
+    "howItWorks": {
+      "title": "Kom igång på tre steg",
+      "description": "Det tar bara några minuter att sätta igång.",
+      "step1": {
+        "title": "Registrera dig",
+        "description": "Skapa ditt konto gratis. Ingen kreditkortsinfo krävs."
+      },
+      "step2": {
+        "title": "Skapa ditt första projekt",
+        "description": "Lägg till projektinfo, uppgifter och ladda upp relevanta filer."
+      },
+      "step3": {
+        "title": "Bjud in ditt team",
+        "description": "Skicka inbjudningar till dina medarbetare och börja samarbeta direkt."
+      }
+    },
+    "pricing": {
+      "title": "Enkel och transparent prissättning",
+      "description": "Börja gratis och uppgradera när du behöver.",
+      "monthly": "/mån",
+      "perUser": "per användare",
+      "trial": "14 dagars gratis provperiod",
+      "cta": "Kom igång gratis",
+      "ctaPopular": "Kom igång gratis",
+      "popular": "Populärast",
+      "starter": {
+        "name": "Starter",
+        "price": "0 kr",
+        "description": "Perfekt för att testa ArbetsYtan.",
+        "features": [
+          "Upp till 2 användare",
+          "3 aktiva projekt",
+          "1 GB fillagring",
+          "Grundläggande AI-assistent"
+        ]
+      },
+      "professional": {
+        "name": "Professionell",
+        "price": "149 kr",
+        "description": "För etablerade hantverksföretag.",
+        "features": [
+          "Upp till 10 användare",
+          "Obegränsat antal projekt",
+          "20 GB fillagring",
+          "Fullständig AI-assistent",
+          "Tidrapportering och export",
+          "Prioriterad support"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "price": "Kontakta oss",
+        "description": "För stora organisationer med speciella behov.",
+        "features": [
+          "Obegränsat antal användare",
+          "Obegränsat antal projekt",
+          "100 GB fillagring",
+          "Dedikerad AI-assistent",
+          "Anpassade integrationer",
+          "Dedikerad kontaktperson"
+        ]
+      }
+    },
+    "socialProof": {
+      "title": "Hantverkare som redan använder ArbetsYtan",
+      "description": "Se vad våra kunder säger om plattformen.",
+      "testimonials": [
+        {
+          "quote": "ArbetsYtan har helt förändrat hur vi hanterar våra projekt. Allt finns på ett ställe och AI-assistenten sparar oss timmar varje vecka.",
+          "name": "Erik Johansson",
+          "role": "Elektriker, EJ Elteknik AB"
+        },
+        {
+          "quote": "Äntligen en projektledningsapp som förstår hur vi hantverkare jobbar. Enkel att använda och teamet kom igång direkt.",
+          "name": "Maria Lindström",
+          "role": "VVS-montör, Lindströms Rör"
+        },
+        {
+          "quote": "Vi testar fortfarande men redan nu ser vi hur mycket tid vi sparar på att ha ritningar, uppgifter och kommunikation samlat.",
+          "name": "Anders Bergqvist",
+          "role": "Byggledare, Bergqvist Bygg"
+        }
+      ]
+    },
+    "cta": {
+      "title": "Redo att effektivisera ditt hantverksföretag?",
+      "description": "Kom igång gratis idag. Ingen kreditkortsinfo krävs.",
+      "button": "Skapa konto gratis"
+    },
+    "footer": {
+      "brand": "ArbetsYtan",
+      "tagline": "Projektledning med AI-assistans för hantverkare.",
+      "product": "Produkt",
+      "features": "Funktioner",
+      "pricingLink": "Priser",
+      "security": "Säkerhet",
+      "company": "Företag",
+      "about": "Om oss",
+      "contact": "Kontakt",
+      "blog": "Blogg",
+      "legal": "Juridiskt",
+      "privacy": "Integritetspolicy",
+      "terms": "Användarvillkor",
+      "cookies": "Cookies",
+      "copyright": "© {year} ArbetsYtan. Alla rättigheter förbehållna."
+    }
+  }
+}

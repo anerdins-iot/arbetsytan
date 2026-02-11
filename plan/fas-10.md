@@ -7,13 +7,15 @@
 **Input:** Fas 1 klar (Next.js + i18n)
 **Output:** Publik landningssida
 
-- [ ] Bygga hero-sektion med rubrik, beskrivning och "Kom igång gratis"-knapp
-- [ ] Bygga funktionssektion med rutnät: projekthantering, filer, AI, team
-- [ ] Bygga "Så fungerar det" i tre steg
-- [ ] Bygga prissättningssektion med planer
-- [ ] Bygga socialt bevis-sektion (placeholder-citat)
-- [ ] Bygga footer med kontaktinfo och länkar
-- [ ] Responsiv design — mobil först
-- [ ] SEO: metadata, Open Graph, sitemap
+- [x] Bygga hero-sektion med rubrik, beskrivning och "Kom igång gratis"-knapp
+- [x] Bygga funktionssektion med rutnät: projekthantering, filer, AI, team
+- [x] Bygga "Så fungerar det" i tre steg
+- [x] Bygga prissättningssektion med planer
+- [x] Bygga socialt bevis-sektion (placeholder-citat)
+- [x] Bygga footer med kontaktinfo och länkar
+- [x] Responsiv design — mobil först
+- [x] SEO: metadata, Open Graph, sitemap
+- [x] Generera AI-bilder med `generate_image` för hero, funktioner och steg-sektioner
+- [x] Integrera bilder i komponenterna (spara i `web/public/images/`)
 
-**Verifiering:** Alla sektioner renderas, responsiv design fungerar, SEO-metadata finns, alla texter via i18n, `npm run build` OK
+**Verifiering:** Alla sektioner renderas, responsiv design fungerar, SEO-metadata finns, alla texter via i18n, AI-genererade bilder visas korrekt, `npm run build` OK

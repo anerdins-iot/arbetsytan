@@ -44,13 +44,13 @@
 **Input:** Block 1.1A klart (fungerande Next.js-projekt)
 **Output:** Fungerande i18n med sv/en
 
-- [ ] Installera och konfigurera `next-intl`
-- [ ] Skapa `web/src/i18n/request.ts` och `web/src/i18n/routing.ts`
-- [ ] Skapa `web/messages/sv.json` med grundläggande nycklar (navigation, knappar, felmeddelanden)
-- [ ] Skapa `web/messages/en.json` med samma nycklar på engelska
-- [ ] Konfigurera `[locale]`-segment i App Router (flytta sidor under `app/[locale]/`)
-- [ ] Konfigurera språkdetektering och default locale (sv)
-- [ ] Verifiera att `/sv/` och `/en/` fungerar korrekt
+- [x] Installera och konfigurera `next-intl`
+- [x] Skapa `web/src/i18n/request.ts` och `web/src/i18n/routing.ts`
+- [x] Skapa `web/messages/sv.json` med grundläggande nycklar (navigation, knappar, felmeddelanden)
+- [x] Skapa `web/messages/en.json` med samma nycklar på engelska
+- [x] Konfigurera `[locale]`-segment i App Router (flytta sidor under `app/[locale]/`)
+- [x] Konfigurera språkdetektering och default locale (sv)
+- [x] Verifiera att `/sv/` och `/en/` fungerar korrekt
 
 **Verifiering:** `/sv/` och `/en/` laddar korrekt, `npm run build` OK
 
