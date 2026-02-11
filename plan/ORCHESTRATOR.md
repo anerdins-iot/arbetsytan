@@ -14,6 +14,16 @@ Läs dessa filer i ordning:
 6. `DEVLOG.md` — kända problem och lärdomar
 7. Den fas-fil du ska arbeta med (t.ex. `plan/fas-01.md`)
 
+## Hitta nästa block
+
+1. Öppna fas-filerna (`plan/fas-01.md`, `fas-02.md`, ...) och leta efter första oavbockade checkbox (`- [ ]`)
+2. Det blocket som innehåller den första oavbockade checkboxen är nästa block att bygga
+3. Kontrollera blockets **Input** — alla refererade block/faser måste ha sina checkboxar avbockade (`- [x]`)
+4. Om Input inte är uppfyllt: gå vidare till nästa block vars Input är uppfyllt (parallella faser kan köras oberoende)
+5. Om alla checkboxar i en fas är avbockade (`[x]`) är den fasen klar — gå till nästa fas enligt beroendesdiagrammet i `plan/README.md`
+
+**Första gången:** Om inga checkboxar är avbockade börjar du med Block 1.1A i `plan/fas-01.md`.
+
 ## Per block
 
 Följ arbetsflödet i `plan/README.md` (analys → implementation → verifiering → test). Utöver det:
