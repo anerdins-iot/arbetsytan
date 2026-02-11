@@ -156,21 +156,21 @@ OpenAI:s bildgenererings-API anropas direkt via OpenAI SDK för att skapa bilder
 
 ## Realtidskommunikation
 
-Server-Sent Events (SSE) används för all realtidskommunikation. SSE är enkelriktat — servern skickar data till klienten — och fungerar över vanlig HTTP utan extra infrastruktur.
+Socket.IO används för all realtidskommunikation — både på webben och i mobilappen (Expo). Vercel AI SDK använder sin egen SSE-transport för AI-streaming, separat från Socket.IO.
 
 ### Användningsområden
 
-- Streaming av AI-svar — token för token medan AI:n genererar sitt svar
 - Live-notifikationer — in-app-notiser visas direkt utan att användaren behöver ladda om
 - Statusuppdateringar — uppgifter, projekt och andra ändringar som görs av teammedlemmar
+- AI-streaming — hanteras av Vercel AI SDK via sin inbyggda SSE-transport (ej Socket.IO)
 
-### Varför SSE och inte WebSockets
+### Varför Socket.IO
 
-Klienten skickar data via Server Actions och API-anrop, inte via en öppen kanal. Därför behövs inte tvåvägskommunikation. SSE fungerar direkt med Next.js App Router, kräver ingen separat server, har inbyggd återanslutning i webbläsaren, och passerar brandväggar och proxys utan problem. WebSockets hade krävt extra infrastruktur och komplexitet utan att ge något mervärde för våra behov.
+Konsekvent transport för webb och mobil. React Native stödjer inte SSE/EventSource nativt, men Socket.IO fungerar på båda plattformar med samma API. Socket.IO ger automatisk återanslutning, rum per tenant, och autentisering via session (webb) eller JWT (mobil).
 
 ### Implementation
 
-En SSE-endpoint skapas som en API-route i Next.js. Klienten ansluter med EventSource. Servern skickar events med data i JSON-format. Varje event har en typ (t.ex. "notification", "ai-token", "task-update") som klienten lyssnar på.
+Socket.IO-servern skapas i `src/lib/socket.ts` med autentisering och rum per tenant. Klienten ansluter via `useSocket`-hook vid inloggning. Events skickas med typ (t.ex. "notification", "task-update", "project-update") och data i JSON-format.
 
 ## Mobilautentisering
 

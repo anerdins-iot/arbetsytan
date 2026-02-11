@@ -75,6 +75,7 @@ messages/
   - `prisma` — global klient, ENBART för plattformsoperationer (superadmin, cron-jobb, auth-flöden utan tenant-kontext)
   - `tenantDb(tenantId)` — tenant-scoped klient som injicerar `WHERE tenantId = ?` på alla operationer
 - **Projektåtkomst:** Alla operationer som tar `projectId` som input ska verifiera att användaren har tillgång till projektet via `requireProject(tenantId, projectId, userId)`. Denna funktion kontrollerar att projektet tillhör rätt tenant och att användaren är medlem i projektet (eller har Admin-roll). Returnerar projektet eller kastar ett fel.
+- **AI-åtkomstkontroll:** Personliga AI-konversationer ägs av `userId` — bara ägaren har åtkomst. Projekt-AI-konversationer kräver `requireProject()`. AIMessages filtreras alltid på `userId` + `tenantId`. Alla AI-verktyg (tool calls) ärver samma åtkomstkontroll som den kontext de körs i.
 - Roller per tenant: Admin, Projektledare, Montör
 - Superadmin är plattformsnivå — separerad från tenant-roller
 - Rättigheter är konfigurerbara per roll och tenant

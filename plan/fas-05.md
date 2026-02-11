@@ -25,7 +25,7 @@
 - [ ] Skapa Conversation och Message-poster i databasen
 - [ ] Implementera konversationshistorik (senaste meddelanden + sammanfattning)
 
-**Verifiering:** Chatt fungerar, meddelanden sparas i DB, kontext injiceras, `npm run build` OK
+**Verifiering:** Chatt fungerar, meddelanden sparas i DB, kontext injiceras, åtkomst valideras via `requireProject()`, `npm run build` OK
 
 ### Block 5.3: Projekt-AI — Verktyg
 **Input:** Block 5.2 klart
@@ -39,7 +39,7 @@
   - [ ] Hämta projektmedlemmar
   - [ ] Skicka AIMessage till personlig AI
 
-**Verifiering:** Alla verktyg anropas korrekt av AI, tenantId-filter i alla verktyg, resultat returneras, `npm run build` OK
+**Verifiering:** Alla verktyg anropas korrekt av AI, alla verktyg använder `tenantDb(tenantId)` + `requireProject()`, resultat returneras, `npm run build` OK
 
 ### Block 5.4: Personlig AI
 **Input:** Block 5.2 klart (AI-infrastruktur)
@@ -56,7 +56,7 @@
   - [ ] Söka i filer
   - [ ] Skapa och uppdatera uppgifter
 
-**Verifiering:** Chattkomponent visas globalt, verktyg fungerar, tenantId-filter, `npm run build` OK
+**Verifiering:** Chattkomponent visas globalt, verktyg fungerar, konversation ägs av `userId` — bara ägaren har åtkomst, alla verktyg använder `tenantDb(tenantId)`, `npm run build` OK
 
 ### Block 5.5: AI-kommunikation
 **Input:** Block 5.3 + 5.4 klara
@@ -68,7 +68,7 @@
 - [ ] Projekt-AI triggar meddelanden vid: uppgift tilldelad, deadline ändrad, fil uppladdad, status ändrad
 - [ ] Personlig AI kollar olästa meddelanden vid start
 
-**Verifiering:** Meddelanden skickas mellan AI:er, trådar fungerar, automatiska triggers fungerar, `npm run build` OK
+**Verifiering:** Meddelanden skickas mellan AI:er, trådar fungerar, automatiska triggers fungerar, AIMessages filtreras på `userId` + `tenantId`, `npm run build` OK
 
 ### Block 5.6: Konversationshantering
 **Input:** Block 5.2 klart
