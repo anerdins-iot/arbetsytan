@@ -15,7 +15,7 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | Komponent | Teknologi | Docs |
 |-----------|-----------|------|
 | Framework | Next.js 16.0.9 | `/docs/nextjs.md` |
-| Databas | PostgreSQL + Prisma 7 | `/docs/prisma.md` |
+| Databas | PostgreSQL + Prisma 7 + pgvector | `/docs/prisma.md` |
 | Auth | Auth.js (v5) | `/docs/auth.md` |
 | Validering | Zod 4 | `/docs/zod.md` |
 | Styling | Tailwind CSS v4 + shadcn/ui | `/docs/tailwind.md`, `/docs/shadcn-ui.md` |
@@ -27,7 +27,10 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | E-post | Resend | — |
 | Realtid | SSE (Server-Sent Events) | se `AI.md` |
 | Notifikationer | Expo Push, Web Push, Resend | se `AI.md` |
+| AI SDK | Vercel AI SDK (ai) | `vercel-ai-sdk.md` |
 | AI | Claude, OpenAI, Mistral | se `AI.md` |
+| OCR | Mistral OCR | `mistral-api.md` |
+| Embeddings | OpenAI + pgvector | se `AI.md` |
 
 ## Kommandon
 
@@ -74,7 +77,7 @@ src/
 - Alla Server Actions har auth-check + tenant-check + Zod-validering
 - Felhantering med tydliga felmeddelanden på svenska till användaren
 - Filer lagras i MinIO, aldrig lokalt på servern
-- AI-anrop via abstraktionslager i `src/lib/ai/` — se `AI.md` för arkitektur
+- AI-anrop via Vercel AI SDK — se `AI.md` för arkitektur, `vercel-ai-sdk.md` för SDK-docs
 
 ## Design
 
@@ -107,6 +110,9 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `src/lib/db.ts` — Prisma-klient
 - `src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
 - `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
+- `claude-api.md` — Claude API-referens (streaming, tool use)
+- `mistral-api.md` — Mistral API och OCR-referens
+- `vercel-ai-sdk.md` — Vercel AI SDK-referens
 - `prisma/schema.prisma` — Databasschema
 - `prisma/seed.ts` — Seed-data
 - `PROJEKT.md` — Fullständig projektbeskrivning och faser

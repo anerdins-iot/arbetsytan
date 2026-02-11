@@ -134,9 +134,25 @@ När en konversation blir lång (över ett konfigurerbart antal meddelanden) tri
 
 Detta håller kontexten liten och kostnaderna nere, utan att tappa viktig information.
 
-## Providers
+## Providers och SDK
 
-Claude används som primär AI-modell för chattassistenterna. OpenAI används för viss analys. Mistral används för OCR på ritningar och dokument. Val av provider sker via abstraktionslagret i `src/lib/ai/`.
+Vercel AI SDK (npm-paketet `ai`) används som abstraktionslager för all AI-kommunikation. Det ger ett enhetligt API för streaming, tool use och strukturerade outputs oavsett vilken provider som används. Provider byts genom att ändra en rad — resten av koden är identisk.
+
+### Providers
+
+- **Claude** (via `@ai-sdk/anthropic`) — primär modell för chattassistenterna. Streaming, tool use, extended thinking.
+- **OpenAI** (via `@ai-sdk/openai`) — bildgenerering (DALL-E) och embeddings.
+- **Mistral** (via `@ai-sdk/mistral` + direkt API för OCR) — OCR på ritningar och dokument via Mistral OCR API. För OCR används Mistrals API direkt eftersom det är ett separat endpoint som inte går via chattmodellen.
+
+### Varför Vercel AI SDK
+
+Istället för att bygga ett eget abstraktionslager använder vi Vercel AI SDK. Det ger oss streaming med SSE inbyggt, tool use som fungerar likadant för alla providers, React hooks (useChat) som sköter hela chattflödet på klienten, stöd för strukturerade outputs med Zod, och sömlös integration med Next.js App Router. Se `vercel-ai-sdk.md` för fullständig dokumentation.
+
+### Direkt API-åtkomst
+
+Mistral OCR (modell `mistral-ocr-2512`) anropas direkt via Mistrals REST API eller deras TypeScript SDK (`@mistralai/mistralai`). OCR-endpointen är separat från chattmodellen och hanterar PDF:er, bilder och tekniska ritningar. Se `mistral-api.md` för fullständig dokumentation.
+
+OpenAI:s bildgenererings-API (DALL-E) anropas direkt via OpenAI SDK för att skapa bilder. Claude API-dokumentation finns i `claude-api.md` som referens för provider-specifika detaljer.
 
 ## Realtidskommunikation
 
@@ -168,6 +184,36 @@ Webben använder cookies som vanligt via Auth.js. Mobilappen använder JWT Beare
 
 Auth.js konfigureras med dubbla strategier — session-baserad för webb och JWT för mobil. API-routes kontrollerar först Authorization-headern (mobil) och faller tillbaka på session-cookies (webb). En gemensam hjälpfunktion abstraherar detta så att resten av koden inte behöver bry sig om vilken klient som anropar.
 
+## Embeddings och semantisk sökning
+
+AI-assistenterna behöver kunna söka i dokument, ritningar och projekthistorik baserat på betydelse — inte bara exakta ord. Detta löses med embeddings och vektorsökning.
+
+### Flöde
+
+1. En fil laddas upp till MinIO (PDF, bild, dokument)
+2. Filen skickas genom Mistral OCR som extraherar texten
+3. Texten delas upp i chunks (mindre textbitar, typiskt 500–1000 tokens)
+4. Varje chunk skickas till OpenAI:s embeddings-API som returnerar en vektor
+5. Vektorn sparas i databasen tillsammans med texten, kopplad till filen och projektet
+
+### Sökning
+
+När AI-assistenten behöver hitta information — t.ex. "vad står det om elinstallationen i ritningen?" — omvandlas frågan till en vektor via samma embeddings-API. Databasen söker efter de chunks vars vektorer liknar frågevektorn mest (cosine similarity). De mest relevanta chunksarna skickas som kontext till Claude, som formulerar svaret.
+
+### Vad som embeddas
+
+- Filinnehåll efter OCR-extraktion (ritningar, PDF:er, dokument)
+- Uppgiftsbeskrivningar och kommentarer
+- Konversationssammanfattningar (så att personliga AI:n kan hitta relevant historik)
+
+### Lagring — pgvector
+
+Vektorer lagras i PostgreSQL via pgvector-extensionen. Ingen separat vektordatabas behövs. En DocumentChunk-modell i schemat kopplar varje chunk till sin fil och sitt projekt. Chunken innehåller den extraherade texten, vektorn, metadata (sidnummer, position) och en referens till källfilen.
+
+### Multi-tenant-isolering
+
+Alla vektorsökningar filtreras på projektId och tenantId. En tenant kan aldrig söka i en annan tenants dokument. Detta sker via WHERE-villkor i SQL-frågan tillsammans med vektorsökningen.
+
 ## Datamodell
 
-Se `prisma/schema.prisma` för tabellstruktur. AI-relaterade modeller: Conversation, Message, AIMessage, Notification, ConversationType, AIDirection, NotificationChannel, AIProvider, MessageRole.
+Se `prisma/schema.prisma` för tabellstruktur. AI-relaterade modeller: Conversation, Message, AIMessage, AIDirection, Notification, NotificationChannel, DocumentChunk, ConversationType, AIProvider, MessageRole.

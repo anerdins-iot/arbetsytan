@@ -152,6 +152,7 @@ model Project {
 
   tasks           Task[]
   files           File[]
+  chunks          DocumentChunk[]
   conversations   Conversation[]
   aiMessages      AIMessage[]
   notifications   Notification[]
@@ -216,6 +217,7 @@ model File {
   size      Int
   bucket    String
   key       String
+  ocrText   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -223,6 +225,27 @@ model File {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   uploadedById String
+
+  chunks DocumentChunk[]
+}
+
+// ─────────────────────────────────────────
+// Embeddings (pgvector)
+// ─────────────────────────────────────────
+
+/// Vektorsökning via pgvector. Embedding-kolumnen hanteras via raw SQL / migrering
+/// eftersom Prisma inte har native vektor-typ. Se AI.md för arkitektur.
+model DocumentChunk {
+  id        String   @id @default(cuid())
+  content   String
+  metadata  Json     @default("{}")
+  page      Int?
+  createdAt DateTime @default(now())
+
+  fileId    String
+  file      File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 // ─────────────────────────────────────────
