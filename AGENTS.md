@@ -25,6 +25,7 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | Mobilapp | Expo SDK 54 | `/docs/expo.md` |
 | React | React 19.2 | `/docs/react.md` |
 | E-post | Resend | — |
+| Realtid | SSE (Server-Sent Events) | se `AI.md` |
 | Notifikationer | Expo Push, Web Push, Resend | se `AI.md` |
 | AI | Claude, OpenAI, Mistral | se `AI.md` |
 

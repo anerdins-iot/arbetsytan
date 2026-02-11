@@ -138,6 +138,36 @@ Detta håller kontexten liten och kostnaderna nere, utan att tappa viktig inform
 
 Claude används som primär AI-modell för chattassistenterna. OpenAI används för viss analys. Mistral används för OCR på ritningar och dokument. Val av provider sker via abstraktionslagret i `src/lib/ai/`.
 
+## Realtidskommunikation
+
+Server-Sent Events (SSE) används för all realtidskommunikation. SSE är enkelriktat — servern skickar data till klienten — och fungerar över vanlig HTTP utan extra infrastruktur.
+
+### Användningsområden
+
+- Streaming av AI-svar — token för token medan AI:n genererar sitt svar
+- Live-notifikationer — in-app-notiser visas direkt utan att användaren behöver ladda om
+- Statusuppdateringar — uppgifter, projekt och andra ändringar som görs av teammedlemmar
+
+### Varför SSE och inte WebSockets
+
+Klienten skickar data via Server Actions och API-anrop, inte via en öppen kanal. Därför behövs inte tvåvägskommunikation. SSE fungerar direkt med Next.js App Router, kräver ingen separat server, har inbyggd återanslutning i webbläsaren, och passerar brandväggar och proxys utan problem. WebSockets hade krävt extra infrastruktur och komplexitet utan att ge något mervärde för våra behov.
+
+### Implementation
+
+En SSE-endpoint skapas som en API-route i Next.js. Klienten ansluter med EventSource. Servern skickar events med data i JSON-format. Varje event har en typ (t.ex. "notification", "ai-token", "task-update") som klienten lyssnar på.
+
+## Mobilautentisering
+
+Webappen använder cookies via Auth.js — det är standardbeteendet och fungerar direkt. Mobilappen (Expo) kan däremot inte använda httpOnly cookies på samma sätt, eftersom React Native inte har en webbläsare med inbyggt cookie-stöd.
+
+### Strategi
+
+Webben använder cookies som vanligt via Auth.js. Mobilappen använder JWT Bearer tokens. Vid inloggning i mobilappen anropas ett API-endpoint som returnerar en JWT. Token lagras säkert i expo-secure-store på enheten. Varje API-anrop från mobilappen skickar token i Authorization-headern.
+
+### Auth.js-konfiguration
+
+Auth.js konfigureras med dubbla strategier — session-baserad för webb och JWT för mobil. API-routes kontrollerar först Authorization-headern (mobil) och faller tillbaka på session-cookies (webb). En gemensam hjälpfunktion abstraherar detta så att resten av koden inte behöver bry sig om vilken klient som anropar.
+
 ## Datamodell
 
 Se `prisma/schema.prisma` för tabellstruktur. AI-relaterade modeller: Conversation, Message, AIMessage, Notification, ConversationType, AIDirection, NotificationChannel, AIProvider, MessageRole.
