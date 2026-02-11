@@ -44,7 +44,9 @@ Instruera agenten att läsa dessa filer i ordning och följa dem strikt:
 
 Agenten ska avbryta och rapportera tillbaka om den upptäcker avvikelser, konflikter mellan filer, eller oklarheter — aldrig gissa.
 
-Agenten ska skriva till `DEVLOG.md` vid alla icke-triviala problem, workarounds, eller avvikelser från planen.
+**Inga rollbacks eller workarounds.** Om agenten stöter på ett problem ska det lösas i grunden — aldrig kringgås. Om agenten upptäcker fel från en tidigare fas eller ett tidigare block ska den dokumentera felet i `DEVLOG.md` och rapportera tillbaka till orkestern. Orkestern ansvarar för att felet åtgärdas innan arbetet fortsätter. Fel får aldrig skjutas framåt.
+
+Agenten ska skriva till `DEVLOG.md` vid alla icke-triviala problem eller avvikelser från planen.
 
 ### Verifieringsagent
 
@@ -79,6 +81,7 @@ Instruera agenten att:
 - **Polla inte** — du får automatiska meddelanden vid klart, frågor och timeout
 - **Blockordning** — följ ordningen i fas-filen, kolla blockets **Input** innan start
 - **Parallellt** om block är oberoende (olika filer/områden), annars sekventiellt
+- **Inga genvägar** — problem löses i grunden, aldrig med workarounds eller rollbacks. Om en agent hittar fel från tidigare faser: stoppa, dokumentera i `DEVLOG.md`, åtgärda felet först
 - **Felhantering** — om verifiering misslyckas: åtgärda och verifiera igen. Om samma fel upprepas: eskalera till Claude opus eller bryt ner i mindre steg
 - **DEVLOG** — skriv till `DEVLOG.md` vid icke-triviala problem
 - **Commits** — beskrivande meddelanden på engelska, aldrig innan verifiering och test är godkänt

@@ -16,6 +16,7 @@ Se `PROJEKT.md` för fullständig beskrivning, `AI.md` för AI-arkitektur, `UI.m
 - **TypeScript**: Strict mode. Ingen `any`. Inga TypeScript-fel.
 - **Server Components**: Default. `'use client'` bara vid interaktivitet.
 - **Server Actions**: Alla ska ha auth-check + tenant-check + Zod-validering.
+- **Inga rollbacks eller workarounds**: Problem ska lösas i grunden — aldrig kringgås. Upptäcker en agent fel från en tidigare fas ska det dokumenteras i `DEVLOG.md` och åtgärdas innan arbetet fortsätter. Fel får aldrig skjutas framåt.
 - **Förbjudet**: Se "Förbjudet"-sektionen i `AGENTS.md` för komplett lista.
 
 ## Modellval per uppgiftstyp
@@ -67,6 +68,8 @@ Varje agentblock genomförs i fyra steg:
 - **Verifiering**: Specifika kontroller som måste passera
 
 Nästa block kan **inte** starta innan föregående blocks checkboxar är avbockade i fas-filen. Om en checkbox inte är ifylld är steget inte klart. Kontrollera alltid fas-filen innan du börjar ett nytt block. Om verifieringen misslyckas: åtgärda och verifiera igen.
+
+**Upptäckta fel från tidigare block/faser** ska dokumenteras i `DEVLOG.md` och åtgärdas omedelbart — innan det aktuella blocket fortsätter. Fel får aldrig ignoreras eller kringgås.
 
 ## Faser
 
