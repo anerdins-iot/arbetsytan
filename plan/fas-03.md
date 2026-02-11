@@ -72,11 +72,11 @@
 **Input:** Block 3.5 klart (uppgiftsdetalj finns)
 **Output:** Kommentarsfunktionalitet på uppgifter
 
-- [ ] Bygga kommentarsfält i uppgiftsdetalj-vyn
-- [ ] Server Action `createComment` med Zod-validering + auth
-- [ ] Visa kommentarer kronologiskt med författare och tid
-- [ ] Server Action `updateComment` och `deleteComment` (bara egen kommentar)
-- [ ] Förbered notis-hook: anropa `createNotification()` vid ny kommentar (funktionen implementeras i Block 6.1 — skapa placeholder som loggar tills dess)
+- [x] Bygga kommentarsfält i uppgiftsdetalj-vyn
+- [x] Server Action `createComment` med Zod-validering + auth
+- [x] Visa kommentarer kronologiskt med författare och tid
+- [x] Server Action `updateComment` och `deleteComment` (bara egen kommentar)
+- [x] Förbered notis-hook: anropa `createNotification()` vid ny kommentar (funktionen implementeras i Block 6.1 — skapa placeholder som loggar tills dess)
 
 **Verifiering:** Kommentarer skapas/visas/raderas, auth-check, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 

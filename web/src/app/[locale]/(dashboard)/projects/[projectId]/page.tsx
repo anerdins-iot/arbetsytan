@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getProject } from "@/actions/projects";
 import { getTasks } from "@/actions/tasks";
 import { getCommentsByTask } from "@/actions/comments";
+import { getActivityLog } from "@/actions/activity-log";
 import { getSession } from "@/lib/auth";
 import { ProjectView } from "@/components/projects/project-view";
 
@@ -12,10 +13,11 @@ type Props = {
 };
 
 async function ProjectContent({ projectId }: { projectId: string }) {
-  const [projectResult, tasksResult, session] = await Promise.all([
+  const [projectResult, tasksResult, session, activityResult] = await Promise.all([
     getProject(projectId),
     getTasks(projectId),
     getSession(),
+    getActivityLog(projectId, { page: 1, pageSize: 5 }),
   ]);
 
   if (!projectResult.success || !session) {
@@ -37,6 +39,7 @@ async function ProjectContent({ projectId }: { projectId: string }) {
       tasks={tasks}
       currentUserId={session.user.id}
       commentsByTaskId={commentsByTaskId}
+      recentActivity={activityResult.success ? activityResult.items : []}
     />
   );
 }

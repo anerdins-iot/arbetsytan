@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { logActivity } from "@/lib/activity-log";
 import type { TaskStatus, Priority } from "../../generated/prisma/client";
 
 // ─────────────────────────────────────────
@@ -174,6 +175,20 @@ export async function updateTaskStatus(
     data: { status: parsed.data.status as TaskStatus },
   });
 
+  await logActivity(
+    tenantId,
+    projectId,
+    userId,
+    parsed.data.status === "DONE" ? "completed" : "statusChanged",
+    "task",
+    task.id,
+    {
+      title: task.title,
+      previousStatus: task.status,
+      newStatus: parsed.data.status,
+    }
+  );
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -210,7 +225,7 @@ export async function createTask(
 
   const db = tenantDb(tenantId);
 
-  await db.task.create({
+  const createdTask = await db.task.create({
     data: {
       title: parsed.data.title,
       description: parsed.data.description ?? null,
@@ -219,6 +234,12 @@ export async function createTask(
       status: "TODO" as TaskStatus,
       project: { connect: { id: projectId } },
     },
+  });
+
+  await logActivity(tenantId, projectId, userId, "created", "task", createdTask.id, {
+    title: createdTask.title,
+    status: createdTask.status,
+    priority: createdTask.priority,
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
@@ -278,6 +299,19 @@ export async function assignTask(
     },
   });
 
+  await logActivity(
+    tenantId,
+    projectId,
+    userId,
+    "assigned",
+    "task",
+    task.id,
+    {
+      title: task.title,
+      membershipId: parsed.data.membershipId,
+    }
+  );
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -332,6 +366,20 @@ export async function updateTask(
     },
   });
 
+  const action: "updated" | "statusChanged" | "completed" =
+    task.status !== parsed.data.status
+      ? parsed.data.status === "DONE"
+        ? "completed"
+        : "statusChanged"
+      : "updated";
+
+  await logActivity(tenantId, projectId, userId, action, "task", task.id, {
+    title: parsed.data.title,
+    previousStatus: task.status,
+    newStatus: parsed.data.status,
+    priority: parsed.data.priority,
+  });
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -371,6 +419,11 @@ export async function deleteTask(
     where: { id: parsed.data.taskId },
   });
 
+  await logActivity(tenantId, projectId, userId, "deleted", "task", task.id, {
+    title: task.title,
+    status: task.status,
+  });
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -407,6 +460,19 @@ export async function unassignTask(
   await db.taskAssignment.delete({
     where: { id: assignment.id },
   });
+
+  await logActivity(
+    tenantId,
+    projectId,
+    userId,
+    "updated",
+    "task",
+    parsed.data.taskId,
+    {
+      membershipId: parsed.data.membershipId,
+      change: "unassigned",
+    }
+  );
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
 

@@ -61,7 +61,9 @@
         "assigned": "assigned",
         "commented": "commented on",
         "uploaded": "uploaded",
-        "statusChanged": "changed status of"
+        "statusChanged": "changed status of",
+        "added": "added",
+        "removed": "removed"
       },
       "entities": {
         "task": "task",
@@ -233,6 +235,48 @@
         "deleting": "Deleting...",
         "by": "by",
         "edited": "(edited)"
+      }
+    },
+    "activity": {
+      "title": "Activity log",
+      "description": "All events in project {projectName}",
+      "recentTitle": "Recent activity",
+      "viewAll": "View full log",
+      "empty": "No events yet",
+      "actions": {
+        "created": "created",
+        "updated": "updated",
+        "deleted": "deleted",
+        "completed": "marked as done",
+        "assigned": "assigned",
+        "uploaded": "uploaded",
+        "statusChanged": "changed status of",
+        "added": "added",
+        "removed": "removed"
+      },
+      "entities": {
+        "task": "task",
+        "project": "project",
+        "file": "file",
+        "member": "member",
+        "comment": "comment"
+      },
+      "filters": {
+        "title": "Filters",
+        "action": "Action",
+        "entity": "Type",
+        "allActions": "All actions",
+        "allEntities": "All types",
+        "apply": "Apply",
+        "clear": "Clear"
+      },
+      "list": {
+        "title": "Events ({count})"
+      },
+      "pagination": {
+        "page": "Page {page} of {totalPages}",
+        "previous": "Previous",
+        "next": "Next"
       }
     }
   },

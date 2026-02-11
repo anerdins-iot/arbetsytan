@@ -10,12 +10,14 @@ import { KanbanBoard } from "./kanban-board";
 import type { ProjectDetail } from "@/actions/projects";
 import type { TaskItem } from "@/actions/tasks";
 import type { CommentItem } from "@/actions/comments";
+import type { ActivityLogItem } from "@/actions/activity-log";
 
 type ProjectViewProps = {
   project: ProjectDetail;
   tasks?: TaskItem[];
   currentUserId: string;
   commentsByTaskId: Record<string, CommentItem[]>;
+  recentActivity: ActivityLogItem[];
 };
 
 export function ProjectView({
@@ -23,6 +25,7 @@ export function ProjectView({
   tasks = [],
   currentUserId,
   commentsByTaskId,
+  recentActivity,
 }: ProjectViewProps) {
   const t = useTranslations("projects");
   const locale = useLocale();
@@ -50,7 +53,7 @@ export function ProjectView({
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
-          <ProjectOverview project={project} />
+          <ProjectOverview project={project} recentActivity={recentActivity} />
         </TabsContent>
 
         <TabsContent value="tasks" className="mt-6">

@@ -108,3 +108,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Next.js 16 med cacheComponents ersätter det gamla route segment config-systemet. `export const dynamic` stöds inte längre.
 **Lösning:** Ta bort `export const dynamic`. Sidor som gör databasanrop renderas ändå dynamiskt med cacheComponents (de har inga `'use cache'`-direktiv). Använd `<Suspense>` vid behov.
 **Lärdom:** Med `cacheComponents: true` — använd aldrig `export const dynamic`. Dynamisk rendering sker automatiskt för sidor utan `'use cache'`. DEVLOG-posten ovan om `force-dynamic` gäller alltså INTE längre med cacheComponents aktiverat.
+
+### "use server"-filer får inte exportera konstanter (Block 3.8)
+**Problem:** Build-fel: `A "use server" file can only export async functions, found object`.
+**Orsak:** `src/lib/activity-log.ts` markerades med `"use server"` men exporterade även action/entity-konstanter.
+**Lösning:** Tog bort `"use server"` från helper-filen och behöll endast async-anropet till `tenantDb()` i funktionen.
+**Lärdom:** Använd `"use server"` endast i filer som enbart exporterar async Server Actions; vanliga helpers med konstanter ska inte markeras.

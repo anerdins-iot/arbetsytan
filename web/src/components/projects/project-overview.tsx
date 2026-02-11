@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   MapPin,
   Calendar,
@@ -15,6 +16,7 @@ import {
   Users,
   UserPlus,
   Trash2,
+  History,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -44,9 +46,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { updateProject, addProjectMember, removeProjectMember } from "@/actions/projects";
 import type { ProjectDetail } from "@/actions/projects";
+import type { ActivityLogItem } from "@/actions/activity-log";
 
 type ProjectOverviewProps = {
   project: ProjectDetail;
+  recentActivity: ActivityLogItem[];
 };
 
 function statusVariant(
@@ -107,8 +111,9 @@ function formatDate(date: Date, locale: string): string {
   );
 }
 
-export function ProjectOverview({ project }: ProjectOverviewProps) {
+export function ProjectOverview({ project, recentActivity }: ProjectOverviewProps) {
   const t = useTranslations("projects");
+  const tActivity = useTranslations("projects.activity");
   const tCommon = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
@@ -278,6 +283,68 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
                 </p>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <History className="size-5" />
+                {tActivity("recentTitle")}
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href={`/${locale}/projects/${project.id}/activity`}>
+                  {tActivity("viewAll")}
+                </Link>
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {recentActivity.length === 0 ? (
+              <p className="text-sm text-muted-foreground">{tActivity("empty")}</p>
+            ) : (
+              recentActivity.map((item) => {
+                const metadata =
+                  item.metadata && typeof item.metadata === "object"
+                    ? JSON.stringify(item.metadata)
+                    : null;
+
+                return (
+                  <div
+                    key={item.id}
+                    className="rounded-lg border border-border p-3 text-sm"
+                  >
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-medium">
+                        {item.actor.name ?? item.actor.email}
+                      </span>
+                      <span>{tActivity(`actions.${item.action}`)}</span>
+                      <Badge variant="secondary">
+                        {tActivity(`entities.${item.entity}`)}
+                      </Badge>
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {new Date(item.createdAt).toLocaleString(
+                        locale === "sv" ? "sv-SE" : "en-US",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )}
+                    </p>
+                    {metadata ? (
+                      <p className="mt-2 break-all text-xs text-muted-foreground">
+                        {metadata}
+                      </p>
+                    ) : null}
+                  </div>
+                );
+              })
+            )}
           </CardContent>
         </Card>
       </div>

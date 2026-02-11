@@ -61,7 +61,9 @@ export function ActivityFeed({ activities }: ActivityFeedProps) {
             | "assigned"
             | "commented"
             | "uploaded"
-            | "statusChanged";
+            | "statusChanged"
+            | "added"
+            | "removed";
           const entityKey = activity.entity as
             | "task"
             | "project"

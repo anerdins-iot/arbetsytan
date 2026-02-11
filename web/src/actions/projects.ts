@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { logActivity } from "@/lib/activity-log";
 import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -96,7 +97,7 @@ export async function getProjects(options?: {
 export async function createProject(
   formData: FormData
 ): Promise<ProjectActionResult> {
-  const { tenantId } = await requireAuth();
+  const { tenantId, userId } = await requireAuth();
 
   const raw = {
     name: formData.get("name"),
@@ -118,13 +119,18 @@ export async function createProject(
   const { name, description, address } = result.data;
   const db = tenantDb(tenantId);
 
-  await db.project.create({
+  const project = await db.project.create({
     data: {
       name,
       description: description ?? null,
       address: address ?? null,
       tenant: { connect: { id: tenantId } },
     },
+  });
+
+  await logActivity(tenantId, project.id, userId, "created", "project", project.id, {
+    name: project.name,
+    status: project.status,
   });
 
   revalidatePath("/[locale]/projects", "page");
@@ -285,7 +291,7 @@ export async function updateProject(
   formData: FormData
 ): Promise<ProjectActionResult> {
   const { tenantId, userId } = await requireAuth();
-  await requireProject(tenantId, projectId, userId);
+  const currentProject = await requireProject(tenantId, projectId, userId);
 
   const raw = {
     name: formData.get("name"),
@@ -316,6 +322,15 @@ export async function updateProject(
       address: address ?? null,
       status: status as ProjectStatus,
     },
+  });
+
+  const action: "updated" | "statusChanged" =
+    currentProject.status !== status ? "statusChanged" : "updated";
+
+  await logActivity(tenantId, projectId, userId, action, "project", projectId, {
+    name,
+    previousStatus: currentProject.status,
+    newStatus: status,
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
@@ -353,6 +368,10 @@ export async function addProjectMember(
   await db.projectMember.create({
     data: { projectId, membershipId },
   });
+  await logActivity(tenantId, projectId, userId, "added", "member", membershipId, {
+    membershipId,
+    memberUserId: membership.userId,
+  });
   revalidatePath("/[locale]/projects/[projectId]", "page");
   return { success: true };
 }
@@ -371,8 +390,16 @@ export async function removeProjectMember(
     return { success: false, error: "VALIDATION_ERROR" };
   }
   const db = tenantDb(tenantId);
+  const membership = await db.membership.findFirst({
+    where: { id: membershipId },
+  });
+
   await db.projectMember.deleteMany({
     where: { projectId, membershipId },
+  });
+  await logActivity(tenantId, projectId, userId, "removed", "member", membershipId, {
+    membershipId,
+    memberUserId: membership?.userId ?? null,
   });
   revalidatePath("/[locale]/projects/[projectId]", "page");
   return { success: true };
