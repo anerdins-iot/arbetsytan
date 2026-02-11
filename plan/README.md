@@ -17,6 +17,7 @@ Se `PROJEKT.md` för fullständig beskrivning, `AI.md` för AI-arkitektur, `UI.m
 - **Server Components**: Default. `'use client'` bara vid interaktivitet.
 - **Server Actions**: Alla ska ha auth-check + tenant-check + Zod-validering.
 - **Inga rollbacks eller workarounds**: Problem ska lösas i grunden — aldrig kringgås. Upptäcker en agent fel från en tidigare fas ska det dokumenteras i `DEVLOG.md` och åtgärdas innan arbetet fortsätter. Fel får aldrig skjutas framåt.
+- **Fel ska vara fel**: Tysta aldrig fel med fallbacks, try/catch som sväljer errors, eller default-värden som döljer problem. Om något går fel ska det synas tydligt — som ett explicit felmeddelande, ett build-fel eller ett kraschar. Inga tysta fallbacks som maskerar det verkliga problemet.
 - **Förbjudet**: Se "Förbjudet"-sektionen i `AGENTS.md` för komplett lista.
 
 ## Modellval per uppgiftstyp
