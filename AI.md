@@ -152,7 +152,7 @@ Istället för att bygga ett eget abstraktionslager använder vi Vercel AI SDK. 
 
 Mistral OCR (modell `mistral-ocr-2512`) anropas direkt via Mistrals REST API eller deras TypeScript SDK (`@mistralai/mistralai`). OCR-endpointen är separat från chattmodellen och hanterar PDF:er, bilder och tekniska ritningar. Se `mistral-api.md` för fullständig dokumentation.
 
-OpenAI:s bildgenererings-API (DALL-E) anropas direkt via OpenAI SDK för att skapa bilder. Claude API-dokumentation finns i `claude-api.md` som referens för provider-specifika detaljer.
+OpenAI:s bildgenererings-API anropas direkt via OpenAI SDK för att skapa bilder. Se `openai-api.md` för fullständig dokumentation.
 
 ## Realtidskommunikation
 

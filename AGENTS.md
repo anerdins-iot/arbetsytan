@@ -110,8 +110,8 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `src/lib/db.ts` — Prisma-klient
 - `src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
 - `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
-- `claude-api.md` — Claude API-referens (streaming, tool use)
 - `mistral-api.md` — Mistral API och OCR-referens
+- `openai-api.md` — OpenAI bildgenerering och embeddings-referens
 - `vercel-ai-sdk.md` — Vercel AI SDK-referens
 - `prisma/schema.prisma` — Databasschema
 - `prisma/seed.ts` — Seed-data
