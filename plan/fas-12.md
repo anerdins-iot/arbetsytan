@@ -4,7 +4,7 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 12.1: Docker och Coolify
-**Input:** Hela appen klar, `/docs/docker.md`, `/docs/coolify.md`
+**Input:** Fas 1–11 klara (alla block avbockade), `/docs/docker.md`, `/docs/coolify.md`
 **Output:** Produktionsdeploy
 
 - [ ] Skapa produktions-Dockerfile för Next.js

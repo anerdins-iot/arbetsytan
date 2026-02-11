@@ -110,9 +110,8 @@
 - [ ] Bygga sökfält i topbar som söker över alla tillgängliga resurser
 - [ ] Sök i projektnamn och beskrivningar
 - [ ] Sök i uppgiftstitlar och beskrivningar
-- [ ] Sök i filnamn och OCR-extraherad text (via embeddings för semantisk sökning)
 - [ ] Server Action `globalSearch` filtrerat på tenantId + användarens projekt
-- [ ] Visa sökresultat grupperat per typ (projekt, uppgifter, filer) med djuplänkar
+- [ ] Visa sökresultat grupperat per typ (projekt, uppgifter) med djuplänkar
 - [ ] Debounce och minst 2 tecken innan sökning triggas
 
 **Verifiering:** Sökning returnerar resultat grupperade per typ, tenantId-filter, debounce fungerar, `npm run build` OK

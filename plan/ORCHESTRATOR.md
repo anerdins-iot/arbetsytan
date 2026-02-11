@@ -9,8 +9,10 @@ Läs dessa filer i ordning:
 1. `plan/README.md` — arbetsflöde, modellval, regler, fasöversikt och beroenden
 2. `AGENTS.md` — projektregler, tech stack och konventioner
 3. `PROJEKT.md` — övergripande mål och produktbeskrivning
-4. `DEVLOG.md` — kända problem och lärdomar
-5. Den fas-fil du ska arbeta med (t.ex. `plan/fas-01.md`)
+4. `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
+5. `UI.md` — Designspråk, färger och visuella riktlinjer
+6. `DEVLOG.md` — kända problem och lärdomar
+7. Den fas-fil du ska arbeta med (t.ex. `plan/fas-01.md`)
 
 ## Per block
 
@@ -39,8 +41,9 @@ Instruera agenten att läsa dessa filer i ordning och följa dem strikt:
 1. `AGENTS.md` — generella regler och konventioner
 2. `PROJEKT.md` — förstå vad vi bygger och varför
 3. `plan/README.md` — arbetsflöde och regler
-4. Relevanta `/docs/*.md` (de som nämns i blockets **Input**)
-5. Den specifika fas-filen och det block som ska implementeras
+4. `AI.md` och `UI.md` — AI-arkitektur och designspråk (vid UI- eller AI-block)
+5. Relevanta `/docs/*.md` (de som nämns i blockets **Input**)
+6. Den specifika fas-filen och det block som ska implementeras
 
 Agenten ska avbryta och rapportera tillbaka om den upptäcker avvikelser, konflikter mellan filer, eller oklarheter — aldrig gissa.
 

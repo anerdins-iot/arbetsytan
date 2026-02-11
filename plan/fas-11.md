@@ -4,19 +4,21 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 11.1: Expo-setup och auth
-**Input:** Fas 2 klar (auth-endpoints), `/docs/expo.md`
+**Input:** Fas 2 klar (auth), `/docs/expo.md`
 **Output:** Expo-projekt med autentisering
 
 - [ ] Initiera Expo SDK 54-projekt med TypeScript
 - [ ] Konfigurera Expo Router v6 för navigation
 - [ ] Implementera JWT-autentisering med expo-secure-store
 - [ ] Skapa API-klient som skickar Bearer token
+- [ ] Skapa JWT-endpoint `src/app/api/auth/mobile/route.ts` — tar e-post+lösenord, returnerar JWT
+- [ ] Skapa JWT-verifieringslogik i `src/lib/auth-mobile.ts`
 - [ ] Inloggningsskärm
 
 **Verifiering:** App startar, inloggning fungerar mot backend, token sparas säkert
 
 ### Block 11.2: Grundläggande skärmar
-**Input:** Block 11.1 klart
+**Input:** Block 11.1 + Fas 3 + Fas 4 + Fas 5 klara
 **Output:** Alla grundskärmar
 
 - [ ] Dashboard med "mina uppgifter"
@@ -31,11 +33,12 @@
 **Input:** Block 11.2 klart
 **Output:** Mobilspecifika funktioner
 
-- [ ] Push-notifikationer via Expo Push API
+- [ ] Konfigurera `socket.io-client` för React Native med JWT-auth
+- [ ] Push-notifikationer via Expo Push API (komplement till Socket.IO)
 - [ ] Kamera-integration för bilduppladdning direkt
 - [ ] Offline-stöd för uppgiftslistan (cache)
 
-**Verifiering:** Push-notifikationer fungerar, kamera laddar upp bilder, offline-cache fungerar
+**Verifiering:** Socket.IO fungerar i appen, push-notifikationer fungerar, kamera laddar upp bilder, offline-cache fungerar
 
 ### Block 11.4: Build och distribution
 **Input:** Block 11.2 + 11.3 klara

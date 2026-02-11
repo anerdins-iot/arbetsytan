@@ -10,15 +10,10 @@ Se `PROJEKT.md` för fullständig beskrivning, `AI.md` för AI-arkitektur, `UI.m
 
 ## Generella regler (gäller ALLA faser)
 
-- **i18n**: Alla UI-texter via `next-intl` — aldrig hårdkodade strängar. Översättningar i `messages/sv.json` och `messages/en.json`. Varje ny sida/komponent ska ha översättningsnycklar för båda språken.
-- **Multi-tenant**: Alla databasfrågor MÅSTE filtreras på `tenantId`. Ingen tenant får se annan tenants data.
-- **Styling**: Inga hårdkodade färger eller spacing — alla via CSS-variabler/Tailwind. Ingen `@apply`.
-- **TypeScript**: Strict mode. Ingen `any`. Inga TypeScript-fel.
-- **Server Components**: Default. `'use client'` bara vid interaktivitet.
-- **Server Actions**: Alla ska ha auth-check + tenant-check + Zod-validering.
+Alla regler i `AGENTS.md` gäller — läs den först. Här kompletteras med plan-specifika regler:
+
 - **Inga rollbacks eller workarounds**: Problem ska lösas i grunden — aldrig kringgås. Upptäcker en agent fel från en tidigare fas ska det dokumenteras i `DEVLOG.md` och åtgärdas innan arbetet fortsätter. Fel får aldrig skjutas framåt.
-- **Fel ska vara fel**: Tysta aldrig fel med fallbacks, try/catch som sväljer errors, eller default-värden som döljer problem. Om något går fel ska det synas tydligt — som ett explicit felmeddelande, ett build-fel eller ett kraschar. Inga tysta fallbacks som maskerar det verkliga problemet.
-- **Förbjudet**: Se "Förbjudet"-sektionen i `AGENTS.md` för komplett lista.
+- **Fel ska vara fel**: Tysta aldrig fel med fallbacks, try/catch som sväljer errors, eller default-värden som döljer problem. Om något går fel ska det synas tydligt — som ett explicit felmeddelande, ett build-fel eller en krasch. Inga tysta fallbacks som maskerar det verkliga problemet.
 
 ## Modellval per uppgiftstyp
 
@@ -76,36 +71,43 @@ Nästa block kan **inte** starta innan föregående blocks checkboxar är avbock
 
 | Fas | Fil | Beskrivning | Steg | Block |
 |-----|-----|-------------|------|-------|
-| 1 | `fas-01.md` | Projektsetup och infrastruktur | 28 | 4 |
-| 2 | `fas-02.md` | Autentisering och multi-tenant | 30 | 5 |
-| 3 | `fas-03.md` | Dashboard, projekt, kommentarer, aktivitetslogg, sökning | 45 | 9 |
-| 4 | `fas-04.md` | Filhantering | 23 | 4 |
-| 5 | `fas-05.md` | AI-assistenter | 31 | 7 |
-| 6 | `fas-06.md` | Notifikationer, realtid och påminnelser | 20 | 4 |
-| 7 | `fas-07.md` | Inställningar och administration | 15 | 3 |
+| 1 | `fas-01.md` | Projektsetup och infrastruktur | 29 | 4 |
+| 2 | `fas-02.md` | Autentisering och multi-tenant | 33 | 5 |
+| 3 | `fas-03.md` | Dashboard, projekt, kanban, team, aktivitetslogg, sökning | 50 | 9 |
+| 4 | `fas-04.md` | Filhantering | 29 | 4 |
+| 5 | `fas-05.md` | AI-assistenter | 42 | 7 |
+| 6 | `fas-06.md` | Notifikationer, realtid och påminnelser | 21 | 4 |
+| 7 | `fas-07.md` | Inställningar och administration | 16 | 3 |
 | 8 | `fas-08.md` | Tidrapportering och export | 12 | 2 |
-| 9 | `fas-09.md` | Betalning (Stripe) | 13 | 2 |
+| 9 | `fas-09.md` | Betalning (Stripe) | 14 | 2 |
 | 10 | `fas-10.md` | Landningssida | 8 | 1 |
-| 11 | `fas-11.md` | Mobilapp (Expo) | 14 | 4 |
-| 12 | `fas-12.md` | Deploy och produktion | 11 | 2 |
-| **Totalt** | | | **250** | **47** |
+| 11 | `fas-11.md` | Mobilapp (Expo) | 19 | 4 |
+| 12 | `fas-12.md` | Deploy och produktion | 13 | 2 |
+| **Totalt** | | | **286** | **47** |
 
 ## Fasordning och beroenden
 
 ```
 Fas 1 (Setup) ──→ Fas 2 (Auth) ──→ Fas 3 (Dashboard/Projekt)
-                                          │
-                                    ┌─────┼─────┐
-                                    ▼     ▼     ▼
-                              Fas 4    Fas 6   Fas 7
-                              (Filer)  (Notis)  (Inställningar)
-                                 │
-                                 ▼
-                              Fas 5 (AI) ──→ Fas 8 (Tidsrapp)
-                                                │
-                              Fas 9 (Stripe)    │
-                              Fas 10 (Landing)  │
-                                    │           │
-                                    ▼           ▼
-                              Fas 11 (Mobil) ──→ Fas 12 (Deploy)
+                       │                    │
+                       │              ┌─────┼─────┬─────┐
+                       │              ▼     ▼     ▼     ▼
+                       │           Fas 4  Fas 6  Fas 7  Fas 9
+                       │           (Filer) (Notis) (Inställn.) (Stripe)
+                       │              │     │
+                       │              ▼     │
+                       │           Fas 5    │
+                       │           (AI)     │
+                       │              │     │
+                       │         ┌────┴─────┘
+                       │         ▼
+                       │      Fas 8 (Tidsrapp)
+                       │
+                       ├──→ Fas 10 (Landing)
+                       │
+                       ├──→ Fas 11 (Mobil)
+                       │
+                       └──→ Fas 12 (Deploy) ← alla andra faser klara
 ```
+
+> **Not:** Diagrammet visar övergripande fasberoenden. Exakta beroenden per block anges i varje blocks **Input**-rad i fas-filerna.

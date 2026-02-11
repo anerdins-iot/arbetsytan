@@ -29,7 +29,7 @@
 **Verifiering:** Rättigheter sparas och respekteras, alla Server Actions kontrollerar permissions, `npm run build` OK
 
 ### Block 7.3: Personliga inställningar
-**Input:** Fas 2 klar (auth)
+**Input:** Fas 2 klar (auth), Block 6.2 klart (notifikationskanaler)
 **Output:** Profil- och preferenssida
 
 - [ ] Profilsida: namn, e-post, profilbild

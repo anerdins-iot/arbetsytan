@@ -10,6 +10,7 @@
 - [ ] Initiera Next.js 16-projekt med App Router och TypeScript
 - [ ] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/docs/tailwind.md`
 - [ ] Installera och konfigurera shadcn/ui med tema enligt `UI.md`
+- [ ] Installera `socket.io` och `socket.io-client` för realtidskommunikation
 - [ ] Skapa `docker-compose.yml` med PostgreSQL, MinIO och Redis
 - [ ] Skapa `.env.local.example` med alla nödvändiga miljövariabler
 - [ ] Verifiera att `npm run dev`, `npm run build` och `docker-compose up -d` fungerar
@@ -17,9 +18,10 @@
 **Verifiering:** `npm run build` OK, `docker-compose up -d` OK, alla tjänster svarar
 
 ### Block 1.1B: Prisma och databas
-**Input:** Block 1.1A klart, `schema.prisma`, `/docs/prisma.md`
+**Input:** Block 1.1A klart, `/docs/prisma.md`
 **Output:** Migrerad databas med seed-data
 
+- [ ] Skapa `prisma/schema.prisma` med hela datamodellen enligt `PROJEKT.md` och `AI.md`
 - [ ] Konfigurera Prisma 7 med `prisma-client` provider och output
 - [ ] Köra `prisma migrate dev` med hela schemat från `schema.prisma`
 - [ ] Verifiera att hela schemat i `schema.prisma` migreras korrekt

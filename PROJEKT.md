@@ -68,25 +68,17 @@ Tillgänglig via en knapp i nedre högra hörnet oavsett var man befinner sig i 
 
 ## Utvecklingsfaser
 
-### Fas 1 - Grundplattform (webb)
-- Autentisering och rollhantering
-- Multi-tenant-struktur
-- Grundläggande projekthantering
+Detaljerad byggplan med 12 faser och 47 block finns i `plan/README.md`. Faserna täcker:
 
-### Fas 2 - Filhantering och dokument
-- Filuppladdning och lagring
-- PDF-visning, bildhantering
-- Dokumentgenerering (Excel, PDF, Word)
-
-### Fas 3 - AI-integration
-- Chattassistent
-- OCR för ritningar och dokument
-- Dokumentanalys
-
-### Fas 4 - Betalning
-- Prenumerationshantering
-- Användarbaserad prissättning
-
-### Fas 5 - Mobilapp
-- Mobilapp för Android och iOS
-- Synkronisering med webbappen
+1. Projektsetup och infrastruktur
+2. Autentisering och multi-tenant
+3. Dashboard och projekthantering
+4. Filhantering och dokument
+5. AI-assistenter
+6. Notifikationer och realtid
+7. Inställningar och administration
+8. Tidrapportering och export
+9. Betalning (Stripe)
+10. Landningssida
+11. Mobilapp (Expo)
+12. Deploy och produktion

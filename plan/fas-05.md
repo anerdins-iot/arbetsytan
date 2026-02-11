@@ -10,10 +10,10 @@
 - [ ] Installera `ai`, `@ai-sdk/anthropic`, `@ai-sdk/openai`, `@ai-sdk/mistral`
 - [ ] Skapa `src/lib/ai/providers.ts` med provider-konfiguration
 - [ ] Skapa API-route för AI-streaming: `src/app/api/ai/chat/route.ts`
-- [ ] Implementera SSE-streaming med Vercel AI SDK
+- [ ] Implementera streaming med Vercel AI SDK (använder sin egen SSE-transport, separat från Socket.IO)
 - [ ] Verifiera att streaming fungerar end-to-end
 
-**Verifiering:** Streaming fungerar, AI svarar, SSE-events skickas, `npm run build` OK
+**Verifiering:** Streaming fungerar, AI svarar, `npm run build` OK
 
 ### Block 5.2: Projekt-AI — Chatt och kontext
 **Input:** Block 5.1 + Fas 3 + Fas 4 klara

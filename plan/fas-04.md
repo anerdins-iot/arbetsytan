@@ -8,7 +8,7 @@
 **Output:** Fungerande filuppladdning till MinIO
 
 - [ ] Konfigurera MinIO-klient i `src/lib/minio.ts`
-- [ ] Skapa bucket per tenant eller per projekt (välj strategi)
+- [ ] Skapa en bucket per tenant (namn: `tenant-{tenantId}`) med prefix per projekt
 - [ ] Generera presigned URL:er för uppladdning
 - [ ] Generera presigned URL:er för nedladdning/visning
 - [ ] Bygga uppladdningskomponent med drag-and-drop
@@ -56,6 +56,7 @@
 - [ ] Skapa SQL-funktion för cosine similarity-sökning
 - [ ] Skapa `searchDocuments`-funktion filtrerat på projectId + tenantId
 - [ ] Bakgrundsbearbetning — använd queue eller async job (ej blockera upload)
+- [ ] Utöka `globalSearch` (från Block 3.9) med sökning i filnamn och dokumentinnehåll via embeddings
 
 **Verifiering:** Embeddings genereras, vektorsökning returnerar relevanta resultat, tenantId-filter, `npm run build` OK
 

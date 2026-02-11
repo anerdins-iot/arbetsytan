@@ -18,7 +18,7 @@
 **Verifiering:** Tider registreras/uppdateras/raderas, summering korrekt, tenantId-filter, `npm run build` OK
 
 ### Block 8.2: Export och rapporter
-**Input:** Block 8.1 + Fas 4 klara (tidsdata + MinIO)
+**Input:** Block 8.1 + Fas 4 + Fas 5 klara (tidsdata + MinIO + AI-verktyg)
 **Output:** Export-funktionalitet
 
 - [ ] Exportera projektsammanställning som PDF (uppgifter, status, tider, medlemmar)
