@@ -4,7 +4,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client"
-  output   = "./generated/prisma"
+  output   = "../generated/prisma"
 }
 
 // ─────────────────────────────────────────
@@ -156,7 +156,7 @@ model Project {
   chunks          DocumentChunk[]
   conversations   Conversation[]
   aiMessages      AIMessage[]
-  notifications   Notification[]
+  notifications  Notification[]
   activityLogs    ActivityLog[]
   timeEntries     TimeEntry[]
 }
@@ -238,14 +238,14 @@ model File {
 // Embeddings (pgvector)
 // ─────────────────────────────────────────
 
-/// Vektorsökning via pgvector. Embedding-kolumnen hanteras via raw SQL / migrering
-/// eftersom Prisma inte har native vektor-typ. Se AI.md för arkitektur.
+/// Vektorsökning via pgvector. Se AI.md för arkitektur.
 model DocumentChunk {
-  id        String   @id @default(cuid())
+  id        String                    @id @default(cuid())
   content   String
-  metadata  Json     @default("{}")
+  embedding Unsupported("vector(1536)")?
+  metadata  Json                      @default("{}")
   page      Int?
-  createdAt DateTime @default(now())
+  createdAt DateTime                  @default(now())
 
   fileId    String
   file      File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
@@ -389,8 +389,8 @@ model TimeEntry {
   description String?
   minutes     Int
   date        DateTime
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   taskId    String?
   task      Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)

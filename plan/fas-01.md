@@ -21,22 +21,22 @@
 **Input:** Block 1.1A klart, `/docs/prisma.md`
 **Output:** Migrerad databas med seed-data
 
-- [ ] Flytta `prisma/schema.prisma` till `web/prisma/` (schemat finns redan i repo-root)
-- [ ] Komplettera schemat med hela datamodellen enligt `PROJEKT.md` och `AI.md` om något saknas
-- [ ] Konfigurera Prisma 7 enligt `/docs/prisma.md`:
+- [x] Flytta `prisma/schema.prisma` till `web/prisma/` (schemat finns redan i repo-root)
+- [x] Komplettera schemat med hela datamodellen enligt `PROJEKT.md` och `AI.md` om något saknas
+- [x] Konfigurera Prisma 7 enligt `/docs/prisma.md`:
   - Generator: `prisma-client` provider med `output = "./generated/prisma"`
   - Datasource: utan `url` (hanteras av `prisma.config.ts`)
   - `package.json`: `"type": "module"` (ESM obligatoriskt)
-- [ ] Skapa `web/prisma.config.ts` i web/ (Next.js projekt-root) med `defineConfig()`: schema-path, migrations-path, seed-kommando och `datasource.url` från env
-- [ ] Installera `@prisma/adapter-pg` och `pg` — driver adapter obligatoriskt i Prisma 7
-- [ ] Skapa `web/src/lib/db.ts` med PrismaPg-adapter och PrismaClient-instans (singleton-pattern)
-- [ ] Köra `npx prisma generate` för att generera klienten
-- [ ] Köra `npx prisma migrate dev` med hela schemat
-- [ ] Verifiera att hela schemat migreras korrekt
-- [ ] Skapa raw SQL-migrering för pgvector-extension (`CREATE EXTENSION vector`)
-- [ ] Skapa raw SQL för embedding-kolumn på DocumentChunk
-- [ ] Skapa `web/prisma/seed.ts` med testdata: tenant, användare, memberships, projekt, uppgifter
-- [ ] Verifiera seed fungerar med `npx prisma db seed`
+- [x] Skapa `web/prisma.config.ts` i web/ (Next.js projekt-root) med `defineConfig()`: schema-path, migrations-path, seed-kommando och `datasource.url` från env
+- [x] Installera `@prisma/adapter-pg` och `pg` — driver adapter obligatoriskt i Prisma 7
+- [x] Skapa `web/src/lib/db.ts` med PrismaPg-adapter och PrismaClient-instans (singleton-pattern)
+- [x] Köra `npx prisma generate` för att generera klienten
+- [x] Köra `npx prisma migrate dev` med hela schemat
+- [x] Verifiera att hela schemat migreras korrekt
+- [x] Skapa raw SQL-migrering för pgvector-extension (`CREATE EXTENSION vector`)
+- [x] Skapa raw SQL för embedding-kolumn på DocumentChunk
+- [x] Skapa `web/prisma/seed.ts` med testdata: tenant, användare, memberships, projekt, uppgifter
+- [x] Verifiera seed fungerar med `npx prisma db seed`
 
 **Verifiering:** `npx prisma migrate dev` OK, `npx prisma db seed` OK, alla tabeller skapade
 
