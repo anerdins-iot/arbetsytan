@@ -8,8 +8,8 @@
 **Output:** Fungerande AI-streaming-endpoint
 
 - [ ] Installera `ai`, `@ai-sdk/anthropic`, `@ai-sdk/openai`, `@ai-sdk/mistral`
-- [ ] Skapa `src/lib/ai/providers.ts` med provider-konfiguration
-- [ ] Skapa API-route för AI-streaming: `src/app/api/ai/chat/route.ts`
+- [ ] Skapa `web/src/lib/ai/providers.ts` med provider-konfiguration
+- [ ] Skapa API-route för AI-streaming: `web/src/app/api/ai/chat/route.ts`
 - [ ] Implementera streaming med Vercel AI SDK (använder sin egen SSE-transport, separat från Socket.IO)
 - [ ] Verifiera att streaming fungerar end-to-end
 

@@ -7,13 +7,13 @@
 **Input:** Fas 2 klar (auth), `/docs/expo.md`
 **Output:** Expo-projekt med autentisering
 
-- [ ] Initiera Expo SDK 54-projekt med TypeScript
+- [ ] Initiera Expo SDK 54-projekt i `mobile/` med TypeScript
 - [ ] Konfigurera Expo Router v6 för navigation
 - [ ] Implementera JWT-autentisering med expo-secure-store
 - [ ] Skapa API-klient som skickar Bearer token
-- [ ] Skapa JWT-endpoint `src/app/api/auth/mobile/route.ts` — tar e-post+lösenord, returnerar JWT med `tenantId`, `userId`, `role`
+- [ ] Skapa JWT-endpoint `web/src/app/api/auth/mobile/route.ts` — tar e-post+lösenord, returnerar JWT med `tenantId`, `userId`, `role`
 - [ ] Konfigurera JWT-livslängd och refresh-token-strategi (kort access token + längre refresh token)
-- [ ] Skapa JWT-verifieringslogik i `src/lib/auth-mobile.ts`
+- [ ] Skapa JWT-verifieringslogik i `web/src/lib/auth-mobile.ts`
 - [ ] Inloggningsskärm
 
 **Verifiering:** App startar, inloggning fungerar mot backend, token sparas säkert, JWT innehåller `tenantId`/`userId`/`role`, refresh fungerar

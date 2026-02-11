@@ -7,13 +7,13 @@
 **Input:** Tomt projekt, `PROJEKT.md`, `/docs/nextjs.md`, `/docs/tailwind.md`, `/docs/docker.md`
 **Output:** Fungerande Next.js-projekt med Docker-tjänster
 
-- [ ] Initiera Next.js 16-projekt med App Router och TypeScript
+- [ ] Initiera Next.js 16-projekt i `web/` med `npx create-next-app@16.0.9` (App Router, TypeScript, Tailwind, ESLint)
 - [ ] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/docs/tailwind.md`
 - [ ] Installera och konfigurera shadcn/ui med tema enligt `UI.md`
 - [ ] Installera `socket.io` och `socket.io-client` (konfigurering i Block 6.1)
-- [ ] Skapa `docker-compose.yml` med PostgreSQL, MinIO och Redis
-- [ ] Skapa `.env.local.example` med alla nödvändiga miljövariabler
-- [ ] Verifiera att `npm run dev`, `npm run build` och `docker-compose up -d` fungerar
+- [ ] Skapa `docker-compose.yml` i workspace root med PostgreSQL, MinIO och Redis
+- [ ] Skapa `web/.env.local.example` med alla nödvändiga miljövariabler
+- [ ] Verifiera att `npm run dev`, `npm run build` (i web/) och `docker-compose up -d` fungerar
 
 **Verifiering:** `npm run build` OK, `docker-compose up -d` OK, alla tjänster svarar
 
@@ -21,32 +21,33 @@
 **Input:** Block 1.1A klart, `/docs/prisma.md`
 **Output:** Migrerad databas med seed-data
 
-- [ ] Skapa `prisma/schema.prisma` med hela datamodellen enligt `PROJEKT.md` och `AI.md`
+- [ ] Flytta `prisma/schema.prisma` till `web/prisma/` (schemat finns redan i repo-root)
+- [ ] Komplettera schemat med hela datamodellen enligt `PROJEKT.md` och `AI.md` om något saknas
 - [ ] Konfigurera Prisma 7 enligt `/docs/prisma.md`:
   - Generator: `prisma-client` provider med `output = "./generated/prisma"`
   - Datasource: utan `url` (hanteras av `prisma.config.ts`)
   - `package.json`: `"type": "module"` (ESM obligatoriskt)
-- [ ] Skapa `prisma.config.ts` i projekt-root med `defineConfig()`: schema-path, migrations-path, seed-kommando och `datasource.url` från env
+- [ ] Skapa `web/prisma.config.ts` i web/ (Next.js projekt-root) med `defineConfig()`: schema-path, migrations-path, seed-kommando och `datasource.url` från env
 - [ ] Installera `@prisma/adapter-pg` och `pg` — driver adapter obligatoriskt i Prisma 7
-- [ ] Skapa `src/lib/db.ts` med PrismaPg-adapter och PrismaClient-instans (singleton-pattern)
+- [ ] Skapa `web/src/lib/db.ts` med PrismaPg-adapter och PrismaClient-instans (singleton-pattern)
 - [ ] Köra `npx prisma generate` för att generera klienten
-- [ ] Köra `prisma migrate dev` med hela schemat
+- [ ] Köra `npx prisma migrate dev` med hela schemat
 - [ ] Verifiera att hela schemat migreras korrekt
 - [ ] Skapa raw SQL-migrering för pgvector-extension (`CREATE EXTENSION vector`)
 - [ ] Skapa raw SQL för embedding-kolumn på DocumentChunk
-- [ ] Skapa `prisma/seed.ts` med testdata: tenant, användare, memberships, projekt, uppgifter
+- [ ] Skapa `web/prisma/seed.ts` med testdata: tenant, användare, memberships, projekt, uppgifter
 - [ ] Verifiera seed fungerar med `npx prisma db seed`
 
-**Verifiering:** `prisma migrate dev` OK, `prisma db seed` OK, alla tabeller skapade
+**Verifiering:** `npx prisma migrate dev` OK, `npx prisma db seed` OK, alla tabeller skapade
 
 ### Block 1.2: Internationalisering
 **Input:** Block 1.1A klart (fungerande Next.js-projekt)
 **Output:** Fungerande i18n med sv/en
 
 - [ ] Installera och konfigurera `next-intl`
-- [ ] Skapa `src/i18n/request.ts` och `src/i18n/routing.ts`
-- [ ] Skapa `messages/sv.json` med grundläggande nycklar (navigation, knappar, felmeddelanden)
-- [ ] Skapa `messages/en.json` med samma nycklar på engelska
+- [ ] Skapa `web/src/i18n/request.ts` och `web/src/i18n/routing.ts`
+- [ ] Skapa `web/messages/sv.json` med grundläggande nycklar (navigation, knappar, felmeddelanden)
+- [ ] Skapa `web/messages/en.json` med samma nycklar på engelska
 - [ ] Konfigurera `[locale]`-segment i App Router (flytta sidor under `app/[locale]/`)
 - [ ] Konfigurera språkdetektering och default locale (sv)
 - [ ] Verifiera att `/sv/` och `/en/` fungerar korrekt

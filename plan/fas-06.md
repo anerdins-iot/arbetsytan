@@ -8,7 +8,7 @@
 **Output:** Fungerande notifikationssystem med Socket.IO
 
 - [ ] Konfigurera `socket.io` (server) och `socket.io-client` (klient) — redan installerade i Block 1.1A
-- [ ] Skapa Socket.IO-server i `src/lib/socket.ts` med säkerhetsmodell enligt `AI.md`:
+- [ ] Skapa Socket.IO-server i `web/src/lib/socket.ts` med säkerhetsmodell enligt `AI.md`:
   - Autentisering vid anslutning: validera session (webb) eller JWT (mobil), avvisa ogiltiga
   - Extrahera `tenantId`, `userId`, `role` vid anslutning — lagra på socket-objektet
   - Klienten kan ALDRIG skicka eller överskriva dessa värden

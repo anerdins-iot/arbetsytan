@@ -8,8 +8,9 @@
 **Output:** Fungerande Auth.js med session-hantering
 
 - [ ] Installera och konfigurera Auth.js v5 med Credentials-provider
-- [ ] Konfigurera `src/lib/auth.ts` med session-callbacks
-- [ ] Skapa `proxy.ts` enligt Next.js 16-mönster (ej middleware.ts)
+- [ ] Skapa `web/src/lib/auth.config.ts` (edge-kompatibel, inga DB-imports) — exporterar providers och callbacks
+- [ ] Skapa `web/src/lib/auth.ts` med full konfiguration (PrismaAdapter + auth.config)
+- [ ] Skapa `web/proxy.ts` som importerar ENDAST från auth.config (ej auth.ts) enligt Next.js 16-mönster
 - [ ] Implementera lösenordshashning med bcrypt vid registrering
 - [ ] Konfigurera session-strategi (cookies för webb)
 - [ ] Lägga till `tenantId` och `role` i session via callbacks
@@ -42,7 +43,7 @@
 - [ ] Skapa `requireAuth`-wrapper för Server Actions som kontrollerar session och returnerar verifierat `tenantId`
 - [ ] Skapa `requireRole`-wrapper som kräver specifik roll (ADMIN, PROJECT_MANAGER)
 - [ ] Skapa `requireProject(tenantId, projectId, userId)`-funktion som verifierar att projektet tillhör rätt tenant och att användaren har åtkomst (projektmedlem eller Admin-roll). Returnerar projektet eller kastar fel.
-- [ ] Skapa tenant-scoped Prisma-klient i `src/lib/db.ts` med Prisma client extension:
+- [ ] Skapa tenant-scoped Prisma-klient i `web/src/lib/db.ts` med Prisma client extension:
   - `tenantDb(tenantId)` — returnerar en Prisma-klient som automatiskt injicerar `WHERE tenantId = ?` på alla queries (find, update, delete, count, aggregate)
   - `tenantDb(tenantId)` ska även automatiskt sätta `tenantId` vid `create`-operationer
   - Den globala `prisma`-klienten finns kvar men är ENBART för plattformsoperationer (superadmin, cron, auth utan tenant-kontext)

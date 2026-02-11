@@ -47,23 +47,28 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 ## Arkitektur
 
 ```
-src/
-├── app/
-│   └── [locale]/        # Språkprefix — alla sidor under locale
-│       ├── (auth)/      # Login, registration
-│       ├── (dashboard)/ # Authenticated - projects, files, tasks
-│       └── api/         # API endpoints (ej locale-prefix)
-├── components/          # UI components
-│   ├── ui/              # shadcn/ui base components
-│   └── [feature]/       # Feature-specific components
-├── lib/                 # Helpers, database, auth config, AI clients
-├── actions/             # Server Actions (all CRUD logic)
-├── types/               # TypeScript types
-├── hooks/               # Custom React hooks (client-side)
-└── i18n/                # next-intl config, request.ts, routing.ts
-messages/
-├── sv.json              # Svenska översättningar
-└── en.json              # Engelska översättningar
+web/
+├── src/
+│   ├── app/
+│   │   └── [locale]/        # Språkprefix — alla sidor under locale
+│   │       ├── (auth)/      # Login, registration
+│   │       ├── (dashboard)/ # Authenticated - projects, files, tasks
+│   │       └── api/         # API endpoints (ej locale-prefix)
+│   ├── components/          # UI components
+│   │   ├── ui/              # shadcn/ui base components
+│   │   └── [feature]/       # Feature-specific components
+│   ├── lib/                 # Helpers, database, auth config, AI clients
+│   ├── actions/             # Server Actions (all CRUD logic)
+│   ├── types/               # TypeScript types
+│   ├── hooks/               # Custom React hooks (client-side)
+│   └── i18n/                # next-intl config, request.ts, routing.ts
+├── prisma/                  # Schema, migrations, seed
+├── messages/
+│   ├── sv.json              # Svenska översättningar
+│   └── en.json              # Engelska översättningar
+└── prisma.config.ts         # Next.js projekt-root
+mobile/                      # Expo-app (Fas 11)
+docker-compose.yml           # Workspace root
 ```
 
 ## Multi-tenant
@@ -71,7 +76,7 @@ messages/
 - Varje företag (tenant) har isolerad data
 - **Central tenant-isolering:** Alla databasfrågor går genom en tenant-scoped Prisma-klient (`tenantDb(tenantId)`) som automatiskt injicerar `tenantId`-filter på alla queries via en Prisma client extension. Ingen kod får använda den globala Prisma-klienten direkt för tenant-data.
 - `tenantId` hämtas från session (webb) eller JWT (mobil) och verifieras i `requireAuth`/`requireRole` innan den skickas till `tenantDb()`
-- Prisma-extensionen i `src/lib/db.ts` exporterar:
+- Prisma-extensionen i `web/src/lib/db.ts` exporterar:
   - `prisma` — global klient, ENBART för plattformsoperationer (superadmin, cron-jobb, auth-flöden utan tenant-kontext)
   - `tenantDb(tenantId)` — tenant-scoped klient som injicerar `WHERE tenantId = ?` på alla operationer
 - **Projektåtkomst:** Alla operationer som tar `projectId` som input ska verifiera att användaren har tillgång till projektet via `requireProject(tenantId, projectId, userId)`. Denna funktion kontrollerar att projektet tillhör rätt tenant och att användaren är medlem i projektet (eller har Admin-roll). Returnerar projektet eller kastar ett fel.
@@ -83,8 +88,8 @@ messages/
 ## Konventioner
 
 - Alla UI-texter via `next-intl` — aldrig hårdkodade strängar i komponenter
-- Översättningar i `messages/sv.json` och `messages/en.json`
-- Nytt språk läggs till genom att skapa en ny JSON-fil (t.ex. `messages/no.json`)
+- Översättningar i `web/messages/sv.json` och `web/messages/en.json`
+- Nytt språk läggs till genom att skapa en ny JSON-fil (t.ex. `web/messages/no.json`)
 - Svenska som standardspråk, engelska som andra språk
 - Routing med språkprefix: `/sv/dashboard`, `/en/dashboard`
 - Användaren väljer språk i inställningar — sparas i `User.locale`
@@ -130,15 +135,15 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 
 ## Viktiga filer
 
-- `src/lib/auth.ts` — Auth.js-konfiguration
-- `src/lib/db.ts` — Prisma-klient
-- `src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
+- `web/src/lib/auth.ts` — Auth.js-konfiguration
+- `web/src/lib/db.ts` — Prisma-klient
+- `web/src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
 - `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
 - `mistral-api.md` — Mistral API och OCR-referens
 - `openai-api.md` — OpenAI bildgenerering och embeddings-referens
 - `vercel-ai-sdk.md` — Vercel AI SDK-referens
-- `prisma/schema.prisma` — Databasschema
-- `prisma/seed.ts` — Seed-data
+- `web/prisma/schema.prisma` — Databasschema
+- `web/prisma/seed.ts` — Seed-data
 - `PROJEKT.md` — Fullständig projektbeskrivning och faser
 - `UI.md` — Designspråk, färger, typsnitt
 - `DEVLOG.md` — Löpande erfarenhetslogg

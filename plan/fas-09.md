@@ -8,7 +8,7 @@
 **Output:** Stripe-integration med trial
 
 - [ ] Konfigurera Stripe med produkter och priser
-- [ ] Skapa webhook-endpoint `src/app/api/stripe/webhook/route.ts`
+- [ ] Skapa webhook-endpoint `web/src/app/api/webhooks/stripe/route.ts`
 - [ ] Hantera events: checkout.session.completed, invoice.paid, customer.subscription.updated/deleted
 - [ ] Vid registrering: skapa Stripe Customer + 14-dagars trial
 - [ ] Spara stripeCustomerId på Tenant

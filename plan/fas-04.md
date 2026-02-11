@@ -7,7 +7,7 @@
 **Input:** Fas 1 klar (Docker med MinIO), Fas 2 klar (auth)
 **Output:** Fungerande filuppladdning till MinIO
 
-- [ ] Konfigurera MinIO-klient i `src/lib/minio.ts`
+- [ ] Konfigurera MinIO-klient i `web/src/lib/minio.ts`
 - [ ] Skapa en bucket per tenant (namn: `tenant-{tenantId}`) med prefix per projekt
 - [ ] Generera presigned URL:er för uppladdning
 - [ ] Generera presigned URL:er för nedladdning/visning
@@ -37,7 +37,7 @@
 **Input:** Block 4.1 klart, Mistral API-nyckel
 **Output:** Automatisk OCR vid filuppladdning
 
-- [ ] Skapa `src/lib/ai/ocr.ts` med Mistral OCR-integration
+- [ ] Skapa `web/src/lib/ai/ocr.ts` med Mistral OCR-integration
 - [ ] Vid uppladdning av PDF/bild: trigga OCR automatiskt
 - [ ] Spara extraherad text i `File.ocrText`
 - [ ] Chunka texten (500–1000 tokens per chunk)
@@ -50,7 +50,7 @@
 **Input:** Block 4.3 klart, OpenAI API-nyckel
 **Output:** Semantisk sökning i dokument
 
-- [ ] Skapa `src/lib/ai/embeddings.ts` med OpenAI embeddings-integration
+- [ ] Skapa `web/src/lib/ai/embeddings.ts` med OpenAI embeddings-integration
 - [ ] Efter chunkning: generera embedding per chunk via OpenAI API
 - [ ] Spara vektor i DocumentChunk.embedding (raw SQL)
 - [ ] Skapa SQL-funktion för cosine similarity-sökning

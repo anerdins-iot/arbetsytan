@@ -190,7 +190,7 @@ All filtrering sker i backend — klienten väljer aldrig vilken data den tar em
 
 ### Implementation
 
-Socket.IO-servern skapas i `src/lib/socket.ts`. Klienten ansluter via `useSocket`-hook vid inloggning. Events skickas med typ (t.ex. "notification", "task-update", "project-update") och data i JSON-format. Alla rum hanteras av servern — klienten kan inte joina rum själv.
+Socket.IO-servern skapas i `web/src/lib/socket.ts`. Klienten ansluter via `useSocket`-hook vid inloggning. Events skickas med typ (t.ex. "notification", "task-update", "project-update") och data i JSON-format. Alla rum hanteras av servern — klienten kan inte joina rum själv.
 
 ## Mobilautentisering
 
@@ -236,4 +236,4 @@ Alla vektorsökningar filtreras på projektId och tenantId. En tenant kan aldrig
 
 ## Datamodell
 
-Se `prisma/schema.prisma` för tabellstruktur. AI-relaterade modeller: Conversation, Message, AIMessage, AIDirection, Notification, NotificationChannel, DocumentChunk, ConversationType, AIProvider, MessageRole.
+Se `web/prisma/schema.prisma` för tabellstruktur. AI-relaterade modeller: Conversation, Message, AIMessage, AIDirection, Notification, NotificationChannel, DocumentChunk, ConversationType, AIProvider, MessageRole.
