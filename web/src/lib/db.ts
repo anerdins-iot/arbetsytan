@@ -159,7 +159,30 @@ function createTenantExtension(tenantId: string) {
     };
   }
 
-  // 3. Handle TaskAssignment (nested relation: task -> project -> tenantId)
+  // 3. Handle ProjectMember (scoped via project)
+  query.projectMember = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    findUnique: ({ args, query: run }) => {
+      const a = args as { where: { id?: string; projectId_membershipId?: { projectId: string; membershipId: string } } };
+      return run({ ...a, where: { ...a.where, project: { tenantId } } });
+    },
+    findUniqueOrThrow: ({ args, query: run }) => {
+      const a = args as { where: { id?: string; projectId_membershipId?: { projectId: string; membershipId: string } } };
+      return run({ ...a, where: { ...a.where, project: { tenantId } } });
+    },
+    create: ({ args, query: run }) => run(args),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+  };
+
+  // 4. Handle TaskAssignment (nested relation: task -> project -> tenantId)
   query.taskAssignment = {
     findMany: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
@@ -194,6 +217,7 @@ export type TenantScopedClient = Omit<
   | "timeEntry"
   | "comment"
   | "taskAssignment"
+  | "projectMember"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -207,6 +231,7 @@ export type TenantScopedClient = Omit<
   timeEntry: PrismaClient["timeEntry"];
   comment: PrismaClient["comment"];
   taskAssignment: PrismaClient["taskAssignment"];
+  projectMember: PrismaClient["projectMember"];
 };
 
 /**

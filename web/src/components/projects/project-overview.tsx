@@ -13,6 +13,8 @@ import {
   Clock,
   CircleDot,
   Users,
+  UserPlus,
+  Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -40,7 +42,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { updateProject } from "@/actions/projects";
+import { updateProject, addProjectMember, removeProjectMember } from "@/actions/projects";
 import type { ProjectDetail } from "@/actions/projects";
 
 type ProjectOverviewProps = {
@@ -113,6 +115,9 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
   const [editOpen, setEditOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [teamError, setTeamError] = useState<string | null>(null);
+  const [selectedMembershipId, setSelectedMembershipId] = useState<string>("");
+  const [teamPending, setTeamPending] = useState(false);
   const statusLabel = useStatusLabel(project.status);
 
   const totalTasks =
@@ -129,6 +134,46 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
         router.refresh();
       } else {
         setError(result.error ?? t("errorGeneric"));
+      }
+    });
+  }
+
+  function handleAddMember() {
+    if (!selectedMembershipId) return;
+    setTeamError(null);
+    setTeamPending(true);
+    addProjectMember(project.id, selectedMembershipId).then((result) => {
+      setTeamPending(false);
+      if (result.success) {
+        setSelectedMembershipId("");
+        router.refresh();
+      } else {
+        const key =
+          result.error === "ALREADY_MEMBER"
+            ? "overview.errorAlreadyMember"
+            : result.error === "MEMBER_NOT_FOUND"
+              ? "overview.errorMemberNotFound"
+              : result.error === "FORBIDDEN"
+                ? "overview.errorForbidden"
+                : "errorGeneric";
+        setTeamError(t(key));
+      }
+    });
+  }
+
+  function handleRemoveMember(membershipId: string, name: string) {
+    const message = t("overview.removeConfirm", { name });
+    if (typeof window !== "undefined" && !window.confirm(message)) return;
+    setTeamError(null);
+    setTeamPending(true);
+    removeProjectMember(project.id, membershipId).then((result) => {
+      setTeamPending(false);
+      if (result.success) {
+        router.refresh();
+      } else {
+        setTeamError(
+          result.error === "FORBIDDEN" ? t("overview.errorForbidden") : t("errorGeneric")
+        );
       }
     });
   }
@@ -246,7 +291,46 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
               {t("overview.members")}
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-3">
+            {project.canManageTeam && project.availableMembers.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2">
+                <Select
+                  value={selectedMembershipId}
+                  onValueChange={setSelectedMembershipId}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={t("overview.selectMember")} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {project.availableMembers.map((m) => (
+                      <SelectItem key={m.id} value={m.id}>
+                        {m.user.name ?? m.user.email}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button
+                  size="sm"
+                  onClick={handleAddMember}
+                  disabled={!selectedMembershipId || teamPending}
+                >
+                  {teamPending ? (
+                    <>
+                      <Loader2 className="mr-1.5 size-3.5 animate-spin" />
+                      {t("overview.adding")}
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="mr-1.5 size-3.5" />
+                      {t("overview.add")}
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+            {teamError && (
+              <p className="text-sm text-destructive">{teamError}</p>
+            )}
             {project.members.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {t("overview.noMembers")}
@@ -254,7 +338,21 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
             ) : (
               <div className="space-y-3">
                 {project.members.map((member) => (
-                  <MemberRow key={member.id} member={member} />
+                  <MemberRow
+                    key={member.id}
+                    member={member}
+                    canRemove={project.canManageTeam}
+                    onRemove={
+                      project.canManageTeam
+                        ? () =>
+                            handleRemoveMember(
+                              member.id,
+                              member.user.name ?? member.user.email
+                            )
+                        : undefined
+                    }
+                    isRemoving={teamPending}
+                  />
                 ))}
               </div>
             )}
@@ -281,9 +379,16 @@ export function ProjectOverview({ project }: ProjectOverviewProps) {
 
 function MemberRow({
   member,
+  canRemove,
+  onRemove,
+  isRemoving,
 }: {
   member: ProjectDetail["members"][number];
+  canRemove: boolean;
+  onRemove?: () => void;
+  isRemoving: boolean;
 }) {
+  const tOverview = useTranslations("projects.overview");
   const roleLabel = useRoleLabel(member.role);
   const initials = (member.user.name ?? member.user.email)
     .split(" ")
@@ -294,7 +399,7 @@ function MemberRow({
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex size-8 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
+      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground">
         {initials}
       </div>
       <div className="min-w-0 flex-1">
@@ -303,6 +408,18 @@ function MemberRow({
         </p>
         <p className="text-xs text-muted-foreground">{roleLabel}</p>
       </div>
+      {canRemove && onRemove && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="shrink-0 text-muted-foreground hover:text-destructive"
+          onClick={onRemove}
+          disabled={isRemoving}
+          aria-label={tOverview("remove")}
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      )}
     </div>
   );
 }

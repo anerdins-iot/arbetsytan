@@ -59,6 +59,7 @@ export const ModelName = {
   VerificationToken: 'VerificationToken',
   Invitation: 'Invitation',
   Project: 'Project',
+  ProjectMember: 'ProjectMember',
   Task: 'Task',
   TaskAssignment: 'TaskAssignment',
   File: 'File',
@@ -197,6 +198,16 @@ export const ProjectScalarFieldEnum = {
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectMemberScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  projectId: 'projectId',
+  membershipId: 'membershipId'
+} as const
+
+export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
 
 
 export const TaskScalarFieldEnum = {

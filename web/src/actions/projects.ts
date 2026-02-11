@@ -2,9 +2,19 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireProject } from "@/lib/auth";
+import { requireAuth, requireProject, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
+
+const addProjectMemberSchema = z.object({
+  projectId: z.string().min(1),
+  membershipId: z.string().min(1),
+});
+
+const removeProjectMemberSchema = z.object({
+  projectId: z.string().min(1),
+  membershipId: z.string().min(1),
+});
 
 const createProjectSchema = z.object({
   name: z.string().min(1).max(200),
@@ -153,6 +163,8 @@ export type ProjectDetail = {
   updatedAt: Date;
   taskStatusCounts: TaskStatusCounts;
   members: ProjectMember[];
+  availableMembers: ProjectMember[];
+  canManageTeam: boolean;
 };
 
 export type GetProjectResult =
@@ -191,8 +203,33 @@ export async function getProject(
     DONE: taskCounts[2],
   };
 
-  // Get tenant members (all tenant members are potential project participants)
-  const memberships = await db.membership.findMany({
+  // Project members (memberships explicitly added to this project)
+  const projectMemberRows = await db.projectMember.findMany({
+    where: { projectId },
+    include: {
+      membership: {
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              image: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const members: ProjectMember[] = projectMemberRows.map((pm) => ({
+    id: pm.membership.id,
+    role: pm.membership.role,
+    user: pm.membership.user,
+  }));
+
+  // Tenant members not yet on the project (for "add member" dropdown)
+  const allMemberships = await db.membership.findMany({
     include: {
       user: {
         select: {
@@ -204,12 +241,22 @@ export async function getProject(
       },
     },
   });
+  const memberIdsOnProject = new Set(members.map((m) => m.id));
+  const availableMembers: ProjectMember[] = allMemberships
+    .filter((m) => !memberIdsOnProject.has(m.id))
+    .map((m) => ({
+      id: m.id,
+      role: m.role,
+      user: m.user,
+    }));
 
-  const members: ProjectMember[] = memberships.map((m) => ({
-    id: m.id,
-    role: m.role,
-    user: m.user,
-  }));
+  // Only Admin or Project Manager can add/remove team members
+  const currentMembership = await db.membership.findFirst({
+    where: { userId },
+  });
+  const canManageTeam =
+    currentMembership?.role === "ADMIN" ||
+    currentMembership?.role === "PROJECT_MANAGER";
 
   return {
     success: true,
@@ -223,6 +270,8 @@ export async function getProject(
       updatedAt: project.updatedAt,
       taskStatusCounts,
       members,
+      availableMembers,
+      canManageTeam,
     },
   };
 }
@@ -272,5 +321,59 @@ export async function updateProject(
   revalidatePath("/[locale]/projects/[projectId]", "page");
   revalidatePath("/[locale]/projects", "page");
 
+  return { success: true };
+}
+
+/**
+ * Add a tenant member to the project. Only Admin or Project Manager.
+ */
+export async function addProjectMember(
+  projectId: string,
+  membershipId: string
+): Promise<ProjectActionResult> {
+  const { tenantId, userId } = await requireRole(["ADMIN", "PROJECT_MANAGER"]);
+  await requireProject(tenantId, projectId, userId);
+  const parsed = addProjectMemberSchema.safeParse({ projectId, membershipId });
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+  const db = tenantDb(tenantId);
+  const membership = await db.membership.findFirst({
+    where: { id: membershipId },
+  });
+  if (!membership) {
+    return { success: false, error: "MEMBER_NOT_FOUND" };
+  }
+  const existing = await db.projectMember.findFirst({
+    where: { projectId, membershipId },
+  });
+  if (existing) {
+    return { success: false, error: "ALREADY_MEMBER" };
+  }
+  await db.projectMember.create({
+    data: { projectId, membershipId },
+  });
+  revalidatePath("/[locale]/projects/[projectId]", "page");
+  return { success: true };
+}
+
+/**
+ * Remove a member from the project. Only Admin or Project Manager.
+ */
+export async function removeProjectMember(
+  projectId: string,
+  membershipId: string
+): Promise<ProjectActionResult> {
+  const { tenantId, userId } = await requireRole(["ADMIN", "PROJECT_MANAGER"]);
+  await requireProject(tenantId, projectId, userId);
+  const parsed = removeProjectMemberSchema.safeParse({ projectId, membershipId });
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+  const db = tenantDb(tenantId);
+  await db.projectMember.deleteMany({
+    where: { projectId, membershipId },
+  });
+  revalidatePath("/[locale]/projects/[projectId]", "page");
   return { success: true };
 }

@@ -6,13 +6,16 @@ import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProjectOverview } from "./project-overview";
+import { KanbanBoard } from "./kanban-board";
 import type { ProjectDetail } from "@/actions/projects";
+import type { TaskItem } from "@/actions/tasks";
 
 type ProjectViewProps = {
   project: ProjectDetail;
+  tasks?: TaskItem[];
 };
 
-export function ProjectView({ project }: ProjectViewProps) {
+export function ProjectView({ project, tasks = [] }: ProjectViewProps) {
   const t = useTranslations("projects");
   const locale = useLocale();
 
@@ -43,9 +46,11 @@ export function ProjectView({ project }: ProjectViewProps) {
         </TabsContent>
 
         <TabsContent value="tasks" className="mt-6">
-          <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-border">
-            <p className="text-muted-foreground">{t("tabs.tasks")}</p>
-          </div>
+          <KanbanBoard
+            tasks={tasks}
+            projectId={project.id}
+            members={project.members}
+          />
         </TabsContent>
 
         <TabsContent value="files" className="mt-6">

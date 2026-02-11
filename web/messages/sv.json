@@ -125,7 +125,17 @@
       "noAddress": "Ingen adress",
       "roleAdmin": "Admin",
       "roleProjectManager": "Projektledare",
-      "roleWorker": "Montör"
+      "roleWorker": "Montör",
+      "addMember": "Lägg till medlem",
+      "selectMember": "Välj medlem",
+      "add": "Lägg till",
+      "remove": "Ta bort",
+      "removeConfirm": "Ta bort {name} från projektet?",
+      "errorAlreadyMember": "Personen tillhör redan projektet.",
+      "errorMemberNotFound": "Medlemmen hittades inte.",
+      "errorForbidden": "Du har inte behörighet att hantera teamet.",
+      "adding": "Lägger till...",
+      "removing": "Tar bort..."
     },
     "edit": {
       "title": "Redigera projekt",
@@ -133,6 +143,54 @@
       "saving": "Sparar...",
       "success": "Projektet har uppdaterats",
       "status": "Status"
+    },
+    "kanban": {
+      "title": "Uppgifter",
+      "addTask": "Ny uppgift",
+      "columns": {
+        "TODO": "Att göra",
+        "IN_PROGRESS": "Pågående",
+        "DONE": "Klart"
+      },
+      "empty": "Inga uppgifter i denna kolumn",
+      "emptyBoard": "Inga uppgifter ännu. Skapa din första uppgift!",
+      "taskCount": "{count, plural, =0 {Inga uppgifter} =1 {1 uppgift} other {# uppgifter}}",
+      "priority": {
+        "LOW": "Låg",
+        "MEDIUM": "Medium",
+        "HIGH": "Hög",
+        "URGENT": "Brådskande"
+      },
+      "deadline": "Deadline",
+      "noDeadline": "Ingen deadline",
+      "overdue": "Försenad",
+      "assignee": "Tilldelad",
+      "unassigned": "Ej tilldelad",
+      "createTask": {
+        "title": "Skapa uppgift",
+        "description": "Lägg till en ny uppgift i projektet",
+        "taskTitle": "Titel",
+        "taskTitlePlaceholder": "T.ex. Installera elcentral",
+        "taskDescription": "Beskrivning",
+        "taskDescriptionPlaceholder": "Beskriv uppgiften...",
+        "taskPriority": "Prioritet",
+        "taskDeadline": "Deadline",
+        "taskAssign": "Tilldela till",
+        "selectMember": "Välj medlem",
+        "noMember": "Ingen",
+        "creating": "Skapar...",
+        "create": "Skapa uppgift"
+      },
+      "assign": {
+        "title": "Tilldela uppgift",
+        "selectMember": "Välj teammedlem",
+        "assigned": "Tilldelade",
+        "noMembers": "Inga teammedlemmar",
+        "assign": "Tilldela",
+        "unassign": "Ta bort tilldelning"
+      },
+      "errorGeneric": "Något gick fel. Försök igen.",
+      "errorLoadTasks": "Kunde inte ladda uppgifter."
     }
   },
   "settings": {

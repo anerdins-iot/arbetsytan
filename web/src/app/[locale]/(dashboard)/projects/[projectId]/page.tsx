@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { getProject } from "@/actions/projects";
+import { getTasks } from "@/actions/tasks";
 import { ProjectView } from "@/components/projects/project-view";
 
 type Props = {
@@ -9,13 +10,23 @@ type Props = {
 };
 
 async function ProjectContent({ projectId }: { projectId: string }) {
-  const result = await getProject(projectId);
+  const [projectResult, tasksResult] = await Promise.all([
+    getProject(projectId),
+    getTasks(projectId),
+  ]);
 
-  if (!result.success) {
+  if (!projectResult.success) {
     notFound();
   }
 
-  return <ProjectView project={result.project} />;
+  const tasks = tasksResult.success ? tasksResult.tasks : [];
+
+  return (
+    <ProjectView
+      project={projectResult.project}
+      tasks={tasks}
+    />
+  );
 }
 
 export default async function ProjectPage({ params }: Props) {

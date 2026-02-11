@@ -125,7 +125,17 @@
       "noAddress": "No address",
       "roleAdmin": "Admin",
       "roleProjectManager": "Project Manager",
-      "roleWorker": "Worker"
+      "roleWorker": "Worker",
+      "addMember": "Add member",
+      "selectMember": "Select member",
+      "add": "Add",
+      "remove": "Remove",
+      "removeConfirm": "Remove {name} from the project?",
+      "errorAlreadyMember": "This person is already on the project.",
+      "errorMemberNotFound": "Member not found.",
+      "errorForbidden": "You do not have permission to manage the team.",
+      "adding": "Adding...",
+      "removing": "Removing..."
     },
     "edit": {
       "title": "Edit project",
@@ -133,6 +143,54 @@
       "saving": "Saving...",
       "success": "Project has been updated",
       "status": "Status"
+    },
+    "kanban": {
+      "title": "Tasks",
+      "addTask": "New task",
+      "columns": {
+        "TODO": "To do",
+        "IN_PROGRESS": "In progress",
+        "DONE": "Done"
+      },
+      "empty": "No tasks in this column",
+      "emptyBoard": "No tasks yet. Create your first task!",
+      "taskCount": "{count, plural, =0 {No tasks} =1 {1 task} other {# tasks}}",
+      "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "deadline": "Deadline",
+      "noDeadline": "No deadline",
+      "overdue": "Overdue",
+      "assignee": "Assigned to",
+      "unassigned": "Unassigned",
+      "createTask": {
+        "title": "Create task",
+        "description": "Add a new task to the project",
+        "taskTitle": "Title",
+        "taskTitlePlaceholder": "E.g. Install electrical panel",
+        "taskDescription": "Description",
+        "taskDescriptionPlaceholder": "Describe the task...",
+        "taskPriority": "Priority",
+        "taskDeadline": "Deadline",
+        "taskAssign": "Assign to",
+        "selectMember": "Select member",
+        "noMember": "None",
+        "creating": "Creating...",
+        "create": "Create task"
+      },
+      "assign": {
+        "title": "Assign task",
+        "selectMember": "Select team member",
+        "assigned": "Assigned",
+        "noMembers": "No team members",
+        "assign": "Assign",
+        "unassign": "Unassign"
+      },
+      "errorGeneric": "Something went wrong. Please try again.",
+      "errorLoadTasks": "Could not load tasks."
     }
   },
   "settings": {
