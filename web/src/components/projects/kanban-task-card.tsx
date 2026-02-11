@@ -30,6 +30,7 @@ type KanbanTaskCardProps = {
   projectId: string;
   members: ProjectMember[];
   isDragging?: boolean;
+  onTaskClick?: (task: TaskItem) => void;
 };
 
 const priorityVariant: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
@@ -44,6 +45,7 @@ export function KanbanTaskCard({
   projectId,
   members,
   isDragging = false,
+  onTaskClick,
 }: KanbanTaskCardProps) {
   const t = useTranslations("projects.kanban");
   const router = useRouter();
@@ -110,9 +112,13 @@ export function KanbanTaskCard({
         </button>
 
         <div className="min-w-0 flex-1 space-y-2">
-          <p className="text-sm font-medium leading-tight text-foreground">
+          <button
+            type="button"
+            className="text-left text-sm font-medium leading-tight text-foreground hover:text-primary hover:underline"
+            onClick={() => onTaskClick?.(task)}
+          >
             {task.title}
-          </p>
+          </button>
 
           {task.description && (
             <p className="line-clamp-2 text-xs text-muted-foreground">

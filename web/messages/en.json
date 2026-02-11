@@ -190,7 +190,31 @@
         "unassign": "Unassign"
       },
       "errorGeneric": "Something went wrong. Please try again.",
-      "errorLoadTasks": "Could not load tasks."
+      "errorLoadTasks": "Could not load tasks.",
+      "filter": {
+        "assignee": "Assigned to",
+        "allAssignees": "All assignees",
+        "priority": "Priority",
+        "allPriorities": "All priorities",
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "clear": "Clear filters"
+      }
+    },
+    "taskDetail": {
+      "title": "Task details",
+      "description": "View and edit the task",
+      "taskTitle": "Title",
+      "taskDescription": "Description",
+      "taskPriority": "Priority",
+      "taskStatus": "Status",
+      "taskDeadline": "Deadline",
+      "assignees": "Assigned to",
+      "addAssignee": "Assign",
+      "created": "Created",
+      "updated": "Updated",
+      "saving": "Saving...",
+      "deleteConfirm": "Are you sure?"
     }
   },
   "settings": {

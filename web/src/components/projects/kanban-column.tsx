@@ -13,6 +13,7 @@ type KanbanColumnProps = {
   projectId: string;
   members: ProjectMember[];
   isPending: boolean;
+  onTaskClick?: (task: TaskItem) => void;
 };
 
 export function KanbanColumn({
@@ -21,6 +22,7 @@ export function KanbanColumn({
   projectId,
   members,
   isPending,
+  onTaskClick,
 }: KanbanColumnProps) {
   const t = useTranslations("projects.kanban");
   const { setNodeRef, isOver } = useDroppable({ id: status });
@@ -57,6 +59,7 @@ export function KanbanColumn({
               task={task}
               projectId={projectId}
               members={members}
+              onTaskClick={onTaskClick}
             />
           ))
         )}

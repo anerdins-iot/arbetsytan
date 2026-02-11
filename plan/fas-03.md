@@ -47,14 +47,14 @@
 **Input:** Block 3.3 klart
 **Output:** Fungerande kanban med uppgiftshantering
 
-- [ ] Bygga kanban-board med tre kolumner: Att göra, Pågående, Klart
-- [ ] Server Action `getTasks` filtrerat på projectId + tenantId
-- [ ] Drag-and-drop för att flytta uppgifter mellan kolumner
-- [ ] Server Action `updateTaskStatus` som uppdaterar status
-- [ ] Skapa ny uppgift — modal med titel, beskrivning, prioritet, deadline
-- [ ] Server Action `createTask` med Zod-validering
-- [ ] Tilldela uppgift till projektmedlem
-- [ ] Server Action `assignTask` som skapar TaskAssignment
+- [x] Bygga kanban-board med tre kolumner: Att göra, Pågående, Klart
+- [x] Server Action `getTasks` filtrerat på projectId + tenantId
+- [x] Drag-and-drop för att flytta uppgifter mellan kolumner
+- [x] Server Action `updateTaskStatus` som uppdaterar status
+- [x] Skapa ny uppgift — modal med titel, beskrivning, prioritet, deadline
+- [x] Server Action `createTask` med Zod-validering
+- [x] Tilldela uppgift till projektmedlem
+- [x] Server Action `assignTask` som skapar TaskAssignment
 
 **Verifiering:** Kanban renderas, drag-and-drop fungerar, uppgifter skapas/uppdateras, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -84,10 +84,10 @@
 **Input:** Block 3.3 klart (projektvy finns)
 **Output:** Team-hantering i projektvyn
 
-- [ ] Visa projektmedlemmar i projektvyn
-- [ ] Lägga till befintliga teammedlemmar (från tenant) till projekt
-- [ ] Ta bort medlem från projekt
-- [ ] Server Actions med roller-check (bara admin/projektledare kan hantera)
+- [x] Visa projektmedlemmar i projektvyn
+- [x] Lägga till befintliga teammedlemmar (från tenant) till projekt
+- [x] Ta bort medlem från projekt
+- [x] Server Actions med roller-check (bara admin/projektledare kan hantera)
 
 **Verifiering:** Medlemmar visas/läggs till/tas bort, rollcheck fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 

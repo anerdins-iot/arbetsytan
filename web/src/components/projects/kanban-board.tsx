@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
@@ -13,16 +13,16 @@ import {
   type DragStartEvent,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import { Plus, GripVertical, Calendar, AlertCircle, Clock, User } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { updateTaskStatus } from "@/actions/tasks";
-import type { TaskItem, TaskAssignee } from "@/actions/tasks";
+import type { TaskItem } from "@/actions/tasks";
 import type { ProjectMember } from "@/actions/projects";
 import { KanbanColumn } from "./kanban-column";
 import { KanbanTaskCard } from "./kanban-task-card";
 import { CreateTaskDialog } from "./create-task-dialog";
+import { TaskDetailSheet } from "./task-detail-sheet";
+import { KanbanFiltersBar, type KanbanFilters } from "./kanban-filters";
 
 type KanbanBoardProps = {
   tasks: TaskItem[];
@@ -39,6 +39,13 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
   const [isPending, startTransition] = useTransition();
   const [activeTask, setActiveTask] = useState<TaskItem | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [detailTask, setDetailTask] = useState<TaskItem | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [filters, setFilters] = useState<KanbanFilters>({
+    assignee: "all",
+    priority: "all",
+    status: "all",
+  });
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -48,14 +55,35 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
     })
   );
 
+  // Apply filters
+  const filteredTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      if (filters.assignee !== "all") {
+        if (filters.assignee === "unassigned") {
+          if (task.assignments.length > 0) return false;
+        } else {
+          if (!task.assignments.some((a) => a.membershipId === filters.assignee))
+            return false;
+        }
+      }
+      if (filters.priority !== "all" && task.priority !== filters.priority) {
+        return false;
+      }
+      if (filters.status !== "all" && task.status !== filters.status) {
+        return false;
+      }
+      return true;
+    });
+  }, [tasks, filters]);
+
   const tasksByStatus: Record<ColumnStatus, TaskItem[]> = {
-    TODO: tasks.filter((t) => t.status === "TODO"),
-    IN_PROGRESS: tasks.filter((t) => t.status === "IN_PROGRESS"),
-    DONE: tasks.filter((t) => t.status === "DONE"),
+    TODO: filteredTasks.filter((t) => t.status === "TODO"),
+    IN_PROGRESS: filteredTasks.filter((t) => t.status === "IN_PROGRESS"),
+    DONE: filteredTasks.filter((t) => t.status === "DONE"),
   };
 
   function handleDragStart(event: DragStartEvent) {
-    const task = tasks.find((t) => t.id === event.active.id);
+    const task = filteredTasks.find((t) => t.id === event.active.id);
     if (task) setActiveTask(task);
   }
 
@@ -66,10 +94,9 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
     if (!over) return;
 
     const taskId = active.id as string;
-    const task = tasks.find((t) => t.id === taskId);
+    const task = filteredTasks.find((t) => t.id === taskId);
     if (!task) return;
 
-    // The over target is a column id (status)
     const newStatus = over.id as string;
     if (!COLUMNS.includes(newStatus as ColumnStatus)) return;
     if (task.status === newStatus) return;
@@ -83,6 +110,11 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
         router.refresh();
       }
     });
+  }
+
+  function handleTaskClick(task: TaskItem) {
+    setDetailTask(task);
+    setDetailOpen(true);
   }
 
   if (tasks.length === 0) {
@@ -118,6 +150,12 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
         </Button>
       </div>
 
+      <KanbanFiltersBar
+        filters={filters}
+        onFiltersChange={setFilters}
+        members={members}
+      />
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -133,6 +171,7 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
               projectId={projectId}
               members={members}
               isPending={isPending}
+              onTaskClick={handleTaskClick}
             />
           ))}
         </div>
@@ -152,6 +191,14 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
       <CreateTaskDialog
         open={createOpen}
         onOpenChange={setCreateOpen}
+        projectId={projectId}
+        members={members}
+      />
+
+      <TaskDetailSheet
+        task={detailTask}
+        open={detailOpen}
+        onOpenChange={setDetailOpen}
         projectId={projectId}
         members={members}
       />

@@ -190,7 +190,31 @@
         "unassign": "Ta bort tilldelning"
       },
       "errorGeneric": "Något gick fel. Försök igen.",
-      "errorLoadTasks": "Kunde inte ladda uppgifter."
+      "errorLoadTasks": "Kunde inte ladda uppgifter.",
+      "filter": {
+        "assignee": "Tilldelad",
+        "allAssignees": "Alla tilldelade",
+        "priority": "Prioritet",
+        "allPriorities": "Alla prioriteter",
+        "status": "Status",
+        "allStatuses": "Alla statusar",
+        "clear": "Rensa filter"
+      }
+    },
+    "taskDetail": {
+      "title": "Uppgiftsdetaljer",
+      "description": "Visa och redigera uppgiften",
+      "taskTitle": "Titel",
+      "taskDescription": "Beskrivning",
+      "taskPriority": "Prioritet",
+      "taskStatus": "Status",
+      "taskDeadline": "Deadline",
+      "assignees": "Tilldelade",
+      "addAssignee": "Tilldela",
+      "created": "Skapad",
+      "updated": "Uppdaterad",
+      "saving": "Sparar...",
+      "deleteConfirm": "Är du säker?"
     }
   },
   "settings": {

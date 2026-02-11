@@ -64,6 +64,19 @@ const updateTaskStatusSchema = z.object({
   status: z.enum(["TODO", "IN_PROGRESS", "DONE"]),
 });
 
+const updateTaskSchema = z.object({
+  taskId: z.string().min(1),
+  title: z.string().min(1).max(200),
+  description: z.string().max(2000).optional(),
+  priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]),
+  status: z.enum(["TODO", "IN_PROGRESS", "DONE"]),
+  deadline: z.string().optional(),
+});
+
+const deleteTaskSchema = z.object({
+  taskId: z.string().min(1),
+});
+
 const assignTaskSchema = z.object({
   taskId: z.string().min(1),
   membershipId: z.string().min(1),
@@ -263,6 +276,99 @@ export async function assignTask(
       task: { connect: { id: parsed.data.taskId } },
       membership: { connect: { id: parsed.data.membershipId } },
     },
+  });
+
+  revalidatePath("/[locale]/projects/[projectId]", "page");
+
+  return { success: true };
+}
+
+/**
+ * Update all fields of a task (title, description, priority, status, deadline).
+ * Requires auth + project access check + Zod validation.
+ */
+export async function updateTask(
+  projectId: string,
+  data: {
+    taskId: string;
+    title: string;
+    description?: string;
+    priority: string;
+    status: string;
+    deadline?: string;
+  }
+): Promise<TaskActionResult> {
+  const { tenantId, userId } = await requireAuth();
+  await requireProject(tenantId, projectId, userId);
+
+  const parsed = updateTaskSchema.safeParse(data);
+  if (!parsed.success) {
+    return {
+      success: false,
+      fieldErrors: parsed.error.flatten().fieldErrors as Record<
+        string,
+        string[]
+      >,
+    };
+  }
+
+  const db = tenantDb(tenantId);
+
+  const task = await db.task.findFirst({
+    where: { id: parsed.data.taskId, projectId },
+  });
+  if (!task) {
+    return { success: false, error: "TASK_NOT_FOUND" };
+  }
+
+  await db.task.update({
+    where: { id: parsed.data.taskId },
+    data: {
+      title: parsed.data.title,
+      description: parsed.data.description ?? null,
+      priority: parsed.data.priority as Priority,
+      status: parsed.data.status as TaskStatus,
+      deadline: parsed.data.deadline ? new Date(parsed.data.deadline) : null,
+    },
+  });
+
+  revalidatePath("/[locale]/projects/[projectId]", "page");
+
+  return { success: true };
+}
+
+/**
+ * Delete a task from a project.
+ * Requires auth + project access check.
+ */
+export async function deleteTask(
+  projectId: string,
+  data: { taskId: string }
+): Promise<TaskActionResult> {
+  const { tenantId, userId } = await requireAuth();
+  await requireProject(tenantId, projectId, userId);
+
+  const parsed = deleteTaskSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const db = tenantDb(tenantId);
+
+  const task = await db.task.findFirst({
+    where: { id: parsed.data.taskId, projectId },
+  });
+  if (!task) {
+    return { success: false, error: "TASK_NOT_FOUND" };
+  }
+
+  // Delete assignments first, then task
+  await db.taskAssignment.deleteMany({
+    where: { taskId: parsed.data.taskId },
+  });
+
+  await db.task.delete({
+    where: { id: parsed.data.taskId },
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
