@@ -20,29 +20,30 @@ Se `PROJEKT.md` för fullständig beskrivning, `AI.md` för AI-arkitektur, `UI.m
 
 ## Modellval per uppgiftstyp
 
-| Uppgiftstyp | Provider / Modell | Notering |
-|---|---|---|
-| Enkel implementation (1-2 filer) | Gemini `gemini-3-flash-preview` | Snabb och billig |
-| Komplex implementation (3+ filer, frontend↔backend) | Claude `opus` | Bäst kodkvalitet |
-| Felsökning | Claude `opus` | Djup analys |
-| Analys / research | Cursor `auto` (2 parallella) | Snabb utforskning |
-| Verifiering / granskning | Gemini `gemini-3-pro-preview` | Grundlig kontroll |
+| Uppgiftstyp | Provider / Modell | Fallback | Notering |
+|---|---|---|---|
+| Frontend och UI | Claude `opus` | Cursor `gpt-5.3-codex` | Komponenter, sidor, styling, layout |
+| Backend, API och databas | Cursor `auto` | Gemini `gemini-3-flash-preview` | Server Actions, Prisma-queries, API-routes |
+| Analys och research | Cursor `auto` | — | Parallella agenter för kodanalys innan implementation |
+| Verifiering och granskning | Gemini `gemini-3-flash-preview` | Cursor `auto` | Kontrollerar build, TypeScript, krav |
+| Felsökning (analys) | Gemini `gemini-3-flash-preview` + Cursor `auto` | — | Parallella agenter som analyserar utan att ändra |
+| Felsökning (fix) | Cursor `auto` | — | Separat agent som fixar baserat på analysen |
+| Test (Playwright) | Claude `haiku` | — | MCP Playwright-navigering med screenshots |
 
 ## Arbetsflöde per agentblock
 
-Varje agentblock genomförs i tre steg:
+Varje agentblock genomförs i fyra steg:
 
 ### 1. Analys
 - Spawna 1-2 forskningsagenter (Cursor `auto`) som analyserar relevanta filer, scheman och existerande kod
 - Resultatet ger implementationsagenten den kontext den behöver
 
 ### 2. Implementation
-- Spawna implementationsagent med rätt modell (se tabell ovan)
+- Bedöm blockets karaktär och välj modell enligt tabellen ovan (frontend → Claude Opus, backend → Cursor Auto, etc.)
 - Agenten får blockets specifikation, input-filer och analysresultat
-- Max ~5-8 steg per block
 
 ### 3. Verifiering
-- Spawna verifieringsagent (Gemini `gemini-3-pro-preview`) som kontrollerar:
+- Spawna verifieringsagent (Gemini `gemini-3-flash-preview`, fallback Cursor `auto`) som kontrollerar:
   - Koden bygger utan fel (`npm run build`)
   - Inga TypeScript-fel (`npx tsc --noEmit`)
   - Funktionaliteten matchar kraven i blockets specifikation
@@ -51,13 +52,21 @@ Varje agentblock genomförs i tre steg:
   - Inga hårdkodade färger — alla via CSS-variabler/Tailwind
   - Inga säkerhetshål (auth-check i alla Server Actions)
 
+### 4. Test
+- Spawna testagent (Claude `haiku`) som kör MCP Playwright-tester
+- Navigera genom blockets sidor och flöden, ta screenshots vid varje steg
+- Spara screenshots i `screenshots/fas-XX/block-X.X/` med namngivning: `01-steg.png`, `02-steg.png`, etc.
+- Tidiga faser (1-2): Fokus på build, API-svar, routing
+- Mellanfaser (3-9): Fullständig navigering med screenshots
+- Sena faser (10-12): Visuell kontroll och responsivitet
+
 ## Handoff mellan block
 
 - **Input**: Vad som måste vara klart innan blocket kan starta
 - **Output**: Vad blocket levererar (filer, funktioner, endpoints)
 - **Verifiering**: Specifika kontroller som måste passera
 
-Nästa block kan **inte** starta innan föregående blocks verifiering är godkänd. Om verifieringen misslyckas: åtgärda och verifiera igen.
+Nästa block kan **inte** starta innan föregående blocks checkboxar är avbockade i fas-filen. Om en checkbox inte är ifylld är steget inte klart. Kontrollera alltid fas-filen innan du börjar ett nytt block. Om verifieringen misslyckas: åtgärda och verifiera igen.
 
 ## Faser
 

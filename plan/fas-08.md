@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 8.1: Tidrapportering
-**Modell:** Claude `opus` (komplex, UI + CRUD + summering)
 **Input:** Fas 3 klar (projekt + uppgifter)
 **Output:** Fungerande tidrapporteringssystem
 
@@ -19,7 +18,6 @@
 **Verifiering:** Tider registreras/uppdateras/raderas, summering korrekt, tenantId-filter, `npm run build` OK
 
 ### Block 8.2: Export och rapporter
-**Modell:** Claude `opus` (komplex, PDF/Excel-generering + MinIO)
 **Input:** Block 8.1 + Fas 4 klara (tidsdata + MinIO)
 **Output:** Export-funktionalitet
 

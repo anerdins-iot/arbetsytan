@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 6.1: In-app-notifikationer och SSE
-**Modell:** Claude `opus` (komplex, SSE + realtid + UI)
 **Input:** Fas 2 klar (auth), Fas 3 klar (dashboard)
 **Output:** Fungerande notifikationssystem med SSE
 
@@ -18,7 +17,6 @@
 **Verifiering:** SSE-anslutning fungerar, notifikationer visas i realtid, markering fungerar, tenantId-filter, `npm run build` OK
 
 ### Block 6.2: Push och e-postnotifikationer
-**Modell:** Claude `opus` (komplex, Web Push API + Resend)
 **Input:** Block 6.1 klart, Resend konfigurerat (Block 2.4)
 **Output:** Push- och e-postnotifikationer
 
@@ -32,7 +30,6 @@
 **Verifiering:** Push-notis skickas, e-post skickas, inställningar sparas, `npm run build` OK
 
 ### Block 6.3: Realtidsuppdateringar
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, bygger på befintlig SSE)
 **Input:** Block 6.1 klart (SSE fungerar)
 **Output:** Realtidsuppdateringar av UI
 
@@ -44,7 +41,6 @@
 **Verifiering:** UI uppdateras vid ändringar från annan användare, `npm run build` OK
 
 ### Block 6.4: Påminnelser vid inaktivitet
-**Modell:** Claude `opus` (komplex, bakgrundsjobb + AI-bedömning)
 **Input:** Block 6.1 + 6.2 klara
 **Output:** Automatiska påminnelser
 

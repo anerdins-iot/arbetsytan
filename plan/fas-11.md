@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 11.1: Expo-setup och auth
-**Modell:** Claude `opus` (komplex, nytt projekt + auth-flöde)
 **Input:** Fas 2 klar (auth-endpoints), `/docs/expo.md`
 **Output:** Expo-projekt med autentisering
 
@@ -17,7 +16,6 @@
 **Verifiering:** App startar, inloggning fungerar mot backend, token sparas säkert
 
 ### Block 11.2: Grundläggande skärmar
-**Modell:** Claude `opus` (komplex, 5+ skärmar)
 **Input:** Block 11.1 klart
 **Output:** Alla grundskärmar
 
@@ -30,7 +28,6 @@
 **Verifiering:** Alla skärmar renderas, data hämtas från API, navigation fungerar
 
 ### Block 11.3: Mobilspecifikt
-**Modell:** Claude `opus` (komplex, push + kamera + offline)
 **Input:** Block 11.2 klart
 **Output:** Mobilspecifika funktioner
 
@@ -41,7 +38,6 @@
 **Verifiering:** Push-notifikationer fungerar, kamera laddar upp bilder, offline-cache fungerar
 
 ### Block 11.4: Build och distribution
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, konfiguration)
 **Input:** Block 11.2 + 11.3 klara
 **Output:** Buildkonfiguration och distribution
 

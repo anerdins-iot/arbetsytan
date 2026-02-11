@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 5.1: Vercel AI SDK-setup
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, 2 filer)
 **Input:** Fas 1 klar, API-nycklar för Anthropic/OpenAI/Mistral
 **Output:** Fungerande AI-streaming-endpoint
 
@@ -17,7 +16,6 @@
 **Verifiering:** Streaming fungerar, AI svarar, SSE-events skickas, `npm run build` OK
 
 ### Block 5.2: Projekt-AI — Chatt och kontext
-**Modell:** Claude `opus` (komplex, AI + verktyg + UI)
 **Input:** Block 5.1 + Fas 3 + Fas 4 klara
 **Output:** Fungerande projekt-AI med chattgränssnitt
 
@@ -30,7 +28,6 @@
 **Verifiering:** Chatt fungerar, meddelanden sparas i DB, kontext injiceras, `npm run build` OK
 
 ### Block 5.3: Projekt-AI — Verktyg
-**Modell:** Claude `opus` (komplex, tool calling)
 **Input:** Block 5.2 klart
 **Output:** AI-verktyg för projekthantering
 
@@ -45,7 +42,6 @@
 **Verifiering:** Alla verktyg anropas korrekt av AI, tenantId-filter i alla verktyg, resultat returneras, `npm run build` OK
 
 ### Block 5.4: Personlig AI
-**Modell:** Claude `opus` (komplex, global komponent + verktyg)
 **Input:** Block 5.2 klart (AI-infrastruktur)
 **Output:** Global personlig AI-assistent
 
@@ -63,7 +59,6 @@
 **Verifiering:** Chattkomponent visas globalt, verktyg fungerar, tenantId-filter, `npm run build` OK
 
 ### Block 5.5: AI-kommunikation
-**Modell:** Claude `opus` (komplex, meddelandeflöde mellan AI:er)
 **Input:** Block 5.3 + 5.4 klara
 **Output:** Fungerande kommunikation mellan AI-assistenter
 
@@ -76,7 +71,6 @@
 **Verifiering:** Meddelanden skickas mellan AI:er, trådar fungerar, automatiska triggers fungerar, `npm run build` OK
 
 ### Block 5.6: Konversationshantering
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, 1–2 filer)
 **Input:** Block 5.2 klart
 **Output:** Konversationshistorik och sammanfattning
 
@@ -89,7 +83,6 @@
 **Verifiering:** Meddelanden sparas, sammanfattning genereras, historik visas, `npm run build` OK
 
 ### Block 5.7: Dokumentanalys och generering
-**Modell:** Claude `opus` (komplex, filgenerering + MinIO-integration)
 **Input:** Block 5.3 + Fas 4 klara
 **Output:** AI kan analysera och generera dokument
 

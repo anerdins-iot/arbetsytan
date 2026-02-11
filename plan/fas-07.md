@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 7.1: Företags- och användarinställningar
-**Modell:** Claude `opus` (komplex, 3+ sektioner + roller)
 **Input:** Fas 2 klar (auth + roller)
 **Output:** Inställningssidor
 
@@ -19,7 +18,6 @@
 **Verifiering:** Inställningar sparas, rollcheck fungerar, admin-only åtkomst, tenantId-filter, `npm run build` OK
 
 ### Block 7.2: Rättighetshantering
-**Modell:** Claude `opus` (komplex, permissions-system)
 **Input:** Block 7.1 klart
 **Output:** Konfigurerbart rättighetssystem
 
@@ -31,7 +29,6 @@
 **Verifiering:** Rättigheter sparas och respekteras, alla Server Actions kontrollerar permissions, `npm run build` OK
 
 ### Block 7.3: Personliga inställningar
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, 1–2 filer)
 **Input:** Fas 2 klar (auth)
 **Output:** Profil- och preferenssida
 

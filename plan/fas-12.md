@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 12.1: Docker och Coolify
-**Modell:** Claude `opus` (komplex, Docker + Coolify + infrastruktur)
 **Input:** Hela appen klar, `/docs/docker.md`, `/docs/coolify.md`
 **Output:** Produktionsdeploy
 
@@ -22,7 +21,6 @@
 **Verifiering:** Docker-image bygger, deploy lyckas, appen svarar på domän med SSL
 
 ### Block 12.2: Övervakning
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, 1–2 filer)
 **Input:** Block 12.1 klart
 **Output:** Grundläggande övervakning
 

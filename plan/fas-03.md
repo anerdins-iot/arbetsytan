@@ -3,10 +3,7 @@
 > Läs `plan/README.md` först för arbetsflöde och regler.
 > Läs relevanta `/docs/*.md` innan implementation.
 
-## Fas 3 — Dashboard och projekt
-
 ### Block 3.1: Dashboard
-**Modell:** Claude `opus` (komplex, 3+ filer, frontend + data)
 **Input:** Fas 1 + Fas 2 klara
 **Output:** Fungerande dashboard-sida
 
@@ -20,7 +17,6 @@
 **Verifiering:** Dashboard renderas, data filtreras på tenantId, montörs-vy visas för rätt roll, `npm run build` OK
 
 ### Block 3.2: Projektlista och skapande
-**Modell:** Claude `opus` (komplex, frontend + backend)
 **Input:** Fas 2 klar (auth + layout)
 **Output:** Projektlista-sida med CRUD
 
@@ -34,7 +30,6 @@
 **Verifiering:** Projektlista visar data, filter fungerar, skapande fungerar, tenantId-filter på alla queries, `npm run build` OK
 
 ### Block 3.3: Projektvy — Översikt
-**Modell:** Claude `opus` (komplex, fliknavigation + CRUD)
 **Input:** Block 3.2 klart
 **Output:** Projektvy med flikar och översikt
 
@@ -49,7 +44,6 @@
 **Verifiering:** Projektvy renderas, fliknavigation fungerar, redigering sparas, tenantId-filter, `npm run build` OK
 
 ### Block 3.4: Kanban-board
-**Modell:** Claude `opus` (komplex, drag-and-drop + CRUD)
 **Input:** Block 3.3 klart
 **Output:** Fungerande kanban med uppgiftshantering
 
@@ -65,7 +59,6 @@
 **Verifiering:** Kanban renderas, drag-and-drop fungerar, uppgifter skapas/uppdateras, tenantId-filter, `npm run build` OK
 
 ### Block 3.5: Uppgiftsdetalj och filtrering
-**Modell:** Claude `opus` (komplex, detaljvy + filter)
 **Input:** Block 3.4 klart
 **Output:** Uppgiftsdetalj-vy med redigering och filtrering
 
@@ -76,7 +69,6 @@
 **Verifiering:** Detaljvy renderas, redigering sparar, filtrering fungerar, `npm run build` OK
 
 ### Block 3.6: Kommentarer
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, 1–2 filer)
 **Input:** Block 3.5 klart (uppgiftsdetalj finns)
 **Output:** Kommentarsfunktionalitet på uppgifter
 
@@ -89,7 +81,6 @@
 **Verifiering:** Kommentarer skapas/visas/raderas, auth-check, tenantId-filter, `npm run build` OK
 
 ### Block 3.7: Teamhantering
-**Modell:** Gemini `gemini-3-flash-preview` (enkel, 1–2 filer)
 **Input:** Block 3.3 klart (projektvy finns)
 **Output:** Team-hantering i projektvyn
 
@@ -101,7 +92,6 @@
 **Verifiering:** Medlemmar visas/läggs till/tas bort, rollcheck fungerar, `npm run build` OK
 
 ### Block 3.8: Aktivitetslogg
-**Modell:** Claude `opus` (komplex, loggning + UI + paginering)
 **Input:** Block 3.3 + 3.4 klara (projektvy + uppgifter)
 **Output:** Aktivitetslogg-system
 
@@ -114,7 +104,6 @@
 **Verifiering:** Händelser loggas vid alla CRUD-operationer, paginering fungerar, tenantId-filter, `npm run build` OK
 
 ### Block 3.9: Global sökning
-**Modell:** Claude `opus` (komplex, sökning + grupperade resultat)
 **Input:** Block 3.2 + 3.4 klara (projekt + uppgifter)
 **Output:** Global sökfunktion
 

@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 1.1A: Next.js och Docker-setup
-**Modell:** Claude `opus` (komplex setup, 3+ filer)
 **Input:** Tomt projekt, `PROJEKT.md`, `/docs/nextjs.md`, `/docs/tailwind.md`, `/docs/docker.md`
 **Output:** Fungerande Next.js-projekt med Docker-tjänster
 
@@ -18,7 +17,6 @@
 **Verifiering:** `npm run build` OK, `docker-compose up -d` OK, alla tjänster svarar
 
 ### Block 1.1B: Prisma och databas
-**Modell:** Gemini `gemini-3-flash-preview` (1–2 filer)
 **Input:** Block 1.1A klart, `schema.prisma`, `/docs/prisma.md`
 **Output:** Migrerad databas med seed-data
 
@@ -33,7 +31,6 @@
 **Verifiering:** `prisma migrate dev` OK, `prisma db seed` OK, alla tabeller skapade
 
 ### Block 1.2: Internationalisering
-**Modell:** Gemini `gemini-3-flash-preview` (2 filer + config)
 **Input:** Block 1.1A klart (fungerande Next.js-projekt)
 **Output:** Fungerande i18n med sv/en
 
@@ -48,7 +45,6 @@
 **Verifiering:** `/sv/` och `/en/` laddar korrekt, `npm run build` OK
 
 ### Block 1.3: Layout och routing
-**Modell:** Claude `opus` (komplex frontend, 3+ filer)
 **Input:** Block 1.1A + Block 1.2 klara (Next.js + i18n)
 **Output:** Grundläggande applikationslayout med navigation
 

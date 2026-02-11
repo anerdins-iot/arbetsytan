@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 9.1: Stripe-setup och trial
-**Modell:** Claude `opus` (komplex, Stripe API + webhooks)
 **Input:** Fas 2 klar (registrering), `/docs/stripe.md`
 **Output:** Stripe-integration med trial
 
@@ -18,7 +17,6 @@
 **Verifiering:** Webhook tar emot events, trial skapas vid registrering, Subscription sparas i DB, `npm run build` OK
 
 ### Block 9.2: Prenumerationshantering
-**Modell:** Claude `opus` (komplex, Stripe Portal + statushantering)
 **Input:** Block 9.1 klart
 **Output:** Faktureringssida med prenumerationshantering
 

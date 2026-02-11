@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 4.1: MinIO-integration och uppladdning
-**Modell:** Claude `opus` (komplex, MinIO + presigned URLs + upload-komponent)
 **Input:** Fas 1 klar (Docker med MinIO), Fas 2 klar (auth)
 **Output:** Fungerande filuppladdning till MinIO
 
@@ -22,7 +21,6 @@
 **Verifiering:** Filer laddas upp till MinIO, metadata sparas i DB, presigned URLs fungerar, tenantId-filter, `npm run build` OK
 
 ### Block 4.2: Fillista och förhandsgranskning
-**Modell:** Claude `opus` (komplex, preview + lightbox + viewer)
 **Input:** Block 4.1 klart
 **Output:** Fillista med förhandsgranskning
 
@@ -36,7 +34,6 @@
 **Verifiering:** Filer visas, förhandsgranskning fungerar, radering rensar MinIO + DB, tenantId-filter, `npm run build` OK
 
 ### Block 4.3: OCR-pipeline
-**Modell:** Claude `opus` (komplex, AI-integration + chunkning)
 **Input:** Block 4.1 klart, Mistral API-nyckel
 **Output:** Automatisk OCR vid filuppladdning
 
@@ -50,7 +47,6 @@
 **Verifiering:** OCR körs vid upload, text sparas, chunks skapas, text visas i UI, `npm run build` OK
 
 ### Block 4.4: Embeddings-pipeline
-**Modell:** Claude `opus` (komplex, vektordatabas + sökning)
 **Input:** Block 4.3 klart, OpenAI API-nyckel
 **Output:** Semantisk sökning i dokument
 

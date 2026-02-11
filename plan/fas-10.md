@@ -4,7 +4,6 @@
 > Läs relevanta `/docs/*.md` innan implementation.
 
 ### Block 10.1: Landningssida
-**Modell:** Claude `opus` (komplex, 3+ sektioner + responsiv + SEO)
 **Input:** Fas 1 klar (Next.js + i18n)
 **Output:** Publik landningssida
 

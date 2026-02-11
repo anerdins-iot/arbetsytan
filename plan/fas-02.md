@@ -3,10 +3,7 @@
 > Läs `plan/README.md` först för arbetsflöde och regler.
 > Läs relevanta `/docs/*.md` innan implementation.
 
-## Fas 2 — Autentisering och multi-tenant
-
 ### Block 2.1: Auth.js-konfiguration
-**Modell:** Claude `opus` (komplex, auth + callbacks + proxy)
 **Input:** Fas 1 klar, `/docs/auth.md`
 **Output:** Fungerande Auth.js med session-hantering
 
@@ -20,7 +17,6 @@
 **Verifiering:** Auth-config laddar utan fel, session-callbacks returnerar tenantId/role, `npm run build` OK
 
 ### Block 2.2: Registrering och inloggning
-**Modell:** Claude `opus` (komplex, frontend + backend + auth)
 **Input:** Block 2.1 klart
 **Output:** Fungerande registrering och inloggningssidor
 
@@ -38,7 +34,6 @@
 **Verifiering:** Registrering skapar User+Tenant+Membership, inloggning fungerar, redirect till dashboard, alla texter via i18n, `npm run build` OK
 
 ### Block 2.3: Session och skyddade routes
-**Modell:** Gemini `gemini-3-flash-preview` (2 filer, hjälpfunktioner)
 **Input:** Block 2.1 + 2.2 klara
 **Output:** Auth-wrappers och skyddade routes
 
@@ -51,7 +46,6 @@
 **Verifiering:** Oautentiserad request redirectar till login, `requireAuth` och `requireRole` fungerar, `npm run build` OK
 
 ### Block 2.4: Lösenordsåterställning
-**Modell:** Claude `opus` (komplex, e-post + token + formulär)
 **Input:** Block 2.2 + 2.3 klara, Resend-konto
 **Output:** Fungerande lösenordsåterställningsflöde
 
@@ -64,7 +58,6 @@
 **Verifiering:** E-post skickas, token valideras, lösenord uppdateras, `npm run build` OK
 
 ### Block 2.5: Inbjudningar
-**Modell:** Claude `opus` (komplex, e-post + registrering + roller)
 **Input:** Block 2.2 + 2.3 + 2.4 klara (auth + Resend)
 **Output:** Fungerande inbjudningsflöde
 

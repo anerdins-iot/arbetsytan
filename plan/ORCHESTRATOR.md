@@ -8,18 +8,70 @@
 Läs dessa filer i ordning:
 1. `plan/README.md` — arbetsflöde, modellval, regler, fasöversikt och beroenden
 2. `AGENTS.md` — projektregler, tech stack och konventioner
-3. `DEVLOG.md` — kända problem och lärdomar
-4. Den fas-fil du ska arbeta med (t.ex. `plan/fas-01.md`)
+3. `PROJEKT.md` — övergripande mål och produktbeskrivning
+4. `DEVLOG.md` — kända problem och lärdomar
+5. Den fas-fil du ska arbeta med (t.ex. `plan/fas-01.md`)
 
 ## Per block
 
-Följ arbetsflödet i `plan/README.md` (analys → implementation → verifiering). Utöver det:
+Följ arbetsflödet i `plan/README.md` (analys → implementation → verifiering → test). Utöver det:
 
-- Kopiera blockets specifikation från fas-filen till implementationsagenten
-- Hänvisa alltid agenten till `AGENTS.md` och relevanta `/docs/*.md`
-- Beskriv problemet, inte lösningen — låt agenten analysera själv
-- Markera checkboxar i fas-filen efter godkänd verifiering: `[ ]` → `[x]`
-- Committa efter godkänd verifiering, aldrig innan
+### Godkännande och commit
+
+Bara orkestern får checka av och committa. Flödet är:
+
+1. Bygga-agent rapporterar klart
+2. Verifieringsagent rapporterar godkänt/underkänt
+3. Testagent rapporterar godkänt/underkänt
+4. Om alla godkänt: orkestern checkar av checkboxarna i fas-filen (`[ ]` → `[x]`) och committar
+5. Om underkänt: orkestern skickar tillbaka till bygga-agenten — ingenting checkas av, ingenting committas
+
+Ingen checkbox får bockas av förrän blocket är verifierat och testat. Commit-meddelanden på engelska, beskrivande.
+
+## Hur du promptar agenter
+
+**KRITISKT:** Beskriv aldrig vad agenten ska göra i detalj. Hänvisa till filerna. Agenten ska själv läsa och förstå.
+
+### Bygga-agent
+
+Instruera agenten att läsa dessa filer i ordning och följa dem strikt:
+
+1. `AGENTS.md` — generella regler och konventioner
+2. `PROJEKT.md` — förstå vad vi bygger och varför
+3. `plan/README.md` — arbetsflöde och regler
+4. Relevanta `/docs/*.md` (de som nämns i blockets **Input**)
+5. Den specifika fas-filen och det block som ska implementeras
+
+Agenten ska avbryta och rapportera tillbaka om den upptäcker avvikelser, konflikter mellan filer, eller oklarheter — aldrig gissa.
+
+Agenten ska skriva till `DEVLOG.md` vid alla icke-triviala problem, workarounds, eller avvikelser från planen.
+
+### Verifieringsagent
+
+Instruera agenten att läsa:
+
+1. `AGENTS.md` — förstå reglerna som ska följas
+2. `plan/README.md` — verifieringslistan i steg 3
+3. Blockets specifikation i fas-filen — vad som ska ha implementerats
+4. Sedan granska koden och köra `npm run build` + `npx tsc --noEmit`
+
+Agenten ska rapportera godkänt/underkänt med specifika avvikelser.
+
+### Testagent
+
+Instruera agenten att:
+
+1. Läsa blockets **Verifiering**-rad för att förstå vad som ska testas
+2. Starta appen och köra MCP Playwright-tester
+3. Navigera genom alla relevanta sidor och flöden för blocket
+4. Ta screenshots vid varje steg och spara i `screenshots/fas-XX/block-X.X/`
+5. Namnge screenshots med steg: `01-login.png`, `02-dashboard.png`, etc.
+6. Rapportera godkänt/underkänt med screenshots som bevis
+
+**Anpassning per fas:**
+- Tidiga faser (1-2): Fokusera på build, API-svar och grundläggande routing
+- Mellanfaser (3-9): Fullständig Playwright-navigering med screenshots
+- Sena faser (10-12): Visuell kontroll, responsivitet, deploy-verifiering
 
 ## Regler
 
@@ -29,4 +81,4 @@ Följ arbetsflödet i `plan/README.md` (analys → implementation → verifierin
 - **Parallellt** om block är oberoende (olika filer/områden), annars sekventiellt
 - **Felhantering** — om verifiering misslyckas: åtgärda och verifiera igen. Om samma fel upprepas: eskalera till Claude opus eller bryt ner i mindre steg
 - **DEVLOG** — skriv till `DEVLOG.md` vid icke-triviala problem
-- **Commits** — beskrivande meddelanden på engelska, aldrig innan verifiering godkänd
+- **Commits** — beskrivande meddelanden på engelska, aldrig innan verifiering och test är godkänt
