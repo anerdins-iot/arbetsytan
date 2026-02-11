@@ -95,11 +95,11 @@
 **Input:** Block 3.3 + 3.4 klara (projektvy + uppgifter)
 **Output:** Aktivitetslogg-system
 
-- [ ] Logga alla viktiga händelser i ActivityLog: uppgift skapad/ändrad/klar, fil uppladdad, medlem tillagd, status ändrad
-- [ ] Visa aktivitetslogg i projektöversikten (senaste händelserna)
-- [ ] Fullständig aktivitetslogg-sida per projekt med filtrering och paginering
-- [ ] Server Action `getActivityLog` filtrerat på projectId + tenantId
-- [ ] Inkludera aktör (vem), action, entity och metadata i varje post
+- [x] Logga alla viktiga händelser i ActivityLog: uppgift skapad/ändrad/klar, fil uppladdad, medlem tillagd, status ändrad
+- [x] Visa aktivitetslogg i projektöversikten (senaste händelserna)
+- [x] Fullständig aktivitetslogg-sida per projekt med filtrering och paginering
+- [x] Server Action `getActivityLog` filtrerat på projectId + tenantId
+- [x] Inkludera aktör (vem), action, entity och metadata i varje post
 
 **Verifiering:** Händelser loggas vid alla CRUD-operationer, paginering fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -107,12 +107,12 @@
 **Input:** Block 3.2 + 3.4 klara (projekt + uppgifter)
 **Output:** Global sökfunktion
 
-- [ ] Bygga sökfält i topbar som söker över alla tillgängliga resurser
-- [ ] Sök i projektnamn och beskrivningar
-- [ ] Sök i uppgiftstitlar och beskrivningar
-- [ ] Server Action `globalSearch` filtrerat på tenantId + användarens projekt
-- [ ] Visa sökresultat grupperat per typ (projekt, uppgifter) med djuplänkar
-- [ ] Debounce och minst 2 tecken innan sökning triggas
+- [x] Bygga sökfält i topbar som söker över alla tillgängliga resurser
+- [x] Sök i projektnamn och beskrivningar
+- [x] Sök i uppgiftstitlar och beskrivningar
+- [x] Server Action `globalSearch` filtrerat på tenantId + användarens projekt
+- [x] Visa sökresultat grupperat per typ (projekt, uppgifter) med djuplänkar
+- [x] Debounce och minst 2 tecken innan sökning triggas
 
 **Verifiering:** Sökning returnerar resultat grupperade per typ, `tenantDb(tenantId)` på alla queries, debounce fungerar, `npm run build` OK
 

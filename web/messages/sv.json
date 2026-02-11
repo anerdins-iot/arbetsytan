@@ -292,7 +292,22 @@
   "topbar": {
     "notifications": "Notifikationer",
     "user": "Användare",
-    "openMenu": "Öppna meny"
+    "openMenu": "Öppna meny",
+    "search": {
+      "placeholder": "Sök projekt och uppgifter...",
+      "minCharacters": "Skriv minst 2 tecken för att söka.",
+      "searching": "Söker...",
+      "noResults": "Inga träffar hittades.",
+      "error": "Sökningen misslyckades. Försök igen.",
+      "projects": "Projekt",
+      "tasks": "Uppgifter",
+      "inProject": "I projekt: {project}",
+      "taskStatus": {
+        "TODO": "Att göra",
+        "IN_PROGRESS": "Pågående",
+        "DONE": "Klart"
+      }
+    }
   },
   "theme": {
     "toggle": "Byt tema",

@@ -10,9 +10,18 @@ import { ProjectView } from "@/components/projects/project-view";
 
 type Props = {
   params: Promise<{ locale: string; projectId: string }>;
+  searchParams: Promise<{ tab?: string; taskId?: string }>;
 };
 
-async function ProjectContent({ projectId }: { projectId: string }) {
+async function ProjectContent({
+  projectId,
+  initialTab,
+  initialTaskId,
+}: {
+  projectId: string;
+  initialTab?: "overview" | "tasks" | "files" | "ai";
+  initialTaskId?: string;
+}) {
   const [projectResult, tasksResult, session, activityResult] = await Promise.all([
     getProject(projectId),
     getTasks(projectId),
@@ -40,13 +49,21 @@ async function ProjectContent({ projectId }: { projectId: string }) {
       currentUserId={session.user.id}
       commentsByTaskId={commentsByTaskId}
       recentActivity={activityResult.success ? activityResult.items : []}
+      initialTab={initialTab}
+      initialTaskId={initialTaskId}
     />
   );
 }
 
-export default async function ProjectPage({ params }: Props) {
+export default async function ProjectPage({ params, searchParams }: Props) {
   const { locale, projectId } = await params;
+  const { tab, taskId } = await searchParams;
   setRequestLocale(locale);
+
+  const validTabs = new Set(["overview", "tasks", "files", "ai"]);
+  const initialTab =
+    tab && validTabs.has(tab) ? (tab as "overview" | "tasks" | "files" | "ai") : undefined;
+  const initialTaskId = taskId?.trim() ? taskId : undefined;
 
   return (
     <Suspense
@@ -56,7 +73,11 @@ export default async function ProjectPage({ params }: Props) {
         </div>
       }
     >
-      <ProjectContent projectId={projectId} />
+      <ProjectContent
+        projectId={projectId}
+        initialTab={initialTab}
+        initialTaskId={initialTaskId}
+      />
     </Suspense>
   );
 }

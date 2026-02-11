@@ -18,6 +18,8 @@ type ProjectViewProps = {
   currentUserId: string;
   commentsByTaskId: Record<string, CommentItem[]>;
   recentActivity: ActivityLogItem[];
+  initialTab?: "overview" | "tasks" | "files" | "ai";
+  initialTaskId?: string;
 };
 
 export function ProjectView({
@@ -26,6 +28,8 @@ export function ProjectView({
   currentUserId,
   commentsByTaskId,
   recentActivity,
+  initialTab = "overview",
+  initialTaskId,
 }: ProjectViewProps) {
   const t = useTranslations("projects");
   const locale = useLocale();
@@ -44,7 +48,7 @@ export function ProjectView({
         </div>
       </div>
 
-      <Tabs defaultValue="overview">
+      <Tabs defaultValue={initialTab}>
         <TabsList>
           <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
           <TabsTrigger value="tasks">{t("tabs.tasks")}</TabsTrigger>
@@ -63,6 +67,7 @@ export function ProjectView({
             members={project.members}
             currentUserId={currentUserId}
             commentsByTaskId={commentsByTaskId}
+            initialTaskId={initialTaskId}
           />
         </TabsContent>
 

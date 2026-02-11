@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useEffect, useState, useTransition, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import {
@@ -31,6 +31,7 @@ type KanbanBoardProps = {
   members: ProjectMember[];
   currentUserId: string;
   commentsByTaskId: Record<string, CommentItem[]>;
+  initialTaskId?: string;
 };
 
 const COLUMNS = ["TODO", "IN_PROGRESS", "DONE"] as const;
@@ -42,6 +43,7 @@ export function KanbanBoard({
   members,
   currentUserId,
   commentsByTaskId,
+  initialTaskId,
 }: KanbanBoardProps) {
   const t = useTranslations("projects.kanban");
   const router = useRouter();
@@ -90,6 +92,14 @@ export function KanbanBoard({
     IN_PROGRESS: filteredTasks.filter((t) => t.status === "IN_PROGRESS"),
     DONE: filteredTasks.filter((t) => t.status === "DONE"),
   };
+
+  useEffect(() => {
+    if (!initialTaskId || detailTask) return;
+    const initialTask = tasks.find((task) => task.id === initialTaskId);
+    if (!initialTask) return;
+    setDetailTask(initialTask);
+    setDetailOpen(true);
+  }, [initialTaskId, detailTask, tasks]);
 
   function handleDragStart(event: DragStartEvent) {
     const task = filteredTasks.find((t) => t.id === event.active.id);

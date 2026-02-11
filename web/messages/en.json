@@ -292,7 +292,22 @@
   "topbar": {
     "notifications": "Notifications",
     "user": "User",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "search": {
+      "placeholder": "Search projects and tasks...",
+      "minCharacters": "Type at least 2 characters to search.",
+      "searching": "Searching...",
+      "noResults": "No results found.",
+      "error": "Search failed. Please try again.",
+      "projects": "Projects",
+      "tasks": "Tasks",
+      "inProject": "In project: {project}",
+      "taskStatus": {
+        "TODO": "To do",
+        "IN_PROGRESS": "In progress",
+        "DONE": "Done"
+      }
+    }
   },
   "theme": {
     "toggle": "Toggle theme",
