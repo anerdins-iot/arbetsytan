@@ -7,13 +7,13 @@
 **Input:** Tomt projekt, `PROJEKT.md`, `/docs/nextjs.md`, `/docs/tailwind.md`, `/docs/docker.md`
 **Output:** Fungerande Next.js-projekt med Docker-tjänster
 
-- [ ] Initiera Next.js 16-projekt i `web/` med `npx create-next-app@16.0.9` (App Router, TypeScript, Tailwind, ESLint)
-- [ ] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/docs/tailwind.md`
-- [ ] Installera och konfigurera shadcn/ui med tema enligt `UI.md`
-- [ ] Installera `socket.io` och `socket.io-client` (konfigurering i Block 6.1)
-- [ ] Skapa `docker-compose.yml` i workspace root med PostgreSQL, MinIO och Redis
-- [ ] Skapa `web/.env.local.example` med alla nödvändiga miljövariabler
-- [ ] Verifiera att `npm run dev`, `npm run build` (i web/) och `docker-compose up -d` fungerar
+- [x] Initiera Next.js 16-projekt i `web/` med `npx create-next-app@16.0.9` (App Router, TypeScript, Tailwind, ESLint)
+- [x] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/docs/tailwind.md`
+- [x] Installera och konfigurera shadcn/ui med tema enligt `UI.md`
+- [x] Installera `socket.io` och `socket.io-client` (konfigurering i Block 6.1)
+- [x] Skapa `docker-compose.yml` i workspace root med PostgreSQL, MinIO och Redis
+- [x] Skapa `web/.env.local.example` med alla nödvändiga miljövariabler
+- [x] Verifiera att `npm run dev`, `npm run build` (i web/) och `docker-compose up -d` fungerar
 
 **Verifiering:** `npm run build` OK, `docker-compose up -d` OK, alla tjänster svarar
 
