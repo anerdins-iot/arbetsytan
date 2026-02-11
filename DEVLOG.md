@@ -48,3 +48,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Orchestratorn angav inte fullständig sökväg till dokumentationen.
 **Lösning:** Alltid ange `/docs/` explicit som absolut sökväg i workspace root, t.ex. "Läs `/docs/nextjs.md` (ligger i workspace root, inte i web/)".
 **Lärdom:** Ange alltid fullständiga sökvägar till dokumentation. Specificera att /docs/ ligger i workspace root, utanför web/.
+
+### Parallella testagenter krockar på dev-server
+**Problem:** Två testagenter spawnas parallellt och båda försöker starta `npm run dev` på samma port.
+**Orsak:** Orchestratorn koordinerade inte delad resurs (dev-server) mellan testagenter.
+**Lösning:** Antingen starta dev-servern själv innan testagenter spawnas, kör testagenter sekventiellt, eller instruera att använda samma körande server.
+**Lärdom:** Testagenter som behöver samma tjänst (dev-server, databas) måste dela resursen. Orkestern ansvarar för att starta delade tjänster före agenter.

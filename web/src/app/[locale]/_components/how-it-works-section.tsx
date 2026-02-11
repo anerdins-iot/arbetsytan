@@ -1,10 +1,11 @@
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 import { UserPlus, FolderPlus, Send } from "lucide-react";
 
 const steps = [
-  { key: "step1", icon: UserPlus, step: "1" },
-  { key: "step2", icon: FolderPlus, step: "2" },
-  { key: "step3", icon: Send, step: "3" },
+  { key: "step1", icon: UserPlus, step: "1", image: "/images/step-signup.jpg" },
+  { key: "step2", icon: FolderPlus, step: "2", image: "/images/step-create-project.jpg" },
+  { key: "step3", icon: Send, step: "3", image: "/images/step-invite-team.jpg" },
 ] as const;
 
 export function HowItWorksSection() {
@@ -22,8 +23,17 @@ export function HowItWorksSection() {
           </p>
         </div>
         <div className="mt-16 grid gap-8 sm:grid-cols-3">
-          {steps.map(({ key, icon: Icon, step }) => (
+          {steps.map(({ key, icon: Icon, step, image }) => (
             <div key={key} className="relative flex flex-col items-center text-center">
+              <div className="relative mb-6 aspect-[4/3] w-full overflow-hidden rounded-xl border border-border shadow-sm">
+                <Image
+                  src={image}
+                  alt={t(`${key}.title`)}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 33vw"
+                />
+              </div>
               <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary text-primary-foreground">
                 <span className="text-2xl font-bold">{step}</span>
               </div>

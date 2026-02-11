@@ -12,12 +12,13 @@ export default async function AuthLayout({ children, params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "auth" });
+  const tSidebar = await getTranslations({ locale, namespace: "sidebar" });
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-muted px-4">
       <div className="mb-8 flex items-center gap-2">
         <Hammer className="size-8 text-primary" />
-        <span className="text-2xl font-bold text-foreground">ArbetsYtan</span>
+        <span className="text-2xl font-bold text-foreground">{tSidebar("brand")}</span>
       </div>
       <div className="w-full max-w-md rounded-lg border border-border bg-card p-8 shadow-sm">
         {children}
