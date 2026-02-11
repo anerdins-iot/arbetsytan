@@ -2,8 +2,10 @@
 
 import { z } from "zod";
 import bcrypt from "bcrypt";
+import crypto from "node:crypto";
 import { prisma } from "@/lib/db";
 import { signIn } from "@/lib/auth";
+import { sendEmail } from "@/lib/email";
 
 // Auth actions run without session (registration/login). Global prisma is correct
 // for User, Tenant, Membership creation and User lookup. Tenant data actions must
@@ -19,6 +21,15 @@ const registerSchema = z.object({
 const loginSchema = z.object({
   email: z.string().email().max(255),
   password: z.string().min(1).max(128),
+});
+
+const forgotPasswordSchema = z.object({
+  email: z.string().email().max(255),
+});
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(1),
+  password: z.string().min(8).max(128),
 });
 
 export type AuthActionResult = {
@@ -168,6 +179,136 @@ export async function loginUser(
     where: { id: user.id },
     data: { failedLoginAttempts: 0 },
   });
+
+  return { success: true };
+}
+
+/** Token validity for password reset (1 hour). */
+const PASSWORD_RESET_EXPIRY_MS = 60 * 60 * 1000;
+
+/**
+ * Request password reset: validate email, create VerificationToken, send email.
+ * Uses global prisma (auth flow, no tenant).
+ */
+export async function requestPasswordReset(
+  formData: FormData
+): Promise<AuthActionResult> {
+  const raw = { email: formData.get("email") };
+  const result = forgotPasswordSchema.safeParse(raw);
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: result.error.flatten().fieldErrors as Record<string, string[]>,
+    };
+  }
+
+  const email = result.data.email.trim().toLowerCase();
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user || !user.password) {
+    return {
+      success: false,
+      error: "EMAIL_NOT_FOUND",
+    };
+  }
+
+  const token = crypto.randomBytes(32).toString("hex");
+  const expires = new Date(Date.now() + PASSWORD_RESET_EXPIRY_MS);
+
+  await prisma.verificationToken.deleteMany({
+    where: { identifier: email },
+  });
+  await prisma.verificationToken.create({
+    data: {
+      identifier: email,
+      token,
+      expires,
+    },
+  });
+
+  const baseUrl =
+    process.env.APP_URL?.replace(/\/$/, "") ??
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+    "http://localhost:3000";
+  const locale = user.locale === "en" ? "en" : "sv";
+  const resetUrl = `${baseUrl}/${locale}/reset-password?token=${encodeURIComponent(token)}`;
+
+  const { getTranslations } = await import("next-intl/server");
+  const t = await getTranslations({ locale, namespace: "auth" });
+  const subject = t("resetEmailSubject");
+  const html = t("resetEmailBody", { resetUrl });
+
+  const sendResult = await sendEmail({
+    to: email,
+    subject,
+    html,
+  });
+
+  if (!sendResult.success) {
+    return {
+      success: false,
+      error: "EMAIL_SEND_FAILED",
+    };
+  }
+
+  return { success: true };
+}
+
+/**
+ * Reset password: validate token, check expiry, update user password, delete token.
+ * Uses global prisma (auth flow, no tenant).
+ */
+export async function resetPassword(
+  formData: FormData
+): Promise<AuthActionResult> {
+  const raw = {
+    token: formData.get("token"),
+    password: formData.get("password"),
+  };
+  const result = resetPasswordSchema.safeParse(raw);
+  if (!result.success) {
+    return {
+      success: false,
+      fieldErrors: result.error.flatten().fieldErrors as Record<string, string[]>,
+    };
+  }
+
+  const { token, password } = result.data;
+
+  const verification = await prisma.verificationToken.findUnique({
+    where: { token },
+  });
+
+  if (!verification) {
+    return {
+      success: false,
+      error: "INVALID_TOKEN",
+    };
+  }
+
+  if (verification.expires < new Date()) {
+    await prisma.verificationToken.delete({
+      where: { token },
+    });
+    return {
+      success: false,
+      error: "EXPIRED_TOKEN",
+    };
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 12);
+
+  await prisma.$transaction([
+    prisma.user.update({
+      where: { email: verification.identifier },
+      data: { password: hashedPassword },
+    }),
+    prisma.verificationToken.delete({
+      where: { token },
+    }),
+  ]);
 
   return { success: true };
 }

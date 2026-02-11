@@ -57,11 +57,11 @@
 **Input:** Block 2.2 + 2.3 klara, Resend-konto
 **Output:** Fungerande lösenordsåterställningsflöde
 
-- [ ] Konfigurera Resend för e-postutskick
-- [ ] Bygga "Glömt lösenord"-sida med e-postfält
-- [ ] Skapa Server Action som genererar VerificationToken och skickar e-post
-- [ ] Bygga "Nytt lösenord"-sida som tar emot token
-- [ ] Skapa Server Action som validerar token och uppdaterar lösenord
+- [x] Konfigurera Resend för e-postutskick
+- [x] Bygga "Glömt lösenord"-sida med e-postfält
+- [x] Skapa Server Action som genererar VerificationToken och skickar e-post
+- [x] Bygga "Nytt lösenord"-sida som tar emot token
+- [x] Skapa Server Action som validerar token och uppdaterar lösenord
 
 **Verifiering:** E-post skickas, token valideras, lösenord uppdateras, `npm run build` OK
 
