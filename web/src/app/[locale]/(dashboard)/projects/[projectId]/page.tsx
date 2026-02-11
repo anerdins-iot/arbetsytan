@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { getProject } from "@/actions/projects";
 import { getTasks } from "@/actions/tasks";
+import { getCommentsByTask } from "@/actions/comments";
+import { getSession } from "@/lib/auth";
 import { ProjectView } from "@/components/projects/project-view";
 
 type Props = {
@@ -10,21 +12,31 @@ type Props = {
 };
 
 async function ProjectContent({ projectId }: { projectId: string }) {
-  const [projectResult, tasksResult] = await Promise.all([
+  const [projectResult, tasksResult, session] = await Promise.all([
     getProject(projectId),
     getTasks(projectId),
+    getSession(),
   ]);
 
-  if (!projectResult.success) {
+  if (!projectResult.success || !session) {
     notFound();
   }
 
   const tasks = tasksResult.success ? tasksResult.tasks : [];
+  const commentsResult = await getCommentsByTask(
+    projectId,
+    tasks.map((task) => task.id)
+  );
+  const commentsByTaskId = commentsResult.success
+    ? commentsResult.commentsByTaskId
+    : {};
 
   return (
     <ProjectView
       project={projectResult.project}
       tasks={tasks}
+      currentUserId={session.user.id}
+      commentsByTaskId={commentsByTaskId}
     />
   );
 }

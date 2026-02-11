@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { updateTaskStatus } from "@/actions/tasks";
 import type { TaskItem } from "@/actions/tasks";
 import type { ProjectMember } from "@/actions/projects";
+import type { CommentItem } from "@/actions/comments";
 import { KanbanColumn } from "./kanban-column";
 import { KanbanTaskCard } from "./kanban-task-card";
 import { CreateTaskDialog } from "./create-task-dialog";
@@ -28,12 +29,20 @@ type KanbanBoardProps = {
   tasks: TaskItem[];
   projectId: string;
   members: ProjectMember[];
+  currentUserId: string;
+  commentsByTaskId: Record<string, CommentItem[]>;
 };
 
 const COLUMNS = ["TODO", "IN_PROGRESS", "DONE"] as const;
 type ColumnStatus = (typeof COLUMNS)[number];
 
-export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
+export function KanbanBoard({
+  tasks,
+  projectId,
+  members,
+  currentUserId,
+  commentsByTaskId,
+}: KanbanBoardProps) {
   const t = useTranslations("projects.kanban");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -201,6 +210,8 @@ export function KanbanBoard({ tasks, projectId, members }: KanbanBoardProps) {
         onOpenChange={setDetailOpen}
         projectId={projectId}
         members={members}
+        currentUserId={currentUserId}
+        commentsByTaskId={commentsByTaskId}
       />
     </div>
   );

@@ -84,3 +84,27 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Orkestern förstod inte att avvikelser alltid kräver planuppdatering — inte framskjutning.
 **Lösning:** Aldrig säga "kan läggas till senare" eller skapa TODOs för saknade funktioner. Om något i planen inte implementerades: uppdatera planen med explicit krav och implementera det direkt.
 **Lärdom:** "Kan läggas till senare" är inte tillåtet. Avvikelser = planuppdatering + implementation. Inga TODOs för saknad funktionalitet.
+
+### Orkestern glömde checka av boxar i planfilen
+**Problem:** Flera block committades utan att checkboxarna i planfilen uppdaterades från `[ ]` till `[x]`.
+**Orsak:** Orkestern fokuserade på commits och nästa steg, glömde att planfilen är sanningskällan för progress.
+**Lösning:** Efter varje commit: uppdatera planfilen med `[x]` på alla genomförda punkter INNAN nästa block startar.
+**Lärdom:** Planfilen är sanningskällan. Checkboxar måste uppdateras som del av commit-processen, inte som efterarbete.
+
+### Next.js 16 dynamiska routes kräver explicit opt-out från prerendering
+**Problem:** Build-fel "Uncached data was accessed outside of Suspense" på dynamiska routes som `/invite/[token]`.
+**Orsak:** Next.js 16 försöker prerendera alla sidor vid build. Dynamiska routes med `[token]` eller liknande som gör databasanrop eller session-check misslyckas eftersom Next.js inte vet vilka tokens som finns.
+**Lösning:** Lägg till `export const dynamic = 'force-dynamic'` i page.tsx för dynamiska routes som inte ska prerenderas. Alternativt: `export function generateStaticParams() { return [] }` för att säga att inga statiska varianter ska genereras.
+**Lärdom:** Alla dynamiska routes i Next.js 16 som gör dataåtkomst behöver explicit `dynamic = 'force-dynamic'` eller tom `generateStaticParams`.
+
+### Turbopack build krachar med ENOENT i sandbox-miljö (Block 3.1)
+**Problem:** `npm run build` (Turbopack default) ger `ENOENT: no such file or directory, open '.next/static/.../_buildManifest.js.tmp...'` konsekvent.
+**Orsak:** Troligen filsystem-/race condition i sandbox-miljön. Turbopack skriver temporära filer som inte hinner skapas/skrivas korrekt.
+**Lösning:** Bygg med webpack-flaggan: `npx next build --webpack`. Producerar identiskt resultat.
+**Lärdom:** Om Turbopack-build krachar med ENOENT i sandbox, använd `--webpack` som fallback. Problemet är miljöspecifikt, inte kodrelaterat.
+
+### cacheComponents: true är inkompatibelt med export const dynamic (Block 3.1)
+**Problem:** `export const dynamic = 'force-dynamic'` ger build-fel med `cacheComponents: true` i next.config.ts.
+**Orsak:** Next.js 16 med cacheComponents ersätter det gamla route segment config-systemet. `export const dynamic` stöds inte längre.
+**Lösning:** Ta bort `export const dynamic`. Sidor som gör databasanrop renderas ändå dynamiskt med cacheComponents (de har inga `'use cache'`-direktiv). Använd `<Suspense>` vid behov.
+**Lärdom:** Med `cacheComponents: true` — använd aldrig `export const dynamic`. Dynamisk rendering sker automatiskt för sidor utan `'use cache'`. DEVLOG-posten ovan om `force-dynamic` gäller alltså INTE längre med cacheComponents aktiverat.

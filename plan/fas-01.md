@@ -1,14 +1,14 @@
 # Fas 1 — Projektsetup och infrastruktur
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 1.1A: Next.js och Docker-setup
-**Input:** Tomt projekt, `PROJEKT.md`, `/docs/nextjs.md`, `/docs/tailwind.md`, `/docs/docker.md`
+**Input:** Tomt projekt, `PROJEKT.md`, `/workspace/docs/nextjs.md`, `/workspace/docs/tailwind.md`, `/workspace/docs/docker.md`
 **Output:** Fungerande Next.js-projekt med Docker-tjänster
 
 - [x] Initiera Next.js 16-projekt i `web/` med `npx create-next-app@16.0.9` (App Router, TypeScript, Tailwind, ESLint)
-- [x] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/docs/tailwind.md`
+- [x] Konfigurera Tailwind CSS v4 med CSS-variabler enligt `/workspace/docs/tailwind.md`
 - [x] Installera och konfigurera shadcn/ui med tema enligt `UI.md`
 - [x] Installera `socket.io` och `socket.io-client` (konfigurering i Block 6.1)
 - [x] Skapa `docker-compose.yml` i workspace root med PostgreSQL, MinIO och Redis
@@ -18,12 +18,12 @@
 **Verifiering:** `npm run build` OK, `docker-compose up -d` OK, alla tjänster svarar
 
 ### Block 1.1B: Prisma och databas
-**Input:** Block 1.1A klart, `/docs/prisma.md`
+**Input:** Block 1.1A klart, `/workspace/docs/prisma.md`
 **Output:** Migrerad databas med seed-data
 
 - [x] Flytta `prisma/schema.prisma` till `web/prisma/` (schemat finns redan i repo-root)
 - [x] Komplettera schemat med hela datamodellen enligt `PROJEKT.md` och `AI.md` om något saknas
-- [x] Konfigurera Prisma 7 enligt `/docs/prisma.md`:
+- [x] Konfigurera Prisma 7 enligt `/workspace/docs/prisma.md`:
   - Generator: `prisma-client` provider med `output = "./generated/prisma"`
   - Datasource: utan `url` (hanteras av `prisma.config.ts`)
   - `package.json`: `"type": "module"` (ESM obligatoriskt)

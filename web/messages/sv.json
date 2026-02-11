@@ -17,6 +17,12 @@
     "close": "Stäng",
     "loading": "Laddar..."
   },
+  "notifications": {
+    "newComment": {
+      "title": "Ny kommentar",
+      "body": "Ny kommentar på uppgift: {taskTitle}"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Välkommen till ArbetsYtan",
@@ -214,7 +220,20 @@
       "created": "Skapad",
       "updated": "Uppdaterad",
       "saving": "Sparar...",
-      "deleteConfirm": "Är du säker?"
+      "deleteConfirm": "Är du säker?",
+      "comments": {
+        "title": "Kommentarer",
+        "empty": "Inga kommentarer ännu",
+        "placeholder": "Skriv en kommentar...",
+        "submit": "Kommentera",
+        "submitting": "Skickar...",
+        "editPlaceholder": "Redigera kommentar...",
+        "editing": "Sparar...",
+        "deleteConfirm": "Ta bort kommentar?",
+        "deleting": "Tar bort...",
+        "by": "av",
+        "edited": "(redigerad)"
+      }
     }
   },
   "settings": {

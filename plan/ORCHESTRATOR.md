@@ -6,13 +6,24 @@
 ## Innan du börjar
 
 Läs dessa filer i ordning:
-1. `plan/README.md` — arbetsflöde, modellval, regler, fasöversikt och beroenden
+1. `plan/README.md` — projektöversikt, regler, verifieringskrav, fasöversikt och beroenden
 2. `AGENTS.md` — projektregler, tech stack och konventioner
 3. `PROJEKT.md` — övergripande mål och produktbeskrivning
 4. `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
 5. `UI.md` — Designspråk, färger och visuella riktlinjer
 6. `DEVLOG.md` — kända problem och lärdomar
 7. Den fas-fil du ska arbeta med (t.ex. `plan/fas-01.md`)
+
+## Modellval per uppgiftstyp
+
+| Uppgiftstyp | Provider / Modell | Fallback | Notering |
+|---|---|---|---|
+| Frontend och UI | Claude `opus` | Cursor `gpt-5.3-codex` | Komponenter, sidor, styling, layout |
+| Backend, API och databas | Cursor `auto` | Gemini `gemini-3-flash-preview` | Server Actions, Prisma-queries, API-routes |
+| Verifiering och granskning | Gemini `gemini-3-flash-preview` | Cursor `auto` | Kontrollerar build, TypeScript, krav |
+| Felsökning (analys) | Gemini `gemini-3-flash-preview` + Cursor `auto` | — | Parallella agenter som analyserar utan att ändra |
+| Felsökning (fix) | Cursor `auto` | — | Separat agent som fixar baserat på analysen |
+| Test (Playwright) | Claude `haiku` | — | MCP Playwright-navigering med screenshots |
 
 ## Hitta nästa block
 
@@ -24,11 +35,28 @@ Läs dessa filer i ordning:
 
 **Första gången:** Om inga checkboxar är avbockade börjar du med Block 1.1A i `plan/fas-01.md`.
 
-## Per block
+## Arbetsflöde per block
 
-Följ arbetsflödet i `plan/README.md` (analys → implementation → verifiering → test). Utöver det:
+Varje block genomförs i tre steg:
 
-### Godkännande och commit
+### 1. Implementation
+
+Spawna bygga-agent med rätt modell baserat på blockets karaktär (se tabellen ovan).
+
+### 2. Verifiering
+
+Spawna verifieringsagent (Gemini `gemini-3-flash-preview`) som kontrollerar mot verifieringskraven i `plan/README.md` och blockets specifikation.
+
+### 3. Test
+
+Spawna testagent (Claude `haiku`) som kör MCP Playwright-tester.
+
+**Anpassning per fas:**
+- Tidiga faser (1-2): Fokusera på build, API-svar, grundläggande routing och att auth avvisar korrekt
+- Mellanfaser (3-9): Fullständig Playwright-navigering med screenshots + åtkomsttester (tenant-isolering, projektåtkomst, Socket.IO-rum)
+- Sena faser (10-12): Visuell kontroll, responsivitet, deploy-verifiering
+
+## Godkännande och commit
 
 Bara orkestern får checka av och committa. Flödet är:
 
@@ -50,14 +78,12 @@ Instruera agenten att läsa dessa filer i ordning och följa dem strikt:
 
 1. `AGENTS.md` — generella regler och konventioner
 2. `PROJEKT.md` — förstå vad vi bygger och varför
-3. `plan/README.md` — arbetsflöde och regler
+3. `plan/README.md` — regler och verifieringskrav
 4. `AI.md` och `UI.md` — AI-arkitektur och designspråk (vid UI- eller AI-block)
-5. Relevanta `/docs/*.md` (de som nämns i blockets **Input**)
+5. Relevanta `/workspace/docs/*.md` (de som nämns i blockets **Input**) **OBS** - Påminn agenten att docs ligger i `/workspace/docs/`.
 6. Den specifika fas-filen och det block som ska implementeras
 
 Agenten ska avbryta och rapportera tillbaka om den upptäcker avvikelser, konflikter mellan filer, eller oklarheter — aldrig gissa.
-
-**Inga rollbacks eller workarounds.** Om agenten stöter på ett problem ska det lösas i grunden — aldrig kringgås. Om agenten upptäcker fel från en tidigare fas eller ett tidigare block ska den dokumentera felet i `DEVLOG.md` och rapportera tillbaka till orkestern. Orkestern ansvarar för att felet åtgärdas innan arbetet fortsätter. Fel får aldrig skjutas framåt.
 
 Agenten ska skriva till `DEVLOG.md` vid alla icke-triviala problem eller avvikelser från planen.
 
@@ -66,9 +92,8 @@ Agenten ska skriva till `DEVLOG.md` vid alla icke-triviala problem eller avvikel
 Instruera agenten att läsa:
 
 1. `AGENTS.md` — förstå reglerna som ska följas
-2. `plan/README.md` — verifieringslistan i steg 3
+2. `plan/README.md` — verifieringskraven
 3. Blockets specifikation i fas-filen — vad som ska ha implementerats
-4. Sedan granska koden och köra `npm run build` + `npx tsc --noEmit`
 
 Agenten ska rapportera godkänt/underkänt med specifika avvikelser.
 
@@ -83,11 +108,6 @@ Instruera agenten att:
 5. Namnge screenshots med steg: `01-login.png`, `02-dashboard.png`, etc.
 6. **Testa åtkomstkontroll** (från Fas 2+): Verifiera att oautentiserade requests avvisas, att en användare inte kan nå annan tenants data, och att projektdata kräver rätt membership
 7. Rapportera godkänt/underkänt med screenshots som bevis
-
-**Anpassning per fas:**
-- Tidiga faser (1-2): Fokusera på build, API-svar, grundläggande routing och att auth avvisar korrekt
-- Mellanfaser (3-9): Fullständig Playwright-navigering med screenshots + åtkomsttester (tenant-isolering, projektåtkomst, Socket.IO-rum)
-- Sena faser (10-12): Visuell kontroll, responsivitet, deploy-verifiering
 
 ## Regler
 

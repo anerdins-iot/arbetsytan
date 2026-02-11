@@ -1,10 +1,10 @@
 # Fas 12 — Deploy och produktion
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 12.1: Docker och Coolify
-**Input:** Fas 1–11 klara (alla block avbockade), `/docs/docker.md`, `/docs/coolify.md`
+**Input:** Fas 1–11 klara (alla block avbockade), `/workspace/docs/docker.md`, `/workspace/docs/coolify.md`
 **Output:** Produktionsdeploy
 
 - [ ] Skapa produktions-Dockerfile för Next.js

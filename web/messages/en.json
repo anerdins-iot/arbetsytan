@@ -17,6 +17,12 @@
     "close": "Close",
     "loading": "Loading..."
   },
+  "notifications": {
+    "newComment": {
+      "title": "New comment",
+      "body": "New comment on task: {taskTitle}"
+    }
+  },
   "dashboard": {
     "title": "Dashboard",
     "welcome": "Welcome to ArbetsYtan",
@@ -214,7 +220,20 @@
       "created": "Created",
       "updated": "Updated",
       "saving": "Saving...",
-      "deleteConfirm": "Are you sure?"
+      "deleteConfirm": "Are you sure?",
+      "comments": {
+        "title": "Comments",
+        "empty": "No comments yet",
+        "placeholder": "Write a comment...",
+        "submit": "Comment",
+        "submitting": "Submitting...",
+        "editPlaceholder": "Edit comment...",
+        "editing": "Saving...",
+        "deleteConfirm": "Delete comment?",
+        "deleting": "Deleting...",
+        "by": "by",
+        "edited": "(edited)"
+      }
     }
   },
   "settings": {

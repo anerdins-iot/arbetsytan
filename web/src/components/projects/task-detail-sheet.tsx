@@ -46,6 +46,8 @@ import {
 } from "@/actions/tasks";
 import type { TaskItem } from "@/actions/tasks";
 import type { ProjectMember } from "@/actions/projects";
+import type { CommentItem } from "@/actions/comments";
+import { TaskComments } from "./task-comments";
 
 type TaskDetailSheetProps = {
   task: TaskItem | null;
@@ -53,6 +55,8 @@ type TaskDetailSheetProps = {
   onOpenChange: (open: boolean) => void;
   projectId: string;
   members: ProjectMember[];
+  currentUserId: string;
+  commentsByTaskId: Record<string, CommentItem[]>;
 };
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
@@ -74,6 +78,8 @@ export function TaskDetailSheet({
   onOpenChange,
   projectId,
   members,
+  currentUserId,
+  commentsByTaskId,
 }: TaskDetailSheetProps) {
   const t = useTranslations("projects.kanban");
   const tDetail = useTranslations("projects.taskDetail");
@@ -314,6 +320,17 @@ export function TaskDetailSheet({
               {new Date(task.updatedAt).toLocaleDateString()}
             </p>
           </div>
+
+          <Separator />
+
+          {/* Comments */}
+          <TaskComments
+            key={task.id}
+            taskId={task.id}
+            projectId={projectId}
+            currentUserId={currentUserId}
+            initialComments={commentsByTaskId[task.id] ?? []}
+          />
 
           <SheetFooter className="p-0 flex-row gap-2">
             {showDeleteConfirm ? (

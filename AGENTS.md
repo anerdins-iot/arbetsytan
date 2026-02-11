@@ -1,7 +1,7 @@
 # AGENTS.md
 
 > **STOPP!** Varje docs-fil innehåller kritiska regler, breaking changes och förbjudna mönster.
-> Du MÅSTE läsa relevant `/docs/*.md` INNAN du skriver kod. Att skippa detta leder till fel.
+> Du MÅSTE läsa relevant `/workspace/docs/*.md` INNAN du skriver kod. Att skippa detta leder till fel.
 
 ## Översikt
 
@@ -14,16 +14,16 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 
 | Komponent | Teknologi | Docs |
 |-----------|-----------|------|
-| Framework | Next.js 16.0.9 | `/docs/nextjs.md` |
-| Databas | PostgreSQL + Prisma 7 + pgvector | `/docs/prisma.md` |
-| Auth | Auth.js (v5) | `/docs/auth.md` |
-| Validering | Zod 4 | `/docs/zod.md` |
-| Styling | Tailwind CSS v4 + shadcn/ui | `/docs/tailwind.md`, `/docs/shadcn-ui.md` |
+| Framework | Next.js 16.0.9 | `/workspace/docs/nextjs.md` |
+| Databas | PostgreSQL + Prisma 7 + pgvector | `/workspace/docs/prisma.md` |
+| Auth | Auth.js (v5) | `/workspace/docs/auth.md` |
+| Validering | Zod 4 | `/workspace/docs/zod.md` |
+| Styling | Tailwind CSS v4 + shadcn/ui | `/workspace/docs/tailwind.md`, `/workspace/docs/shadcn-ui.md` |
 | Fillagring | MinIO (S3-kompatibel) | — |
-| Betalning | Stripe | `/docs/stripe.md` |
-| Deploy | Docker + Coolify | `/docs/docker.md`, `/docs/coolify.md` |
-| Mobilapp | Expo SDK 54 | `/docs/expo.md` |
-| React | React 19.2 | `/docs/react.md` |
+| Betalning | Stripe | `/workspace/docs/stripe.md` |
+| Deploy | Docker + Coolify | `/workspace/docs/docker.md`, `/workspace/docs/coolify.md` |
+| Mobilapp | Expo SDK 54 | `/workspace/docs/expo.md` |
+| React | React 19.2 | `/workspace/docs/react.md` |
 | E-post | Resend | — |
 | Realtid | Socket.IO (webb + mobil) | — |
 | Notifikationer | Expo Push, Web Push, Resend | se `AI.md` |
@@ -105,20 +105,20 @@ docker-compose.yml           # Workspace root
 
 Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs ALLTID denna fil innan du bygger UI-komponenter.
 
-- Tailwind CSS v4 — se `/docs/tailwind.md`
-- shadcn/ui för alla baskomponenter — se `/docs/shadcn-ui.md`
+- Tailwind CSS v4 — se `/workspace/docs/tailwind.md`
+- shadcn/ui för alla baskomponenter — se `/workspace/docs/shadcn-ui.md`
 - Design tokens i CSS-variabler — inga hårdkodade färger/spacing
 - Responsiv design — mobil först
 - Stöd för dark mode
 
 ## Förbjudet
 
-- Hårdkodade färger eller spacing — se `/docs/tailwind.md`
-- `@apply` i CSS — se `/docs/tailwind.md`
-- `useEffect` för data fetching — se `/docs/react.md`
-- `redirectToCheckout` — se `/docs/stripe.md`
-- `middleware.ts` — använd `proxy.ts`, se `/docs/nextjs.md`
-- `prisma-client-js` som provider — se `/docs/prisma.md`
+- Hårdkodade färger eller spacing — se `/workspace/docs/tailwind.md`
+- `@apply` i CSS — se `/workspace/docs/tailwind.md`
+- `useEffect` för data fetching — se `/workspace/docs/react.md`
+- `redirectToCheckout` — se `/workspace/docs/stripe.md`
+- `middleware.ts` — använd `proxy.ts`, se `/workspace/docs/nextjs.md`
+- `prisma-client-js` som provider — se `/workspace/docs/prisma.md`
 - Hårdkodade UI-texter — alla strängar via `next-intl`
 - Mock-data i UI (all data från DB)
 - Databasfrågor utan `tenantId`-filter
@@ -157,5 +157,5 @@ Alla som arbetar i projektet MÅSTE:
 
 ## Deployment
 
-Appen deployas via Coolify med Docker. Se `/docs/coolify.md`.
+Appen deployas via Coolify med Docker. Se `/workspace/docs/coolify.md`.
 PostgreSQL, MinIO och Redis konfigureras som separata tjänster i Coolify.

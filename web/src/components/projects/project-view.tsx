@@ -9,13 +9,21 @@ import { ProjectOverview } from "./project-overview";
 import { KanbanBoard } from "./kanban-board";
 import type { ProjectDetail } from "@/actions/projects";
 import type { TaskItem } from "@/actions/tasks";
+import type { CommentItem } from "@/actions/comments";
 
 type ProjectViewProps = {
   project: ProjectDetail;
   tasks?: TaskItem[];
+  currentUserId: string;
+  commentsByTaskId: Record<string, CommentItem[]>;
 };
 
-export function ProjectView({ project, tasks = [] }: ProjectViewProps) {
+export function ProjectView({
+  project,
+  tasks = [],
+  currentUserId,
+  commentsByTaskId,
+}: ProjectViewProps) {
   const t = useTranslations("projects");
   const locale = useLocale();
 
@@ -50,6 +58,8 @@ export function ProjectView({ project, tasks = [] }: ProjectViewProps) {
             tasks={tasks}
             projectId={project.id}
             members={project.members}
+            currentUserId={currentUserId}
+            commentsByTaskId={commentsByTaskId}
           />
         </TabsContent>
 

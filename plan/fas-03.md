@@ -62,9 +62,9 @@
 **Input:** Block 3.4 klart
 **Output:** Uppgiftsdetalj-vy med redigering och filtrering
 
-- [ ] Uppgiftsdetalj-vy med redigering av alla fält
-- [ ] Server Action `updateTask` och `deleteTask`
-- [ ] Filtrera uppgifter på tilldelad person, prioritet, status
+- [x] Uppgiftsdetalj-vy med redigering av alla fält
+- [x] Server Action `updateTask` och `deleteTask`
+- [x] Filtrera uppgifter på tilldelad person, prioritet, status
 
 **Verifiering:** Detaljvy renderas, redigering sparar, filtrering fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
