@@ -100,7 +100,40 @@
     "statusArchived": "Archived",
     "tasks": "{count, plural, =0 {No tasks} =1 {1 task} other {# tasks}}",
     "lastUpdated": "Last updated",
-    "errorGeneric": "Something went wrong. Please try again."
+    "errorGeneric": "Something went wrong. Please try again.",
+    "backToProjects": "Back to projects",
+    "notFound": "Project not found",
+    "notFoundDescription": "The project you are looking for does not exist or you do not have access.",
+    "tabs": {
+      "overview": "Overview",
+      "tasks": "Tasks",
+      "files": "Files",
+      "ai": "AI"
+    },
+    "overview": {
+      "projectInfo": "Project info",
+      "taskStats": "Tasks",
+      "members": "Team members",
+      "noMembers": "No team members yet",
+      "todo": "To do",
+      "inProgress": "In progress",
+      "done": "Done",
+      "totalTasks": "Total",
+      "created": "Created",
+      "updated": "Updated",
+      "noDescription": "No description",
+      "noAddress": "No address",
+      "roleAdmin": "Admin",
+      "roleProjectManager": "Project Manager",
+      "roleWorker": "Worker"
+    },
+    "edit": {
+      "title": "Edit project",
+      "description": "Update project information",
+      "saving": "Saving...",
+      "success": "Project has been updated",
+      "status": "Status"
+    }
   },
   "settings": {
     "title": "Settings",

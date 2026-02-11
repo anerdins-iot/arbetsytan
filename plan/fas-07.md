@@ -1,7 +1,7 @@
 # Fas 7 — Inställningar och administration
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 7.1: Företags- och användarinställningar
 **Input:** Fas 2 klar (auth + roller)
@@ -39,3 +39,21 @@
 - [ ] Språkval (svenska/engelska) — sparas i User.locale
 
 **Verifiering:** Profil uppdateras, lösenord byts, preferenser sparas, `npm run build` OK
+
+### Block 7.4: Playwright-test för Fas 7
+**Input:** Block 7.1–7.3 klara
+**Output:** Screenshots och verifiering av inställningar
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Logga in som admin och navigera till inställningar
+- [ ] Ta screenshot av företagsinställningar
+- [ ] Ta screenshot av användarlistan
+- [ ] Testa att ändra roll på en användare
+- [ ] Navigera till rättighetshantering, ta screenshot
+- [ ] Navigera till personliga inställningar, ta screenshot
+- [ ] Testa språkbyte (sv → en), verifiera att UI byter språk
+- [ ] Testa dark mode toggle (om implementerat)
+- [ ] Spara alla screenshots i `screenshots/fas-07/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, inställningar sparas korrekt, inga konsolfel

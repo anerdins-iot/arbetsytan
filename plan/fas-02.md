@@ -78,3 +78,20 @@
 - [x] Server Action för att avbryta inbjudan
 
 **Verifiering:** Inbjudan skickas via e-post, acceptering skapar Membership, `tenantDb(tenantId)` på alla queries, `npm run build` OK
+
+### Block 2.6: Playwright-test för Fas 2
+**Input:** Block 2.1–2.5 klara
+**Output:** Screenshots och verifiering av alla auth-flöden
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Navigera till login-sidan, ta screenshot
+- [ ] Navigera till registreringssidan, ta screenshot
+- [ ] Testa registreringsformuläret (fyll i, verifiera redirect till dashboard)
+- [ ] Logga ut, testa inloggning med skapade credentials
+- [ ] Navigera till "glömt lösenord"-sidan, ta screenshot
+- [ ] Navigera till team-inställningar, ta screenshot av inbjudningsformuläret
+- [ ] Verifiera att oautentiserade requests redirectar till login
+- [ ] Spara alla screenshots i `screenshots/fas-02/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, alla flöden fungerar, inga konsolfel

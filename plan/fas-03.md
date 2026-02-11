@@ -33,13 +33,13 @@
 **Input:** Block 3.2 klart
 **Output:** Projektvy med flikar och översikt
 
-- [ ] Bygga projektvy med flik-navigation: Översikt, Uppgifter, Filer, AI
-- [ ] Översiktsflik visar projektnamn, status, adress, beskrivning
-- [ ] Visa antal uppgifter per status (todo, pågående, klart)
-- [ ] Visa projektmedlemmar med roller
-- [ ] Server Action `getProject` med tenantId-filter
-- [ ] Möjlighet att redigera projektinfo (namn, adress, status, beskrivning)
-- [ ] Server Action `updateProject` med auth + tenant-check
+- [x] Bygga projektvy med flik-navigation: Översikt, Uppgifter, Filer, AI
+- [x] Översiktsflik visar projektnamn, status, adress, beskrivning
+- [x] Visa antal uppgifter per status (todo, pågående, klart)
+- [x] Visa projektmedlemmar med roller
+- [x] Server Action `getProject` med tenantId-filter
+- [x] Möjlighet att redigera projektinfo (namn, adress, status, beskrivning)
+- [x] Server Action `updateProject` med auth + tenant-check
 
 **Verifiering:** Projektvy renderas, fliknavigation fungerar, redigering sparas, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -115,3 +115,25 @@
 - [ ] Debounce och minst 2 tecken innan sökning triggas
 
 **Verifiering:** Sökning returnerar resultat grupperade per typ, `tenantDb(tenantId)` på alla queries, debounce fungerar, `npm run build` OK
+
+### Block 3.10: Playwright-test för Fas 3
+**Input:** Block 3.1–3.9 klara
+**Output:** Screenshots och verifiering av alla dashboard/projekt-flöden
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Logga in med testanvändare
+- [ ] Ta screenshot av dashboard (uppgifter, aktivitet, notifikationer)
+- [ ] Navigera till projektlistan, ta screenshot
+- [ ] Testa sökfunktionen och statusfilter
+- [ ] Öppna ett projekt, ta screenshot av projektvyn med flikar
+- [ ] Navigera till Uppgifter-fliken, ta screenshot av kanban-board
+- [ ] Skapa en ny uppgift via modal
+- [ ] Dra en uppgift mellan kolumner (om drag-and-drop fungerar)
+- [ ] Öppna uppgiftsdetalj, ta screenshot
+- [ ] Lägg till en kommentar
+- [ ] Navigera till teamhantering, ta screenshot
+- [ ] Testa global sökning i topbar
+- [ ] Spara alla screenshots i `screenshots/fas-03/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, navigation fungerar, data visas korrekt, inga konsolfel

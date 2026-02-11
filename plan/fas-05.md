@@ -1,7 +1,7 @@
 # Fas 5 — AI-assistenter
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 5.1: Vercel AI SDK-setup
 **Input:** Fas 1 klar, API-nycklar för Anthropic/OpenAI/Mistral
@@ -93,5 +93,22 @@
 - [ ] Sparade dokument syns i projektets fillista
 
 **Verifiering:** Dokument genereras korrekt, sparas i MinIO, visas i fillistan, alla verktyg använder `tenantDb(tenantId)` + `requireProject()`, `npm run build` OK
+
+### Block 5.8: Playwright-test för Fas 5
+**Input:** Block 5.1–5.7 klara
+**Output:** Screenshots och verifiering av AI-funktioner
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Logga in och navigera till ett projekt
+- [ ] Öppna AI-fliken, ta screenshot av chattgränssnittet
+- [ ] Skicka ett meddelande och vänta på svar, ta screenshot
+- [ ] Testa ett AI-verktyg (t.ex. "visa uppgifter"), verifiera verktygsanrop
+- [ ] Navigera till personlig AI (globalt), ta screenshot
+- [ ] Skicka meddelande till personlig AI, ta screenshot
+- [ ] Verifiera att konversationshistorik visas
+- [ ] Spara alla screenshots i `screenshots/fas-05/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, AI svarar, verktyg fungerar, inga konsolfel
 
 ---

@@ -1,7 +1,7 @@
 # Fas 8 — Tidrapportering och export
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 8.1: Tidrapportering
 **Input:** Fas 3 klar (projekt + uppgifter)
@@ -28,3 +28,20 @@
 - [ ] Nedladdning via presigned URL från MinIO (genererade filer sparas)
 
 **Verifiering:** PDF och Excel genereras korrekt, nedladdning fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
+
+### Block 8.3: Playwright-test för Fas 8
+**Input:** Block 8.1–8.2 klara
+**Output:** Screenshots och verifiering av tidrapportering
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Logga in och navigera till ett projekt
+- [ ] Öppna tidrapporteringsvyn, ta screenshot
+- [ ] Registrera tid på en uppgift
+- [ ] Verifiera att tid visas i listan
+- [ ] Ta screenshot av summering (per dag/vecka)
+- [ ] Testa export till Excel, verifiera nedladdning
+- [ ] Testa export till PDF, verifiera nedladdning
+- [ ] Spara alla screenshots i `screenshots/fas-08/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, export fungerar, inga konsolfel

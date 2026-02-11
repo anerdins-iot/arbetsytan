@@ -1,7 +1,7 @@
 # Fas 6 — Notifikationer och realtid
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 6.1: In-app-notifikationer och Socket.IO
 **Input:** Fas 2 klar (auth), Fas 3 klar (dashboard)
@@ -59,5 +59,21 @@
 - [ ] Regelbaserad kanalval: in-app alltid, push vid < 24h till deadline, e-post vid < 12h
 
 **Verifiering:** Påminnelser triggas vid inaktivitet, rätt kanal väljs, `tenantDb(tenantId)` på alla queries, `npm run build` OK
+
+### Block 6.5: Playwright-test för Fas 6
+**Input:** Block 6.1–6.4 klara
+**Output:** Screenshots och verifiering av notifikationer
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Logga in och verifiera att notifikationsklocka visas i topbar
+- [ ] Ta screenshot av notifikationslistan
+- [ ] Trigga en notifikation (t.ex. skapa uppgift i annat fönster)
+- [ ] Verifiera att notis visas i realtid
+- [ ] Markera notis som läst, verifiera uppdatering
+- [ ] Ta screenshot av push-inställningar (om implementerat)
+- [ ] Spara alla screenshots i `screenshots/fas-06/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, realtidsuppdateringar fungerar, inga konsolfel
 
 ---

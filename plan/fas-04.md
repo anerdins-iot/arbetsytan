@@ -1,7 +1,7 @@
 # Fas 4 — Filhantering
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 4.1: MinIO-integration och uppladdning
 **Input:** Fas 1 klar (Docker med MinIO), Fas 2 klar (auth)
@@ -59,5 +59,22 @@
 - [ ] Utöka `globalSearch` (från Block 3.9) med sökning i filnamn och dokumentinnehåll via embeddings
 
 **Verifiering:** Embeddings genereras, vektorsökning returnerar relevanta resultat, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
+
+### Block 4.5: Playwright-test för Fas 4
+**Input:** Block 4.1–4.4 klara
+**Output:** Screenshots och verifiering av filhantering
+
+- [ ] Starta dev-server med PID-fil
+- [ ] Logga in och navigera till ett projekt
+- [ ] Öppna Filer-fliken, ta screenshot
+- [ ] Testa filuppladdning (drag-and-drop eller filväljare)
+- [ ] Verifiera att filen visas i listan med miniatyrbild/ikon
+- [ ] Klicka på en bild för att öppna lightbox, ta screenshot
+- [ ] Klicka på en PDF för förhandsgranskning, ta screenshot
+- [ ] Testa sökning i dokument (om embeddings fungerar)
+- [ ] Spara alla screenshots i `screenshots/fas-04/`
+- [ ] Stoppa dev-server
+
+**Verifiering:** Alla screenshots sparade, uppladdning och visning fungerar, inga konsolfel
 
 ---

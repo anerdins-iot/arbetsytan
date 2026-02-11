@@ -1,10 +1,10 @@
 # Fas 11 — Mobilapp (Expo)
 
 > Läs `plan/README.md` först för arbetsflöde och regler.
-> Läs relevanta `/docs/*.md` innan implementation.
+> Läs relevanta `/workspace/docs/*.md` innan implementation.
 
 ### Block 11.1: Expo-setup och auth
-**Input:** Fas 2 klar (auth), `/docs/expo.md`
+**Input:** Fas 2 klar (auth), `/workspace/docs/expo.md`
 **Output:** Expo-projekt med autentisering
 
 - [ ] Initiera Expo SDK 54-projekt i `mobile/` med TypeScript
@@ -50,3 +50,21 @@
 - [ ] App Store och Google Play-publicering
 
 **Verifiering:** EAS Build lyckas, appen installeras på testenheter
+
+### Block 11.5: Expo-test för Fas 11
+**Input:** Block 11.1–11.4 klara
+**Output:** Screenshots via Expo simulator
+
+- [ ] Starta Expo dev-server
+- [ ] Starta iOS/Android simulator
+- [ ] Ta screenshot av inloggningsskärmen
+- [ ] Logga in och ta screenshot av dashboard
+- [ ] Navigera till projektlista, ta screenshot
+- [ ] Öppna ett projekt, ta screenshot
+- [ ] Öppna AI-chatt, ta screenshot
+- [ ] Öppna inställningar, ta screenshot
+- [ ] Verifiera push-notifikation (om möjligt)
+- [ ] Spara alla screenshots i `screenshots/fas-11/`
+- [ ] Stoppa Expo
+
+**Verifiering:** Alla screenshots sparade, app fungerar i simulator, inga konsolfel

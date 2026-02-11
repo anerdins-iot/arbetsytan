@@ -100,7 +100,40 @@
     "statusArchived": "Arkiverad",
     "tasks": "{count, plural, =0 {Inga uppgifter} =1 {1 uppgift} other {# uppgifter}}",
     "lastUpdated": "Senast uppdaterad",
-    "errorGeneric": "Något gick fel. Försök igen."
+    "errorGeneric": "Något gick fel. Försök igen.",
+    "backToProjects": "Tillbaka till projekt",
+    "notFound": "Projektet hittades inte",
+    "notFoundDescription": "Projektet du letar efter finns inte eller så har du inte behörighet.",
+    "tabs": {
+      "overview": "Översikt",
+      "tasks": "Uppgifter",
+      "files": "Filer",
+      "ai": "AI"
+    },
+    "overview": {
+      "projectInfo": "Projektinfo",
+      "taskStats": "Uppgifter",
+      "members": "Teammedlemmar",
+      "noMembers": "Inga teammedlemmar ännu",
+      "todo": "Att göra",
+      "inProgress": "Pågående",
+      "done": "Klart",
+      "totalTasks": "Totalt",
+      "created": "Skapad",
+      "updated": "Uppdaterad",
+      "noDescription": "Ingen beskrivning",
+      "noAddress": "Ingen adress",
+      "roleAdmin": "Admin",
+      "roleProjectManager": "Projektledare",
+      "roleWorker": "Montör"
+    },
+    "edit": {
+      "title": "Redigera projekt",
+      "description": "Uppdatera projektinformation",
+      "saving": "Sparar...",
+      "success": "Projektet har uppdaterats",
+      "status": "Status"
+    }
   },
   "settings": {
     "title": "Inställningar",
