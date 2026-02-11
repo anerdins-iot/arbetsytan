@@ -33,13 +33,16 @@ model User {
   image         String?
   password      String?
   isSuperAdmin  Boolean   @default(false)
+  pushToken     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
-  memberships   Membership[]
-  accounts      Account[]
-  sessions      Session[]
-  conversations Conversation[]
+  memberships      Membership[]
+  accounts         Account[]
+  sessions         Session[]
+  conversations    Conversation[]
+  aiMessages       AIMessage[]
+  notifications    Notification[]
 }
 
 model Membership {
@@ -147,9 +150,11 @@ model Project {
   tenantId String
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  tasks         Task[]
-  files         File[]
-  conversations Conversation[]
+  tasks           Task[]
+  files           File[]
+  conversations   Conversation[]
+  aiMessages      AIMessage[]
+  notifications   Notification[]
 }
 
 enum ProjectStatus {
@@ -225,11 +230,13 @@ model File {
 // ─────────────────────────────────────────
 
 model Conversation {
-  id        String     @id @default(cuid())
+  id        String           @id @default(cuid())
+  type      ConversationType
   title     String?
-  provider  AIProvider @default(CLAUDE)
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  summary   String?
+  provider  AIProvider       @default(CLAUDE)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -237,6 +244,11 @@ model Conversation {
   project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
 
   messages Message[]
+}
+
+enum ConversationType {
+  PERSONAL
+  PROJECT
 }
 
 enum AIProvider {
@@ -258,6 +270,54 @@ model Message {
 enum MessageRole {
   USER
   ASSISTANT
+}
+
+model AIMessage {
+  id        String          @id @default(cuid())
+  direction AIDirection
+  type      String
+  content   String
+  read      Boolean         @default(false)
+  createdAt DateTime        @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  parentId  String?
+  parent    AIMessage?  @relation("AIMessageThread", fields: [parentId], references: [id])
+  replies   AIMessage[] @relation("AIMessageThread")
+}
+
+enum AIDirection {
+  PROJECT_TO_PERSONAL
+  PERSONAL_TO_PROJECT
+}
+
+// ─────────────────────────────────────────
+// Notifications
+// ─────────────────────────────────────────
+
+model Notification {
+  id        String            @id @default(cuid())
+  title     String
+  body      String
+  channel   NotificationChannel
+  read      Boolean           @default(false)
+  sent      Boolean           @default(false)
+  createdAt DateTime          @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+}
+
+enum NotificationChannel {
+  IN_APP
+  PUSH
+  EMAIL
 }
 
 // ─────────────────────────────────────────

@@ -25,7 +25,8 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | Mobilapp | Expo SDK 54 | `/docs/expo.md` |
 | React | React 19.2 | `/docs/react.md` |
 | E-post | Resend | — |
-| AI | Claude, OpenAI, Mistral | — |
+| Notifikationer | Expo Push, Web Push, Resend | se `AI.md` |
+| AI | Claude, OpenAI, Mistral | se `AI.md` |
 
 ## Kommandon
 
@@ -72,7 +73,7 @@ src/
 - Alla Server Actions har auth-check + tenant-check + Zod-validering
 - Felhantering med tydliga felmeddelanden på svenska till användaren
 - Filer lagras i MinIO, aldrig lokalt på servern
-- AI-anrop via abstraktionslager i `src/lib/ai/`
+- AI-anrop via abstraktionslager i `src/lib/ai/` — se `AI.md` för arkitektur
 
 ## Design
 
@@ -104,6 +105,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `src/lib/auth.ts` — Auth.js-konfiguration
 - `src/lib/db.ts` — Prisma-klient
 - `src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
+- `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
 - `prisma/schema.prisma` — Databasschema
 - `prisma/seed.ts` — Seed-data
 - `PROJEKT.md` — Fullständig projektbeskrivning och faser
