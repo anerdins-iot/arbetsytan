@@ -5,6 +5,10 @@ import bcrypt from "bcrypt";
 import { prisma } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 
+// Auth actions run without session (registration/login). Global prisma is correct
+// for User, Tenant, Membership creation and User lookup. Tenant data actions must
+// use requireAuth() and tenantDb(tenantId) instead.
+
 const registerSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email().max(255),

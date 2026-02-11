@@ -14,6 +14,7 @@ export const authConfig = {
     session({ session, token }) {
       session.tenantId = token.tenantId as string | undefined;
       session.role = token.role as string | undefined;
+      if (session.user && token.sub) session.user.id = token.sub;
       return session;
     },
     authorized({ auth, request }) {
