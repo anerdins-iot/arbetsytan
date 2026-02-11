@@ -77,14 +77,14 @@ Nästa block kan **inte** starta innan föregående blocks checkboxar är avbock
 | 3 | `fas-03.md` | Dashboard, projekt, kanban, team, aktivitetslogg, sökning | 50 | 9 |
 | 4 | `fas-04.md` | Filhantering | 29 | 4 |
 | 5 | `fas-05.md` | AI-assistenter | 42 | 7 |
-| 6 | `fas-06.md` | Notifikationer, realtid och påminnelser | 21 | 4 |
+| 6 | `fas-06.md` | Notifikationer, realtid och påminnelser | 23 | 4 |
 | 7 | `fas-07.md` | Inställningar och administration | 16 | 3 |
 | 8 | `fas-08.md` | Tidrapportering och export | 12 | 2 |
 | 9 | `fas-09.md` | Betalning (Stripe) | 14 | 2 |
 | 10 | `fas-10.md` | Landningssida | 8 | 1 |
 | 11 | `fas-11.md` | Mobilapp (Expo) | 19 | 4 |
 | 12 | `fas-12.md` | Deploy och produktion | 13 | 2 |
-| **Totalt** | | | **288** | **47** |
+| **Totalt** | | | **290** | **47** |
 
 ## Fasordning och beroenden
 

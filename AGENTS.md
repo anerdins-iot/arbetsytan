@@ -119,6 +119,9 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Databasfrågor utan `tenantId`-filter
 - Direkt användning av `prisma` (global klient) för tenant-data — använd alltid `tenantDb(tenantId)`
 - Projektoperationer utan `requireProject()`-validering — verifiera alltid att användaren har åtkomst
+- Socket.IO broadcast utan rum — emit alltid till specifika rum (`tenant:`, `project:`, `user:`), aldrig till alla
+- Socket.IO-filtrering i frontend — all data filtreras i backend innan emit
+- Klient-styrd rumshantering — servern bestämmer vilka rum klienten joinar
 - Direkt åtkomst till annan tenants data
 - Committa `.env.local` eller hemligheter
 - API-nycklar i klientkod

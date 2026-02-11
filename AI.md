@@ -168,9 +168,29 @@ Socket.IO används för all realtidskommunikation — både på webben och i mob
 
 Konsekvent transport för webb och mobil. React Native stödjer inte SSE/EventSource nativt, men Socket.IO fungerar på båda plattformar med samma API. Socket.IO ger automatisk återanslutning, rum per tenant, och autentisering via session (webb) eller JWT (mobil).
 
+### Säkerhetsmodell
+
+All filtrering sker i backend — klienten väljer aldrig vilken data den tar emot. Principen är: servern bestämmer vad som skickas, klienten renderar det den får.
+
+**Autentisering vid anslutning:**
+- Webb: session-cookie valideras vid `connection`-eventet. Ogiltig session → anslutning avvisas.
+- Mobil: JWT skickas via `auth`-parameter vid anslutning. Ogiltig token → anslutning avvisas.
+- `tenantId`, `userId` och `role` extraheras vid anslutning och lagras på socket-objektet. Dessa värden används för all filtrering — klienten kan aldrig skicka eller överskriva dem.
+
+**Rumsstruktur (server-hanterad):**
+- `tenant:{tenantId}` — alla events för en tenant (projektstatus, teamändringar)
+- `project:{projectId}` — projektspecifika events (uppgifter, filer, statusändringar)
+- `user:{userId}` — personliga events (notifikationer, AI-meddelanden)
+- Servern placerar klienten i rum baserat på verifierad session — ALDRIG baserat på klientens request. Vid anslutning joinar klienten `tenant:{tenantId}` och `user:{userId}`. Projektrum joinas först efter `requireProject()`-validering.
+
+**Emit-regler:**
+- Backend emittar alltid till specifika rum — aldrig broadcast till alla.
+- Data som emittas har redan filtrerats via `tenantDb(tenantId)` — klienten får aldrig ofiltrerad data.
+- Känslig data (t.ex. andra tenants information) kan aldrig läcka eftersom emit-target alltid är ett rum som är scopat till tenant/projekt/användare.
+
 ### Implementation
 
-Socket.IO-servern skapas i `src/lib/socket.ts` med autentisering och rum per tenant. Klienten ansluter via `useSocket`-hook vid inloggning. Events skickas med typ (t.ex. "notification", "task-update", "project-update") och data i JSON-format.
+Socket.IO-servern skapas i `src/lib/socket.ts`. Klienten ansluter via `useSocket`-hook vid inloggning. Events skickas med typ (t.ex. "notification", "task-update", "project-update") och data i JSON-format. Alla rum hanteras av servern — klienten kan inte joina rum själv.
 
 ## Mobilautentisering
 

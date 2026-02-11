@@ -8,14 +8,22 @@
 **Output:** Fungerande notifikationssystem med Socket.IO
 
 - [ ] Installera och konfigurera `socket.io` (server) och `socket.io-client` (klient)
-- [ ] Skapa Socket.IO-server i `src/lib/socket.ts` — autentisering via session/JWT, rum per tenant
+- [ ] Skapa Socket.IO-server i `src/lib/socket.ts` med säkerhetsmodell enligt `AI.md`:
+  - Autentisering vid anslutning: validera session (webb) eller JWT (mobil), avvisa ogiltiga
+  - Extrahera `tenantId`, `userId`, `role` vid anslutning — lagra på socket-objektet
+  - Klienten kan ALDRIG skicka eller överskriva dessa värden
+- [ ] Implementera rumsstruktur (server-hanterad, ej klient-styrd):
+  - `tenant:{tenantId}` — joinas automatiskt vid anslutning
+  - `user:{userId}` — joinas automatiskt vid anslutning
+  - `project:{projectId}` — joinas efter `requireProject()`-validering
+- [ ] All emit sker till specifika rum — aldrig broadcast. Data filtreras i backend via `tenantDb(tenantId)` innan emit.
 - [ ] Klienten ansluter vid inloggning med `useSocket` hook
-- [ ] Skapa `createNotification`-funktion som sparar i DB + emittar via Socket.IO
+- [ ] Skapa `createNotification`-funktion som sparar i DB + emittar via Socket.IO till `user:{userId}`-rum
 - [ ] Visa notifikationsklocka i topbar med antal olästa
 - [ ] Bygga notifikationspanel med lista och "markera som läst"
 - [ ] Server Action `markNotificationRead`
 
-**Verifiering:** Socket.IO-anslutning fungerar, notifikationer visas i realtid, markering fungerar, tenantId-filter, `npm run build` OK
+**Verifiering:** Socket.IO-anslutning fungerar, autentisering avvisar ogiltiga sessioner/JWT, rum hanteras av server (klienten kan inte joina själv), data filtreras i backend, notifikationer visas i realtid, `npm run build` OK
 
 ### Block 6.2: Push och e-postnotifikationer
 **Input:** Block 6.1 klart, Resend konfigurerat (Block 2.4)
@@ -39,7 +47,7 @@
 - [ ] Socket.IO-events för projektstatusändringar
 - [ ] Klienten lyssnar och uppdaterar UI i realtid
 
-**Verifiering:** UI uppdateras vid ändringar från annan användare, `npm run build` OK
+**Verifiering:** UI uppdateras vid ändringar från annan användare, events emittas till rätt rum (projekt/tenant), data filtreras i backend, `npm run build` OK
 
 ### Block 6.4: Påminnelser vid inaktivitet
 **Input:** Block 6.1 + 6.2 klara
