@@ -69,7 +69,11 @@ messages/
 ## Multi-tenant
 
 - Varje företag (tenant) har isolerad data
-- Alla databasfrågor MÅSTE filtreras på `tenantId`
+- **Central tenant-isolering:** Alla databasfrågor går genom en tenant-scoped Prisma-klient (`tenantDb(tenantId)`) som automatiskt injicerar `tenantId`-filter på alla queries via en Prisma client extension. Ingen kod får använda den globala Prisma-klienten direkt för tenant-data.
+- `tenantId` hämtas från session (webb) eller JWT (mobil) och verifieras i `requireAuth`/`requireRole` innan den skickas till `tenantDb()`
+- Prisma-extensionen i `src/lib/db.ts` exporterar:
+  - `prisma` — global klient, ENBART för plattformsoperationer (superadmin, cron-jobb, auth-flöden utan tenant-kontext)
+  - `tenantDb(tenantId)` — tenant-scoped klient som injicerar `WHERE tenantId = ?` på alla operationer
 - Roller per tenant: Admin, Projektledare, Montör
 - Superadmin är plattformsnivå — separerad från tenant-roller
 - Rättigheter är konfigurerbara per roll och tenant
@@ -85,7 +89,7 @@ messages/
 - Engelska i kod (variabelnamn, funktioner, kommentarer, mappstruktur, URLs)
 - Server Components som default — `'use client'` bara vid interaktivitet
 - All data via Server Actions — aldrig hårdkodad
-- Alla Server Actions har auth-check + tenant-check + Zod-validering
+- Alla Server Actions har auth-check via `requireAuth`/`requireRole` + `tenantDb(tenantId)` för databasåtkomst + Zod-validering
 - Felhantering med tydliga felmeddelanden på svenska till användaren
 - Filer lagras i MinIO, aldrig lokalt på servern
 - AI-anrop via Vercel AI SDK — se `AI.md` för arkitektur, `vercel-ai-sdk.md` för SDK-docs
@@ -111,6 +115,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Hårdkodade UI-texter — alla strängar via `next-intl`
 - Mock-data i UI (all data från DB)
 - Databasfrågor utan `tenantId`-filter
+- Direkt användning av `prisma` (global klient) för tenant-data — använd alltid `tenantDb(tenantId)`
 - Direkt åtkomst till annan tenants data
 - Committa `.env.local` eller hemligheter
 - API-nycklar i klientkod

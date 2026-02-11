@@ -33,17 +33,21 @@
 
 **Verifiering:** Registrering skapar User+Tenant+Membership, inloggning fungerar, redirect till dashboard, alla texter via i18n, `npm run build` OK
 
-### Block 2.3: Session och skyddade routes
+### Block 2.3: Session, skyddade routes och tenant-isolering
 **Input:** Block 2.1 + 2.2 klara
-**Output:** Auth-wrappers och skyddade routes
+**Output:** Auth-wrappers, skyddade routes och tenant-scoped databasklient
 
 - [ ] Skapa `getSession`-hjälpfunktion som returnerar user, tenantId, role
-- [ ] Skapa `requireAuth`-wrapper för Server Actions som kontrollerar session
+- [ ] Skapa `requireAuth`-wrapper för Server Actions som kontrollerar session och returnerar verifierat `tenantId`
 - [ ] Skapa `requireRole`-wrapper som kräver specifik roll (ADMIN, PROJECT_MANAGER)
+- [ ] Skapa tenant-scoped Prisma-klient i `src/lib/db.ts` med Prisma client extension:
+  - `tenantDb(tenantId)` — returnerar en Prisma-klient som automatiskt injicerar `WHERE tenantId = ?` på alla queries (find, update, delete, count, aggregate)
+  - `tenantDb(tenantId)` ska även automatiskt sätta `tenantId` vid `create`-operationer
+  - Den globala `prisma`-klienten finns kvar men är ENBART för plattformsoperationer (superadmin, cron, auth utan tenant-kontext)
 - [ ] Alla dashboard-sidor kontrollerar session — redirect till login om ej autentiserad
-- [ ] Alla Server Actions kontrollerar auth + tenant
+- [ ] Alla Server Actions kontrollerar auth med `requireAuth`, hämtar `tenantId` därifrån, och använder `tenantDb(tenantId)` för databasåtkomst
 
-**Verifiering:** Oautentiserad request redirectar till login, `requireAuth` och `requireRole` fungerar, `npm run build` OK
+**Verifiering:** Oautentiserad request redirectar till login, `requireAuth` och `requireRole` fungerar, `tenantDb()` injicerar tenantId på alla queries, det är omöjligt att göra tenant-databasfrågor utan `tenantDb()`, `npm run build` OK
 
 ### Block 2.4: Lösenordsåterställning
 **Input:** Block 2.2 + 2.3 klara, Resend-konto
