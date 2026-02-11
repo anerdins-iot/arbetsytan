@@ -31,6 +31,7 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | AI | Claude, OpenAI, Mistral | se `AI.md` |
 | OCR | Mistral OCR | `mistral-api.md` |
 | Embeddings | OpenAI + pgvector | se `AI.md` |
+| i18n | next-intl | — |
 
 ## Kommandon
 
@@ -47,17 +48,22 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 
 ```
 src/
-├── app/              # App Router (pages, layouts, API routes)
-│   ├── (auth)/       # Login, registration
-│   ├── (dashboard)/  # Authenticated - projects, files, tasks
-│   └── api/          # API endpoints
-├── components/       # UI components
-│   ├── ui/           # shadcn/ui base components
-│   └── [feature]/    # Feature-specific components
-├── lib/              # Helpers, database, auth config, AI clients
-├── actions/          # Server Actions (all CRUD logic)
-├── types/            # TypeScript types
-└── hooks/            # Custom React hooks (client-side)
+├── app/
+│   └── [locale]/        # Språkprefix — alla sidor under locale
+│       ├── (auth)/      # Login, registration
+│       ├── (dashboard)/ # Authenticated - projects, files, tasks
+│       └── api/         # API endpoints (ej locale-prefix)
+├── components/          # UI components
+│   ├── ui/              # shadcn/ui base components
+│   └── [feature]/       # Feature-specific components
+├── lib/                 # Helpers, database, auth config, AI clients
+├── actions/             # Server Actions (all CRUD logic)
+├── types/               # TypeScript types
+├── hooks/               # Custom React hooks (client-side)
+└── i18n/                # next-intl config, request.ts, routing.ts
+messages/
+├── sv.json              # Svenska översättningar
+└── en.json              # Engelska översättningar
 ```
 
 ## Multi-tenant
@@ -70,7 +76,12 @@ src/
 
 ## Konventioner
 
-- Svenska i UI-texter
+- Alla UI-texter via `next-intl` — aldrig hårdkodade strängar i komponenter
+- Översättningar i `messages/sv.json` och `messages/en.json`
+- Nytt språk läggs till genom att skapa en ny JSON-fil (t.ex. `messages/no.json`)
+- Svenska som standardspråk, engelska som andra språk
+- Routing med språkprefix: `/sv/dashboard`, `/en/dashboard`
+- Användaren väljer språk i inställningar — sparas i `User.locale`
 - Engelska i kod (variabelnamn, funktioner, kommentarer, mappstruktur, URLs)
 - Server Components som default — `'use client'` bara vid interaktivitet
 - All data via Server Actions — aldrig hårdkodad
@@ -97,6 +108,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `redirectToCheckout` — se `/docs/stripe.md`
 - `middleware.ts` — använd `proxy.ts`, se `/docs/nextjs.md`
 - `prisma-client-js` som provider — se `/docs/prisma.md`
+- Hårdkodade UI-texter — alla strängar via `next-intl`
 - Mock-data i UI (all data från DB)
 - Databasfrågor utan `tenantId`-filter
 - Direkt åtkomst till annan tenants data

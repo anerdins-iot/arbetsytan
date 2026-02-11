@@ -12,6 +12,12 @@ En kommersiell multi-tenant SaaS-plattform för hantverkare. Projektledning med 
 - AI-assistent i vardagen - läsa ritningar, sammanfatta dokument, skriva offerter och hjälpa med det mesta
 - Fleranvändarstöd med rollbaserad åtkomst
 - Multi-tenant - varje företag har isolerad data
+- Kommentarer på uppgifter - diskutera arbetet direkt i uppgiften
+- Aktivitetslogg - spåra vem som gjort vad i projektet (audit trail)
+- Global sökning - sök i projekt, uppgifter, filer och dokumentinnehåll
+- Tidrapportering - rapportera tid per uppgift och projekt
+- Export och rapporter - sammanställningar som PDF eller Excel
+- Påminnelser vid inaktivitet - automatiska notiser om uppgifter som inte rört sig
 
 ## Roller och behörigheter
 

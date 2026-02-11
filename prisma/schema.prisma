@@ -33,6 +33,7 @@ model User {
   image         String?
   password      String?
   isSuperAdmin  Boolean   @default(false)
+  locale        String    @default("sv")
   pushToken     String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -156,6 +157,8 @@ model Project {
   conversations   Conversation[]
   aiMessages      AIMessage[]
   notifications   Notification[]
+  activityLogs    ActivityLog[]
+  timeEntries     TimeEntry[]
 }
 
 enum ProjectStatus {
@@ -179,6 +182,8 @@ model Task {
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   assignments TaskAssignment[]
+  comments    Comment[]
+  timeEntries TimeEntry[]
 }
 
 enum TaskStatus {
@@ -341,6 +346,57 @@ enum NotificationChannel {
   IN_APP
   PUSH
   EMAIL
+}
+
+// ─────────────────────────────────────────
+// Comments
+// ─────────────────────────────────────────
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  taskId   String
+  task     Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  authorId String
+}
+
+// ─────────────────────────────────────────
+// Activity Log (Audit Trail)
+// ─────────────────────────────────────────
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  action    String
+  entity    String
+  entityId  String
+  metadata  Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actorId   String
+}
+
+// ─────────────────────────────────────────
+// Time Tracking
+// ─────────────────────────────────────────
+
+model TimeEntry {
+  id          String    @id @default(cuid())
+  description String?
+  minutes     Int
+  date        DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  taskId    String?
+  task      Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
 }
 
 // ─────────────────────────────────────────
