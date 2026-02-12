@@ -23,8 +23,8 @@ export function HeroSection() {
               {t("description")}
             </p>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button size="lg" asChild>
-                <Link href="/">
+              <Button size="lg" variant="accent" asChild>
+                <Link href="/register">
                   {t("cta")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

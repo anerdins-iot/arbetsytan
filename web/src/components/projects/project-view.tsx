@@ -21,6 +21,7 @@ import { TimeEntryForm } from "@/components/time/time-entry-form";
 import { TimeEntryList } from "@/components/time/time-entry-list";
 import { TimeSummary } from "@/components/time/time-summary";
 import { ProjectExportPanel } from "./project-export-panel";
+import { ProjectAiChat } from "./project-ai-chat";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -134,9 +135,7 @@ export function ProjectView({
         </TabsContent>
 
         <TabsContent value="ai" className="mt-6">
-          <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-border">
-            <p className="text-muted-foreground">{t("tabs.ai")}</p>
-          </div>
+          <ProjectAiChat projectId={project.id} />
         </TabsContent>
       </Tabs>
     </div>

@@ -56,7 +56,7 @@ export function RegisterAcceptForm({ token, email }: Props) {
 
   if (success) {
     return (
-      <div className="rounded-md bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-400">
+      <div className="rounded-md bg-success/10 p-3 text-sm text-success">
         {t("acceptSuccess")}
       </div>
     );

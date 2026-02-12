@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, useTransition } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { Bell, CheckCheck, Menu, Search, User } from "lucide-react"
+import { Bell, CheckCheck, FileText, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Separator } from "@/components/ui/separator"
@@ -40,6 +40,8 @@ export function Topbar({
   const [results, setResults] = useState<GlobalSearchResult>({
     projects: [],
     tasks: [],
+    files: [],
+    documents: [],
   })
   const [isSearching, setIsSearching] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
@@ -52,7 +54,7 @@ export function Topbar({
   const requestIdRef = useRef(0)
 
   const hasQuery = query.trim().length >= 2
-  const hasResults = results.projects.length > 0 || results.tasks.length > 0
+  const hasResults = results.projects.length > 0 || results.tasks.length > 0 || results.files.length > 0 || results.documents.length > 0
 
   const handleRealtimeNotification = useCallback((incoming: NotificationItem) => {
     setNotifications((current) => {
@@ -77,7 +79,7 @@ export function Topbar({
   }
 
   function resetSearchResults() {
-    setResults({ projects: [], tasks: [] })
+    setResults({ projects: [], tasks: [], files: [], documents: [] })
     setHasError(false)
     setIsSearching(false)
   }
@@ -111,7 +113,7 @@ export function Topbar({
       } catch {
         if (requestIdRef.current !== requestId) return
         setHasError(true)
-        setResults({ projects: [], tasks: [] })
+        setResults({ projects: [], tasks: [], files: [], documents: [] })
       } finally {
         if (requestIdRef.current === requestId) {
           setIsSearching(false)
@@ -249,6 +251,66 @@ export function Topbar({
                           </div>
                           <p className="line-clamp-1 text-xs text-muted-foreground">
                             {t("search.inProject", { project: task.projectName })}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {results.files.length > 0 && (
+                  <div>
+                    <p className="px-4 py-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                      {t("search.files")}
+                    </p>
+                    <div className="space-y-1 px-2 pb-2">
+                      {results.files.map((file) => (
+                        <Link
+                          key={file.id}
+                          href={`/projects/${file.projectId}?tab=files`}
+                          onClick={handleResultClick}
+                          className="block rounded-md px-2 py-2 hover:bg-muted"
+                        >
+                          <div className="flex items-center gap-2">
+                            <FileText className="size-4 shrink-0 text-muted-foreground" />
+                            <p className="line-clamp-1 text-sm font-medium text-foreground">
+                              {file.name}
+                            </p>
+                          </div>
+                          <p className="line-clamp-1 text-xs text-muted-foreground pl-6">
+                            {t("search.inProject", { project: file.projectName })}
+                          </p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {results.documents.length > 0 && (
+                  <div>
+                    <p className="px-4 py-2 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                      {t("search.documents")}
+                    </p>
+                    <div className="space-y-1 px-2 pb-2">
+                      {results.documents.map((doc) => (
+                        <Link
+                          key={doc.chunkId}
+                          href={`/projects/${doc.projectId}?tab=files`}
+                          onClick={handleResultClick}
+                          className="block rounded-md px-2 py-2 hover:bg-muted"
+                        >
+                          <div className="flex items-center gap-2">
+                            <FileText className="size-4 shrink-0 text-muted-foreground" />
+                            <p className="line-clamp-1 text-sm font-medium text-foreground">
+                              {doc.fileName}
+                              {doc.page !== null ? ` (${t("search.page", { page: doc.page })})` : ""}
+                            </p>
+                          </div>
+                          <p className="line-clamp-2 text-xs text-muted-foreground pl-6">
+                            {doc.content}
+                          </p>
+                          <p className="line-clamp-1 text-xs text-muted-foreground pl-6">
+                            {t("search.inProject", { project: doc.projectName })}
                           </p>
                         </Link>
                       ))}

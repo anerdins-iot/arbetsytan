@@ -40,7 +40,7 @@ function statusBadge(
   }
   if (status === "ACCEPTED") {
     return (
-      <Badge variant="default" className="bg-green-600">
+      <Badge variant="default" className="bg-success text-success-foreground">
         {t("statusAccepted")}
       </Badge>
     );

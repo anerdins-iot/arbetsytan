@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import { useTranslations } from "next-intl"
 import { Sidebar } from "./sidebar"
 import { Topbar } from "./topbar"
+import { PersonalAiChat } from "@/components/ai/personal-ai-chat"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import type { NotificationItem } from "@/actions/notifications"
 
@@ -56,6 +57,7 @@ export function DashboardShell({
           {children}
         </main>
       </div>
+      <PersonalAiChat />
     </div>
   )
 }

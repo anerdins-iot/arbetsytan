@@ -16,8 +16,8 @@ export function CtaSection() {
           {t("description")}
         </p>
         <div className="mt-8">
-          <Button size="lg" variant="secondary" asChild>
-            <Link href="/">
+          <Button size="lg" variant="accent" asChild>
+            <Link href="/register">
               {t("button")}
               <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

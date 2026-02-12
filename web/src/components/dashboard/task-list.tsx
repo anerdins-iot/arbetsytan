@@ -29,9 +29,9 @@ function StatusIcon({ status }: { status: string }) {
     case "TODO":
       return <Circle className="size-4 text-muted-foreground" />;
     case "IN_PROGRESS":
-      return <Clock className="size-4 text-blue-500" />;
+      return <Clock className="size-4 text-primary" />;
     case "DONE":
-      return <CheckCircle2 className="size-4 text-green-500" />;
+      return <CheckCircle2 className="size-4 text-success" />;
     default:
       return <Circle className="size-4 text-muted-foreground" />;
   }
@@ -81,7 +81,7 @@ function DeadlineDisplay({ deadline }: { deadline: string | null }) {
         isOverdue
           ? "text-destructive font-medium"
           : isToday
-            ? "text-amber-600 dark:text-amber-400 font-medium"
+            ? "text-warning font-medium"
             : "text-muted-foreground"
       }`}
     >

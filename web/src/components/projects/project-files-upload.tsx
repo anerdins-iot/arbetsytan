@@ -3,11 +3,14 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
+  ChevronDown,
+  ChevronUp,
   Download,
   FileImage,
   FileSpreadsheet,
   FileText,
   Loader2,
+  ScanText,
   Trash2,
   UploadCloud,
   X,
@@ -95,6 +98,7 @@ export function ProjectFilesUpload({
   const [files, setFiles] = useState<FileItem[]>(initialFiles);
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<FileItem | null>(null);
+  const [showOcrText, setShowOcrText] = useState(false);
   const [isDeletingFileId, setIsDeletingFileId] = useState<string | null>(null);
 
   function mapErrorCode(errorCode: string): string {
@@ -246,6 +250,7 @@ export function ProjectFilesUpload({
   function handlePreview(file: FileItem): void {
     if (isImageFile(file) || isPdfFile(file)) {
       setPreviewFile(file);
+      setShowOcrText(false);
       return;
     }
     window.open(file.downloadUrl, "_blank", "noopener,noreferrer");
@@ -434,13 +439,21 @@ export function ProjectFilesUpload({
                   </button>
                   <div className="mt-3 flex min-w-0 items-center gap-2">
                     {fileIcon(file.type)}
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-foreground">
                         {file.name}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatBytes(file.size)}
-                      </p>
+                      <div className="flex items-center gap-2">
+                        <p className="text-xs text-muted-foreground">
+                          {formatBytes(file.size)}
+                        </p>
+                        {file.ocrText ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                            <ScanText className="size-2.5" />
+                            {t("ocrBadge")}
+                          </span>
+                        ) : null}
+                      </div>
                     </div>
                   </div>
                   <div className="mt-3 flex items-center justify-end gap-2">
@@ -530,6 +543,33 @@ export function ProjectFilesUpload({
                   />
                 )}
               </div>
+
+              {previewFile.ocrText ? (
+                <div className="border-t border-border">
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-between p-4 text-left text-sm font-medium text-foreground hover:bg-muted/50"
+                    onClick={() => setShowOcrText(!showOcrText)}
+                  >
+                    <span className="flex items-center gap-2">
+                      <ScanText className="size-4" />
+                      {t("ocrTitle")}
+                    </span>
+                    {showOcrText ? (
+                      <ChevronUp className="size-4 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="size-4 text-muted-foreground" />
+                    )}
+                  </button>
+                  {showOcrText ? (
+                    <div className="max-h-[40vh] overflow-auto border-t border-border bg-muted/20 p-4">
+                      <pre className="whitespace-pre-wrap text-sm text-foreground">
+                        {previewFile.ocrText}
+                      </pre>
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
           ) : null}
         </DialogContent>

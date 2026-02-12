@@ -30,9 +30,9 @@ function StatusIcon({ status }: { status: string }) {
     case "TODO":
       return <Circle className="size-5 text-muted-foreground" />;
     case "IN_PROGRESS":
-      return <Clock className="size-5 text-blue-500" />;
+      return <Clock className="size-5 text-primary" />;
     case "DONE":
-      return <CheckCircle2 className="size-5 text-green-500" />;
+      return <CheckCircle2 className="size-5 text-success" />;
     default:
       return <Circle className="size-5 text-muted-foreground" />;
   }
@@ -80,7 +80,7 @@ export function WorkerDashboard({ tasks, userName }: WorkerDashboardProps) {
         <CardContent className="space-y-2">
           {tasks.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-8 text-center">
-              <CheckCircle2 className="size-12 text-green-500/50" />
+              <CheckCircle2 className="size-12 text-success/50" />
               <p className="mt-3 text-sm text-muted-foreground">
                 {taskT("emptyToday")}
               </p>

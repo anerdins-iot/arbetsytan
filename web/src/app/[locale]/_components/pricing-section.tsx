@@ -70,10 +70,10 @@ export function PricingSection() {
                 <CardFooter>
                   <Button
                     className="w-full"
-                    variant={isPopular ? "default" : "outline"}
+                    variant={isPopular ? "accent" : "outline"}
                     asChild
                   >
-                    <Link href="/">
+                    <Link href="/register">
                       {isPopular ? t("ctaPopular") : t("cta")}
                     </Link>
                   </Button>

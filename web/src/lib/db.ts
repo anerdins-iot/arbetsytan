@@ -42,6 +42,16 @@ const PROJECT_SCOPED_MODELS = [
 /** Comment is scoped via task.project (no direct project relation). */
 const COMMENT_MODEL = "comment" as const;
 
+/** Conversation: personal (projectId null) or project.project.tenantId. */
+const CONVERSATION_TENANT_OR = (tenantId: string) => ({
+  OR: [{ projectId: null }, { project: { tenantId } }] as const,
+});
+
+/** Message is scoped via conversation (same OR as Conversation). */
+const MESSAGE_CONVERSATION_FILTER = (tenantId: string) => ({
+  conversation: { OR: [{ projectId: null }, { project: { tenantId } }] } as const,
+});
+
 /** Build nested where key from dot path, e.g. "task.project" -> { task: { project: { tenantId } } }. */
 function nestedTenantFilter(relationPath: string, tenantId: string): Record<string, unknown> {
   const parts = relationPath.split(".");
@@ -81,6 +91,28 @@ function mergeDataTenantId<T extends { data?: unknown }>(
   return {
     ...args,
     data: { ...data, tenantId },
+  } as T;
+}
+
+function mergeWhereConversationTenant<T extends { where?: unknown }>(
+  args: T,
+  tenantId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { AND: [existing, CONVERSATION_TENANT_OR(tenantId)] },
+  } as T;
+}
+
+function mergeWhereMessageTenant<T extends { where?: unknown }>(
+  args: T,
+  tenantId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { AND: [existing, MESSAGE_CONVERSATION_FILTER(tenantId)] },
   } as T;
 }
 
@@ -232,6 +264,81 @@ function createTenantExtension(tenantId: string) {
     },
   };
 
+  // 4b. AIMessage is scoped via project (always has projectId)
+  query.aIMessage = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    findUnique: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, project: { tenantId } } });
+    },
+    findUniqueOrThrow: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, project: { tenantId } } });
+    },
+    create: ({ args, query: run }) => run(args),
+    update: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    count: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+  };
+
+  // 5. Conversation: personal (projectId null) or project.tenantId
+  query.conversation = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    create: ({ args, query: run }) => run(args),
+    update: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereConversationTenant(args as { where?: unknown }, tenantId)),
+  };
+
+  // 6. Message: scoped via conversation (personal or project.tenantId)
+  query.message = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    create: ({ args, query: run }) => run(args),
+    update: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+  };
+
   return { query };
 }
 
@@ -252,6 +359,8 @@ export type TenantScopedClient = Omit<
   | "comment"
   | "taskAssignment"
   | "projectMember"
+  | "conversation"
+  | "message"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -268,6 +377,8 @@ export type TenantScopedClient = Omit<
   comment: PrismaClient["comment"];
   taskAssignment: PrismaClient["taskAssignment"];
   projectMember: PrismaClient["projectMember"];
+  conversation: PrismaClient["conversation"];
+  message: PrismaClient["message"];
 };
 
 /**
