@@ -7,7 +7,7 @@ import { requirePermission, requireAuth, getSession } from "@/lib/auth";
 import { tenantDb, prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { signIn } from "@/lib/auth";
-import { syncSubscriptionQuantityForTenant } from "@/actions/subscription";
+import { updateSubscriptionQuantity } from "@/actions/subscription";
 import type { Role, InvitationStatus } from "../../generated/prisma/client";
 
 // ─── Schemas ───────────────────────────────────────────
@@ -333,7 +333,10 @@ export async function acceptInvitation(
   ]);
 
   try {
-    await syncSubscriptionQuantityForTenant(invitation.tenantId);
+    const count = await prisma.membership.count({
+      where: { tenantId: invitation.tenantId },
+    });
+    await updateSubscriptionQuantity(count);
   } catch {
     // Non-fatal: Stripe quantity may be out of sync until next update
   }
@@ -423,7 +426,10 @@ export async function acceptInvitationWithRegistration(
   });
 
   try {
-    await syncSubscriptionQuantityForTenant(invitation.tenantId);
+    const count = await prisma.membership.count({
+      where: { tenantId: invitation.tenantId },
+    });
+    await updateSubscriptionQuantity(count);
   } catch {
     // Non-fatal: Stripe quantity may be out of sync until next update
   }

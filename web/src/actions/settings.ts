@@ -11,7 +11,7 @@ import {
   parsePermissionOverrides,
   resolvePermissions,
 } from "@/lib/permissions";
-import { syncSubscriptionQuantityForTenant } from "@/actions/subscription";
+import { updateSubscriptionQuantity } from "@/actions/subscription";
 
 const updateTenantSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -240,7 +240,8 @@ export async function removeMembership(
   });
 
   try {
-    await syncSubscriptionQuantityForTenant(tenantId);
+    const count = await db.membership.count();
+    await updateSubscriptionQuantity(count);
   } catch {
     // Non-fatal: Stripe quantity may be out of sync until next update
   }
