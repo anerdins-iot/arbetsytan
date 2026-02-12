@@ -127,6 +127,7 @@ export async function createProject(
       name,
       description: description ?? null,
       address: address ?? null,
+      tenantId,
     },
   });
 

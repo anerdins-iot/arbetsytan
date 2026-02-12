@@ -50,15 +50,30 @@ function getSocketPath(): string {
 
 function getAllowedOrigins(): string[] {
   const appUrl = process.env.APP_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  return appUrl
+  const origins = appUrl
     .split(",")
-    .map((origin) => origin.trim())
+    .map((origin) => origin.trim().replace(/\/$/, ""))
     .filter((origin) => origin.length > 0);
+
+  // In development, also allow common localhost variations if not already present
+  if (process.env.NODE_ENV === "development" || !process.env.NODE_ENV) {
+    const devOrigins = ["http://localhost:3000", "http://127.0.0.1:3000"];
+    devOrigins.forEach((origin) => {
+      if (!origins.includes(origin)) {
+        origins.push(origin);
+      }
+    });
+  }
+
+  return origins;
 }
 
 async function authenticateSocket(socket: Socket): Promise<SocketAuthData> {
   const secret = process.env.AUTH_SECRET;
-  if (!secret) throw new Error("AUTH_SECRET_MISSING");
+  if (!secret) {
+    console.error("Socket Auth Error: AUTH_SECRET is missing");
+    throw new Error("AUTH_SECRET_MISSING");
+  }
 
   const authToken =
     typeof socket.handshake.auth?.token === "string" ? socket.handshake.auth.token : undefined;
@@ -117,13 +132,18 @@ async function attachRedisAdapter(io: Server): Promise<void> {
 }
 
 function createSocketServer(): Server {
-  const io = new Server(getSocketPort(), {
+  const port = getSocketPort();
+  console.log(`Creating Socket.IO server on port ${port}...`);
+
+  const io = new Server(port, {
     path: getSocketPath(),
     cors: {
       origin: getAllowedOrigins(),
       credentials: true,
     },
   });
+
+  console.log("Socket.IO server created and listening.");
 
   // Attach Redis adapter for multi-instance support (non-blocking)
   attachRedisAdapter(io).catch((err) => {
