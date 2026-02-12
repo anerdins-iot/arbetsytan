@@ -144,3 +144,31 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Kontroll via `curl` fångade bara HTTP-svar, inte "lyssnar men svarar inte"-fall.
 **Lösning:** Uppdaterade scriptet att även kontrollera aktiv listener med `ss -ltn "( sport = :3000 )"` och avbryta direkt.
 **Lärdom:** I agentmiljö ska port-check verifiera både HTTP-respons och socket-listener för att undvika hängande testkörningar.
+
+### AI SDK v6 useChat transport (Block 5.2)
+**Problem:** Build-fel: `'api' does not exist in type 'UseChatOptions'` i project-ai-chat.tsx.
+**Orsak:** I AI SDK v6 tar useChat inte längre `api` och `body` direkt i UseChatOptions; API:et är transport-baserat.
+**Lösning:** Använd `transport: new DefaultChatTransport({ api: '/api/ai/chat', body: () => ({ ... }) })` från paketet `ai`. Custom fetch för att läsa X-Conversation-Id och X-Sources flyttas in i transport-options. body kan vara en funktion (Resolvable) för dynamiskt innehåll.
+**Lärdom:** Vid useChat med egen endpoint och body i AI SDK v6: importera DefaultChatTransport från `ai` och skicka transport istället för api/body.
+
+### "use server"-filer får bara exportera async-funktioner (Block 5.5/5.6)
+**Problem:** Build-fel "Only async functions are allowed to be exported in a use server file" när MESSAGE_SUMMARY_THRESHOLD och RECENT_MESSAGES_AFTER_SUMMARY exporterades från conversations.ts.
+**Orsak:** Next.js "use server" filer får endast exportera async Server Actions, inga konstanter eller typer (typer kan exporteras i vissa versioner; konstanter inte).
+**Lösning:** Flyttade MESSAGE_SUMMARY_THRESHOLD och RECENT_MESSAGES_AFTER_SUMMARY till web/src/lib/ai/conversation-config.ts. conversations.ts importerar RECENT_MESSAGES_AFTER_SUMMARY därifrån; chat-route och summarize-conversation importerar MESSAGE_SUMMARY_THRESHOLD.
+**Lärdom:** Konstanter som behövs av både Server Actions och API/lib ska ligga i en vanlig modul utan "use server".
+
+### Zod 4 + AI SDK 6 + Anthropic: tool input_schema.type saknas (Block 5.8)
+**Problem:** Anthropic API returnerar 400: `tools.0.custom.input_schema.type: Field required` när AI-verktyg används.
+**Orsak:** Två problem: (1) AI SDK v6 kräver `inputSchema` istället för `parameters` i tool-definitioner. (2) Zod 4:s JSON Schema kan sakna `type: "object"` på toppnivå.
+**Lösning:** Byt `parameters` till `inputSchema` i alla tool()-anrop. Använd `toolInputSchema()` wrapper som tar bort `$schema` och säkerställer `type: "object"`. Verktyg är nu aktiverade och fungerar.
+**Lärdom:** I AI SDK v6 heter det `inputSchema`, inte `parameters`. SDK:n ignorerar `parameters` tyst vilket ger tomma scheman till Anthropic.
+
+### Designavvikelser från UI.md (verifiering efter Fas 10)
+**Problem:** Gemini-verifiering flaggade fyra designavvikelser mot UI.md:
+1. Saknad rubrikfont — bara Inter används, UI.md specificerar "tyngre typsnitt för rubriker"
+2. Orange accentfärg underutnyttjad — definierad men knappt synlig på CTAs/knappar
+3. Hårdkodade färger — komponenter använder text-blue-500, text-green-500 istället för tema-variabler
+4. CTA-länkar — Pricing/CTA-sektioner länkar till "/" istället för /register
+**Orsak:** Implementation fokuserade på funktionalitet, visuell polering prioriterades ner.
+**Lösning:** Lägga till rubrikfont (t.ex. display/serif), använda accent-färg på primära CTAs, migrera hårdkodade färger till tema-variabler, fixa alla CTA-länkar.
+**Lärdom:** Verifiera design mot UI.md efter varje fas som innehåller UI-arbete, inte bara i slutet.
