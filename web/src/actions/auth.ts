@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import { prisma } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
+import { stripe } from "@/lib/stripe";
 
 // Auth actions run without session (registration/login). Global prisma is correct
 // for User, Tenant, Membership creation and User lookup. Tenant data actions must
@@ -71,30 +72,53 @@ export async function registerUser(
   }
 
   const hashedPassword = await bcrypt.hash(password, 12);
+  const trialEndsAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
-  await prisma.$transaction(async (tx) => {
-    const user = await tx.user.create({
-      data: {
-        name,
-        email: normalizedEmail,
-        password: hashedPassword,
-      },
-    });
-
-    const tenant = await tx.tenant.create({
-      data: {
-        name: companyName,
-      },
-    });
-
-    await tx.membership.create({
-      data: {
-        userId: user.id,
-        tenantId: tenant.id,
-        role: "ADMIN",
-      },
-    });
+  const stripeCustomer = await stripe.customers.create({
+    email: normalizedEmail,
+    name: companyName,
+    metadata: {
+      contactName: name,
+    },
   });
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name,
+          email: normalizedEmail,
+          password: hashedPassword,
+        },
+      });
+
+      const tenant = await tx.tenant.create({
+        data: {
+          name: companyName,
+          stripeCustomerId: stripeCustomer.id,
+        },
+      });
+
+      await tx.membership.create({
+        data: {
+          userId: user.id,
+          tenantId: tenant.id,
+          role: "ADMIN",
+        },
+      });
+
+      await tx.subscription.create({
+        data: {
+          tenantId: tenant.id,
+          status: "TRIALING",
+          trialEndsAt,
+        },
+      });
+    });
+  } catch (error) {
+    await stripe.customers.del(stripeCustomer.id);
+    throw error;
+  }
 
   try {
     await signIn("credentials", {

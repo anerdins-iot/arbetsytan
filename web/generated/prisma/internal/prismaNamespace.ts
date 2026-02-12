@@ -2475,9 +2475,12 @@ export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof t
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
   status: 'status',
-  plan: 'plan',
+  currentPeriodStart: 'currentPeriodStart',
   currentPeriodEnd: 'currentPeriodEnd',
+  trialEndsAt: 'trialEndsAt',
+  canceledAt: 'canceledAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tenantId: 'tenantId'
