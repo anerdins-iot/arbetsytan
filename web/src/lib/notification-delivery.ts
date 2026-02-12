@@ -19,6 +19,28 @@ type NotificationContent = {
   emailHtml: string;
 };
 
+type DeliveryChannels = {
+  inApp?: boolean;
+  push?: boolean;
+  email?: boolean;
+};
+
+type DeliverNotificationArgs = {
+  tenantId: string;
+  userId: string;
+  projectId: string;
+  taskId?: string;
+  eventType: EventType;
+  title: string;
+  body: string;
+  channels: Required<DeliveryChannels>;
+  pushEnabled: boolean;
+  emailEnabled: boolean;
+  emailTo: string;
+  emailSubject: string;
+  emailHtml: string;
+};
+
 async function getRecipient(userId: string): Promise<Recipient | null> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
@@ -77,6 +99,46 @@ async function createInAppNotification(args: {
     createdAt: created.createdAt.toISOString(),
     projectId: created.projectId,
   });
+}
+
+export async function deliverNotification(args: DeliverNotificationArgs) {
+  if (args.channels.inApp) {
+    await createInAppNotification({
+      tenantId: args.tenantId,
+      userId: args.userId,
+      projectId: args.projectId,
+      taskId: args.taskId,
+      eventType: args.eventType,
+      title: args.title,
+      body: args.body,
+    });
+  }
+
+  await Promise.all([
+    sendPushIfEnabled({
+      tenantId: args.tenantId,
+      userId: args.userId,
+      projectId: args.projectId,
+      taskId: args.taskId,
+      eventType: args.eventType,
+      title: args.title,
+      body: args.body,
+      enabled: args.channels.push && args.pushEnabled,
+    }),
+    sendEmailIfEnabled({
+      tenantId: args.tenantId,
+      userId: args.userId,
+      projectId: args.projectId,
+      taskId: args.taskId,
+      eventType: args.eventType,
+      enabled: args.channels.email && args.emailEnabled,
+      to: args.emailTo,
+      subject: args.emailSubject,
+      html: args.emailHtml,
+      title: args.title,
+      body: args.body,
+    }),
+  ]);
 }
 
 async function sendPushIfEnabled(args: {
@@ -322,21 +384,45 @@ export async function notifyDeadlineSoon(args: {
   userId: string;
   projectName: string;
   deadline: Date;
-}) {
+  channels?: DeliveryChannels;
+  dedupeSince?: Date;
+}): Promise<boolean> {
   const db = tenantDb(args.tenantId);
-  const recent = await db.notification.findFirst({
+  const channels: Required<DeliveryChannels> = {
+    inApp: args.channels?.inApp ?? true,
+    push: args.channels?.push ?? true,
+    email: args.channels?.email ?? true,
+  };
+
+  const selectedChannels = [
+    channels.inApp ? "IN_APP" : null,
+    channels.push ? "PUSH" : null,
+    channels.email ? "EMAIL" : null,
+  ].filter((value): value is "IN_APP" | "PUSH" | "EMAIL" => value !== null);
+
+  if (selectedChannels.length === 0) {
+    return false;
+  }
+
+  const dedupeFrom = args.dedupeSince ?? new Date(Date.now() - 12 * 60 * 60 * 1000);
+  const recent = await db.notification.findMany({
     where: {
       userId: args.userId,
       taskId: args.taskId,
       eventType: "DEADLINE_SOON",
-      channel: { in: ["PUSH", "EMAIL"] },
-      createdAt: { gte: new Date(Date.now() - 12 * 60 * 60 * 1000) },
+      channel: { in: selectedChannels },
+      createdAt: { gte: dedupeFrom },
     },
+    select: { channel: true },
   });
-  if (recent) return;
+  const sentChannels = new Set(recent.map((item) => item.channel));
+  const shouldSendInApp = channels.inApp && !sentChannels.has("IN_APP");
+  const shouldSendPush = channels.push && !sentChannels.has("PUSH");
+  const shouldSendEmail = channels.email && !sentChannels.has("EMAIL");
+  if (!shouldSendInApp && !shouldSendPush && !shouldSendEmail) return false;
 
   const recipient = await getRecipient(args.userId);
-  if (!recipient) return;
+  if (!recipient) return false;
 
   const preferences = await getOrCreatePreferences(args.tenantId, recipient.id);
   const appUrl = process.env.APP_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -352,7 +438,7 @@ export async function notifyDeadlineSoon(args: {
   };
 
   const content = await localizeDeadlineSoon(recipient.locale, params);
-  await createInAppNotification({
+  await deliverNotification({
     tenantId: args.tenantId,
     userId: recipient.id,
     projectId: args.projectId,
@@ -360,31 +446,16 @@ export async function notifyDeadlineSoon(args: {
     eventType: "DEADLINE_SOON",
     title: content.title,
     body: content.body,
+    channels: {
+      inApp: shouldSendInApp,
+      push: shouldSendPush,
+      email: shouldSendEmail,
+    },
+    pushEnabled: preferences.pushEnabled,
+    emailEnabled: preferences.emailDeadlineTomorrow,
+    emailTo: recipient.email,
+    emailSubject: content.emailSubject,
+    emailHtml: content.emailHtml,
   });
-
-  await Promise.all([
-    sendPushIfEnabled({
-      tenantId: args.tenantId,
-      userId: recipient.id,
-      projectId: args.projectId,
-      taskId: args.taskId,
-      eventType: "DEADLINE_SOON",
-      title: content.title,
-      body: content.body,
-      enabled: preferences.pushEnabled,
-    }),
-    sendEmailIfEnabled({
-      tenantId: args.tenantId,
-      userId: recipient.id,
-      projectId: args.projectId,
-      taskId: args.taskId,
-      eventType: "DEADLINE_SOON",
-      enabled: preferences.emailDeadlineTomorrow,
-      to: recipient.email,
-      subject: content.emailSubject,
-      html: content.emailHtml,
-      title: content.title,
-      body: content.body,
-    }),
-  ]);
+  return true;
 }
