@@ -96,6 +96,7 @@ export const TenantScalarFieldEnum = {
   id: 'id',
   name: 'name',
   orgNumber: 'orgNumber',
+  address: 'address',
   stripeCustomerId: 'stripeCustomerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

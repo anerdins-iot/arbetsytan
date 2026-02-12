@@ -335,6 +335,43 @@
   "settings": {
     "title": "Settings",
     "description": "Manage your account and company settings",
+    "adminOnly": {
+      "title": "Administrator access required",
+      "description": "Only administrators can manage company details, users, and invitations."
+    },
+    "company": {
+      "title": "Company",
+      "description": "Update the company's basic details.",
+      "name": "Company name",
+      "orgNumber": "Organization number",
+      "address": "Address",
+      "save": "Save company details",
+      "saving": "Saving...",
+      "saved": "Company details saved.",
+      "errors": {
+        "invalidInput": "Please check the details and try again.",
+        "generic": "Could not save company details."
+      }
+    },
+    "users": {
+      "title": "Users",
+      "description": "Manage roles and memberships in the company.",
+      "roleAdmin": "Admin",
+      "roleProjectManager": "Project Manager",
+      "roleWorker": "Worker",
+      "remove": "Remove",
+      "removing": "Removing...",
+      "you": "You",
+      "errors": {
+        "lastAdmin": "At least one admin must remain in the company.",
+        "cannotRemoveSelf": "You cannot remove yourself.",
+        "generic": "Could not update the user."
+      }
+    },
+    "invitations": {
+      "title": "Invitations",
+      "description": "Send and manage invitations to the company."
+    },
     "notifications": {
       "title": "Notification settings",
       "saving": "Saving...",

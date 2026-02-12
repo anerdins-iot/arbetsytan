@@ -335,6 +335,43 @@
   "settings": {
     "title": "Inställningar",
     "description": "Hantera ditt konto och företagsinställningar",
+    "adminOnly": {
+      "title": "Administratörsåtkomst krävs",
+      "description": "Endast administratörer kan hantera företagsuppgifter, användare och inbjudningar."
+    },
+    "company": {
+      "title": "Företag",
+      "description": "Uppdatera företagets grunduppgifter.",
+      "name": "Företagsnamn",
+      "orgNumber": "Organisationsnummer",
+      "address": "Adress",
+      "save": "Spara företagsuppgifter",
+      "saving": "Sparar...",
+      "saved": "Företagsuppgifter sparade.",
+      "errors": {
+        "invalidInput": "Kontrollera uppgifterna och försök igen.",
+        "generic": "Kunde inte spara företagsuppgifter."
+      }
+    },
+    "users": {
+      "title": "Användare",
+      "description": "Hantera roller och medlemskap i företaget.",
+      "roleAdmin": "Admin",
+      "roleProjectManager": "Projektledare",
+      "roleWorker": "Montör",
+      "remove": "Ta bort",
+      "removing": "Tar bort...",
+      "you": "Du",
+      "errors": {
+        "lastAdmin": "Det måste finnas minst en admin i företaget.",
+        "cannotRemoveSelf": "Du kan inte ta bort dig själv.",
+        "generic": "Kunde inte uppdatera användaren."
+      }
+    },
+    "invitations": {
+      "title": "Inbjudningar",
+      "description": "Skicka och hantera inbjudningar till företaget."
+    },
     "notifications": {
       "title": "Notifikationsinställningar",
       "saving": "Sparar...",
