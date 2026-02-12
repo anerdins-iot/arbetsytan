@@ -20,7 +20,13 @@ import {
   createGenerateExcelDocumentTool,
   createGeneratePdfDocumentTool,
   createGenerateWordDocumentTool,
+  parseScheduleFromText,
 } from "@/lib/ai/tools/shared-tools";
+import {
+  createAutomation as createAutomationAction,
+  listAutomations as listAutomationsAction,
+  deleteAutomation as deleteAutomationAction,
+} from "@/actions/automations";
 
 export type ProjectToolsContext = {
   db: TenantScopedClient;
@@ -1242,6 +1248,82 @@ Genererad: ${new Date().toLocaleString("sv-SE")}
     },
   });
 
+  // ─── Automations ───────────────────────────────────────
+
+  const createAutomation = tool({
+    description:
+      "Skapa en schemalagd automation som kör en åtgärd vid en viss tid eller enligt ett återkommande schema. Använd naturligt språk för schema, t.ex. 'imorgon kl 8', 'om 2 timmar', 'varje dag kl 9', 'varje måndag kl 8'.",
+    inputSchema: toolInputSchema(z.object({
+      name: z.string().describe("Automationens namn"),
+      description: z.string().optional().describe("Valfri beskrivning"),
+      schedule: z.string().describe("När den ska köras: 'imorgon kl 8', 'om 2 timmar', 'varje dag kl 9', etc."),
+      actionTool: z.string().describe("Verktyg som ska köras: createTask, notify, updateTask, etc."),
+      actionParams: z.record(z.string(), z.unknown()).describe("Parametrar till verktyget (objekt med nycklar och värden)"),
+    })),
+    execute: async ({ name, description, schedule, actionTool, actionParams }) => {
+      const timezone = "Europe/Stockholm";
+      const parsed = parseScheduleFromText(schedule, timezone);
+      if (!parsed) {
+        return { error: "Kunde inte tolka schemat. Använd t.ex. 'imorgon kl 8', 'om 2 timmar', 'varje dag kl 9' eller 'varje måndag kl 8'." };
+      }
+      const result = await createAutomationAction({
+        name,
+        description,
+        triggerAt: parsed.triggerAt,
+        recurrence: parsed.recurrence ?? undefined,
+        timezone,
+        actionTool,
+        actionParams: actionParams as Record<string, unknown>,
+        projectId,
+      });
+      if (!result.success) return { error: result.error };
+      return {
+        id: result.automation.id,
+        name: result.automation.name,
+        triggerAt: result.automation.triggerAt,
+        recurrence: result.automation.recurrence,
+        nextRunAt: result.automation.nextRunAt,
+        message: "Automation skapad.",
+      };
+    },
+  });
+
+  const listAutomations = tool({
+    description: "Lista projektets schemalagda automationer med nästa körning och status.",
+    inputSchema: toolInputSchema(z.object({
+      _: z.string().optional().describe("Ignored"),
+    })),
+    execute: async () => {
+      const result = await listAutomationsAction({ projectId });
+      if (!result.success) return { error: result.error };
+      return {
+        automations: result.automations.map((a) => ({
+          id: a.id,
+          name: a.name,
+          description: a.description,
+          triggerAt: a.triggerAt,
+          recurrence: a.recurrence,
+          actionTool: a.actionTool,
+          status: a.status,
+          nextRunAt: a.nextRunAt,
+          lastRunAt: a.lastRunAt,
+        })),
+      };
+    },
+  });
+
+  const deleteAutomation = tool({
+    description: "Ta bort en schemalagd automation. Ange automationens ID (från listAutomations).",
+    inputSchema: toolInputSchema(z.object({
+      automationId: z.string().describe("Automationens ID som ska tas bort"),
+    })),
+    execute: async ({ automationId }) => {
+      const result = await deleteAutomationAction(automationId);
+      if (!result.success) return { error: result.error };
+      return { success: true, message: "Automation borttagen." };
+    },
+  });
+
   return {
     getProjectTasks,
     createTask,
@@ -1273,5 +1355,8 @@ Genererad: ${new Date().toLocaleString("sv-SE")}
     updateNote: updateProjectNote,
     deleteNote: deleteProjectNote,
     searchNotes: searchProjectNotes,
+    createAutomation,
+    listAutomations,
+    deleteAutomation,
   };
 }

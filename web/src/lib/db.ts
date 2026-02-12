@@ -27,6 +27,7 @@ const DIRECT_TENANT_MODELS = [
   "subscription",
   "notificationPreference",
   "pushSubscription",
+  "automation",
 ] as const;
 
 /** Models scoped via direct project relation. */

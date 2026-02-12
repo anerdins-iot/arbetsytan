@@ -107,6 +107,35 @@ export const NotificationEventType = {
 export type NotificationEventType = (typeof NotificationEventType)[keyof typeof NotificationEventType]
 
 
+export const AutomationStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type AutomationStatus = (typeof AutomationStatus)[keyof typeof AutomationStatus]
+
+
+export const AutomationCreator = {
+  USER: 'USER',
+  AI: 'AI'
+} as const
+
+export type AutomationCreator = (typeof AutomationCreator)[keyof typeof AutomationCreator]
+
+
+export const AutomationLogStatus = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED'
+} as const
+
+export type AutomationLogStatus = (typeof AutomationLogStatus)[keyof typeof AutomationLogStatus]
+
+
 export const SubscriptionStatus = {
   ACTIVE: 'ACTIVE',
   PAST_DUE: 'PAST_DUE',

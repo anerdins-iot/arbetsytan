@@ -74,6 +74,8 @@ export const ModelName = {
   ActivityLog: 'ActivityLog',
   TimeEntry: 'TimeEntry',
   Note: 'Note',
+  Automation: 'Automation',
+  AutomationLog: 'AutomationLog',
   Subscription: 'Subscription'
 } as const
 
@@ -413,6 +415,43 @@ export const NoteScalarFieldEnum = {
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
 
 
+export const AutomationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  triggerAt: 'triggerAt',
+  recurrence: 'recurrence',
+  timezone: 'timezone',
+  actionTool: 'actionTool',
+  actionParams: 'actionParams',
+  status: 'status',
+  projectId: 'projectId',
+  createdBy: 'createdBy',
+  sourceConversationId: 'sourceConversationId',
+  userId: 'userId',
+  tenantId: 'tenantId',
+  lastRunAt: 'lastRunAt',
+  nextRunAt: 'nextRunAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AutomationScalarFieldEnum = (typeof AutomationScalarFieldEnum)[keyof typeof AutomationScalarFieldEnum]
+
+
+export const AutomationLogScalarFieldEnum = {
+  id: 'id',
+  status: 'status',
+  result: 'result',
+  errorMessage: 'errorMessage',
+  executedAt: 'executedAt',
+  durationMs: 'durationMs',
+  automationId: 'automationId'
+} as const
+
+export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
+
+
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   stripeSubscriptionId: 'stripeSubscriptionId',
@@ -443,6 +482,14 @@ export const JsonNullValueInput = {
 } as const
 
 export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {

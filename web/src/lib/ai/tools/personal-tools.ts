@@ -11,8 +11,14 @@ import {
   createTaskShared,
   updateTaskShared,
   searchDocumentsAcrossProjects,
+  parseScheduleFromText,
 } from "@/lib/ai/tools/shared-tools";
 import { getOcrTextForFile } from "@/lib/ai/ocr";
+import {
+  createAutomation as createAutomationAction,
+  listAutomations as listAutomationsAction,
+  deleteAutomation as deleteAutomationAction,
+} from "@/actions/automations";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -1118,6 +1124,87 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  // ─── Automations (valfritt projectId) ─────────────────
+
+  const createAutomation = tool({
+    description:
+      "Skapa en schemalagd automation som kör en åtgärd vid en viss tid eller enligt ett återkommande schema. Ange valfritt projectId om automationen ska gälla ett projekt; annars är den personlig. Använd naturligt språk för schema, t.ex. 'imorgon kl 8', 'om 2 timmar', 'varje dag kl 9'.",
+    inputSchema: toolInputSchema(z.object({
+      name: z.string().describe("Automationens namn"),
+      description: z.string().optional().describe("Valfri beskrivning"),
+      schedule: z.string().describe("När den ska köras: 'imorgon kl 8', 'om 2 timmar', 'varje dag kl 9', etc."),
+      actionTool: z.string().describe("Verktyg som ska köras: createTask, notify, updateTask, etc."),
+      actionParams: z.record(z.string(), z.unknown()).describe("Parametrar till verktyget (objekt med nycklar och värden)"),
+      projectId: z.string().optional().describe("Projektets ID om automationen ska gälla ett specifikt projekt"),
+    })),
+    execute: async ({ name, description, schedule, actionTool, actionParams, projectId: pid }) => {
+      if (pid) await requireProject(tenantId, pid, userId);
+      const timezone = "Europe/Stockholm";
+      const parsed = parseScheduleFromText(schedule, timezone);
+      if (!parsed) {
+        return { error: "Kunde inte tolka schemat. Använd t.ex. 'imorgon kl 8', 'om 2 timmar', 'varje dag kl 9' eller 'varje måndag kl 8'." };
+      }
+      const result = await createAutomationAction({
+        name,
+        description,
+        triggerAt: parsed.triggerAt,
+        recurrence: parsed.recurrence ?? undefined,
+        timezone,
+        actionTool,
+        actionParams: actionParams as Record<string, unknown>,
+        projectId: pid,
+      });
+      if (!result.success) return { error: result.error };
+      return {
+        id: result.automation.id,
+        name: result.automation.name,
+        triggerAt: result.automation.triggerAt,
+        recurrence: result.automation.recurrence,
+        nextRunAt: result.automation.nextRunAt,
+        message: "Automation skapad.",
+      };
+    },
+  });
+
+  const listAutomations = tool({
+    description:
+      "Lista användarens schemalagda automationer. Ange valfritt projectId för att bara se automationer för ett projekt.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().optional().describe("Projektets ID för att filtrera på ett projekt"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      if (pid) await requireProject(tenantId, pid, userId);
+      const result = await listAutomationsAction(pid ? { projectId: pid } : {});
+      if (!result.success) return { error: result.error };
+      return {
+        automations: result.automations.map((a) => ({
+          id: a.id,
+          name: a.name,
+          description: a.description,
+          triggerAt: a.triggerAt,
+          recurrence: a.recurrence,
+          actionTool: a.actionTool,
+          status: a.status,
+          nextRunAt: a.nextRunAt,
+          lastRunAt: a.lastRunAt,
+          projectId: a.projectId,
+        })),
+      };
+    },
+  });
+
+  const deleteAutomation = tool({
+    description: "Ta bort en schemalagd automation. Ange automationens ID (från listAutomations).",
+    inputSchema: toolInputSchema(z.object({
+      automationId: z.string().describe("Automationens ID som ska tas bort"),
+    })),
+    execute: async ({ automationId }) => {
+      const result = await deleteAutomationAction(automationId);
+      if (!result.success) return { error: result.error };
+      return { success: true, message: "Automation borttagen." };
+    },
+  });
+
   return {
     // AIMessages
     getUnreadAIMessages,
@@ -1161,5 +1248,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     updatePersonalNote,
     deletePersonalNote,
     searchPersonalNotes,
+    createAutomation,
+    listAutomations,
+    deleteAutomation,
   };
 }

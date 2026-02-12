@@ -155,6 +155,16 @@ export type TimeEntry = Prisma.TimeEntryModel
  */
 export type Note = Prisma.NoteModel
 /**
+ * Model Automation
+ * 
+ */
+export type Automation = Prisma.AutomationModel
+/**
+ * Model AutomationLog
+ * 
+ */
+export type AutomationLog = Prisma.AutomationLogModel
+/**
  * Model Subscription
  * 
  */

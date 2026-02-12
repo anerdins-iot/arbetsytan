@@ -168,7 +168,87 @@ async function main() {
     },
   });
 
-  console.log("Seed OK: tenant, users, memberships, project, tasks created.");
+  // --- Automations (example scheduled actions) ---
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(10, 0, 0, 0);
+
+  function nextMorning9AM(): Date {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    d.setHours(9, 0, 0, 0);
+    return d;
+  }
+
+  await prisma.automation.create({
+    data: {
+      name: "Påminnelse om kundmöte",
+      description: "Påminn om möte med kunden på fredag",
+      triggerAt: tomorrow,
+      recurrence: null,
+      timezone: "Europe/Stockholm",
+      actionTool: "notify",
+      actionParams: { message: "Glöm inte kundmötet imorgon kl 10!" },
+      status: "PENDING",
+      userId: pmUser.id,
+      tenantId: tenant.id,
+      projectId: project.id,
+      createdBy: "USER",
+    },
+  });
+
+  await prisma.automation.create({
+    data: {
+      name: "Daglig projektrapport",
+      description: "Generera projektrapport varje morgon",
+      triggerAt: nextMorning9AM(),
+      recurrence: "0 9 * * *",
+      timezone: "Europe/Stockholm",
+      actionTool: "generateProjectReport",
+      actionParams: {},
+      status: "ACTIVE",
+      userId: adminUser.id,
+      tenantId: tenant.id,
+      projectId: project.id,
+      createdBy: "AI",
+    },
+  });
+
+  await prisma.automation.create({
+    data: {
+      name: "Veckovis uppgiftspåminnelse",
+      description: "Påminn om oavslutade uppgifter varje måndag",
+      triggerAt: nextMorning9AM(),
+      recurrence: "0 8 * * 1",
+      timezone: "Europe/Stockholm",
+      actionTool: "notify",
+      actionParams: { message: "Veckovisa påminnelse: granska oavslutade uppgifter i projektet." },
+      status: "ACTIVE",
+      userId: pmUser.id,
+      tenantId: tenant.id,
+      projectId: project.id,
+      createdBy: "USER",
+    },
+  });
+
+  await prisma.automation.create({
+    data: {
+      name: "Månadsgenomgång (pausad)",
+      description: "Månatlig sammanställning – pausad tills vidare",
+      triggerAt: nextMorning9AM(),
+      recurrence: "0 9 1 * *",
+      timezone: "Europe/Stockholm",
+      actionTool: "generateProjectReport",
+      actionParams: {},
+      status: "PAUSED",
+      userId: adminUser.id,
+      tenantId: tenant.id,
+      projectId: project.id,
+      createdBy: "AI",
+    },
+  });
+
+  console.log("Seed OK: tenant, users, memberships, project, tasks, automations created.");
 }
 
 main()

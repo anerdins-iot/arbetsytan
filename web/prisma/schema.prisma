@@ -171,6 +171,7 @@ model Project {
   activityLogs    ActivityLog[]
   timeEntries     TimeEntry[]
   notes           Note[]
+  automations     Automation[]
 }
 
 model ProjectMember {
@@ -491,6 +492,87 @@ model Note {
   @@index([projectId, createdAt])
   @@index([projectId, category])
   @@index([createdById, projectId])
+}
+
+// ─────────────────────────────────────────
+// Automations (Scheduled Actions)
+// ─────────────────────────────────────────
+
+model Automation {
+  id          String           @id @default(cuid())
+  name        String
+  description String?
+
+  // Timing
+  triggerAt   DateTime         // Next scheduled execution
+  recurrence  String?          // Cron expression for recurring, null for one-time
+  timezone    String           @default("Europe/Stockholm")
+
+  // Action to execute (references AI tool system)
+  actionTool   String          // Tool name, e.g., "createTask", "notify", "updateTask"
+  actionParams Json            // Tool parameters as JSON
+
+  // Status
+  status      AutomationStatus @default(PENDING)
+
+  // Scope - either user-level OR project-level
+  projectId   String?
+  project     Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Creator tracking
+  createdBy   AutomationCreator @default(USER)
+  sourceConversationId String?  // Link to AI conversation if created by AI
+
+  // Ownership
+  userId      String           // Owner of the automation
+  tenantId    String           // Required for tenant isolation
+
+  // Timestamps
+  lastRunAt   DateTime?
+  nextRunAt   DateTime?        // Calculated from recurrence
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Execution history
+  logs        AutomationLog[]
+
+  @@index([tenantId, status, triggerAt])
+  @@index([userId, tenantId])
+  @@index([projectId])
+}
+
+model AutomationLog {
+  id           String                @id @default(cuid())
+  status       AutomationLogStatus
+  result       Json?                 // Tool execution result
+  errorMessage String?
+  executedAt   DateTime              @default(now())
+  durationMs   Int?
+
+  automationId String
+  automation   Automation            @relation(fields: [automationId], references: [id], onDelete: Cascade)
+
+  @@index([automationId, executedAt])
+}
+
+enum AutomationStatus {
+  PENDING    // Waiting to be executed
+  ACTIVE     // Recurring and active
+  PAUSED     // Temporarily disabled
+  COMPLETED  // One-time automation that has run
+  FAILED     // Last execution failed
+  CANCELLED  // Manually cancelled
+}
+
+enum AutomationCreator {
+  USER       // Created by user via UI or explicit command
+  AI         // Created automatically by AI agent
+}
+
+enum AutomationLogStatus {
+  SUCCESS
+  FAILED
+  SKIPPED    // e.g., target entity no longer exists
 }
 
 // ─────────────────────────────────────────

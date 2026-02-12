@@ -405,3 +405,214 @@ export function createGenerateWordDocumentTool(ctx: SharedToolsContext) {
     },
   });
 }
+
+// ============================================================================
+// Schedule parsing (natural language → triggerAt + recurrence)
+// ============================================================================
+
+/**
+ * Parse natural language schedule text into triggerAt (Date) and optional cron recurrence.
+ * Supports Swedish and English phrases.
+ * Timezone is used to resolve "today", "tomorrow" and time (e.g. "kl 8").
+ *
+ * Examples:
+ * - "imorgon kl 8" / "tomorrow at 8" → triggerAt = tomorrow 08:00, recurrence = null
+ * - "om 2 timmar" / "in 2 hours" → triggerAt = now + 2h, recurrence = null
+ * - "varje dag kl 9" / "every day at 9" → triggerAt = next 09:00, recurrence = "0 9 * * *"
+ * - "varje måndag kl 8" / "every Monday at 8" → triggerAt = next Monday 08:00, recurrence = "0 8 * * 1"
+ * - "kl 15:30" → triggerAt = today or tomorrow 15:30 depending on current time
+ */
+export function parseScheduleFromText(
+  text: string,
+  timezone: string
+): { triggerAt: Date; recurrence: string | null } | null {
+  const raw = text.trim().toLowerCase();
+  if (!raw) return null;
+
+  const now = new Date();
+
+  // Helper: get (year, month 1-based, day, hour, minute) in timezone for a given UTC timestamp
+  function getLocalInTz(utcDate: Date): { y: number; m: number; d: number; h: number; min: number } {
+    const formatter = new Intl.DateTimeFormat("en-CA", {
+      timeZone: timezone,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
+    const parts = formatter.formatToParts(utcDate);
+    const get = (type: Intl.DateTimeFormatPartTypes) =>
+      Number(parts.find((p) => p.type === type)?.value ?? 0);
+    return {
+      y: get("year"),
+      m: get("month"),
+      d: get("day"),
+      h: get("hour"),
+      min: get("minute"),
+    };
+  }
+
+  // Helper: build UTC Date from (y, m, d, h, min) in timezone
+  function buildDateInTz(y: number, m: number, d: number, h: number, min: number): Date {
+    const noonUtc = new Date(Date.UTC(y, m - 1, d, 12, 0));
+    const local = getLocalInTz(noonUtc);
+    const offsetHours = local.h - 12;
+    const offsetMinutes = local.min - 0;
+    return new Date(Date.UTC(y, m - 1, d, h - offsetHours, min - offsetMinutes));
+  }
+
+  // "in X hours" / "om X timmar"
+  const inHoursMatch = raw.match(
+    /(?:om|in)\s+(\d+)\s*(?:timmar|hours?|h)(?:\s|$)/i
+  );
+  if (inHoursMatch) {
+    const hours = Math.min(168, Math.max(0, parseInt(inHoursMatch[1]!, 10) || 0));
+    const triggerAt = new Date(now.getTime() + hours * 60 * 60 * 1000);
+    return { triggerAt, recurrence: null };
+  }
+
+  // "in X minutes" / "om X minuter"
+  const inMinutesMatch = raw.match(
+    /(?:om|in)\s+(\d+)\s*(?:minuter|minutes?|min)(?:\s|$)/i
+  );
+  if (inMinutesMatch) {
+    const minutes = Math.min(10080, Math.max(0, parseInt(inMinutesMatch[1]!, 10) || 0));
+    const triggerAt = new Date(now.getTime() + minutes * 60 * 1000);
+    return { triggerAt, recurrence: null };
+  }
+
+  // Parse time: "kl 8", "kl 9:30", "at 15:30", "8:00", "9am"
+  function parseTime(s: string): { h: number; min: number } | null {
+    const klMatch = s.match(/(?:kl|at|@)\s*(\d{1,2})(?::(\d{2}))?(?:\s*(?:am|pm))?/i);
+    if (klMatch) {
+      let h = parseInt(klMatch[1]!, 10);
+      const min = klMatch[2] ? parseInt(klMatch[2], 10) : 0;
+      if (s.includes("pm") && h < 12) h += 12;
+      if (s.includes("am") && h === 12) h = 0;
+      return { h: Math.min(23, h), min: Math.min(59, min) };
+    }
+    const plainMatch = s.match(/(\d{1,2}):(\d{2})/);
+    if (plainMatch) {
+      const h = Math.min(23, parseInt(plainMatch[1]!, 10));
+      const min = Math.min(59, parseInt(plainMatch[2]!, 10));
+      return { h, min };
+    }
+    const hourOnly = s.match(/(?:^|\s)(\d{1,2})(?:\s|$)/);
+    if (hourOnly) {
+      const h = Math.min(23, parseInt(hourOnly[1]!, 10));
+      return { h, min: 0 };
+    }
+    return null;
+  }
+
+  const timePart = parseTime(raw) ?? parseTime(text);
+  const hourMin = timePart ?? { h: 9, min: 0 };
+
+  const today = getLocalInTz(now);
+
+  // Day of week (0=Sun .. 6=Sat) in timezone for a given UTC date
+  function getDayOfWeekInTz(utcDate: Date): number {
+    const formatter = new Intl.DateTimeFormat("en-US", {
+      timeZone: timezone,
+      weekday: "short",
+    });
+    const short = formatter.format(utcDate);
+    const map: Record<string, number> = {
+      Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6,
+    };
+    return map[short] ?? 0;
+  }
+
+  // "every day at X" / "varje dag kl X" — cron: minute hour day month dow
+  if (/\b(?:varje\s+dag|every\s+day|daily)\b/i.test(raw)) {
+    let runAt = buildDateInTz(today.y, today.m, today.d, hourMin.h, hourMin.min);
+    if (runAt.getTime() <= now.getTime()) {
+      runAt = new Date(runAt.getTime() + 24 * 60 * 60 * 1000);
+    }
+    const recurrence = `${hourMin.min} ${hourMin.h} * * *`;
+    return { triggerAt: runAt, recurrence };
+  }
+
+  // "every Monday at X" / "varje måndag kl X" (cron: 0 = Sunday, 1 = Monday, ...)
+  const weekdays: Record<string, number> = {
+    söndag: 0, sunday: 0,
+    måndag: 1, monday: 1, mon: 1,
+    tisdag: 2, tuesday: 2, tue: 2,
+    onsdag: 3, wednesday: 3, wed: 3,
+    torsdag: 4, thursday: 4, thu: 4,
+    fredag: 5, friday: 5, fri: 5,
+    lördag: 6, saturday: 6, sat: 6,
+  };
+  for (const [name, dow] of Object.entries(weekdays)) {
+    const re = new RegExp(`(?:varje|every)\\s+${name}\\b`, "i");
+    if (re.test(raw)) {
+      // Next occurrence of that weekday (use TZ for current day of week)
+      const currentDow = getDayOfWeekInTz(now);
+      let daysAhead = (dow - currentDow + 7) % 7;
+      if (daysAhead === 0) {
+        const runToday = buildDateInTz(today.y, today.m, today.d, hourMin.h, hourMin.min);
+        if (runToday.getTime() <= now.getTime()) daysAhead = 7;
+      }
+      const next = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000);
+      const nextLocal = getLocalInTz(next);
+      const runAt = buildDateInTz(nextLocal.y, nextLocal.m, nextLocal.d, hourMin.h, hourMin.min);
+      const recurrence = `${hourMin.min} ${hourMin.h} * * ${dow}`;
+      return { triggerAt: runAt, recurrence };
+    }
+  }
+
+  // "tomorrow at X" / "imorgon kl X"
+  if (/\b(?:imorgon|tomorrow)\b/i.test(raw)) {
+    const tomorrowUtc = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const tomorrowLocal = getLocalInTz(tomorrowUtc);
+    const triggerAt = buildDateInTz(
+      tomorrowLocal.y,
+      tomorrowLocal.m,
+      tomorrowLocal.d,
+      hourMin.h,
+      hourMin.min
+    );
+    return { triggerAt, recurrence: null };
+  }
+
+  // "today at X" / "idag kl X"
+  if (/\b(?:idag|today)\b/i.test(raw)) {
+    const triggerAt = buildDateInTz(today.y, today.m, today.d, hourMin.h, hourMin.min);
+    if (triggerAt.getTime() <= now.getTime()) {
+      const tomorrowUtc = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      const tomorrowLocal = getLocalInTz(tomorrowUtc);
+      return {
+        triggerAt: buildDateInTz(
+          tomorrowLocal.y,
+          tomorrowLocal.m,
+          tomorrowLocal.d,
+          hourMin.h,
+          hourMin.min
+        ),
+        recurrence: null,
+      };
+    }
+    return { triggerAt, recurrence: null };
+  }
+
+  // Just time: "kl 15:30" → today or tomorrow
+  if (timePart) {
+    let runAt = buildDateInTz(today.y, today.m, today.d, hourMin.h, hourMin.min);
+    if (runAt.getTime() <= now.getTime()) {
+      const tomorrowUtc = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+      const tomorrowLocal = getLocalInTz(tomorrowUtc);
+      runAt = buildDateInTz(
+        tomorrowLocal.y,
+        tomorrowLocal.m,
+        tomorrowLocal.d,
+        hourMin.h,
+        hourMin.min
+      );
+    }
+    return { triggerAt: runAt, recurrence: null };
+  }
+
+  return null;
+}
