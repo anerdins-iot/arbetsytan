@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projekt",
+    "automations": "Automatiseringar",
     "myTimes": "Mina tider",
     "settings": "Inställningar"
   },
@@ -86,7 +87,26 @@
       "AI": "Skapad av AI"
     },
     "recurring": "Återkommande",
-    "oneTime": "Engångs"
+    "oneTime": "Engångs",
+    "tools": {
+      "notify": "Skicka påminnelse",
+      "createTask": "Skapa uppgift",
+      "createComment": "Lägg till kommentar",
+      "createTimeEntry": "Registrera tid",
+      "createNote": "Skapa anteckning",
+      "createPersonalNote": "Skapa personlig anteckning",
+      "generateProjectReport": "Generera projektrapport"
+    },
+    "toolParams": {
+      "message": "Meddelande",
+      "messagePlaceholder": "Skriv ditt meddelande...",
+      "title": "Titel",
+      "titlePlaceholder": "Valfri titel...",
+      "taskTitle": "Uppgiftsnamn",
+      "taskDescription": "Beskrivning",
+      "priority": "Prioritet",
+      "deadline": "Deadline"
+    }
   },
   "personalAi": {
     "title": "Personlig AI",
@@ -233,6 +253,7 @@
       "files": "Filer",
       "time": "Tid",
       "notes": "Anteckningar",
+      "automations": "Automatiseringar",
       "ai": "AI"
     },
     "notes": {

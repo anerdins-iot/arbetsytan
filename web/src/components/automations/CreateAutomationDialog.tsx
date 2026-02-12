@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useEffect, useState, useTransition, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import {
   Dialog,
@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { createAutomation } from "@/actions/automations";
+import { createAutomation, updateAutomation, type AutomationItem } from "@/actions/automations";
 import {
   getSchedulableTools,
   getToolDefinition,
@@ -33,6 +33,7 @@ type CreateAutomationDialogProps = {
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
   projectId?: string;
+  automation?: AutomationItem | null;
 };
 
 type RecurrenceType = "once" | "daily" | "weekly";
@@ -55,16 +56,49 @@ function buildRecurrence(
   return `${cronMin} ${cronHour} * * ${weekday}`;
 }
 
+function getDefaultTriggerAtInput() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  d.setHours(8, 0, 0, 0);
+  return d.toISOString().slice(0, 16);
+}
+
+function formatDateForInput(value: string) {
+  const date = new Date(value);
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return localDate.toISOString().slice(0, 16);
+}
+
+function parseRecurrence(
+  recurrence: string | null
+): { recurrenceType: RecurrenceType; weekday: number } {
+  if (!recurrence) {
+    return { recurrenceType: "once", weekday: 1 };
+  }
+
+  const parts = recurrence.trim().split(/\s+/);
+  if (parts.length === 5 && parts[2] === "*" && parts[3] === "*") {
+    if (parts[4] === "*") {
+      return { recurrenceType: "daily", weekday: 1 };
+    }
+    const parsedWeekday = Number(parts[4]);
+    return {
+      recurrenceType: "weekly",
+      weekday: Number.isNaN(parsedWeekday) ? 1 : parsedWeekday,
+    };
+  }
+
+  return { recurrenceType: "once", weekday: 1 };
+}
+
 function ActionParamsFields({
   toolName,
-  params,
   value,
   onChange,
   projectId,
   disabled,
 }: {
   toolName: string;
-  params: ToolParameter[];
   value: Record<string, unknown>;
   onChange: (v: Record<string, unknown>) => void;
   projectId?: string;
@@ -79,6 +113,17 @@ function ActionParamsFields({
 
   const update = (name: string, val: string | number | boolean) => {
     onChange({ ...value, [name]: val });
+  };
+
+  const getParamLabel = (param: ToolParameter) => {
+    const key = `toolParams.${param.name}`;
+    return t.has(key) ? t(key) : param.description;
+  };
+
+  const getParamPlaceholder = (param: ToolParameter) => {
+    const key = `toolParams.${param.name}Placeholder`;
+    if (t.has(key)) return t(key);
+    return getParamLabel(param);
   };
 
   if (fields.length === 0) return null;
@@ -104,7 +149,7 @@ function ActionParamsFields({
           return (
             <div key={key} className="space-y-1">
               <Label htmlFor={key} className="text-xs">
-                {param.description}
+                {getParamLabel(param)}
               </Label>
               <Select
                 value={strVal || undefined}
@@ -112,7 +157,7 @@ function ActionParamsFields({
                 disabled={disabled}
               >
                 <SelectTrigger id={key}>
-                  <SelectValue placeholder={param.description} />
+                  <SelectValue placeholder={getParamPlaceholder(param)} />
                 </SelectTrigger>
                 <SelectContent>
                   {param.enumValues.map((opt) => (
@@ -138,7 +183,7 @@ function ActionParamsFields({
                 className="rounded border-input"
               />
               <Label htmlFor={key} className="text-xs">
-                {param.description}
+                {getParamLabel(param)}
               </Label>
             </div>
           );
@@ -154,7 +199,7 @@ function ActionParamsFields({
         return (
           <div key={key} className="space-y-1">
             <Label htmlFor={key} className="text-xs">
-              {param.description}
+              {getParamLabel(param)}
               {param.required && " *"}
             </Label>
             <Input
@@ -169,7 +214,7 @@ function ActionParamsFields({
               }
               required={param.required}
               disabled={disabled}
-              placeholder={param.description}
+              placeholder={getParamPlaceholder(param)}
             />
           </div>
         );
@@ -183,11 +228,13 @@ export function CreateAutomationDialog({
   onOpenChange,
   onSuccess,
   projectId,
+  automation,
 }: CreateAutomationDialogProps) {
   const t = useTranslations("automations");
+  const defaultTriggerAt = useMemo(() => getDefaultTriggerAtInput(), []);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [triggerAt, setTriggerAt] = useState("");
+  const [triggerAt, setTriggerAt] = useState(defaultTriggerAt);
   const [recurrenceType, setRecurrenceType] = useState<RecurrenceType>("once");
   const [weekday, setWeekday] = useState<number>(1);
   const [actionTool, setActionTool] = useState("");
@@ -195,6 +242,35 @@ export function CreateAutomationDialog({
   const [isPending, startTransition] = useTransition();
 
   const schedulableTools = useMemo(() => getSchedulableTools(), []);
+  const getToolLabel = (toolName: string) => {
+    const key = `tools.${toolName}`;
+    return t.has(key) ? t(key) : toolName;
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (automation) {
+      const { recurrenceType: recurrence, weekday: recurrenceWeekday } =
+        parseRecurrence(automation.recurrence);
+      setName(automation.name);
+      setDescription(automation.description ?? "");
+      setTriggerAt(formatDateForInput(automation.triggerAt));
+      setRecurrenceType(recurrence);
+      setWeekday(recurrenceWeekday);
+      setActionTool(automation.actionTool);
+      setActionParams((automation.actionParams as Record<string, unknown>) ?? {});
+      return;
+    }
+
+    setName("");
+    setDescription("");
+    setTriggerAt(defaultTriggerAt);
+    setRecurrenceType("once");
+    setWeekday(1);
+    setActionTool("");
+    setActionParams({});
+  }, [automation, defaultTriggerAt, open]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,7 +290,7 @@ export function CreateAutomationDialog({
       projectId ? { ...actionParams, projectId } : actionParams;
 
     startTransition(async () => {
-      const result = await createAutomation({
+      const payload = {
         name: name.trim(),
         description: description.trim() || undefined,
         triggerAt: triggerDate,
@@ -222,14 +298,20 @@ export function CreateAutomationDialog({
         timezone: "Europe/Stockholm",
         actionTool,
         actionParams: paramsWithProject as Record<string, unknown>,
-        projectId,
-      });
+      };
+      const result = automation
+        ? await updateAutomation(automation.id, payload)
+        : await createAutomation({
+            ...payload,
+            projectId,
+          });
 
       if (result.success) {
         setName("");
         setDescription("");
-        setTriggerAt("");
+        setTriggerAt(defaultTriggerAt);
         setRecurrenceType("once");
+        setWeekday(1);
         setActionTool("");
         setActionParams({});
         onOpenChange(false);
@@ -243,30 +325,20 @@ export function CreateAutomationDialog({
   const handleCancel = () => {
     setName("");
     setDescription("");
-    setTriggerAt("");
+    setTriggerAt(defaultTriggerAt);
     setRecurrenceType("once");
+    setWeekday(1);
     setActionTool("");
     setActionParams({});
     onOpenChange(false);
   };
-
-  const toolDef = actionTool ? getToolDefinition(actionTool) : null;
-  const paramsList = toolDef?.parameters ?? [];
-
-  // Default trigger to tomorrow 08:00 if empty
-  const triggerAtDefault = (() => {
-    const d = new Date();
-    d.setDate(d.getDate() + 1);
-    d.setHours(8, 0, 0, 0);
-    return d.toISOString().slice(0, 16);
-  })();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>{t("create")}</DialogTitle>
+            <DialogTitle>{automation ? t("edit") : t("create")}</DialogTitle>
             <DialogDescription>{t("createDescription")}</DialogDescription>
           </DialogHeader>
 
@@ -302,7 +374,7 @@ export function CreateAutomationDialog({
               <Input
                 id="triggerAt"
                 type="datetime-local"
-                value={triggerAt || triggerAtDefault}
+                value={triggerAt}
                 onChange={(e) => setTriggerAt(e.target.value)}
                 required
                 disabled={isPending}
@@ -363,7 +435,7 @@ export function CreateAutomationDialog({
                 <SelectContent>
                   {schedulableTools.map((tool) => (
                     <SelectItem key={tool.name} value={tool.name}>
-                      {tool.name}
+                      {getToolLabel(tool.name)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -373,7 +445,6 @@ export function CreateAutomationDialog({
             {actionTool && (
               <ActionParamsFields
                 toolName={actionTool}
-                params={paramsList}
                 value={actionParams}
                 onChange={setActionParams}
                 projectId={projectId}
@@ -392,7 +463,7 @@ export function CreateAutomationDialog({
               {t("cancel")}
             </Button>
             <Button type="submit" disabled={isPending}>
-              {isPending ? t("creating") : t("createButton")}
+              {isPending ? t("creating") : automation ? t("edit") : t("createButton")}
             </Button>
           </DialogFooter>
         </form>

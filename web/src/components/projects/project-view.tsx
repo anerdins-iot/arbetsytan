@@ -24,6 +24,8 @@ import { ProjectExportPanel } from "./project-export-panel";
 import { ProjectAiChat } from "./project-ai-chat";
 import { NotesTab } from "./notes-tab";
 import type { NoteItem } from "@/actions/notes";
+import type { AutomationItem } from "@/actions/automations";
+import { AutomationsManager } from "@/components/automations";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -35,7 +37,8 @@ type ProjectViewProps = {
   timeEntries?: GroupedTimeEntries[];
   timeSummary?: ProjectTimeSummary | null;
   notes?: NoteItem[];
-  initialTab?: "overview" | "tasks" | "files" | "time" | "ai" | "notes";
+  automations?: AutomationItem[];
+  initialTab?: "overview" | "tasks" | "files" | "time" | "ai" | "notes" | "automations";
   initialTaskId?: string;
 };
 
@@ -49,6 +52,7 @@ export function ProjectView({
   timeEntries = [],
   timeSummary = null,
   notes = [],
+  automations = [],
   initialTab = "overview",
   initialTaskId,
 }: ProjectViewProps) {
@@ -110,6 +114,7 @@ export function ProjectView({
           <TabsTrigger value="files">{t("tabs.files")}</TabsTrigger>
           <TabsTrigger value="time">{t("tabs.time")}</TabsTrigger>
           <TabsTrigger value="notes">{t("tabs.notes")}</TabsTrigger>
+          <TabsTrigger value="automations">{t("tabs.automations")}</TabsTrigger>
           <TabsTrigger value="ai">{t("tabs.ai")}</TabsTrigger>
         </TabsList>
 
@@ -141,6 +146,10 @@ export function ProjectView({
 
         <TabsContent value="notes" className="mt-6">
           <NotesTab projectId={project.id} initialNotes={notes} />
+        </TabsContent>
+
+        <TabsContent value="automations" className="mt-6">
+          <AutomationsManager initialAutomations={automations} projectId={project.id} />
         </TabsContent>
 
         <TabsContent value="ai" className="mt-6">

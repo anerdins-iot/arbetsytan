@@ -44,6 +44,10 @@ export function AutomationCard({
 }: AutomationCardProps) {
   const t = useTranslations("automations");
   const [isPending, startTransition] = useTransition();
+  const getToolLabel = (toolName: string) => {
+    const key = `tools.${toolName}`;
+    return t.has(key) ? t(key) : toolName;
+  };
 
   const nextRun = automation.nextRunAt ?? automation.triggerAt;
   const nextRunFormatted = nextRun
@@ -165,7 +169,7 @@ export function AutomationCard({
           </div>
           <div className="flex justify-between gap-2">
             <span className="text-muted-foreground">{t("action")}</span>
-            <span className="font-medium">{automation.actionTool}</span>
+            <span className="font-medium">{getToolLabel(automation.actionTool)}</span>
           </div>
         </dl>
       </CardContent>

@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projects",
+    "automations": "Automations",
     "myTimes": "My time",
     "settings": "Settings"
   },
@@ -86,7 +87,26 @@
       "AI": "Created by AI"
     },
     "recurring": "Recurring",
-    "oneTime": "One-time"
+    "oneTime": "One-time",
+    "tools": {
+      "notify": "Send reminder",
+      "createTask": "Create task",
+      "createComment": "Add comment",
+      "createTimeEntry": "Log time",
+      "createNote": "Create note",
+      "createPersonalNote": "Create personal note",
+      "generateProjectReport": "Generate project report"
+    },
+    "toolParams": {
+      "message": "Message",
+      "messagePlaceholder": "Write your message...",
+      "title": "Title",
+      "titlePlaceholder": "Optional title...",
+      "taskTitle": "Task title",
+      "taskDescription": "Description",
+      "priority": "Priority",
+      "deadline": "Deadline"
+    }
   },
   "personalAi": {
     "title": "Personal AI",
@@ -233,6 +253,7 @@
       "files": "Files",
       "time": "Time",
       "notes": "Notes",
+      "automations": "Automations",
       "ai": "AI"
     },
     "notes": {
