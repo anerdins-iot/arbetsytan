@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useTransition, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +67,28 @@ function formatDateForInput(value: string) {
   const date = new Date(value);
   const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
   return localDate.toISOString().slice(0, 16);
+}
+
+/** YYYY-MM-DD from triggerAt (YYYY-MM-DDTHH:mm) */
+function getDatePart(triggerAt: string) {
+  return triggerAt.slice(0, 10);
+}
+
+/** Hour in 24h (0–23) from triggerAt */
+function getHour24(triggerAt: string) {
+  return parseInt(triggerAt.slice(11, 13), 10) || 0;
+}
+
+/** Minute (0–59) from triggerAt */
+function getMinute(triggerAt: string) {
+  return parseInt(triggerAt.slice(14, 16), 10) || 0;
+}
+
+/** Build triggerAt from date (YYYY-MM-DD) and 24h hour/minute */
+function buildTriggerAt(datePart: string, hour24: number, minute: number) {
+  const h = String(hour24).padStart(2, "0");
+  const m = String(minute).padStart(2, "0");
+  return `${datePart}T${h}:${m}`;
 }
 
 function parseRecurrence(
@@ -223,6 +245,19 @@ function ActionParamsFields({
   );
 }
 
+/** 24h hour to 12h + AM/PM for en locale */
+function hour24To12(hour24: number): { hour12: number; ampm: "AM" | "PM" } {
+  if (hour24 === 0) return { hour12: 12, ampm: "AM" };
+  if (hour24 < 12) return { hour12: hour24, ampm: "AM" };
+  if (hour24 === 12) return { hour12: 12, ampm: "PM" };
+  return { hour12: hour24 - 12, ampm: "PM" };
+}
+
+function hour12To24(hour12: number, ampm: "AM" | "PM"): number {
+  if (ampm === "AM") return hour12 === 12 ? 0 : hour12;
+  return hour12 === 12 ? 12 : hour12 + 12;
+}
+
 export function CreateAutomationDialog({
   open,
   onOpenChange,
@@ -231,6 +266,8 @@ export function CreateAutomationDialog({
   automation,
 }: CreateAutomationDialogProps) {
   const t = useTranslations("automations");
+  const locale = useLocale() as string;
+  const isSv = locale === "sv";
   const defaultTriggerAt = useMemo(() => getDefaultTriggerAtInput(), []);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -370,15 +407,162 @@ export function CreateAutomationDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="triggerAt">{t("dateTime")}</Label>
-              <Input
-                id="triggerAt"
-                type="datetime-local"
-                value={triggerAt}
-                onChange={(e) => setTriggerAt(e.target.value)}
-                required
-                disabled={isPending}
-              />
+              <Label>{t("dateTime")}</Label>
+              <div className="flex flex-wrap items-end gap-2">
+                <div className="space-y-1">
+                  <Label htmlFor="triggerDate" className="sr-only">
+                    {t("dateTime")}
+                  </Label>
+                  <Input
+                    id="triggerDate"
+                    type="date"
+                    value={getDatePart(triggerAt)}
+                    onChange={(e) =>
+                      setTriggerAt(
+                        buildTriggerAt(
+                          e.target.value,
+                          getHour24(triggerAt),
+                          getMinute(triggerAt)
+                        )
+                      )
+                    }
+                    required
+                    disabled={isPending}
+                  />
+                </div>
+                {isSv ? (
+                  <>
+                    <Select
+                      value={String(getHour24(triggerAt))}
+                      onValueChange={(v) =>
+                        setTriggerAt(
+                          buildTriggerAt(
+                            getDatePart(triggerAt),
+                            Number(v),
+                            getMinute(triggerAt)
+                          )
+                        )
+                      }
+                      disabled={isPending}
+                    >
+                      <SelectTrigger className="w-[72px]" aria-label={t("hour")}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 24 }, (_, i) => (
+                          <SelectItem key={i} value={String(i)}>
+                            {String(i).padStart(2, "0")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-muted-foreground pb-2">:</span>
+                    <Select
+                      value={String(getMinute(triggerAt))}
+                      onValueChange={(v) =>
+                        setTriggerAt(
+                          buildTriggerAt(
+                            getDatePart(triggerAt),
+                            getHour24(triggerAt),
+                            Number(v)
+                          )
+                        )
+                      }
+                      disabled={isPending}
+                    >
+                      <SelectTrigger className="w-[72px]" aria-label={t("minute")}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 60 }, (_, i) => (
+                          <SelectItem key={i} value={String(i)}>
+                            {String(i).padStart(2, "0")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </>
+                ) : (
+                  <>
+                    <Select
+                      value={String(hour24To12(getHour24(triggerAt)).hour12)}
+                      onValueChange={(v) =>
+                        setTriggerAt(
+                          buildTriggerAt(
+                            getDatePart(triggerAt),
+                            hour12To24(
+                              Number(v),
+                              hour24To12(getHour24(triggerAt)).ampm
+                            ),
+                            getMinute(triggerAt)
+                          )
+                        )
+                      }
+                      disabled={isPending}
+                    >
+                      <SelectTrigger className="w-[64px]" aria-label={t("hour")}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }, (_, i) => (
+                          <SelectItem key={i} value={String(i + 1)}>
+                            {i + 1}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span className="text-muted-foreground pb-2">:</span>
+                    <Select
+                      value={String(getMinute(triggerAt))}
+                      onValueChange={(v) =>
+                        setTriggerAt(
+                          buildTriggerAt(
+                            getDatePart(triggerAt),
+                            getHour24(triggerAt),
+                            Number(v)
+                          )
+                        )
+                      }
+                      disabled={isPending}
+                    >
+                      <SelectTrigger className="w-[72px]" aria-label={t("minute")}>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 60 }, (_, i) => (
+                          <SelectItem key={i} value={String(i)}>
+                            {String(i).padStart(2, "0")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={hour24To12(getHour24(triggerAt)).ampm}
+                      onValueChange={(v) =>
+                        setTriggerAt(
+                          buildTriggerAt(
+                            getDatePart(triggerAt),
+                            hour12To24(
+                              hour24To12(getHour24(triggerAt)).hour12,
+                              v as "AM" | "PM"
+                            ),
+                            getMinute(triggerAt)
+                          )
+                        )
+                      }
+                      disabled={isPending}
+                    >
+                      <SelectTrigger className="w-[72px]" aria-label="AM/PM">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="AM">AM</SelectItem>
+                        <SelectItem value="PM">PM</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </>
+                )}
+              </div>
             </div>
 
             <div className="space-y-2">

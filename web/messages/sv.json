@@ -40,6 +40,8 @@
     "scheduleWeekly": "Veckovis",
     "scheduleCustom": "Anpassat (cron)",
     "dateTime": "Datum och tid",
+    "hour": "Timme",
+    "minute": "Minut",
     "weekday": "Veckodag",
     "time": "Tid",
     "action": "Åtgärd",

@@ -40,6 +40,8 @@
     "scheduleWeekly": "Weekly",
     "scheduleCustom": "Custom (cron)",
     "dateTime": "Date and time",
+    "hour": "Hour",
+    "minute": "Minute",
     "weekday": "Weekday",
     "time": "Time",
     "action": "Action",
