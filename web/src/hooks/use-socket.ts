@@ -4,7 +4,10 @@ import { useEffect, useMemo, useState } from "react";
 import { io, type Socket } from "socket.io-client";
 import {
   SOCKET_EVENTS,
+  type RealtimeFileEvent,
   type RealtimeNotification,
+  type RealtimeProjectUpdatedEvent,
+  type RealtimeTaskEvent,
 } from "@/lib/socket-events";
 
 type SocketStatus = "connecting" | "connected" | "disconnected";
@@ -12,6 +15,12 @@ type SocketStatus = "connecting" | "connected" | "disconnected";
 type UseSocketOptions = {
   enabled: boolean;
   onNotification?: (notification: RealtimeNotification) => void;
+  onTaskCreated?: (event: RealtimeTaskEvent) => void;
+  onTaskUpdated?: (event: RealtimeTaskEvent) => void;
+  onTaskDeleted?: (event: RealtimeTaskEvent) => void;
+  onFileCreated?: (event: RealtimeFileEvent) => void;
+  onFileDeleted?: (event: RealtimeFileEvent) => void;
+  onProjectUpdated?: (event: RealtimeProjectUpdatedEvent) => void;
   mobileToken?: string;
 };
 
@@ -38,6 +47,12 @@ function getSocketPath(): string {
 export function useSocket({
   enabled,
   onNotification,
+  onTaskCreated,
+  onTaskUpdated,
+  onTaskDeleted,
+  onFileCreated,
+  onFileDeleted,
+  onProjectUpdated,
   mobileToken,
 }: UseSocketOptions): UseSocketResult {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -73,11 +88,35 @@ export function useSocket({
     const handleNotification = (payload: RealtimeNotification) => {
       onNotification?.(payload);
     };
+    const handleTaskCreated = (payload: RealtimeTaskEvent) => {
+      onTaskCreated?.(payload);
+    };
+    const handleTaskUpdated = (payload: RealtimeTaskEvent) => {
+      onTaskUpdated?.(payload);
+    };
+    const handleTaskDeleted = (payload: RealtimeTaskEvent) => {
+      onTaskDeleted?.(payload);
+    };
+    const handleFileCreated = (payload: RealtimeFileEvent) => {
+      onFileCreated?.(payload);
+    };
+    const handleFileDeleted = (payload: RealtimeFileEvent) => {
+      onFileDeleted?.(payload);
+    };
+    const handleProjectUpdated = (payload: RealtimeProjectUpdatedEvent) => {
+      onProjectUpdated?.(payload);
+    };
 
     connection.on("connect", handleConnect);
     connection.on("disconnect", handleDisconnect);
     connection.io.on("reconnect_attempt", handleReconnectAttempt);
     connection.on(SOCKET_EVENTS.notificationNew, handleNotification);
+    connection.on(SOCKET_EVENTS.taskCreated, handleTaskCreated);
+    connection.on(SOCKET_EVENTS.taskUpdated, handleTaskUpdated);
+    connection.on(SOCKET_EVENTS.taskDeleted, handleTaskDeleted);
+    connection.on(SOCKET_EVENTS.fileCreated, handleFileCreated);
+    connection.on(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
+    connection.on(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
 
     setSocket(connection);
 
@@ -86,11 +125,27 @@ export function useSocket({
       connection.off("disconnect", handleDisconnect);
       connection.io.off("reconnect_attempt", handleReconnectAttempt);
       connection.off(SOCKET_EVENTS.notificationNew, handleNotification);
+      connection.off(SOCKET_EVENTS.taskCreated, handleTaskCreated);
+      connection.off(SOCKET_EVENTS.taskUpdated, handleTaskUpdated);
+      connection.off(SOCKET_EVENTS.taskDeleted, handleTaskDeleted);
+      connection.off(SOCKET_EVENTS.fileCreated, handleFileCreated);
+      connection.off(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
+      connection.off(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
       connection.disconnect();
       setSocket(null);
       setStatus("disconnected");
     };
-  }, [enabled, mobileToken, onNotification]);
+  }, [
+    enabled,
+    mobileToken,
+    onFileCreated,
+    onFileDeleted,
+    onNotification,
+    onProjectUpdated,
+    onTaskCreated,
+    onTaskDeleted,
+    onTaskUpdated,
+  ]);
 
   const joinProjectRoom = useMemo(
     () => async (projectId: string) => {

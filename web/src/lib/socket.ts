@@ -7,7 +7,10 @@ import {
   projectRoom,
   tenantRoom,
   userRoom,
+  type RealtimeFileEvent,
   type RealtimeNotification,
+  type RealtimeProjectUpdatedEvent,
+  type RealtimeTaskEvent,
 } from "@/lib/socket-events";
 
 type SocketAuthData = {
@@ -152,4 +155,37 @@ export function getSocketServer(): Server {
 export function emitNotificationToUser(userId: string, notification: RealtimeNotification): void {
   const io = getSocketServer();
   io.to(userRoom(userId)).emit(SOCKET_EVENTS.notificationNew, notification);
+}
+
+export function emitTaskCreatedToProject(projectId: string, payload: RealtimeTaskEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.taskCreated, payload);
+}
+
+export function emitTaskUpdatedToProject(projectId: string, payload: RealtimeTaskEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.taskUpdated, payload);
+}
+
+export function emitTaskDeletedToProject(projectId: string, payload: RealtimeTaskEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.taskDeleted, payload);
+}
+
+export function emitFileCreatedToProject(projectId: string, payload: RealtimeFileEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.fileCreated, payload);
+}
+
+export function emitFileDeletedToProject(projectId: string, payload: RealtimeFileEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.fileDeleted, payload);
+}
+
+export function emitProjectUpdatedToProject(
+  projectId: string,
+  payload: RealtimeProjectUpdatedEvent
+): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.projectUpdated, payload);
 }

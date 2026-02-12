@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
+import { emitFileCreatedToProject, emitFileDeletedToProject } from "@/lib/socket";
 import {
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE_BYTES,
@@ -193,6 +194,12 @@ export async function completeFileUpload(input: {
       fileType: created.type,
     });
 
+    emitFileCreatedToProject(projectId, {
+      projectId,
+      fileId: created.id,
+      actorUserId: userId,
+    });
+
     const previewUrl = await createPresignedDownloadUrl({
       bucket: created.bucket,
       key: created.key,
@@ -271,6 +278,12 @@ export async function uploadFile(
       fileName: created.name,
       fileSize: created.size,
       fileType: created.type,
+    });
+
+    emitFileCreatedToProject(projectId, {
+      projectId,
+      fileId: created.id,
+      actorUserId: userId,
     });
 
     const previewUrl = await createPresignedDownloadUrl({
@@ -394,6 +407,12 @@ export async function deleteFile(input: {
       fileName: file.name,
       fileSize: file.size,
       fileType: file.type,
+    });
+
+    emitFileDeletedToProject(projectId, {
+      projectId,
+      fileId: file.id,
+      actorUserId: userId,
     });
 
     revalidatePath("/[locale]/projects/[projectId]", "page");

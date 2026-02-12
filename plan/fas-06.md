@@ -42,10 +42,10 @@
 **Input:** Block 6.1 klart (Socket.IO fungerar)
 **Output:** Realtidsuppdateringar av UI
 
-- [ ] Socket.IO-events för uppgiftsändringar (annan teammedlem uppdaterar)
-- [ ] Socket.IO-events för nya filer
-- [ ] Socket.IO-events för projektstatusändringar
-- [ ] Klienten lyssnar och uppdaterar UI i realtid
+- [x] Socket.IO-events för uppgiftsändringar (annan teammedlem uppdaterar)
+- [x] Socket.IO-events för nya filer
+- [x] Socket.IO-events för projektstatusändringar
+- [x] Klienten lyssnar och uppdaterar UI i realtid
 
 **Verifiering:** UI uppdateras vid ändringar från annan användare, events emittas till rätt rum (projekt/tenant), data hämtas via `tenantDb(tenantId)` innan emit, `npm run build` OK
 

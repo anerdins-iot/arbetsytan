@@ -1,10 +1,13 @@
 "use client";
 
+import { useCallback, useEffect, useRef } from "react";
 import { useTranslations, useLocale } from "next-intl";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useSocket } from "@/hooks/use-socket";
 import { ProjectOverview } from "./project-overview";
 import { KanbanBoard } from "./kanban-board";
 import { ProjectFilesUpload } from "./project-files-upload";
@@ -37,6 +40,39 @@ export function ProjectView({
 }: ProjectViewProps) {
   const t = useTranslations("projects");
   const locale = useLocale();
+  const router = useRouter();
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const refreshProjectView = useCallback(() => {
+    if (refreshTimeoutRef.current) return;
+    refreshTimeoutRef.current = setTimeout(() => {
+      refreshTimeoutRef.current = null;
+      router.refresh();
+    }, 150);
+  }, [router]);
+
+  const { status, joinProjectRoom } = useSocket({
+    enabled: true,
+    onTaskCreated: refreshProjectView,
+    onTaskUpdated: refreshProjectView,
+    onTaskDeleted: refreshProjectView,
+    onFileCreated: refreshProjectView,
+    onFileDeleted: refreshProjectView,
+    onProjectUpdated: refreshProjectView,
+  });
+
+  useEffect(() => {
+    if (status !== "connected") return;
+    void joinProjectRoom(project.id);
+  }, [joinProjectRoom, project.id, status]);
+
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="space-y-6">

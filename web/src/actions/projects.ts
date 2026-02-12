@@ -6,6 +6,7 @@ import { requireAuth, requireProject, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
+import { emitProjectUpdatedToProject } from "@/lib/socket";
 import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -335,6 +336,13 @@ export async function updateProject(
   });
 
   if (action === "statusChanged") {
+    emitProjectUpdatedToProject(projectId, {
+      projectId,
+      actorUserId: userId,
+      previousStatus: currentProject.status,
+      newStatus: status,
+    });
+
     const members = await db.projectMember.findMany({
       where: { projectId },
       include: {
