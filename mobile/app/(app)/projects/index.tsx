@@ -10,45 +10,45 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { apiFetch } from "../../lib/api";
+import { apiFetch } from "../../../lib/api";
 
-type Task = {
+type Project = {
   id: string;
-  title: string;
+  name: string;
   status: string;
-  priority: string;
-  deadline: string | null;
-  projectId: string;
-  projectName: string;
+  description: string | null;
+  taskCount: number;
+  updatedAt: string;
+};
+
+const statusLabels: Record<string, string> = {
+  ACTIVE: "Aktiv",
+  PAUSED: "Pausad",
+  COMPLETED: "Klar",
+  ARCHIVED: "Arkiverad",
 };
 
 const statusColors: Record<string, string> = {
-  TODO: "#6b7280",
-  IN_PROGRESS: "#2563eb",
-  DONE: "#16a34a",
+  ACTIVE: "#16a34a",
+  PAUSED: "#eab308",
+  COMPLETED: "#2563eb",
+  ARCHIVED: "#6b7280",
 };
 
-const priorityLabels: Record<string, string> = {
-  LOW: "L\u00e5g",
-  MEDIUM: "Medium",
-  HIGH: "H\u00f6g",
-  URGENT: "Br\u00e5dskande",
-};
-
-export default function DashboardScreen() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+export default function ProjectsScreen() {
+  const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const fetchTasks = useCallback(async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       setError(null);
-      const res = await apiFetch("/api/mobile/tasks");
-      if (!res.ok) throw new Error("Kunde inte h\u00e4mta uppgifter");
+      const res = await apiFetch("/api/mobile/projects");
+      if (!res.ok) throw new Error("Kunde inte h\u00e4mta projekt");
       const data = await res.json();
-      setTasks(data.tasks);
+      setProjects(data.projects);
     } catch (err) {
       setError(err instanceof Error ? err.message : "N\u00e5got gick fel");
     } finally {
@@ -58,13 +58,13 @@ export default function DashboardScreen() {
   }, []);
 
   useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+    fetchProjects();
+  }, [fetchProjects]);
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
-    fetchTasks();
-  }, [fetchTasks]);
+    fetchProjects();
+  }, [fetchProjects]);
 
   if (loading) {
     return (
@@ -79,17 +79,17 @@ export default function DashboardScreen() {
       {error ? (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
-          <Pressable style={styles.retryButton} onPress={fetchTasks}>
+          <Pressable style={styles.retryButton} onPress={fetchProjects}>
             <Text style={styles.retryText}>F\u00f6rs\u00f6k igen</Text>
           </Pressable>
         </View>
-      ) : tasks.length === 0 ? (
+      ) : projects.length === 0 ? (
         <View style={styles.center}>
-          <Text style={styles.emptyText}>Inga uppgifter tilldelade</Text>
+          <Text style={styles.emptyText}>Inga projekt</Text>
         </View>
       ) : (
         <FlatList
-          data={tasks}
+          data={projects}
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -98,11 +98,11 @@ export default function DashboardScreen() {
           renderItem={({ item }) => (
             <Pressable
               style={styles.card}
-              onPress={() => router.push(`/(app)/projects/${item.projectId}`)}
+              onPress={() => router.push(`/(app)/projects/${item.id}`)}
             >
               <View style={styles.cardHeader}>
-                <Text style={styles.taskTitle} numberOfLines={1}>
-                  {item.title}
+                <Text style={styles.projectName} numberOfLines={1}>
+                  {item.name}
                 </Text>
                 <View
                   style={[
@@ -110,19 +110,23 @@ export default function DashboardScreen() {
                     { backgroundColor: statusColors[item.status] ?? "#6b7280" },
                   ]}
                 >
-                  <Text style={styles.statusText}>{item.status}</Text>
+                  <Text style={styles.statusText}>
+                    {statusLabels[item.status] ?? item.status}
+                  </Text>
                 </View>
               </View>
-              <Text style={styles.projectName}>{item.projectName}</Text>
-              <View style={styles.cardFooter}>
-                <Text style={styles.priority}>
-                  {priorityLabels[item.priority] ?? item.priority}
+              {item.description && (
+                <Text style={styles.description} numberOfLines={2}>
+                  {item.description}
                 </Text>
-                {item.deadline && (
-                  <Text style={styles.deadline}>
-                    {new Date(item.deadline).toLocaleDateString("sv-SE")}
-                  </Text>
-                )}
+              )}
+              <View style={styles.cardFooter}>
+                <Text style={styles.taskCount}>
+                  {item.taskCount} uppgift{item.taskCount !== 1 ? "er" : ""}
+                </Text>
+                <Text style={styles.date}>
+                  {new Date(item.updatedAt).toLocaleDateString("sv-SE")}
+                </Text>
               </View>
             </Pressable>
           )}
@@ -163,8 +167,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 4,
   },
-  taskTitle: {
-    fontSize: 16,
+  projectName: {
+    fontSize: 17,
     fontWeight: "600",
     color: "#111",
     flex: 1,
@@ -180,7 +184,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#fff",
   },
-  projectName: {
+  description: {
     fontSize: 13,
     color: "#6b7280",
     marginBottom: 8,
@@ -188,14 +192,15 @@ const styles = StyleSheet.create({
   cardFooter: {
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 4,
   },
-  priority: {
+  taskCount: {
     fontSize: 12,
     color: "#9ca3af",
   },
-  deadline: {
+  date: {
     fontSize: 12,
-    color: "#ef4444",
+    color: "#9ca3af",
   },
   emptyText: {
     fontSize: 16,
