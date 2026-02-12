@@ -64,16 +64,18 @@
 **Input:** Block 6.1–6.4 klara
 **Output:** Screenshots och verifiering av notifikationer
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Logga in och verifiera att notifikationsklocka visas i topbar
-- [ ] Ta screenshot av notifikationslistan
+- [x] Starta dev-server med PID-fil
+- [x] Logga in och verifiera att notifikationsklocka visas i topbar
+- [x] Ta screenshot av notifikationslistan
 - [ ] Trigga en notifikation (t.ex. skapa uppgift i annat fönster)
 - [ ] Verifiera att notis visas i realtid
 - [ ] Markera notis som läst, verifiera uppdatering
-- [ ] Ta screenshot av push-inställningar (om implementerat)
-- [ ] Spara alla screenshots i `screenshots/fas-06/`
-- [ ] Stoppa dev-server
+- [x] Ta screenshot av push-inställningar (om implementerat)
+- [x] Spara alla screenshots i `screenshots/fas-06/`
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, realtidsuppdateringar fungerar, inga konsolfel
+
+**Implementation:** Test i `web/e2e/fas-06-notifications.spec.ts`. Kör hela flödet (start server → test → stop server) med `web/scripts/run-fas06-e2e.sh`. PID sparas i `web/.dev-server.pid`, stopp med `kill -TERM $(cat ...)` (aldrig pkill).
 
 ---
