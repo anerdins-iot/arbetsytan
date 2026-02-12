@@ -126,7 +126,26 @@
     "uploading": "Uploading…",
     "analyzing": "Analyzing…",
     "fileTooLarge": "File is too large (max 50 MB)",
-    "fileTypeNotAllowed": "File type not supported"
+    "fileTypeNotAllowed": "File type not supported",
+    "voice": {
+      "voiceMode": "Voice mode",
+      "voiceSettings": "Voice settings",
+      "on": "On",
+      "off": "Off",
+      "ttsProvider": "Voice provider",
+      "startRecording": "Start recording",
+      "stopRecording": "Stop recording",
+      "stopSpeaking": "Stop speaking",
+      "transcribing": "Transcribing…",
+      "microphoneError": "Could not access microphone",
+      "pushToTalk": "Push to talk",
+      "conversationMode": "Conversation",
+      "microphoneHelp": "Microphone modes",
+      "microphoneHelpDetails": "Hold, click or double-click",
+      "holdToTalk": "Hold = talk, release = send",
+      "clickOnce": "Click 1x = record, auto-send",
+      "clickTwice": "Click 2x = conversation mode"
+    }
   },
   "notifications": {
     "newComment": {

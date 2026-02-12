@@ -29,6 +29,8 @@ import {
 import type { ConversationListItem } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
+import { VoiceModeToggle } from "@/components/ai/voice-mode-toggle";
+import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
@@ -86,6 +88,16 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Voice mode state
+  const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
+  const [ttsProvider, setTtsProvider] = useState<TTSProvider>("openai");
+  const [isConversationMode, setIsConversationMode] = useState(false);
+  const [triggerConversationRecording, setTriggerConversationRecording] = useState(false);
+  const speakRef = useRef<((text: string) => Promise<void>) | null>(null);
+  const stopSpeakingRef = useRef<(() => void) | null>(null);
+  const isSpeakingRef = useRef<boolean>(false);
+  const lastSpokenMessageIdRef = useRef<string | null>(null);
+
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
@@ -116,6 +128,38 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
 
   const isLoading = status === "streaming" || status === "submitted";
 
+  // Auto-speak assistant messages when voice mode is enabled
+  useEffect(() => {
+    if (!voiceModeEnabled || isLoading) return;
+
+    const lastMessage = messages[messages.length - 1];
+    if (!lastMessage || lastMessage.role !== "assistant") return;
+    if (lastMessage.id === lastSpokenMessageIdRef.current) return;
+
+    // Get text content from message parts
+    const textContent = (lastMessage.parts ?? [])
+      .filter((part): part is { type: "text"; text: string } => part.type === "text")
+      .map((part) => part.text)
+      .join(" ");
+
+    if (!textContent.trim()) return;
+
+    // Mark as spoken and speak
+    lastSpokenMessageIdRef.current = lastMessage.id;
+
+    // Speak and trigger conversation recording when done
+    const speakAndTrigger = async () => {
+      await speakRef.current?.(textContent);
+      // After TTS ends, trigger recording if in conversation mode
+      if (isConversationMode) {
+        setTriggerConversationRecording(true);
+        // Reset trigger after a short delay
+        setTimeout(() => setTriggerConversationRecording(false), 100);
+      }
+    };
+    speakAndTrigger();
+  }, [messages, voiceModeEnabled, isLoading, isConversationMode]);
+
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setInputValue(e.target.value);
@@ -139,6 +183,7 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
     setMessages([]);
     setHistoryOpen(false);
     setUploadedFiles([]);
+    lastSpokenMessageIdRef.current = null;
   }, [setMessages]);
 
   const loadConversation = useCallback(
@@ -154,6 +199,10 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
       setMessages(uiMessages);
       setHistoryOpen(false);
       setUploadedFiles([]);
+      // Don't auto-speak when loading old conversations
+      if (uiMessages.length > 0) {
+        lastSpokenMessageIdRef.current = uiMessages[uiMessages.length - 1].id;
+      }
     },
     [setMessages]
   );
@@ -289,11 +338,24 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
   }, []);
 
+  // Handle voice input - send message directly
+  const handleVoiceInput = useCallback(
+    (text: string) => {
+      if (!text.trim() || isLoading) return;
+      // Stop any current speech before sending new message
+      stopSpeakingRef.current?.();
+      sendMessage({ text });
+    },
+    [isLoading, sendMessage]
+  );
+
   const handleSubmit = useCallback(
     (e?: { preventDefault?: () => void }) => {
       e?.preventDefault?.();
       const text = inputValue.trim();
       if (!text || isLoading) return;
+      // Stop any current speech before sending new message
+      stopSpeakingRef.current?.();
       sendMessage({ text });
       setInputValue("");
     },
@@ -528,6 +590,21 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
             >
               <Paperclip className="size-4" />
             </Button>
+
+            {/* Voice mode controls */}
+            <VoiceModeToggle
+              onVoiceInput={handleVoiceInput}
+              voiceModeEnabled={voiceModeEnabled}
+              onVoiceModeToggle={setVoiceModeEnabled}
+              disabled={isLoading}
+              ttsProvider={ttsProvider}
+              onTtsProviderChange={setTtsProvider}
+              speakRef={speakRef}
+              stopRef={stopSpeakingRef}
+              isSpeakingRef={isSpeakingRef}
+              onConversationModeChange={setIsConversationMode}
+              triggerConversationRecording={triggerConversationRecording}
+            />
 
             <Textarea
               value={inputValue}

@@ -126,7 +126,26 @@
     "uploading": "Laddar upp…",
     "analyzing": "Analyserar…",
     "fileTooLarge": "Filen är för stor (max 50 MB)",
-    "fileTypeNotAllowed": "Filtypen stöds inte"
+    "fileTypeNotAllowed": "Filtypen stöds inte",
+    "voice": {
+      "voiceMode": "Röstläge",
+      "voiceSettings": "Röstinställningar",
+      "on": "På",
+      "off": "Av",
+      "ttsProvider": "Röstleverantör",
+      "startRecording": "Börja spela in",
+      "stopRecording": "Stoppa inspelning",
+      "stopSpeaking": "Stoppa uppläsning",
+      "transcribing": "Transkriberar…",
+      "microphoneError": "Kunde inte komma åt mikrofonen",
+      "pushToTalk": "Håll för att prata",
+      "conversationMode": "Konversation",
+      "microphoneHelp": "Mikrofon-lägen",
+      "microphoneHelpDetails": "Håll, klicka eller dubbelklicka",
+      "holdToTalk": "Håll in = prata, släpp = skicka",
+      "clickOnce": "Klicka 1x = spela in, auto-skicka",
+      "clickTwice": "Klicka 2x = konversationsläge"
+    }
   },
   "notifications": {
     "newComment": {
