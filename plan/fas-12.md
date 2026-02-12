@@ -25,8 +25,8 @@
 **Input:** Block 12.1 klart
 **Output:** Grundläggande övervakning
 
-- [ ] Felrapportering (Sentry eller liknande)
-- [ ] Healthcheck-endpoint
-- [ ] Loggning av viktiga händelser
+- [x] Felrapportering (Sentry eller liknande)
+- [x] Healthcheck-endpoint
+- [x] Loggning av viktiga händelser
 
 **Verifiering:** Sentry fångar fel, healthcheck svarar 200, loggar skrivs
