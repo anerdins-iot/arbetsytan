@@ -13,6 +13,7 @@ import {
   assertObjectExists,
   createPresignedDownloadUrl,
   createPresignedUploadUrl,
+  deleteObject,
   ensureTenantBucket,
   projectObjectKey,
   putObjectToMinio,
@@ -40,6 +41,10 @@ const uploadFileFormSchema = z.object({
 });
 
 const projectIdSchema = z.string().uuid();
+const deleteFileSchema = z.object({
+  projectId: z.string().uuid(),
+  fileId: z.string().min(1),
+});
 
 export type FileItem = {
   id: string;
@@ -50,6 +55,7 @@ export type FileItem = {
   key: string;
   createdAt: Date;
   previewUrl: string;
+  downloadUrl: string;
 };
 
 function hasAllowedExtension(fileName: string): boolean {
@@ -205,6 +211,7 @@ export async function completeFileUpload(input: {
         key: created.key,
         createdAt: created.createdAt,
         previewUrl,
+        downloadUrl: previewUrl,
       },
     };
   } catch (error) {
@@ -284,6 +291,7 @@ export async function uploadFile(
         key: created.key,
         createdAt: created.createdAt,
         previewUrl,
+        downloadUrl: previewUrl,
       },
     };
   } catch (error) {
@@ -312,24 +320,86 @@ export async function getProjectFiles(
     });
 
     const filesWithUrls = await Promise.all(
-      files.map(async (file) => ({
-        id: file.id,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        bucket: file.bucket,
-        key: file.key,
-        createdAt: file.createdAt,
-        previewUrl: await createPresignedDownloadUrl({
+      files.map(async (file) => {
+        const downloadUrl = await createPresignedDownloadUrl({
           bucket: file.bucket,
           key: file.key,
-        }),
-      }))
+        });
+
+        return {
+          id: file.id,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          bucket: file.bucket,
+          key: file.key,
+          createdAt: file.createdAt,
+          previewUrl: downloadUrl,
+          downloadUrl,
+        };
+      })
     );
 
     return { success: true, files: filesWithUrls };
   } catch (error) {
     const message = error instanceof Error ? error.message : "FETCH_FILES_FAILED";
+    return { success: false, error: message };
+  }
+}
+
+export async function getFiles(
+  projectId: string
+): Promise<{ success: true; files: FileItem[] } | { success: false; error: string }> {
+  return getProjectFiles(projectId);
+}
+
+export async function deleteFile(input: {
+  projectId: string;
+  fileId: string;
+}): Promise<{ success: true } | { success: false; error: string }> {
+  const { tenantId, userId } = await requireAuth();
+  const parsed = deleteFileSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+
+  const { projectId, fileId } = parsed.data;
+
+  try {
+    await requireProject(tenantId, projectId, userId);
+    const db = tenantDb(tenantId);
+    const file = await db.file.findFirst({
+      where: {
+        id: fileId,
+        projectId,
+      },
+    });
+
+    if (!file) {
+      return { success: false, error: "FILE_NOT_FOUND" };
+    }
+
+    await deleteObject({
+      bucket: file.bucket,
+      key: file.key,
+    });
+
+    await db.file.delete({
+      where: {
+        id: file.id,
+      },
+    });
+
+    await logActivity(tenantId, projectId, userId, "deleted", "file", file.id, {
+      fileName: file.name,
+      fileSize: file.size,
+      fileType: file.type,
+    });
+
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+    return { success: true };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "DELETE_FILE_FAILED";
     return { success: false, error: message };
   }
 }

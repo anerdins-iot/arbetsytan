@@ -1,5 +1,6 @@
 import {
   CreateBucketCommand,
+  DeleteObjectCommand,
   GetObjectCommand,
   HeadBucketCommand,
   HeadObjectCommand,
@@ -143,4 +144,16 @@ export async function createPresignedDownloadUrl(params: {
   return getSignedUrl(minioClient, command, {
     expiresIn: params.expiresInSeconds ?? 60 * 15,
   });
+}
+
+export async function deleteObject(params: {
+  bucket: string;
+  key: string;
+}): Promise<void> {
+  await minioClient.send(
+    new DeleteObjectCommand({
+      Bucket: params.bucket,
+      Key: params.key,
+    })
+  );
 }
