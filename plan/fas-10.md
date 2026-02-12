@@ -7,7 +7,7 @@
 **Input:** Fas 1 klar (Next.js + i18n)
 **Output:** Publik landningssida
 
-- [ ] **FIX:** Hero-sektionens CTA-knapp "Kom igång gratis" leder till `/` istället för registreringssidan
+- [x] **FIX:** Hero-sektionens CTA-knapp "Kom igång gratis" leder till `/register`
 - [x] Bygga funktionssektion med rutnät: projekthantering, filer, AI, team
 - [x] Bygga "Så fungerar det" i tre steg
 - [x] Bygga prissättningssektion med planer
