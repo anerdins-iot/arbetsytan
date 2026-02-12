@@ -15,10 +15,10 @@ export function Header() {
         </Link>
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/">{t("login")}</Link>
+            <Link href="/login">{t("login")}</Link>
           </Button>
           <Button size="sm" asChild>
-            <Link href="/">{t("getStarted")}</Link>
+            <Link href="/register">{t("getStarted")}</Link>
           </Button>
         </div>
       </div>
