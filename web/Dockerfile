@@ -60,9 +60,10 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy Prisma generated client — without this the app crashes at startup
 COPY --from=builder /app/generated ./generated
 
-# Copy migration SQL files and runner script
+# Copy migration SQL files and runner scripts
 COPY --from=builder /app/prisma/migrations ./prisma/migrations
 COPY --from=builder /app/migrate.mjs ./migrate.mjs
+COPY --from=builder /app/seed.mjs ./seed.mjs
 
 # Entrypoint script: run migrations then start server
 COPY --chown=nextjs:nodejs docker-entrypoint.sh /app/docker-entrypoint.sh
