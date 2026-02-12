@@ -44,16 +44,18 @@
 **Input:** Block 7.1–7.3 klara
 **Output:** Screenshots och verifiering av inställningar
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Logga in som admin och navigera till inställningar
-- [ ] Ta screenshot av företagsinställningar
-- [ ] Ta screenshot av användarlistan
-- [ ] Testa att ändra roll på en användare
-- [ ] Navigera till rättighetshantering, ta screenshot
-- [ ] Navigera till personliga inställningar, ta screenshot
-- [ ] Testa språkbyte (sv → en), verifiera att UI byter språk
-- [ ] Testa dark mode toggle (om implementerat)
-- [ ] Spara alla screenshots i `screenshots/fas-07/`
-- [ ] Stoppa dev-server
+- [x] Starta dev-server med PID-fil
+- [x] Logga in som admin och navigera till inställningar
+- [x] Ta screenshot av företagsinställningar
+- [x] Ta screenshot av användarlistan
+- [x] Testa att ändra roll på en användare
+- [x] Navigera till rättighetshantering, ta screenshot
+- [x] Navigera till personliga inställningar, ta screenshot
+- [x] Testa språkbyte (sv → en), verifiera att UI byter språk
+- [x] Testa dark mode toggle (om implementerat)
+- [x] Spara alla screenshots i `screenshots/fas-07/`
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, inställningar sparas korrekt, inga konsolfel
+
+**Implementation:** Test i `web/e2e/fas-07-settings.spec.ts`. Kör med `web/scripts/run-fas07-e2e.sh`. PID sparas i `web/.dev-server.pid`, stopp med `kill -TERM $(cat ...)` (aldrig pkill).

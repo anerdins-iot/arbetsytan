@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { prisma } from "@/lib/db";
 
 const preferenceSchema = z.object({
   pushEnabled: z.boolean(),
@@ -26,14 +26,16 @@ const endpointSchema = z.object({
 
 export type NotificationPreferences = z.infer<typeof preferenceSchema>;
 
+// Use global prisma for upsert with composite unique key.
+// tenantDb extension adds duplicate tenantId which conflicts with compound unique constraint.
+// Security: tenantId is explicitly passed and verified via requireAuth() in calling functions.
 async function getOrCreatePreferences(tenantId: string, userId: string) {
-  const db = tenantDb(tenantId);
-  return db.notificationPreference.upsert({
+  return prisma.notificationPreference.upsert({
     where: { userId_tenantId: { userId, tenantId } },
     update: {},
     create: {
-      user: { connect: { id: userId } },
-      tenant: { connect: { id: tenantId } },
+      userId,
+      tenantId,
     },
   });
 }
@@ -64,14 +66,14 @@ export async function updateNotificationPreferences(input: NotificationPreferenc
   const parsed = preferenceSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: "INVALID_INPUT" };
 
-  const db = tenantDb(tenantId);
-  await db.notificationPreference.upsert({
+  // Use global prisma for upsert with composite unique key (see getOrCreatePreferences comment)
+  await prisma.notificationPreference.upsert({
     where: { userId_tenantId: { userId, tenantId } },
     update: parsed.data,
     create: {
       ...parsed.data,
-      user: { connect: { id: userId } },
-      tenant: { connect: { id: tenantId } },
+      userId,
+      tenantId,
     },
   });
 
@@ -86,22 +88,22 @@ export async function upsertPushSubscription(input: z.infer<typeof pushSubscript
   const parsed = pushSubscriptionSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: "INVALID_INPUT" };
 
-  const db = tenantDb(tenantId);
-  await db.pushSubscription.upsert({
+  // Use global prisma for upsert with composite unique key (see getOrCreatePreferences comment)
+  await prisma.pushSubscription.upsert({
     where: { tenantId_endpoint: { tenantId, endpoint: parsed.data.endpoint } },
     update: {
       p256dhKey: parsed.data.keys.p256dh,
       authKey: parsed.data.keys.auth,
       userAgent: parsed.data.userAgent ?? null,
-      user: { connect: { id: userId } },
+      userId,
     },
     create: {
       endpoint: parsed.data.endpoint,
       p256dhKey: parsed.data.keys.p256dh,
       authKey: parsed.data.keys.auth,
       userAgent: parsed.data.userAgent ?? null,
-      user: { connect: { id: userId } },
-      tenant: { connect: { id: tenantId } },
+      userId,
+      tenantId,
     },
   });
 
@@ -116,11 +118,12 @@ export async function removePushSubscription(input: z.infer<typeof endpointSchem
   const parsed = endpointSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: "INVALID_INPUT" };
 
-  const db = tenantDb(tenantId);
-  await db.pushSubscription.deleteMany({
+  // Use global prisma - tenantId and userId are explicitly filtered
+  await prisma.pushSubscription.deleteMany({
     where: {
       endpoint: parsed.data.endpoint,
       userId,
+      tenantId,
     },
   });
 
