@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, useTransition } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { Bell, CheckCheck, FileText, Menu, Search, User } from "lucide-react"
+import { Bell, Bot, CheckCheck, FileText, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Separator } from "@/components/ui/separator"
@@ -27,12 +27,16 @@ type TopbarProps = {
   onMobileMenuToggle: () => void
   initialNotifications: NotificationItem[]
   initialUnreadCount: number
+  initialUnreadAiCount: number
+  onAiChatToggle: () => void
 }
 
 export function Topbar({
   onMobileMenuToggle,
   initialNotifications,
   initialUnreadCount,
+  initialUnreadAiCount,
+  onAiChatToggle,
 }: TopbarProps) {
   const t = useTranslations("topbar")
   const locale = useLocale()
@@ -323,9 +327,25 @@ export function Topbar({
         )}
       </div>
 
-      {/* Right section */}
+      {/* Högersektion med AI-chatt, notifikationer och profil */}
       <div className="ml-auto flex items-center gap-1">
         <ModeToggle />
+
+        {/* AI-chatt-knapp */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative"
+          onClick={onAiChatToggle}
+          aria-label={t("aiChat")}
+        >
+          <Bot className="size-5" />
+          {initialUnreadAiCount > 0 ? (
+            <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-accent-foreground">
+              {initialUnreadAiCount > 99 ? "99+" : initialUnreadAiCount}
+            </span>
+          ) : null}
+        </Button>
 
         <DropdownMenu open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
           <DropdownMenuTrigger asChild>

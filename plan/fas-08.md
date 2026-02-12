@@ -24,7 +24,7 @@
 - [x] Exportera projektsammanställning som PDF (uppgifter, status, tider, medlemmar)
 - [x] Exportera tidrapport som Excel (filtrerat på period, projekt, person)
 - [x] Exportera uppgiftslista som Excel
-- [ ] AI-verktyg: generera sammanfattande projektrapport (text + data) — **HOPPADE ÖVER** (saknar API-nycklar)
+- [x] AI-verktyg: generera sammanfattande projektrapport (text + data) — använder OpenAI för textgenerering
 - [x] Nedladdning via presigned URL från MinIO (genererade filer sparas)
 
 **Verifiering:** PDF och Excel genereras korrekt, nedladdning fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
@@ -33,7 +33,7 @@
 **Input:** Block 8.1–8.2 klara
 **Output:** Screenshots och verifiering av tidrapportering
 
-- [ ] Starta dev-server med PID-fil
+- [x] Starta dev-server med PID-fil
 - [x] Logga in och navigera till ett projekt
 - [x] Öppna tidrapporteringsvyn, ta screenshot
 - [x] Registrera tid på en uppgift
@@ -42,6 +42,6 @@
 - [x] Testa export till Excel, verifiera nedladdning
 - [x] Testa export till PDF, verifiera nedladdning
 - [x] Spara alla screenshots i `screenshots/fas-08/`
-- [ ] Stoppa dev-server
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, export fungerar, inga konsolfel

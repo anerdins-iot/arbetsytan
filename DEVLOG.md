@@ -188,3 +188,11 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Implementation fokuserade på funktionalitet, visuell polering prioriterades ner.
 **Lösning:** Lägga till rubrikfont (t.ex. display/serif), använda accent-färg på primära CTAs, migrera hårdkodade färger till tema-variabler, fixa alla CTA-länkar.
 **Lärdom:** Verifiera design mot UI.md efter varje fas som innehåller UI-arbete, inte bara i slutet.
+
+---
+
+### AI-verktyg generateProjectReport kräver endast OpenAI (Block 8.2)
+**Problem:** Block 8.2 specificerade AI-verktyg för rapportgenerering, men ANTHROPIC_API_KEY och MISTRAL_API_KEY saknades i miljön.
+**Orsak:** Utvecklingsmiljön har endast OPENAI_API_KEY konfigurerad. Verktyget skulle inte kunna köras om det krävde Claude/Mistral.
+**Lösning:** Implementerade `generateProjectReport` i project-tools.ts med OpenAI (`gpt-4o`) för textgenerering via `generateText` från AI SDK. Verktyget hämtar projektdata (uppgifter, status, tidsrapporter, medlemmar), genererar en AI-sammanfattning och sparar som PDF till MinIO. Graceful error om API-nyckel saknas.
+**Lärdom:** AI-verktyg som behöver text-generering kan använda vilken provider som helst via AI SDK — OpenAI räcker för grundläggande rapportgenerering. Implementera alltid graceful degradation om API-nycklar saknas.

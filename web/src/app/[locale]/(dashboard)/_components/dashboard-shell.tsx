@@ -12,15 +12,19 @@ type DashboardShellProps = {
   children: React.ReactNode
   initialNotifications: NotificationItem[]
   initialUnreadCount: number
+  initialUnreadAiCount: number
 }
 
 export function DashboardShell({
   children,
   initialNotifications,
   initialUnreadCount,
+  initialUnreadAiCount,
 }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  // Kontrollera AI-chattpanelens öppet/stängt-tillstånd från topbar
+  const [aiChatOpen, setAiChatOpen] = useState(false)
   const t = useTranslations("sidebar")
 
   const handleSidebarToggle = useCallback(() => {
@@ -33,12 +37,12 @@ export function DashboardShell({
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Desktop sidebar */}
+      {/* Desktop-sidofält */}
       <div className="hidden lg:flex">
         <Sidebar collapsed={sidebarCollapsed} onToggle={handleSidebarToggle} />
       </div>
 
-      {/* Mobile sidebar (sheet) */}
+      {/* Mobilt sidofält (sheet) */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent side="left" className="w-64 p-0">
           <SheetTitle className="sr-only">{t("brand")}</SheetTitle>
@@ -46,18 +50,22 @@ export function DashboardShell({
         </SheetContent>
       </Sheet>
 
-      {/* Main content area */}
+      {/* Huvudinnehåll */}
       <div className="flex flex-1 flex-col overflow-hidden">
         <Topbar
           onMobileMenuToggle={handleMobileMenuToggle}
           initialNotifications={initialNotifications}
           initialUnreadCount={initialUnreadCount}
+          initialUnreadAiCount={initialUnreadAiCount}
+          onAiChatToggle={() => setAiChatOpen((prev) => !prev)}
         />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>
       </div>
-      <PersonalAiChat />
+
+      {/* Personlig AI-chatt (styrs från topbar-ikonen) */}
+      <PersonalAiChat open={aiChatOpen} onOpenChange={setAiChatOpen} />
     </div>
   )
 }

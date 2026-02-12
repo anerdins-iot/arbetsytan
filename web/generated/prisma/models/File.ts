@@ -225,7 +225,7 @@ export type FileGroupByOutputType = {
   ocrText: string | null
   createdAt: Date
   updatedAt: Date
-  projectId: string
+  projectId: string | null
   uploadedById: string
   _count: FileCountAggregateOutputType | null
   _avg: FileAvgAggregateOutputType | null
@@ -262,9 +262,9 @@ export type FileWhereInput = {
   ocrText?: Prisma.StringNullableFilter<"File"> | string | null
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
-  projectId?: Prisma.StringFilter<"File"> | string
+  projectId?: Prisma.StringNullableFilter<"File"> | string | null
   uploadedById?: Prisma.StringFilter<"File"> | string
-  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   chunks?: Prisma.DocumentChunkListRelationFilter
 }
 
@@ -278,7 +278,7 @@ export type FileOrderByWithRelationInput = {
   ocrText?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   chunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
@@ -297,9 +297,9 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   ocrText?: Prisma.StringNullableFilter<"File"> | string | null
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
-  projectId?: Prisma.StringFilter<"File"> | string
+  projectId?: Prisma.StringNullableFilter<"File"> | string | null
   uploadedById?: Prisma.StringFilter<"File"> | string
-  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   chunks?: Prisma.DocumentChunkListRelationFilter
 }, "id">
 
@@ -313,7 +313,7 @@ export type FileOrderByWithAggregationInput = {
   ocrText?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   uploadedById?: Prisma.SortOrder
   _count?: Prisma.FileCountOrderByAggregateInput
   _avg?: Prisma.FileAvgOrderByAggregateInput
@@ -335,7 +335,7 @@ export type FileScalarWhereWithAggregatesInput = {
   ocrText?: Prisma.StringNullableWithAggregatesFilter<"File"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"File"> | Date | string
-  projectId?: Prisma.StringWithAggregatesFilter<"File"> | string
+  projectId?: Prisma.StringNullableWithAggregatesFilter<"File"> | string | null
   uploadedById?: Prisma.StringWithAggregatesFilter<"File"> | string
 }
 
@@ -350,7 +350,7 @@ export type FileCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   uploadedById: string
-  project: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
 }
 
@@ -364,7 +364,7 @@ export type FileUncheckedCreateInput = {
   ocrText?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projectId: string
+  projectId?: string | null
   uploadedById: string
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
 }
@@ -380,7 +380,7 @@ export type FileUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
-  project?: Prisma.ProjectUpdateOneRequiredWithoutFilesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
 }
 
@@ -394,7 +394,7 @@ export type FileUncheckedUpdateInput = {
   ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -409,7 +409,7 @@ export type FileCreateManyInput = {
   ocrText?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projectId: string
+  projectId?: string | null
   uploadedById: string
 }
 
@@ -436,7 +436,7 @@ export type FileUncheckedUpdateManyInput = {
   ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -628,7 +628,7 @@ export type FileScalarWhereInput = {
   ocrText?: Prisma.StringNullableFilter<"File"> | string | null
   createdAt?: Prisma.DateTimeFilter<"File"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"File"> | Date | string
-  projectId?: Prisma.StringFilter<"File"> | string
+  projectId?: Prisma.StringNullableFilter<"File"> | string | null
   uploadedById?: Prisma.StringFilter<"File"> | string
 }
 
@@ -643,7 +643,7 @@ export type FileCreateWithoutChunksInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   uploadedById: string
-  project: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
 }
 
 export type FileUncheckedCreateWithoutChunksInput = {
@@ -656,7 +656,7 @@ export type FileUncheckedCreateWithoutChunksInput = {
   ocrText?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projectId: string
+  projectId?: string | null
   uploadedById: string
 }
 
@@ -687,7 +687,7 @@ export type FileUpdateWithoutChunksInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
-  project?: Prisma.ProjectUpdateOneRequiredWithoutFilesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
 }
 
 export type FileUncheckedUpdateWithoutChunksInput = {
@@ -700,7 +700,7 @@ export type FileUncheckedUpdateWithoutChunksInput = {
   ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -801,7 +801,7 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   projectId?: boolean
   uploadedById?: boolean
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.File$projectArgs<ExtArgs>
   chunks?: boolean | Prisma.File$chunksArgs<ExtArgs>
   _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
@@ -818,7 +818,7 @@ export type FileSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   projectId?: boolean
   uploadedById?: boolean
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.File$projectArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -833,7 +833,7 @@ export type FileSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   updatedAt?: boolean
   projectId?: boolean
   uploadedById?: boolean
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.File$projectArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
 export type FileSelectScalar = {
@@ -852,21 +852,21 @@ export type FileSelectScalar = {
 
 export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "size" | "bucket" | "key" | "ocrText" | "createdAt" | "updatedAt" | "projectId" | "uploadedById", ExtArgs["result"]["file"]>
 export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.File$projectArgs<ExtArgs>
   chunks?: boolean | Prisma.File$chunksArgs<ExtArgs>
   _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.File$projectArgs<ExtArgs>
 }
 export type FileIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.File$projectArgs<ExtArgs>
 }
 
 export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "File"
   objects: {
-    project: Prisma.$ProjectPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
     chunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -879,7 +879,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     ocrText: string | null
     createdAt: Date
     updatedAt: Date
-    projectId: string
+    projectId: string | null
     uploadedById: string
   }, ExtArgs["result"]["file"]>
   composites: {}
@@ -1275,7 +1275,7 @@ readonly fields: FileFieldRefs;
  */
 export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.File$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   chunks<T extends Prisma.File$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1710,6 +1710,25 @@ export type FileDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Files to delete.
    */
   limit?: number
+}
+
+/**
+ * File.project
+ */
+export type File$projectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
 }
 
 /**

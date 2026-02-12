@@ -97,6 +97,17 @@ export async function getPersonalConversations(): Promise<
 }
 
 /**
+ * Hämta antal olästa AI-meddelanden (PROJECT_TO_PERSONAL) för inloggad användare.
+ */
+export async function getUnreadAiMessageCount(): Promise<number> {
+  const { tenantId, userId } = await requireAuth();
+  const db = tenantDb(tenantId);
+  return db.aIMessage.count({
+    where: { userId, direction: "PROJECT_TO_PERSONAL", read: false },
+  });
+}
+
+/**
  * Get a single conversation with all messages (for loading into chat).
  * If projectId is provided, verifies the conversation belongs to that project.
  */

@@ -378,18 +378,19 @@ export async function getProjectFiles(
     await requireProject(tenantId, validatedProjectId, userId);
     const db = tenantDb(tenantId);
 
+    // Alla filer för projektet (både uppladdade och AI-genererade) – ingen filtrering på source
     const files = await db.file.findMany({
       where: { projectId: validatedProjectId },
       orderBy: { createdAt: "desc" },
     });
 
-    const filesWithUrls = await Promise.all(
+    // Promise.allSettled så att en felande presigned URL inte fäller hela listan (t.ex. för AI-genererade filer)
+    const results = await Promise.allSettled(
       files.map(async (file) => {
         const downloadUrl = await createPresignedDownloadUrl({
           bucket: file.bucket,
           key: file.key,
         });
-
         return {
           id: file.id,
           name: file.name,
@@ -404,6 +405,29 @@ export async function getProjectFiles(
         };
       })
     );
+
+    const filesWithUrls = results.map((result, index) => {
+      if (result.status === "fulfilled") {
+        return result.value;
+      }
+      const file = files[index];
+      logger.warn(
+        "getProjectFiles: presigned URL misslyckades för fil, visar fil med fallback-URL",
+        { fileId: file?.id, bucket: file?.bucket, key: file?.key, err: result.reason }
+      );
+      return {
+        id: file.id,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        bucket: file.bucket,
+        key: file.key,
+        ocrText: file.ocrText,
+        createdAt: file.createdAt,
+        previewUrl: "#",
+        downloadUrl: "#",
+      };
+    });
 
     return { success: true, files: filesWithUrls };
   } catch (error) {

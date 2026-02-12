@@ -52,6 +52,7 @@ model User {
   activityLogs     ActivityLog[]
   notificationPreferences NotificationPreference[]
   pushSubscriptions       PushSubscription[]
+  notes            Note[]
 }
 
 model Membership {
@@ -169,6 +170,7 @@ model Project {
   notifications  Notification[]
   activityLogs    ActivityLog[]
   timeEntries     TimeEntry[]
+  notes           Note[]
 }
 
 model ProjectMember {
@@ -249,8 +251,8 @@ model File {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   uploadedById String
 
@@ -464,6 +466,31 @@ model TimeEntry {
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId    String
+}
+
+// ─────────────────────────────────────────
+// Notes (Anteckningsbok)
+// ─────────────────────────────────────────
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String   @default("")
+  content   String   @db.Text
+  category  String?
+  isPinned  Boolean  @default(false)
+
+  projectId   String?
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  createdById String
+  createdBy   User   @relation(fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, createdAt])
+  @@index([projectId, category])
+  @@index([createdById, projectId])
 }
 
 // ─────────────────────────────────────────

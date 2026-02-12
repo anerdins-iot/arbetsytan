@@ -73,6 +73,7 @@ export const ModelName = {
   Comment: 'Comment',
   ActivityLog: 'ActivityLog',
   TimeEntry: 'TimeEntry',
+  Note: 'Note',
   Subscription: 'Subscription'
 } as const
 
@@ -395,6 +396,21 @@ export const TimeEntryScalarFieldEnum = {
 } as const
 
 export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]
+
+
+export const NoteScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  content: 'content',
+  category: 'category',
+  isPinned: 'isPinned',
+  projectId: 'projectId',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {

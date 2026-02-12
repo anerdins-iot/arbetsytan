@@ -128,6 +128,11 @@ export type ActivityLog = Prisma.ActivityLogModel
  */
 export type TimeEntry = Prisma.TimeEntryModel
 /**
+ * Model Note
+ * 
+ */
+export type Note = Prisma.NoteModel
+/**
  * Model Subscription
  * 
  */

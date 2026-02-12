@@ -36,6 +36,7 @@ const PROJECT_SCOPED_MODELS = [
   "file",
   "documentChunk",
   "timeEntry",
+  "note",
 ] as const;
 
 /** Comment is scoped via task.project (no direct project relation). */
@@ -404,6 +405,7 @@ export type TenantScopedClient = Omit<
   | "projectMember"
   | "conversation"
   | "message"
+  | "note"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -422,6 +424,7 @@ export type TenantScopedClient = Omit<
   projectMember: PrismaClient["projectMember"];
   conversation: PrismaClient["conversation"];
   message: PrismaClient["message"];
+  note: PrismaClient["note"];
 };
 
 /**

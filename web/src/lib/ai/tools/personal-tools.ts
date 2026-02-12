@@ -1,12 +1,18 @@
 /**
  * Personal AI tools. All use tenantDb(tenantId). Conversation owned by userId.
+ * Personlig AI har direkt tillgång till användarens projekt via projectId-parameter.
  */
 import { tool } from "ai";
 import { z } from "zod";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
-import { searchDocumentsGlobal } from "@/lib/ai/embeddings";
 import { requireProject } from "@/lib/auth";
 import type { TenantScopedClient } from "@/lib/db";
+import {
+  createTaskShared,
+  updateTaskShared,
+  searchDocumentsAcrossProjects,
+} from "@/lib/ai/tools/shared-tools";
+import { getOcrTextForFile } from "@/lib/ai/ocr";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -16,6 +22,8 @@ export type PersonalToolsContext = {
 
 export function createPersonalTools(ctx: PersonalToolsContext) {
   const { db, tenantId, userId } = ctx;
+
+  // ─── AIMessages ───────────────────────────────────────
 
   const getUnreadAIMessages = tool({
     description:
@@ -86,6 +94,27 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  // ─── Projektlista och översikt ────────────────────────
+
+  const getProjectList = tool({
+    description: "Hämta listan över projekt som användaren är medlem i (id, namn, status).",
+    inputSchema: toolInputSchema(z.object({
+      _: z.string().optional().describe("Ignored"),
+    })),
+    execute: async () => {
+      const projects = await db.project.findMany({
+        where: {
+          projectMembers: { some: { membership: { userId } } },
+        },
+        select: { id: true, name: true, status: true },
+        orderBy: { name: "asc" },
+      });
+      return projects.map((p) => ({ id: p.id, name: p.name, status: p.status }));
+    },
+  });
+
+  // ─── Uppgifter (Tasks) ────────────────────────────────
+
   const getUserTasks = tool({
     description:
       "Hämta användarens uppgifter från alla projekt användaren är med i. Returnerar uppgifter med projekt, status, prioritet, deadline och tilldelning.",
@@ -128,49 +157,44 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
-  const getProjectList = tool({
-    description: "Hämta listan över projekt som användaren är medlem i (id, namn, status).",
-    inputSchema: toolInputSchema(z.object({
-      _: z.string().optional().describe("Ignored"),
-    })),
-    execute: async () => {
-      const projects = await db.project.findMany({
-        where: {
-          projectMembers: { some: { membership: { userId } } },
-        },
-        select: { id: true, name: true, status: true },
-        orderBy: { name: "asc" },
-      });
-      return projects.map((p) => ({ id: p.id, name: p.name, status: p.status }));
-    },
-  });
-
-  const searchFiles = tool({
+  const getProjectTasks = tool({
     description:
-      "Söka i dokument (PDF, ritningar) över alla projekt användaren har tillgång till. Semantisk sökning; ange en fråga eller sökord.",
+      "Hämta alla uppgifter i ett specifikt projekt. Kräver projectId. Returnerar titel, beskrivning, status, prioritet, deadline och tilldelade personer.",
     inputSchema: toolInputSchema(z.object({
-      query: z.string().describe("Sökfråga eller nyckelord"),
-      limit: z.number().min(1).max(15).optional().default(8),
+      projectId: z.string().describe("Projektets ID"),
+      limit: z.number().min(1).max(100).optional().default(50).describe("Max antal uppgifter"),
     })),
-    execute: async ({ query, limit }) => {
-      const projectIds = (
-        await db.projectMember.findMany({
-          where: { membership: { userId } },
-          select: { projectId: true },
-        })
-      ).map((p) => p.projectId);
-      if (projectIds.length === 0) return [];
-      const results = await searchDocumentsGlobal(tenantId, projectIds, query, {
-        limit,
-        threshold: 0.5,
+    execute: async ({ projectId: pid, limit = 50 }) => {
+      await requireProject(tenantId, pid, userId);
+      const tasks = await db.task.findMany({
+        where: { projectId: pid },
+        include: {
+          project: { select: { id: true, name: true } },
+          assignments: {
+            include: {
+              membership: {
+                include: { user: { select: { id: true, name: true, email: true } } },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take: limit,
       });
-      return results.map((r) => ({
-        projectName: r.projectName,
-        projectId: r.projectId,
-        fileName: r.fileName,
-        page: r.page,
-        similarity: r.similarity,
-        excerpt: r.content.slice(0, 250) + (r.content.length > 250 ? "…" : ""),
+      return tasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        description: t.description,
+        status: t.status,
+        priority: t.priority,
+        deadline: t.deadline?.toISOString() ?? null,
+        projectName: t.project.name,
+        projectId: t.project.id,
+        assignees: t.assignments.map((a) => ({
+          membershipId: a.membershipId,
+          name: a.membership.user.name ?? a.membership.user.email,
+          email: a.membership.user.email,
+        })),
       }));
     },
   });
@@ -187,17 +211,14 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, title, description, priority, deadline }) => {
       await requireProject(tenantId, pid, userId);
-      const task = await db.task.create({
-        data: {
-          title,
-          description: description ?? null,
-          priority: priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT",
-          status: "TODO",
-          deadline: deadline ? new Date(deadline) : null,
-          projectId: pid,
-        },
+      return createTaskShared({
+        db,
+        projectId: pid,
+        title,
+        description,
+        priority: priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT",
+        deadline,
       });
-      return { id: task.id, title: task.title, status: task.status, message: "Uppgift skapad." };
     },
   });
 
@@ -215,34 +236,930 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, taskId, title, description, status, priority, deadline }) => {
       await requireProject(tenantId, pid, userId);
-      const existing = await db.task.findFirst({
-        where: { id: taskId, projectId: pid },
+      return updateTaskShared({
+        db,
+        projectId: pid,
+        taskId,
+        title,
+        description,
+        status: status as "TODO" | "IN_PROGRESS" | "DONE" | undefined,
+        priority: priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT" | undefined,
+        deadline,
       });
-      if (!existing) return { error: "Uppgiften hittades inte i projektet." };
-      const task = await db.task.update({
-        where: { id: taskId },
+    },
+  });
+
+  const assignTask = tool({
+    description:
+      "Tilldela en uppgift till en projektmedlem. Kräver projectId, taskId och membershipId (från getProjectMembers).",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      taskId: z.string().describe("Uppgiftens ID"),
+      membershipId: z.string().describe("MembershipId för den som ska tilldelas (från getProjectMembers)"),
+    })),
+    execute: async ({ projectId: pid, taskId, membershipId }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const task = await db.task.findFirst({
+        where: { id: taskId, projectId: pid },
+        select: { id: true, title: true },
+      });
+      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+
+      const membership = await db.membership.findFirst({
+        where: { id: membershipId, tenantId },
+        include: { user: { select: { id: true } } },
+      });
+      if (!membership) return { error: "Medlemmen hittades inte." };
+
+      const existing = await db.taskAssignment.findFirst({
+        where: { taskId, membershipId },
+      });
+      if (existing) return { error: "Uppgiften är redan tilldelad denna person." };
+
+      await db.taskAssignment.create({
+        data: { taskId, membershipId },
+      });
+
+      return { id: task.id, message: `Uppgiften "${task.title}" har tilldelats.` };
+    },
+  });
+
+  const deleteTask = tool({
+    description:
+      "Ta bort en uppgift från ett projekt. VIKTIGT: Kan inte ångras. Uppgiften och alla dess tilldelningar raderas.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      taskId: z.string().describe("ID för uppgiften som ska tas bort"),
+      confirmDeletion: z.boolean().describe("Måste vara true för att bekräfta permanent borttagning"),
+    })),
+    execute: async ({ projectId: pid, taskId, confirmDeletion }) => {
+      if (!confirmDeletion) {
+        return { error: "Radering avbröts: confirmDeletion måste vara true." };
+      }
+      await requireProject(tenantId, pid, userId);
+
+      const task = await db.task.findFirst({
+        where: { id: taskId, projectId: pid },
+        select: { id: true, title: true, status: true },
+      });
+      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+
+      await db.taskAssignment.deleteMany({ where: { taskId } });
+      await db.task.delete({ where: { id: taskId } });
+
+      return {
+        success: true,
+        deletedTaskId: taskId,
+        message: `Uppgiften "${task.title}" har tagits bort permanent.`,
+      };
+    },
+  });
+
+  // ─── Kommentarer (Comments) ───────────────────────────
+
+  const getTaskComments = tool({
+    description:
+      "Hämta alla kommentarer för en uppgift i ett projekt. Returnerar kommentarer i kronologisk ordning.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      taskId: z.string().describe("Uppgiftens ID"),
+    })),
+    execute: async ({ projectId: pid, taskId }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const task = await db.task.findFirst({
+        where: { id: taskId, projectId: pid },
+        select: { id: true },
+      });
+      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+
+      const comments = await db.comment.findMany({
+        where: { taskId },
+        orderBy: { createdAt: "asc" },
+      });
+
+      // Hämta författarinformation
+      const authorIds = [...new Set(comments.map((c) => c.authorId))];
+      const { prisma } = await import("@/lib/db");
+      const users = await prisma.user.findMany({
+        where: { id: { in: authorIds } },
+        select: { id: true, name: true, email: true },
+      });
+      const userMap = new Map(users.map((u) => [u.id, u]));
+
+      return comments.map((c) => {
+        const author = userMap.get(c.authorId);
+        return {
+          id: c.id,
+          content: c.content,
+          createdAt: c.createdAt.toISOString(),
+          updatedAt: c.updatedAt.toISOString(),
+          author: author
+            ? { name: author.name ?? author.email, email: author.email }
+            : { name: "Okänd användare", email: "unknown" },
+        };
+      });
+    },
+  });
+
+  const createComment = tool({
+    description:
+      "Skapa en kommentar på en uppgift i ett projekt. Kommentaren skapas som den inloggade användaren.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      taskId: z.string().describe("Uppgiftens ID"),
+      content: z.string().min(1).max(5000).describe("Kommentarens innehåll"),
+    })),
+    execute: async ({ projectId: pid, taskId, content }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const task = await db.task.findFirst({
+        where: { id: taskId, projectId: pid },
+        select: { id: true, title: true },
+      });
+      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+
+      const comment = await db.comment.create({
         data: {
-          ...(title !== undefined && { title }),
-          ...(description !== undefined && { description }),
-          ...(status !== undefined && { status: status as "TODO" | "IN_PROGRESS" | "DONE" }),
-          ...(priority !== undefined && { priority: priority as "LOW" | "MEDIUM" | "HIGH" | "URGENT" }),
-          ...(deadline !== undefined && {
-            deadline: deadline === null || deadline === "" ? null : new Date(deadline),
-          }),
+          content,
+          authorId: userId,
+          task: { connect: { id: taskId } },
         },
       });
-      return { id: task.id, title: task.title, status: task.status, message: "Uppgift uppdaterad." };
+
+      return {
+        id: comment.id,
+        message: `Kommentar skapad på uppgiften "${task.title}".`,
+      };
+    },
+  });
+
+  const updateComment = tool({
+    description:
+      "Uppdatera en kommentar. Endast kommentarer som användaren själv skapat kan uppdateras.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      commentId: z.string().describe("Kommentarens ID"),
+      content: z.string().min(1).max(5000).describe("Nytt innehåll"),
+    })),
+    execute: async ({ projectId: pid, commentId, content }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const comment = await db.comment.findFirst({
+        where: { id: commentId },
+        include: { task: { select: { projectId: true } } },
+      });
+      if (!comment) return { error: "Kommentaren hittades inte." };
+      if (comment.task.projectId !== pid) return { error: "Kommentaren tillhör inte detta projekt." };
+      if (comment.authorId !== userId) return { error: "Endast författaren kan uppdatera sin egen kommentar." };
+
+      await db.comment.update({
+        where: { id: commentId },
+        data: { content },
+      });
+
+      return { id: commentId, message: "Kommentar uppdaterad." };
+    },
+  });
+
+  const deleteComment = tool({
+    description:
+      "Ta bort en kommentar. Endast kommentarer som användaren själv skapat kan tas bort.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      commentId: z.string().describe("Kommentarens ID"),
+    })),
+    execute: async ({ projectId: pid, commentId }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const comment = await db.comment.findFirst({
+        where: { id: commentId },
+        include: { task: { select: { projectId: true } } },
+      });
+      if (!comment) return { error: "Kommentaren hittades inte." };
+      if (comment.task.projectId !== pid) return { error: "Kommentaren tillhör inte detta projekt." };
+      if (comment.authorId !== userId) return { error: "Endast författaren kan ta bort sin egen kommentar." };
+
+      await db.comment.delete({ where: { id: commentId } });
+      return { message: "Kommentar borttagen." };
+    },
+  });
+
+  // ─── Tidrapportering (Time Entries) ───────────────────
+
+  const getProjectTimeEntries = tool({
+    description:
+      "Hämta tidsrapporter för ett projekt. Returnerar tidsposter med uppgiftsinformation.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      limit: z.number().min(1).max(200).optional().default(100).describe("Max antal tidsposter"),
+    })),
+    execute: async ({ projectId: pid, limit = 100 }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const entries = await db.timeEntry.findMany({
+        where: { projectId: pid },
+        include: {
+          task: { select: { id: true, title: true } },
+        },
+        orderBy: [{ date: "desc" }, { createdAt: "desc" }],
+        take: limit,
+      });
+
+      // Hämta användardata separat
+      const userIds = [...new Set(entries.map((e) => e.userId))];
+      const { prisma } = await import("@/lib/db");
+      const users = await prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, name: true, email: true },
+      });
+      const userMap = new Map(users.map((u) => [u.id, u]));
+
+      return entries.map((entry) => {
+        const user = userMap.get(entry.userId);
+        return {
+          id: entry.id,
+          taskId: entry.task?.id ?? null,
+          taskTitle: entry.task?.title ?? null,
+          minutes: entry.minutes,
+          hours: Math.floor(entry.minutes / 60),
+          remainingMinutes: entry.minutes % 60,
+          date: entry.date.toISOString().split("T")[0],
+          description: entry.description,
+          userName: user ? (user.name ?? user.email) : "Okänd användare",
+          userId: entry.userId,
+          createdAt: entry.createdAt.toISOString(),
+        };
+      });
+    },
+  });
+
+  const createTimeEntry = tool({
+    description:
+      "Skapa en ny tidsrapport för en uppgift i ett projekt. Ange minuter eller timmar, datum och valfri beskrivning.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      taskId: z.string().describe("Uppgiftens ID"),
+      minutes: z.number().int().positive().optional().describe("Antal minuter"),
+      hours: z.number().positive().optional().describe("Antal timmar (konverteras till minuter)"),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("Datum YYYY-MM-DD"),
+      description: z.string().max(500).optional().describe("Beskrivning av arbetet"),
+    })),
+    execute: async ({ projectId: pid, taskId, minutes, hours, date, description }) => {
+      await requireProject(tenantId, pid, userId);
+
+      if (!minutes && !hours) return { error: "Du måste ange antingen minutes eller hours." };
+      const totalMinutes = minutes ?? Math.round((hours ?? 0) * 60);
+      if (totalMinutes <= 0) return { error: "Tid måste vara större än 0." };
+
+      const task = await db.task.findFirst({
+        where: { id: taskId, projectId: pid },
+        select: { id: true, title: true },
+      });
+      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+
+      const created = await db.timeEntry.create({
+        data: {
+          taskId: task.id,
+          projectId: pid,
+          userId,
+          minutes: totalMinutes,
+          date: new Date(date),
+          description: description?.trim() || null,
+        },
+        include: { task: { select: { title: true } } },
+      });
+
+      return {
+        id: created.id,
+        taskId: created.taskId,
+        taskTitle: created.task?.title ?? null,
+        minutes: created.minutes,
+        hours: Math.floor(created.minutes / 60),
+        remainingMinutes: created.minutes % 60,
+        date: created.date.toISOString().split("T")[0],
+        description: created.description,
+        message: `Tidsrapport skapad: ${Math.floor(created.minutes / 60)}h ${created.minutes % 60}min på ${created.task?.title}`,
+      };
+    },
+  });
+
+  const updateTimeEntry = tool({
+    description:
+      "Uppdatera en befintlig tidsrapport. Endast egna tidsrapporter kan uppdateras.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      timeEntryId: z.string().describe("Tidsrapportens ID"),
+      taskId: z.string().optional().describe("Ny uppgift (om flytt)"),
+      minutes: z.number().int().positive().optional().describe("Nytt antal minuter"),
+      hours: z.number().positive().optional().describe("Nytt antal timmar"),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Nytt datum YYYY-MM-DD"),
+      description: z.string().max(500).optional().describe("Ny beskrivning"),
+    })),
+    execute: async ({ projectId: pid, timeEntryId, taskId, minutes, hours, date, description }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const existing = await db.timeEntry.findFirst({
+        where: { id: timeEntryId, userId, projectId: pid },
+      });
+      if (!existing) return { error: "Tidsrapporten hittades inte eller saknar behörighet." };
+
+      let targetTaskId = existing.taskId;
+      if (taskId) {
+        const task = await db.task.findFirst({
+          where: { id: taskId, projectId: pid },
+          select: { id: true },
+        });
+        if (!task) return { error: "Den angivna uppgiften hittades inte i projektet." };
+        targetTaskId = task.id;
+      }
+
+      let totalMinutes = existing.minutes;
+      if (hours !== undefined) {
+        totalMinutes = Math.round(hours * 60);
+      } else if (minutes !== undefined) {
+        totalMinutes = minutes;
+      }
+      if (totalMinutes <= 0) return { error: "Tid måste vara större än 0." };
+
+      const updated = await db.timeEntry.update({
+        where: { id: existing.id },
+        data: {
+          taskId: targetTaskId,
+          minutes: totalMinutes,
+          date: date ? new Date(date) : existing.date,
+          description: description !== undefined ? (description.trim() || null) : existing.description,
+        },
+        include: { task: { select: { title: true } } },
+      });
+
+      return {
+        id: updated.id,
+        taskId: updated.taskId,
+        taskTitle: updated.task?.title ?? null,
+        minutes: updated.minutes,
+        hours: Math.floor(updated.minutes / 60),
+        remainingMinutes: updated.minutes % 60,
+        date: updated.date.toISOString().split("T")[0],
+        description: updated.description,
+        message: "Tidsrapport uppdaterad.",
+      };
+    },
+  });
+
+  const deleteTimeEntry = tool({
+    description:
+      "Ta bort en tidsrapport. Endast egna tidsrapporter kan tas bort.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      timeEntryId: z.string().describe("Tidsrapportens ID"),
+    })),
+    execute: async ({ projectId: pid, timeEntryId }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const existing = await db.timeEntry.findFirst({
+        where: { id: timeEntryId, userId, projectId: pid },
+        include: { task: { select: { title: true } } },
+      });
+      if (!existing) return { error: "Tidsrapporten hittades inte eller saknar behörighet." };
+
+      await db.timeEntry.delete({ where: { id: existing.id } });
+
+      return {
+        message: `Tidsrapport borttagen: ${Math.floor(existing.minutes / 60)}h ${existing.minutes % 60}min på ${existing.task?.title ?? "uppgift"}`,
+      };
+    },
+  });
+
+  const getProjectTimeSummary = tool({
+    description:
+      "Hämta sammanfattning av registrerad tid i ett projekt. Visar total tid, tid per uppgift, tid per person och tid per vecka.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const entries = await db.timeEntry.findMany({
+        where: { projectId: pid },
+        include: { task: { select: { id: true, title: true } } },
+        orderBy: { date: "desc" },
+      });
+
+      const totalMinutes = entries.reduce((sum, entry) => sum + entry.minutes, 0);
+
+      // Hämta användardata separat
+      const userIds = [...new Set(entries.map((e) => e.userId))];
+      const { prisma } = await import("@/lib/db");
+      const users = await prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, name: true, email: true },
+      });
+      const userMap = new Map(users.map((u) => [u.id, u]));
+
+      // Gruppera per uppgift
+      const taskTotals = new Map<string, { taskId: string; taskTitle: string; totalMinutes: number }>();
+      for (const entry of entries) {
+        if (entry.task) {
+          const current = taskTotals.get(entry.task.id);
+          if (!current) {
+            taskTotals.set(entry.task.id, { taskId: entry.task.id, taskTitle: entry.task.title, totalMinutes: entry.minutes });
+          } else {
+            current.totalMinutes += entry.minutes;
+          }
+        }
+      }
+
+      // Gruppera per person
+      const personTotals = new Map<string, { userId: string; userName: string; totalMinutes: number }>();
+      for (const entry of entries) {
+        const user = userMap.get(entry.userId);
+        const userName = user ? (user.name ?? user.email) : "Okänd användare";
+        const current = personTotals.get(entry.userId);
+        if (!current) {
+          personTotals.set(entry.userId, { userId: entry.userId, userName, totalMinutes: entry.minutes });
+        } else {
+          current.totalMinutes += entry.minutes;
+        }
+      }
+
+      // Gruppera per vecka (måndagar)
+      const weekTotals = new Map<string, number>();
+      for (const entry of entries) {
+        const date = new Date(entry.date);
+        const day = date.getUTCDay();
+        const mondayOffset = day === 0 ? -6 : 1 - day;
+        const monday = new Date(date);
+        monday.setUTCDate(date.getUTCDate() + mondayOffset);
+        const weekKey = monday.toISOString().split("T")[0];
+        weekTotals.set(weekKey, (weekTotals.get(weekKey) ?? 0) + entry.minutes);
+      }
+
+      return {
+        totalMinutes,
+        totalHours: Math.floor(totalMinutes / 60),
+        totalRemainingMinutes: totalMinutes % 60,
+        byTask: Array.from(taskTotals.values())
+          .sort((a, b) => b.totalMinutes - a.totalMinutes)
+          .map((t) => ({ ...t, hours: Math.floor(t.totalMinutes / 60), remainingMinutes: t.totalMinutes % 60 })),
+        byPerson: Array.from(personTotals.values())
+          .sort((a, b) => b.totalMinutes - a.totalMinutes)
+          .map((p) => ({ ...p, hours: Math.floor(p.totalMinutes / 60), remainingMinutes: p.totalMinutes % 60 })),
+        byWeek: Array.from(weekTotals.entries())
+          .map(([weekStart, mins]) => ({ weekStart, totalMinutes: mins, hours: Math.floor(mins / 60), remainingMinutes: mins % 60 }))
+          .sort((a, b) => b.weekStart.localeCompare(a.weekStart))
+          .slice(0, 12),
+      };
+    },
+  });
+
+  // ─── Filer (Files) ────────────────────────────────────
+
+  const getProjectFiles = tool({
+    description: "Hämta listan över filer i ett projekt (namn, typ, storlek, datum).",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
+    })),
+    execute: async ({ projectId: pid, limit = 50 }) => {
+      await requireProject(tenantId, pid, userId);
+      const files = await db.file.findMany({
+        where: { projectId: pid },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        select: { id: true, name: true, type: true, size: true, createdAt: true },
+      });
+      return files.map((f) => ({
+        id: f.id,
+        name: f.name,
+        type: f.type,
+        size: f.size,
+        createdAt: f.createdAt.toISOString(),
+      }));
+    },
+  });
+
+  const searchFiles = tool({
+    description:
+      "Söka i dokument (PDF, ritningar) över alla projekt användaren har tillgång till. Semantisk sökning; ange en fråga eller sökord.",
+    inputSchema: toolInputSchema(z.object({
+      query: z.string().describe("Sökfråga eller nyckelord"),
+      limit: z.number().min(1).max(15).optional().default(8),
+    })),
+    execute: async ({ query, limit }) => {
+      const projectIds = (
+        await db.projectMember.findMany({
+          where: { membership: { userId } },
+          select: { projectId: true },
+        })
+      ).map((p) => p.projectId);
+      return searchDocumentsAcrossProjects({ tenantId, projectIds, query, limit });
+    },
+  });
+
+  const analyzeDocument = tool({
+    description:
+      "Analysera en PDF eller ritning (bild) i ett projekt med OCR. Ange projectId och fileId (från getProjectFiles). Returnerar extraherad text.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileId: z.string().describe("ID för filen som ska analyseras"),
+    })),
+    execute: async ({ projectId: pid, fileId }) => {
+      await requireProject(tenantId, pid, userId);
+      const result = await getOcrTextForFile({ fileId, projectId: pid, tenantId });
+      if ("error" in result) return { error: result.error };
+      return { fullText: result.fullText };
+    },
+  });
+
+  // ─── Projektmedlemmar ─────────────────────────────────
+
+  const getProjectMembers = tool({
+    description: "Hämta medlemmar i ett projekt med namn, e-post och membershipId.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      await requireProject(tenantId, pid, userId);
+      const members = await db.projectMember.findMany({
+        where: { projectId: pid },
+        include: {
+          membership: {
+            include: {
+              user: { select: { id: true, name: true, email: true } },
+            },
+          },
+        },
+      });
+      return members.map((m) => ({
+        membershipId: m.membershipId,
+        userName: m.membership.user.name ?? m.membership.user.email,
+        email: m.membership.user.email,
+      }));
+    },
+  });
+
+  // ─── Projektanteckningar (Notes) ──────────────────────
+
+  const getProjectNotes = tool({
+    description:
+      "Hämta anteckningar från ett projekt. Kan filtrera på kategori.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
+        .describe("Filtrera på kategori"),
+      limit: z.number().min(1).max(50).optional().default(20),
+    })),
+    execute: async ({ projectId: pid, category, limit = 20 }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const where: Record<string, unknown> = { projectId: pid };
+      if (category) where.category = category;
+
+      const notes = await db.note.findMany({
+        where,
+        include: {
+          createdBy: { select: { id: true, name: true, email: true } },
+        },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+        take: limit,
+      });
+
+      return notes.map((n: typeof notes[number]) => ({
+        id: n.id,
+        title: n.title,
+        content: n.content,
+        category: n.category,
+        isPinned: n.isPinned,
+        createdBy: n.createdBy.name ?? n.createdBy.email,
+        createdAt: n.createdAt.toISOString(),
+      }));
+    },
+  });
+
+  const createProjectNote = tool({
+    description:
+      "Skapa en anteckning i ett projekt (beslut, teknisk info, kundönskemål etc.).",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      content: z.string().describe("Anteckningens innehåll"),
+      title: z.string().optional().describe("Valfri titel"),
+      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
+        .describe("Kategori"),
+    })),
+    execute: async ({ projectId: pid, content, title, category }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const note = await db.note.create({
+        data: {
+          title: title ?? "",
+          content,
+          category: category ?? null,
+          projectId: pid,
+          createdById: userId,
+        },
+        include: {
+          createdBy: { select: { id: true, name: true, email: true } },
+        },
+      });
+
+      return {
+        id: note.id,
+        title: note.title,
+        content: note.content,
+        category: note.category,
+        createdAt: note.createdAt.toISOString(),
+        message: "Anteckning skapad.",
+      };
+    },
+  });
+
+  const updateProjectNote = tool({
+    description: "Uppdatera en befintlig anteckning i ett projekt.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      noteId: z.string().describe("Anteckningens ID"),
+      content: z.string().optional().describe("Nytt innehåll"),
+      title: z.string().optional().describe("Ny titel"),
+      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
+        .describe("Ny kategori"),
+    })),
+    execute: async ({ projectId: pid, noteId, content, title, category }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const existing = await db.note.findFirst({
+        where: { id: noteId, projectId: pid },
+      });
+      if (!existing) return { error: "Anteckningen hittades inte i detta projekt." };
+
+      const updateData: Record<string, unknown> = {};
+      if (content !== undefined) updateData.content = content;
+      if (title !== undefined) updateData.title = title;
+      if (category !== undefined) updateData.category = category;
+
+      const note = await db.note.update({
+        where: { id: noteId },
+        data: updateData,
+      });
+
+      return {
+        id: note.id,
+        title: note.title,
+        content: note.content,
+        category: note.category,
+        message: "Anteckning uppdaterad.",
+      };
+    },
+  });
+
+  const deleteProjectNote = tool({
+    description: "Ta bort en anteckning från ett projekt.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      noteId: z.string().describe("Anteckningens ID"),
+    })),
+    execute: async ({ projectId: pid, noteId }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const existing = await db.note.findFirst({
+        where: { id: noteId, projectId: pid },
+      });
+      if (!existing) return { error: "Anteckningen hittades inte i detta projekt." };
+
+      await db.note.delete({ where: { id: noteId } });
+      return { success: true, message: "Anteckning borttagen." };
+    },
+  });
+
+  const searchProjectNotes = tool({
+    description:
+      "Sök bland anteckningar i ett projekt. Söker i titel och innehåll.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      query: z.string().describe("Sökord eller fras"),
+      limit: z.number().min(1).max(50).optional().default(20),
+    })),
+    execute: async ({ projectId: pid, query, limit = 20 }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const notes = await db.note.findMany({
+        where: {
+          projectId: pid,
+          OR: [
+            { title: { contains: query, mode: "insensitive" } },
+            { content: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        include: {
+          createdBy: { select: { id: true, name: true, email: true } },
+        },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+        take: limit,
+      });
+
+      return notes.map((n: typeof notes[number]) => ({
+        id: n.id,
+        title: n.title,
+        content: n.content,
+        category: n.category,
+        isPinned: n.isPinned,
+        createdBy: n.createdBy.name ?? n.createdBy.email,
+        createdAt: n.createdAt.toISOString(),
+      }));
+    },
+  });
+
+  // ─── Personliga anteckningar (utan projekt) ───────────
+
+  const getPersonalNotes = tool({
+    description:
+      "Hämta användarens personliga anteckningar (inte kopplade till något projekt). Kan filtrera på kategori.",
+    inputSchema: toolInputSchema(z.object({
+      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
+        .describe("Filtrera på kategori"),
+      limit: z.number().min(1).max(50).optional().default(20),
+    })),
+    execute: async ({ category, limit = 20 }) => {
+      const where: Record<string, unknown> = { createdById: userId, projectId: null };
+      if (category) where.category = category;
+
+      const notes = await db.note.findMany({
+        where,
+        include: {
+          createdBy: { select: { id: true, name: true, email: true } },
+        },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+        take: limit,
+      });
+
+      return notes.map((n: typeof notes[number]) => ({
+        id: n.id,
+        title: n.title,
+        content: n.content,
+        category: n.category,
+        isPinned: n.isPinned,
+        createdAt: n.createdAt.toISOString(),
+      }));
+    },
+  });
+
+  const createPersonalNote = tool({
+    description:
+      "Skapa en personlig anteckning (inte kopplad till något projekt). Använd för att spara personliga tankar, idéer eller information.",
+    inputSchema: toolInputSchema(z.object({
+      content: z.string().describe("Anteckningens innehåll"),
+      title: z.string().optional().describe("Valfri titel"),
+      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
+        .describe("Kategori"),
+    })),
+    execute: async ({ content, title, category }) => {
+      const note = await db.note.create({
+        data: {
+          title: title ?? "",
+          content,
+          category: category ?? null,
+          projectId: null,
+          createdById: userId,
+        },
+      });
+
+      return {
+        id: note.id,
+        title: note.title,
+        content: note.content,
+        category: note.category,
+        createdAt: note.createdAt.toISOString(),
+        message: "Personlig anteckning skapad.",
+      };
+    },
+  });
+
+  const updatePersonalNote = tool({
+    description: "Uppdatera en personlig anteckning.",
+    inputSchema: toolInputSchema(z.object({
+      noteId: z.string().describe("Anteckningens ID"),
+      content: z.string().optional().describe("Nytt innehåll"),
+      title: z.string().optional().describe("Ny titel"),
+      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
+        .describe("Ny kategori"),
+    })),
+    execute: async ({ noteId, content, title, category }) => {
+      const existing = await db.note.findFirst({
+        where: { id: noteId, createdById: userId, projectId: null },
+      });
+      if (!existing) return { error: "Den personliga anteckningen hittades inte." };
+
+      const updateData: Record<string, unknown> = {};
+      if (content !== undefined) updateData.content = content;
+      if (title !== undefined) updateData.title = title;
+      if (category !== undefined) updateData.category = category;
+
+      const note = await db.note.update({
+        where: { id: noteId },
+        data: updateData,
+      });
+
+      return {
+        id: note.id,
+        title: note.title,
+        content: note.content,
+        category: note.category,
+        message: "Personlig anteckning uppdaterad.",
+      };
+    },
+  });
+
+  const deletePersonalNote = tool({
+    description: "Ta bort en personlig anteckning.",
+    inputSchema: toolInputSchema(z.object({
+      noteId: z.string().describe("Anteckningens ID"),
+    })),
+    execute: async ({ noteId }) => {
+      const existing = await db.note.findFirst({
+        where: { id: noteId, createdById: userId, projectId: null },
+      });
+      if (!existing) return { error: "Den personliga anteckningen hittades inte." };
+
+      await db.note.delete({ where: { id: noteId } });
+      return { success: true, message: "Personlig anteckning borttagen." };
+    },
+  });
+
+  const searchPersonalNotes = tool({
+    description:
+      "Sök bland personliga anteckningar. Söker i titel och innehåll.",
+    inputSchema: toolInputSchema(z.object({
+      query: z.string().describe("Sökord eller fras"),
+      limit: z.number().min(1).max(50).optional().default(20),
+    })),
+    execute: async ({ query, limit = 20 }) => {
+      const notes = await db.note.findMany({
+        where: {
+          createdById: userId,
+          projectId: null,
+          OR: [
+            { title: { contains: query, mode: "insensitive" } },
+            { content: { contains: query, mode: "insensitive" } },
+          ],
+        },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+        take: limit,
+      });
+
+      return notes.map((n: typeof notes[number]) => ({
+        id: n.id,
+        title: n.title,
+        content: n.content,
+        category: n.category,
+        isPinned: n.isPinned,
+        createdAt: n.createdAt.toISOString(),
+      }));
     },
   });
 
   return {
+    // AIMessages
     getUnreadAIMessages,
     markAIMessageRead,
     sendAIMessageToProject,
-    getUserTasks,
+    // Projektlista
     getProjectList,
-    searchFiles,
+    // Uppgifter
+    getUserTasks,
+    getProjectTasks,
     createTask,
     updateTask,
+    assignTask,
+    deleteTask,
+    // Kommentarer
+    getTaskComments,
+    createComment,
+    updateComment,
+    deleteComment,
+    // Tidrapportering
+    getProjectTimeEntries,
+    createTimeEntry,
+    updateTimeEntry,
+    deleteTimeEntry,
+    getProjectTimeSummary,
+    // Filer
+    getProjectFiles,
+    searchFiles,
+    analyzeDocument,
+    // Projektmedlemmar
+    getProjectMembers,
+    // Projektanteckningar
+    getProjectNotes,
+    createNote: createProjectNote,
+    updateNote: updateProjectNote,
+    deleteNote: deleteProjectNote,
+    searchNotes: searchProjectNotes,
+    // Personliga anteckningar
+    getPersonalNotes,
+    createPersonalNote,
+    updatePersonalNote,
+    deletePersonalNote,
+    searchPersonalNotes,
   };
 }

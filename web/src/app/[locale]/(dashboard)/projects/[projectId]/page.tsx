@@ -7,6 +7,7 @@ import { getCommentsByTask } from "@/actions/comments";
 import { getActivityLog } from "@/actions/activity-log";
 import { getProjectFiles } from "@/actions/files";
 import { getProjectTimeSummary, getTimeEntriesByProject } from "@/actions/time-entries";
+import { getNotes } from "@/actions/notes";
 import { getSession } from "@/lib/auth";
 import { ProjectView } from "@/components/projects/project-view";
 
@@ -21,7 +22,7 @@ async function ProjectContent({
   initialTaskId,
 }: {
   projectId: string;
-  initialTab?: "overview" | "tasks" | "files" | "time" | "ai";
+  initialTab?: "overview" | "tasks" | "files" | "time" | "ai" | "notes";
   initialTaskId?: string;
 }) {
   const [
@@ -32,6 +33,7 @@ async function ProjectContent({
     filesResult,
     timeEntriesResult,
     timeSummaryResult,
+    notesResult,
   ] = await Promise.all([
     getProject(projectId),
     getTasks(projectId),
@@ -40,6 +42,7 @@ async function ProjectContent({
     getProjectFiles(projectId),
     getTimeEntriesByProject(projectId),
     getProjectTimeSummary(projectId),
+    getNotes(projectId),
   ]);
 
   if (!projectResult.success || !session) {
@@ -65,6 +68,7 @@ async function ProjectContent({
       files={filesResult.success ? filesResult.files : []}
       timeEntries={timeEntriesResult.success ? timeEntriesResult.data : []}
       timeSummary={timeSummaryResult.success ? timeSummaryResult.data : null}
+      notes={notesResult.success ? notesResult.notes : []}
       initialTab={initialTab}
       initialTaskId={initialTaskId}
     />
@@ -76,10 +80,10 @@ export default async function ProjectPage({ params, searchParams }: Props) {
   const { tab, taskId } = await searchParams;
   setRequestLocale(locale);
 
-  const validTabs = new Set(["overview", "tasks", "files", "time", "ai"]);
+  const validTabs = new Set(["overview", "tasks", "files", "time", "ai", "notes"]);
   const initialTab =
     tab && validTabs.has(tab)
-      ? (tab as "overview" | "tasks" | "files" | "time" | "ai")
+      ? (tab as "overview" | "tasks" | "files" | "time" | "ai" | "notes")
       : undefined;
   const initialTaskId = taskId?.trim() ? taskId : undefined;
 

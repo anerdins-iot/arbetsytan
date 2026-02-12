@@ -22,6 +22,8 @@ import { TimeEntryList } from "@/components/time/time-entry-list";
 import { TimeSummary } from "@/components/time/time-summary";
 import { ProjectExportPanel } from "./project-export-panel";
 import { ProjectAiChat } from "./project-ai-chat";
+import { NotesTab } from "./notes-tab";
+import type { NoteItem } from "@/actions/notes";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -32,7 +34,8 @@ type ProjectViewProps = {
   files: FileItem[];
   timeEntries?: GroupedTimeEntries[];
   timeSummary?: ProjectTimeSummary | null;
-  initialTab?: "overview" | "tasks" | "files" | "time" | "ai";
+  notes?: NoteItem[];
+  initialTab?: "overview" | "tasks" | "files" | "time" | "ai" | "notes";
   initialTaskId?: string;
 };
 
@@ -45,6 +48,7 @@ export function ProjectView({
   files,
   timeEntries = [],
   timeSummary = null,
+  notes = [],
   initialTab = "overview",
   initialTaskId,
 }: ProjectViewProps) {
@@ -105,6 +109,7 @@ export function ProjectView({
           <TabsTrigger value="tasks">{t("tabs.tasks")}</TabsTrigger>
           <TabsTrigger value="files">{t("tabs.files")}</TabsTrigger>
           <TabsTrigger value="time">{t("tabs.time")}</TabsTrigger>
+          <TabsTrigger value="notes">{t("tabs.notes")}</TabsTrigger>
           <TabsTrigger value="ai">{t("tabs.ai")}</TabsTrigger>
         </TabsList>
 
@@ -132,6 +137,10 @@ export function ProjectView({
           <ProjectExportPanel projectId={project.id} members={project.members} />
           {timeSummary ? <TimeSummary summary={timeSummary} /> : null}
           <TimeEntryList groupedEntries={timeEntries} tasks={taskOptions} />
+        </TabsContent>
+
+        <TabsContent value="notes" className="mt-6">
+          <NotesTab projectId={project.id} initialNotes={notes} />
         </TabsContent>
 
         <TabsContent value="ai" className="mt-6">

@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { getSession } from "@/lib/auth";
 import { getNotifications } from "@/actions/notifications";
 import { checkSubscriptionAccess } from "@/actions/subscription";
+import { getUnreadAiMessageCount } from "@/actions/conversations";
 import { DashboardShell } from "./_components/dashboard-shell";
 
 type Props = {
@@ -31,9 +32,16 @@ async function DashboardAuthGuard({
       redirect(`/${locale}/settings/billing`);
     }
   }
-  const { notifications, unreadCount } = await getNotifications({ limit: 20 });
+  const [{ notifications, unreadCount }, unreadAiCount] = await Promise.all([
+    getNotifications({ limit: 20 }),
+    getUnreadAiMessageCount(),
+  ]);
   return (
-    <DashboardShell initialNotifications={notifications} initialUnreadCount={unreadCount}>
+    <DashboardShell
+      initialNotifications={notifications}
+      initialUnreadCount={unreadCount}
+      initialUnreadAiCount={unreadAiCount}
+    >
       {children}
     </DashboardShell>
   );

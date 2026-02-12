@@ -184,12 +184,14 @@ export async function globalSearch(input: { query: string }): Promise<GlobalSear
       projectId: task.project.id,
       projectName: task.project.name,
     })),
-    files: files.map((file) => ({
-      id: file.id,
-      name: file.name,
-      projectId: file.project.id,
-      projectName: file.project.name,
-    })),
+    files: files
+      .filter((file) => file.project != null)
+      .map((file) => ({
+        id: file.id,
+        name: file.name,
+        projectId: file.project!.id,
+        projectName: file.project!.name,
+      })),
     documents,
   };
 }
