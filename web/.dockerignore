@@ -1,11 +1,23 @@
+# Dependencies and build output (must not be in context)
 node_modules
 .next
 .env*
 .git
 .gitignore
-*.md
+
+# Dev/tooling
 .dev-server.pid
 playwright-report
 test-results
 .playwright-browsers
 coverage
+e2e
+*.log
+
+# Docs and screenshots (not needed for build)
+*.md
+screenshots
+
+# SQLite dev DB (production uses PostgreSQL)
+*.db
+prisma/*.db
