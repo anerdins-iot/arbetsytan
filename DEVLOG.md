@@ -7,6 +7,14 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ---
 
+### Docker healthcheck: använd Node.js istället för curl/wget (Coolify deployment)
+**Problem:** Coolify markerade container som `exited:unhealthy` trots att Next.js-servern körs. HEALTHCHECK var kommenterad för att curl/wget inte fanns i node:22-alpine.
+**Orsak:** Cirkulärt beroende: healthcheck-verktyg saknades, så healthcheck disabled → container kunde inte rapporteras healthy → Coolify höll den exited.
+**Lösning:** HEALTHCHECK använder Node.js built-in HTTP-modul istället: `CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"`. /api/health returnerar alltid 200, även om DB är down, vilket låter containern starta medan DB-fel undersöks separat.
+**Lärdom:** Använd aldrig curl/wget för HEALTHCHECK i alpine-baserade images; Node.js är alltid tillgängligt. Design health-endpoints för att returnera 200 för container-hälsa (oberoende av tjänstdependenser).
+
+---
+
 ### Auth.js proxy: importera endast auth.config (Block 2.1)
 **Problem:** proxy.ts ska importera endast från auth.config (ej auth.ts) enligt Next.js 16-mönster, men behöva kombinera med next-intl.
 **Orsak:** Edge-kompatibilitet kräver att proxy inte laddar Prisma/DB; auth.config innehåller inga DB-imports.
