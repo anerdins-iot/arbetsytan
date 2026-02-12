@@ -7,16 +7,16 @@
 **Input:** Fas 1 klar (Docker med MinIO), Fas 2 klar (auth)
 **Output:** Fungerande filuppladdning till MinIO
 
-- [ ] Konfigurera MinIO-klient i `web/src/lib/minio.ts`
-- [ ] Skapa en bucket per tenant (namn: `tenant-{tenantId}`) med prefix per projekt
-- [ ] Generera presigned URL:er för uppladdning
-- [ ] Generera presigned URL:er för nedladdning/visning
-- [ ] Bygga uppladdningskomponent med drag-and-drop
-- [ ] Stöd för flera filer samtidigt
-- [ ] Visa uppladdningsförlopp
-- [ ] Server Action `uploadFile` — validera typ/storlek, spara metadata i DB, ladda upp till MinIO
-- [ ] Stöd för filtyper: PDF, bilder (JPG/PNG/WEBP), dokument (DOCX, XLSX)
-- [ ] Maxstorlek per fil och per tenant
+- [x] Konfigurera MinIO-klient i `web/src/lib/minio.ts`
+- [x] Skapa en bucket per tenant (namn: `tenant-{tenantId}`) med prefix per projekt
+- [x] Generera presigned URL:er för uppladdning
+- [x] Generera presigned URL:er för nedladdning/visning
+- [x] Bygga uppladdningskomponent med drag-and-drop
+- [x] Stöd för flera filer samtidigt
+- [x] Visa uppladdningsförlopp
+- [x] Server Action `uploadFile` — validera typ/storlek, spara metadata i DB, ladda upp till MinIO
+- [x] Stöd för filtyper: PDF, bilder (JPG/PNG/WEBP), dokument (DOCX, XLSX)
+- [x] Maxstorlek per fil och per tenant
 
 **Verifiering:** Filer laddas upp till MinIO, metadata sparas i DB, presigned URLs fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -24,12 +24,12 @@
 **Input:** Block 4.1 klart
 **Output:** Fillista med förhandsgranskning
 
-- [ ] Bygga filfliken i projektvyn med rutnätsvisning
-- [ ] Miniatyrbilder för bilder, ikon för dokument
-- [ ] Server Action `getFiles` filtrerat på projectId + tenantId
-- [ ] Klick öppnar förhandsgranskning — PDF i inbyggd viewer, bilder i lightbox
-- [ ] Nedladdningslänk via presigned URL
-- [ ] Server Action `deleteFile` — radera från MinIO och DB
+- [x] Bygga filfliken i projektvyn med rutnätsvisning
+- [x] Miniatyrbilder för bilder, ikon för dokument
+- [x] Server Action `getFiles` filtrerat på projectId + tenantId
+- [x] Klick öppnar förhandsgranskning — PDF i inbyggd viewer, bilder i lightbox
+- [x] Nedladdningslänk via presigned URL
+- [x] Server Action `deleteFile` — radera från MinIO och DB
 
 **Verifiering:** Filer visas, förhandsgranskning fungerar, radering rensar MinIO + DB, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -61,19 +61,18 @@
 **Verifiering:** Embeddings genereras, vektorsökning returnerar relevanta resultat, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
 ### Block 4.5: Playwright-test för Fas 4
-**Input:** Block 4.1–4.4 klara
+**Input:** Block 4.1 och 4.2 klara (4.3/4.4 hoppade över — ingen sökning i dokument)
 **Output:** Screenshots och verifiering av filhantering
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Logga in och navigera till ett projekt
-- [ ] Öppna Filer-fliken, ta screenshot
-- [ ] Testa filuppladdning (drag-and-drop eller filväljare)
-- [ ] Verifiera att filen visas i listan med miniatyrbild/ikon
-- [ ] Klicka på en bild för att öppna lightbox, ta screenshot
-- [ ] Klicka på en PDF för förhandsgranskning, ta screenshot
-- [ ] Testa sökning i dokument (om embeddings fungerar)
-- [ ] Spara alla screenshots i `screenshots/fas-04/`
-- [ ] Stoppa dev-server
+- [x] Starta dev-server med PID-fil
+- [x] Logga in och navigera till ett projekt
+- [x] Öppna Filer-fliken, ta screenshot
+- [x] Testa filuppladdning (drag-and-drop eller filväljare)
+- [x] Verifiera att filen visas i listan med miniatyrbild/ikon
+- [x] Klicka på en bild för att öppna lightbox, ta screenshot
+- [x] Klicka på en PDF för förhandsgranskning, ta screenshot (om PDF finns)
+- [x] Spara alla screenshots i `screenshots/fas-04/`
+- [x] Stoppa dev-server (PID från fil, aldrig pkill)
 
 **Verifiering:** Alla screenshots sparade, uppladdning och visning fungerar, inga konsolfel
 
