@@ -57,13 +57,13 @@ async function getRecipient(userId: string): Promise<Recipient | null> {
 }
 
 async function getOrCreatePreferences(tenantId: string, userId: string) {
-  const db = tenantDb(tenantId);
-  return db.notificationPreference.upsert({
+  // Use global prisma for upsert to avoid tenantDb extension conflict
+  return prisma.notificationPreference.upsert({
     where: { userId_tenantId: { userId, tenantId } },
     update: {},
     create: {
-      user: { connect: { id: userId } },
-      tenant: { connect: { id: tenantId } },
+      userId,
+      tenantId,
     },
   });
 }
