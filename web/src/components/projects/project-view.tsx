@@ -16,6 +16,10 @@ import type { TaskItem } from "@/actions/tasks";
 import type { CommentItem } from "@/actions/comments";
 import type { ActivityLogItem } from "@/actions/activity-log";
 import type { FileItem } from "@/actions/files";
+import type { GroupedTimeEntries, ProjectTimeSummary } from "@/actions/time-entries";
+import { TimeEntryForm } from "@/components/time/time-entry-form";
+import { TimeEntryList } from "@/components/time/time-entry-list";
+import { TimeSummary } from "@/components/time/time-summary";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -24,7 +28,9 @@ type ProjectViewProps = {
   commentsByTaskId: Record<string, CommentItem[]>;
   recentActivity: ActivityLogItem[];
   files: FileItem[];
-  initialTab?: "overview" | "tasks" | "files" | "ai";
+  timeEntries?: GroupedTimeEntries[];
+  timeSummary?: ProjectTimeSummary | null;
+  initialTab?: "overview" | "tasks" | "files" | "time" | "ai";
   initialTaskId?: string;
 };
 
@@ -35,6 +41,8 @@ export function ProjectView({
   commentsByTaskId,
   recentActivity,
   files,
+  timeEntries = [],
+  timeSummary = null,
   initialTab = "overview",
   initialTaskId,
 }: ProjectViewProps) {
@@ -42,6 +50,7 @@ export function ProjectView({
   const locale = useLocale();
   const router = useRouter();
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const taskOptions = tasks.map((task) => ({ id: task.id, title: task.title }));
 
   const refreshProjectView = useCallback(() => {
     if (refreshTimeoutRef.current) return;
@@ -93,6 +102,7 @@ export function ProjectView({
           <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
           <TabsTrigger value="tasks">{t("tabs.tasks")}</TabsTrigger>
           <TabsTrigger value="files">{t("tabs.files")}</TabsTrigger>
+          <TabsTrigger value="time">{t("tabs.time")}</TabsTrigger>
           <TabsTrigger value="ai">{t("tabs.ai")}</TabsTrigger>
         </TabsList>
 
@@ -113,6 +123,12 @@ export function ProjectView({
 
         <TabsContent value="files" className="mt-6">
           <ProjectFilesUpload projectId={project.id} initialFiles={files} />
+        </TabsContent>
+
+        <TabsContent value="time" className="mt-6 space-y-6">
+          <TimeEntryForm tasks={taskOptions} />
+          {timeSummary ? <TimeSummary summary={timeSummary} /> : null}
+          <TimeEntryList groupedEntries={timeEntries} tasks={taskOptions} />
         </TabsContent>
 
         <TabsContent value="ai" className="mt-6">

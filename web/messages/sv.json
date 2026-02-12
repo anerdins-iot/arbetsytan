@@ -6,6 +6,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projekt",
+    "myTimes": "Mina tider",
     "settings": "Inställningar"
   },
   "common": {
@@ -142,6 +143,7 @@
       "overview": "Översikt",
       "tasks": "Uppgifter",
       "files": "Filer",
+      "time": "Tid",
       "ai": "AI"
     },
     "files": {
@@ -330,6 +332,66 @@
         "previous": "Föregående",
         "next": "Nästa"
       }
+    }
+  },
+  "time": {
+    "create": {
+      "title": "Registrera tid",
+      "submit": "Spara tid",
+      "saving": "Sparar...",
+      "noTasks": "Det finns inga uppgifter att rapportera tid på ännu."
+    },
+    "fields": {
+      "task": "Uppgift",
+      "amount": "Antal",
+      "unit": "Enhet",
+      "date": "Datum",
+      "description": "Beskrivning",
+      "descriptionPlaceholder": "Valfri kommentar (max 500 tecken)"
+    },
+    "units": {
+      "minutes": "Minuter",
+      "hours": "Timmar",
+      "shortMinutes": "min",
+      "shortHours": "tim"
+    },
+    "list": {
+      "empty": "Inga tidposter ännu.",
+      "dayTotal": "Summa: {total}",
+      "noTask": "Uppgift saknas",
+      "otherUserEntry": "Tidpost från annan användare",
+      "edit": "Redigera",
+      "delete": "Radera",
+      "save": "Spara",
+      "cancel": "Avbryt",
+      "deleteConfirm": "Vill du radera denna tidpost?"
+    },
+    "summary": {
+      "total": "Total tid",
+      "byDay": "Per dag",
+      "byWeek": "Per vecka",
+      "byTask": "Per uppgift",
+      "byPerson": "Per person",
+      "weekStarting": "Vecka från {date}",
+      "empty": "Ingen data att visa."
+    },
+    "myTimes": {
+      "title": "Mina tider",
+      "description": "Alla dina tidposter över projekt.",
+      "totalForPeriod": "Total tid för vald period",
+      "byProject": "Summering per projekt",
+      "entries": "Tidposter",
+      "empty": "Inga tidposter för vald period."
+    },
+    "filters": {
+      "thisWeek": "Denna vecka",
+      "lastWeek": "Förra veckan",
+      "thisMonth": "Denna månad",
+      "all": "Alla"
+    },
+    "errors": {
+      "invalidInput": "Kontrollera inmatningen och försök igen.",
+      "generic": "Något gick fel. Försök igen."
     }
   },
   "settings": {

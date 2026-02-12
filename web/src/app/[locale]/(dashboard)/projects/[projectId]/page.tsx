@@ -6,6 +6,7 @@ import { getTasks } from "@/actions/tasks";
 import { getCommentsByTask } from "@/actions/comments";
 import { getActivityLog } from "@/actions/activity-log";
 import { getProjectFiles } from "@/actions/files";
+import { getProjectTimeSummary, getTimeEntriesByProject } from "@/actions/time-entries";
 import { getSession } from "@/lib/auth";
 import { ProjectView } from "@/components/projects/project-view";
 
@@ -20,15 +21,25 @@ async function ProjectContent({
   initialTaskId,
 }: {
   projectId: string;
-  initialTab?: "overview" | "tasks" | "files" | "ai";
+  initialTab?: "overview" | "tasks" | "files" | "time" | "ai";
   initialTaskId?: string;
 }) {
-  const [projectResult, tasksResult, session, activityResult, filesResult] = await Promise.all([
+  const [
+    projectResult,
+    tasksResult,
+    session,
+    activityResult,
+    filesResult,
+    timeEntriesResult,
+    timeSummaryResult,
+  ] = await Promise.all([
     getProject(projectId),
     getTasks(projectId),
     getSession(),
     getActivityLog(projectId, { page: 1, pageSize: 5 }),
     getProjectFiles(projectId),
+    getTimeEntriesByProject(projectId),
+    getProjectTimeSummary(projectId),
   ]);
 
   if (!projectResult.success || !session) {
@@ -52,6 +63,8 @@ async function ProjectContent({
       commentsByTaskId={commentsByTaskId}
       recentActivity={activityResult.success ? activityResult.items : []}
       files={filesResult.success ? filesResult.files : []}
+      timeEntries={timeEntriesResult.success ? timeEntriesResult.data : []}
+      timeSummary={timeSummaryResult.success ? timeSummaryResult.data : null}
       initialTab={initialTab}
       initialTaskId={initialTaskId}
     />
@@ -63,9 +76,11 @@ export default async function ProjectPage({ params, searchParams }: Props) {
   const { tab, taskId } = await searchParams;
   setRequestLocale(locale);
 
-  const validTabs = new Set(["overview", "tasks", "files", "ai"]);
+  const validTabs = new Set(["overview", "tasks", "files", "time", "ai"]);
   const initialTab =
-    tab && validTabs.has(tab) ? (tab as "overview" | "tasks" | "files" | "ai") : undefined;
+    tab && validTabs.has(tab)
+      ? (tab as "overview" | "tasks" | "files" | "time" | "ai")
+      : undefined;
   const initialTaskId = taskId?.trim() ? taskId : undefined;
 
   return (
