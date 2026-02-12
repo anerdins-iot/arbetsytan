@@ -66,8 +66,10 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
-# Health check disabled - use Coolify's health check instead
-# HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=5 \
-#   CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/health || exit 1
+# Health check: test if Next.js server is responding
+# Using node to check HTTP endpoint since curl/wget may not be in alpine
+# The health endpoint returns 200 even if database is down, allowing container to start
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
 CMD ["node", "server.js"]
