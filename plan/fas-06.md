@@ -67,11 +67,11 @@
 - [x] Starta dev-server med PID-fil
 - [x] Logga in och verifiera att notifikationsklocka visas i topbar
 - [x] Ta screenshot av notifikationslistan
-- [ ] Trigga en notifikation (t.ex. skapa uppgift i annat fönster)
-- [ ] Verifiera att notis visas i realtid
-- [ ] Markera notis som läst, verifiera uppdatering
+- [x] Trigga en notifikation (t.ex. skapa uppgift i annat fönster)
+- [x] Verifiera att notis visas i realtid
+- [x] Markera notis som läst, verifiera uppdatering
 - [x] Ta screenshot av push-inställningar (om implementerat)
-- [ ] **FIX:** Spara alla screenshots i `screenshots/fas-06/` (saknas i repot)
+- [x] Spara alla screenshots i `screenshots/fas-06/`
 - [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, realtidsuppdateringar fungerar, inga konsolfel
