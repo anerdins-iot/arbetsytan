@@ -18,6 +18,18 @@
     "close": "Close",
     "loading": "Loading..."
   },
+  "personalAi": {
+    "title": "Personal AI",
+    "open": "Open personal AI",
+    "placeholder": "Ask about tasks, projects or messages…",
+    "send": "Send",
+    "newConversation": "New conversation",
+    "history": "Conversation history",
+    "noConversations": "No conversations yet.",
+    "loading": "Loading…",
+    "error": "Something went wrong. Try again.",
+    "messageCount": "{count} msgs"
+  },
   "notifications": {
     "newComment": {
       "title": "New comment",
@@ -146,6 +158,19 @@
       "time": "Time",
       "ai": "AI"
     },
+    "aiChat": {
+      "placeholder": "Ask about the project, files or tasks…",
+      "send": "Send",
+      "newConversation": "New conversation",
+      "history": "Conversation history",
+      "sources": "Sources",
+      "sourceFrom": "From {fileName}",
+      "sourcePage": "Page {page}",
+      "noConversations": "No conversations yet.",
+      "loading": "Loading…",
+      "error": "Something went wrong. Please try again.",
+      "messageCount": "{count} msgs"
+    },
     "files": {
       "title": "Upload files",
       "dropzone": "Drag and drop files here, or choose files",
@@ -170,7 +195,9 @@
       "errorFileNotFound": "File not found.",
       "errorTenantLimit": "Tenant storage limit has been reached.",
       "errorStorage": "Could not upload to storage.",
-      "errorGeneric": "Something went wrong during upload. Please try again."
+      "errorGeneric": "Something went wrong during upload. Please try again.",
+      "ocrBadge": "OCR",
+      "ocrTitle": "Extracted text (OCR)"
     },
     "overview": {
       "projectInfo": "Project info",
@@ -641,13 +668,16 @@
       "markAllRead": "Mark all"
     },
     "search": {
-      "placeholder": "Search projects and tasks...",
+      "placeholder": "Search projects, tasks and files...",
       "minCharacters": "Type at least 2 characters to search.",
       "searching": "Searching...",
       "noResults": "No results found.",
       "error": "Search failed. Please try again.",
       "projects": "Projects",
       "tasks": "Tasks",
+      "files": "Files",
+      "documents": "Document content",
+      "page": "page {page}",
       "inProject": "In project: {project}",
       "taskStatus": {
         "TODO": "To do",

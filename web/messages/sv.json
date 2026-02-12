@@ -18,6 +18,18 @@
     "close": "Stäng",
     "loading": "Laddar..."
   },
+  "personalAi": {
+    "title": "Personlig AI",
+    "open": "Öppna personlig AI",
+    "placeholder": "Fråga om uppgifter, projekt eller meddelanden…",
+    "send": "Skicka",
+    "newConversation": "Ny konversation",
+    "history": "Konversationshistorik",
+    "noConversations": "Inga konversationer ännu.",
+    "loading": "Laddar…",
+    "error": "Något gick fel. Försök igen.",
+    "messageCount": "{count} medd."
+  },
   "notifications": {
     "newComment": {
       "title": "Ny kommentar",
@@ -146,6 +158,19 @@
       "time": "Tid",
       "ai": "AI"
     },
+    "aiChat": {
+      "placeholder": "Fråga om projektet, filer eller uppgifter…",
+      "send": "Skicka",
+      "newConversation": "Ny konversation",
+      "history": "Konversationshistorik",
+      "sources": "Källor",
+      "sourceFrom": "Från {fileName}",
+      "sourcePage": "Sida {page}",
+      "noConversations": "Inga konversationer ännu.",
+      "loading": "Laddar…",
+      "error": "Något gick fel. Försök igen.",
+      "messageCount": "{count} medd."
+    },
     "files": {
       "title": "Ladda upp filer",
       "dropzone": "Dra och släpp filer här, eller välj filer",
@@ -170,7 +195,9 @@
       "errorFileNotFound": "Filen hittades inte.",
       "errorTenantLimit": "Tenantens lagringsgräns är uppnådd.",
       "errorStorage": "Kunde inte ladda upp till lagringen.",
-      "errorGeneric": "Något gick fel vid uppladdning. Försök igen."
+      "errorGeneric": "Något gick fel vid uppladdning. Försök igen.",
+      "ocrBadge": "OCR",
+      "ocrTitle": "Extraherad text (OCR)"
     },
     "overview": {
       "projectInfo": "Projektinfo",
@@ -641,13 +668,16 @@
       "markAllRead": "Markera alla"
     },
     "search": {
-      "placeholder": "Sök projekt och uppgifter...",
+      "placeholder": "Sök projekt, uppgifter och filer...",
       "minCharacters": "Skriv minst 2 tecken för att söka.",
       "searching": "Söker...",
       "noResults": "Inga träffar hittades.",
       "error": "Sökningen misslyckades. Försök igen.",
       "projects": "Projekt",
       "tasks": "Uppgifter",
+      "files": "Filer",
+      "documents": "Dokumentinnehåll",
+      "page": "sida {page}",
       "inProject": "I projekt: {project}",
       "taskStatus": {
         "TODO": "Att göra",
