@@ -49,6 +49,7 @@
     "react-photo-view": "^1.2.7",
     "redis": "^5.10.0",
     "rehype-highlight": "^7.0.2",
+    "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.1",
     "resend": "^6.9.2",
     "shadcn": "^3.8.4",

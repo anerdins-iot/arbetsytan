@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkBreaks from "remark-breaks";
 import rehypeHighlight from "rehype-highlight";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "highlight.js/styles/github-dark-dimmed.min.css";
@@ -35,7 +36,7 @@ export function MarkdownMessage({ content }: MarkdownMessageProps) {
   const markdownContent = (
     <div className="prose prose-sm dark:prose-invert max-w-none break-words text-inherit prose-headings:text-inherit prose-strong:text-inherit prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-pre:my-2 prose-pre:bg-[#22272e] prose-pre:text-[#adbac7] prose-pre:rounded-md prose-code:before:content-none prose-code:after:content-none">
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeHighlight]}
         components={{
           // Öppna länkar i ny flik
@@ -55,6 +56,11 @@ export function MarkdownMessage({ content }: MarkdownMessageProps) {
                   alt={alt || ""}
                   className="my-2 max-h-48 cursor-pointer rounded-md object-cover transition-opacity hover:opacity-80"
                   loading="lazy"
+                  onError={(e) => {
+                    // Vid laddningsfel, visa alt-text istället
+                    const target = e.currentTarget;
+                    target.style.display = "none";
+                  }}
                   {...props}
                 />
               </PhotoView>

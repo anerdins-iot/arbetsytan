@@ -118,6 +118,15 @@ export async function prepareFileUpload(input: {
   const { tenantId, userId } = await requirePermission("canUploadFiles");
   const parsed = uploadPreparationSchema.safeParse(input);
   if (!parsed.success) {
+    logger.warn("prepareFileUpload validation failed", {
+      errors: parsed.error.flatten(),
+      input: {
+        projectId: input.projectId,
+        fileName: input.fileName,
+        fileType: input.fileType,
+        fileSize: input.fileSize,
+      },
+    });
     return { success: false, error: "VALIDATION_ERROR" };
   }
 
@@ -145,6 +154,12 @@ export async function prepareFileUpload(input: {
       maxFileSize: MAX_FILE_SIZE_BYTES,
     };
   } catch (error) {
+    logger.error("prepareFileUpload failed", {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      projectId,
+      fileName,
+    });
     const message = error instanceof Error ? error.message : "UPLOAD_PREPARE_FAILED";
     return { success: false, error: message };
   }
