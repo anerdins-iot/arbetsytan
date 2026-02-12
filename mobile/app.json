@@ -15,7 +15,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.arbetsytan.app"
+      "bundleIdentifier": "se.arbetsytan.app"
     },
     "android": {
       "adaptiveIcon": {
@@ -23,11 +23,16 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.arbetsytan.app"
+      "package": "se.arbetsytan.app"
     },
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00000000-0000-0000-0000-000000000000"
+      }
     },
     "plugins": [
       "expo-router",

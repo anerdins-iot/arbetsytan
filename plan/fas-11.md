@@ -34,10 +34,10 @@
 **Input:** Block 11.2 klart
 **Output:** Mobilspecifika funktioner
 
-- [ ] Konfigurera `socket.io-client` för React Native med JWT-auth
-- [ ] Push-notifikationer via Expo Push API (komplement till Socket.IO)
-- [ ] Kamera-integration för bilduppladdning direkt
-- [ ] Offline-stöd för uppgiftslistan (cache)
+- [x] Konfigurera `socket.io-client` för React Native med JWT-auth
+- [x] Push-notifikationer via Expo Push API (komplement till Socket.IO)
+- [x] Kamera-integration för bilduppladdning direkt
+- [x] Offline-stöd för uppgiftslistan (cache)
 
 **Verifiering:** Socket.IO fungerar i appen med JWT-auth, push-notifikationer fungerar, kamera laddar upp bilder, offline-cache fungerar, `tenantDb(tenantId)` på alla API-endpoints
 
