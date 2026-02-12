@@ -18,7 +18,32 @@ const minioEnvSchema = z.object({
   S3_REGION: z.string().min(1),
 });
 
-const minioEnv = minioEnvSchema.parse(process.env);
+// Lazy initialization to avoid crashing at import time if S3 vars are missing
+let _minioEnv: z.infer<typeof minioEnvSchema> | null = null;
+let _minioClient: S3Client | null = null;
+
+function getMinioEnv() {
+  if (!_minioEnv) {
+    _minioEnv = minioEnvSchema.parse(process.env);
+  }
+  return _minioEnv;
+}
+
+function getMinioClient(): S3Client {
+  if (!_minioClient) {
+    const env = getMinioEnv();
+    _minioClient = new S3Client({
+      endpoint: env.S3_ENDPOINT,
+      region: env.S3_REGION,
+      credentials: {
+        accessKeyId: env.S3_ACCESS_KEY,
+        secretAccessKey: env.S3_SECRET_KEY,
+      },
+      forcePathStyle: true,
+    });
+  }
+  return _minioClient;
+}
 
 export const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
 export const MAX_TENANT_STORAGE_BYTES = 5 * 1024 * 1024 * 1024; // 5GB
@@ -32,16 +57,11 @@ export const ALLOWED_FILE_TYPES = new Set<string>([
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ]);
 
-const PROJECT_PREFIX_ROOT = minioEnv.S3_BUCKET;
-
-export const minioClient = new S3Client({
-  endpoint: minioEnv.S3_ENDPOINT,
-  region: minioEnv.S3_REGION,
-  credentials: {
-    accessKeyId: minioEnv.S3_ACCESS_KEY,
-    secretAccessKey: minioEnv.S3_SECRET_KEY,
+/** @deprecated Use getMinioClient() instead for lazy initialization */
+export const minioClient = new Proxy({} as S3Client, {
+  get(_, prop) {
+    return getMinioClient()[prop as keyof S3Client];
   },
-  forcePathStyle: true,
 });
 
 export function tenantBucketName(tenantId: string): string {
@@ -63,7 +83,7 @@ export function projectObjectKey(
   objectId: string
 ): string {
   const normalized = normalizeFileName(fileName) || "file";
-  return `${PROJECT_PREFIX_ROOT}/projects/${projectId}/${objectId}-${normalized}`;
+  return `${getMinioEnv().S3_BUCKET}/projects/${projectId}/${objectId}-${normalized}`;
 }
 
 export function exportObjectKey(
@@ -72,7 +92,7 @@ export function exportObjectKey(
   objectId: string
 ): string {
   const normalized = normalizeFileName(fileName) || "export";
-  return `${PROJECT_PREFIX_ROOT}/exports/${projectId}/${objectId}-${normalized}`;
+  return `${getMinioEnv().S3_BUCKET}/exports/${projectId}/${objectId}-${normalized}`;
 }
 
 export async function ensureTenantBucket(tenantId: string): Promise<string> {
