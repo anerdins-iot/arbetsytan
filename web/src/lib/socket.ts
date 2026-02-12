@@ -1,5 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { Server, type Socket } from "socket.io";
+import { createAdapter } from "@socket.io/redis-adapter";
+import { createClient } from "redis";
 import { z } from "zod";
 import { requireProject } from "@/lib/auth";
 import { verifyAccessToken } from "@/lib/auth-mobile";
@@ -104,6 +106,16 @@ async function authenticateSocket(socket: Socket): Promise<SocketAuthData> {
   };
 }
 
+async function attachRedisAdapter(io: Server): Promise<void> {
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) return;
+
+  const pubClient = createClient({ url: redisUrl });
+  const subClient = pubClient.duplicate();
+  await Promise.all([pubClient.connect(), subClient.connect()]);
+  io.adapter(createAdapter(pubClient, subClient));
+}
+
 function createSocketServer(): Server {
   const io = new Server(getSocketPort(), {
     path: getSocketPath(),
@@ -111,6 +123,11 @@ function createSocketServer(): Server {
       origin: getAllowedOrigins(),
       credentials: true,
     },
+  });
+
+  // Attach Redis adapter for multi-instance support (non-blocking)
+  attachRedisAdapter(io).catch((err) => {
+    console.error("Failed to attach Redis adapter to Socket.IO:", err);
   });
 
   io.use(async (socket, next) => {

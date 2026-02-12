@@ -1,0 +1,11 @@
+node_modules
+.next
+.env*
+.git
+.gitignore
+*.md
+.dev-server.pid
+playwright-report
+test-results
+.playwright-browsers
+coverage
