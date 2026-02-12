@@ -394,6 +394,27 @@
       "generic": "Något gick fel. Försök igen."
     }
   },
+  "export": {
+    "title": "Export och rapporter",
+    "loading": "Genererar...",
+    "actions": {
+      "timeReportExcel": "Exportera tidrapport (Excel)",
+      "taskListExcel": "Exportera uppgiftslista (Excel)",
+      "projectSummaryPdf": "Exportera projektsammanstallning (PDF)"
+    },
+    "filters": {
+      "fromDate": "Fran datum",
+      "toDate": "Till datum",
+      "person": "Person",
+      "allPeople": "Alla personer"
+    },
+    "errors": {
+      "validation": "Kontrollera exportinställningarna och försök igen.",
+      "projectNotFound": "Projektet kunde inte hittas.",
+      "forbidden": "Du har inte behörighet att exportera detta projekt.",
+      "generic": "Exporten misslyckades. Försök igen."
+    }
+  },
   "settings": {
     "title": "Inställningar",
     "description": "Hantera ditt konto och företagsinställningar",

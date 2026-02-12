@@ -66,6 +66,15 @@ export function projectObjectKey(
   return `${PROJECT_PREFIX_ROOT}/projects/${projectId}/${objectId}-${normalized}`;
 }
 
+export function exportObjectKey(
+  projectId: string,
+  fileName: string,
+  objectId: string
+): string {
+  const normalized = normalizeFileName(fileName) || "export";
+  return `${PROJECT_PREFIX_ROOT}/exports/${projectId}/${objectId}-${normalized}`;
+}
+
 export async function ensureTenantBucket(tenantId: string): Promise<string> {
   const bucket = tenantBucketName(tenantId);
 

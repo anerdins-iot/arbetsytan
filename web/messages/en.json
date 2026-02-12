@@ -394,6 +394,27 @@
       "generic": "Something went wrong. Please try again."
     }
   },
+  "export": {
+    "title": "Exports and reports",
+    "loading": "Generating...",
+    "actions": {
+      "timeReportExcel": "Export time report (Excel)",
+      "taskListExcel": "Export task list (Excel)",
+      "projectSummaryPdf": "Export project summary (PDF)"
+    },
+    "filters": {
+      "fromDate": "From date",
+      "toDate": "To date",
+      "person": "Person",
+      "allPeople": "All people"
+    },
+    "errors": {
+      "validation": "Check export settings and try again.",
+      "projectNotFound": "The project could not be found.",
+      "forbidden": "You do not have permission to export this project.",
+      "generic": "Export failed. Please try again."
+    }
+  },
   "settings": {
     "title": "Settings",
     "description": "Manage your account and company settings",

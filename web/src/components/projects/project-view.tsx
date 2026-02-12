@@ -20,6 +20,7 @@ import type { GroupedTimeEntries, ProjectTimeSummary } from "@/actions/time-entr
 import { TimeEntryForm } from "@/components/time/time-entry-form";
 import { TimeEntryList } from "@/components/time/time-entry-list";
 import { TimeSummary } from "@/components/time/time-summary";
+import { ProjectExportPanel } from "./project-export-panel";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -127,6 +128,7 @@ export function ProjectView({
 
         <TabsContent value="time" className="mt-6 space-y-6">
           <TimeEntryForm tasks={taskOptions} />
+          <ProjectExportPanel projectId={project.id} members={project.members} />
           {timeSummary ? <TimeSummary summary={timeSummary} /> : null}
           <TimeEntryList groupedEntries={timeEntries} tasks={taskOptions} />
         </TabsContent>
