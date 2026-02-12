@@ -7,13 +7,13 @@
 **Input:** Fas 3 klar (projekt + uppgifter)
 **Output:** Fungerande tidrapporteringssystem
 
-- [ ] Bygga tidrapporteringsvy i projektet (ny flik eller del av uppgiftsvyn)
-- [ ] Snabb tidsregistrering: välj uppgift, ange minuter/timmar, datum och valfri beskrivning
-- [ ] Server Action `createTimeEntry` med Zod-validering + auth
-- [ ] Visa tidslista per projekt med summa per dag/vecka
-- [ ] Visa tidslista per användare (mina tider)
-- [ ] Server Action `updateTimeEntry` och `deleteTimeEntry` (bara egna poster)
-- [ ] Summering: totalt per projekt, per uppgift, per person
+- [x] Bygga tidrapporteringsvy i projektet (ny flik eller del av uppgiftsvyn)
+- [x] Snabb tidsregistrering: välj uppgift, ange minuter/timmar, datum och valfri beskrivning
+- [x] Server Action `createTimeEntry` med Zod-validering + auth
+- [x] Visa tidslista per projekt med summa per dag/vecka
+- [x] Visa tidslista per användare (mina tider)
+- [x] Server Action `updateTimeEntry` och `deleteTimeEntry` (bara egna poster)
+- [x] Summering: totalt per projekt, per uppgift, per person
 
 **Verifiering:** Tider registreras/uppdateras/raderas, summering korrekt, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -21,11 +21,11 @@
 **Input:** Block 8.1 + Fas 4 + Fas 5 klara (tidsdata + MinIO + AI-verktyg)
 **Output:** Export-funktionalitet
 
-- [ ] Exportera projektsammanställning som PDF (uppgifter, status, tider, medlemmar)
-- [ ] Exportera tidrapport som Excel (filtrerat på period, projekt, person)
-- [ ] Exportera uppgiftslista som Excel
-- [ ] AI-verktyg: generera sammanfattande projektrapport (text + data)
-- [ ] Nedladdning via presigned URL från MinIO (genererade filer sparas)
+- [x] Exportera projektsammanställning som PDF (uppgifter, status, tider, medlemmar)
+- [x] Exportera tidrapport som Excel (filtrerat på period, projekt, person)
+- [x] Exportera uppgiftslista som Excel
+- [ ] AI-verktyg: generera sammanfattande projektrapport (text + data) — **HOPPADE ÖVER** (saknar API-nycklar)
+- [x] Nedladdning via presigned URL från MinIO (genererade filer sparas)
 
 **Verifiering:** PDF och Excel genereras korrekt, nedladdning fungerar, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 
@@ -34,14 +34,14 @@
 **Output:** Screenshots och verifiering av tidrapportering
 
 - [ ] Starta dev-server med PID-fil
-- [ ] Logga in och navigera till ett projekt
-- [ ] Öppna tidrapporteringsvyn, ta screenshot
-- [ ] Registrera tid på en uppgift
-- [ ] Verifiera att tid visas i listan
-- [ ] Ta screenshot av summering (per dag/vecka)
-- [ ] Testa export till Excel, verifiera nedladdning
-- [ ] Testa export till PDF, verifiera nedladdning
-- [ ] Spara alla screenshots i `screenshots/fas-08/`
+- [x] Logga in och navigera till ett projekt
+- [x] Öppna tidrapporteringsvyn, ta screenshot
+- [x] Registrera tid på en uppgift
+- [x] Verifiera att tid visas i listan
+- [x] Ta screenshot av summering (per dag/vecka)
+- [x] Testa export till Excel, verifiera nedladdning
+- [x] Testa export till PDF, verifiera nedladdning
+- [x] Spara alla screenshots i `screenshots/fas-08/`
 - [ ] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, export fungerar, inga konsolfel

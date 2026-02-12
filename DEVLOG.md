@@ -127,8 +127,20 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Lösning:** I `/api/socket` returnera tidigt när `NEXT_PHASE === "phase-production-build"` och hoppa över serverstart i build.
 **Lärdom:** Runtime-init (ports/listeners) måste vara build-säkert i Next.js App Router; guarda mot buildfas innan side effects.
 
+### Fas 8 export validerade bort seed-projekt (Block 8.3)
+**Problem:** Exportknappar i projektets tidflik gav valideringsfel istället för nedladdning i testmiljön.
+**Orsak:** `src/actions/export.ts` accepterade bara `uuid/cuid`, men seeddata använder ID-format som `seed-project-1`.
+**Lösning:** Uppdaterade `idSchema` till ett säkert generiskt ID-format (`[A-Za-z0-9_-]`) och behöll behörighetskontroll via `requireProject()`.
+**Lärdom:** ID-formatvalidering måste spegla faktisk datakälla (inklusive seeddata), annars blockeras legitima flöden trots korrekt auth.
+
 ### web-push saknade TypeScript-typer i Next.js build (Block 6.2)
 **Problem:** `npm run build` stoppade på `Could not find a declaration file for module 'web-push'` trots installerat paket.
 **Orsak:** `web-push` exponerar inte inbyggda typer i den här setupen och `@types/web-push` löste inte importen via Turbopack/TS.
 **Lösning:** Lade till lokal deklarationsfil `src/types/web-push.d.ts` med minsta API-signaturer som används (`setVapidDetails`, `sendNotification`).
 **Lärdom:** För JS-bibliotek utan stabila typer i Next.js 16/Turbopack, lös med lokal `.d.ts` istället för att blockera bygget.
+
+### Fas 7 E2E: port kan vara upptagen utan HTTP-svar
+**Problem:** Run-script för Playwright kunde fastna i readiness-loop trots att port 3000 redan var låst av annan `next-server`.
+**Orsak:** Kontroll via `curl` fångade bara HTTP-svar, inte "lyssnar men svarar inte"-fall.
+**Lösning:** Uppdaterade scriptet att även kontrollera aktiv listener med `ss -ltn "( sport = :3000 )"` och avbryta direkt.
+**Lärdom:** I agentmiljö ska port-check verifiera både HTTP-respons och socket-listener för att undvika hängande testkörningar.

@@ -13,7 +13,12 @@ import {
 } from "@/lib/minio";
 import { buildProjectSummaryPdf } from "@/lib/reports/project-summary-pdf";
 
-const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
+const idSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(191)
+  .regex(/^[A-Za-z0-9_-]+$/);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const timeReportOptionsSchema = z
   .object({
