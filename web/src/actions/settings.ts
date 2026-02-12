@@ -11,6 +11,7 @@ import {
   parsePermissionOverrides,
   resolvePermissions,
 } from "@/lib/permissions";
+import { syncSubscriptionQuantityForTenant } from "@/actions/subscription";
 
 const updateTenantSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -237,6 +238,12 @@ export async function removeMembership(
   await db.membership.delete({
     where: { id: membership.id },
   });
+
+  try {
+    await syncSubscriptionQuantityForTenant(tenantId);
+  } catch {
+    // Non-fatal: Stripe quantity may be out of sync until next update
+  }
 
   return { success: true };
 }

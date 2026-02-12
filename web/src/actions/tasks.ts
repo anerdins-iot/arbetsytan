@@ -11,6 +11,7 @@ import {
   emitTaskDeletedToProject,
   emitTaskUpdatedToProject,
 } from "@/lib/socket";
+import { sendProjectToPersonalAIMessage } from "@/lib/ai/aimessage-triggers";
 import type { TaskStatus, Priority } from "../../generated/prisma/client";
 
 // ─────────────────────────────────────────
@@ -355,6 +356,14 @@ export async function assignTask(
     });
   }
 
+  await sendProjectToPersonalAIMessage({
+    db,
+    projectId,
+    userId: membership.user.id,
+    type: "task_assigned",
+    content: `Du har tilldelats uppgiften "${task.title}" i projektet ${project.name}.`,
+  });
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -376,7 +385,7 @@ export async function updateTask(
   }
 ): Promise<TaskActionResult> {
   const { tenantId, userId } = await requirePermission("canUpdateTasks");
-  await requireProject(tenantId, projectId, userId);
+  const project = await requireProject(tenantId, projectId, userId);
 
   const parsed = updateTaskSchema.safeParse(data);
   if (!parsed.success) {
@@ -398,6 +407,11 @@ export async function updateTask(
     return { success: false, error: "TASK_NOT_FOUND" };
   }
 
+  const deadlineChanged =
+    (task.deadline?.getTime() ?? null) !==
+    (parsed.data.deadline ? new Date(parsed.data.deadline).getTime() : null);
+  const statusChanged = task.status !== parsed.data.status;
+
   await db.task.update({
     where: { id: parsed.data.taskId },
     data: {
@@ -408,6 +422,36 @@ export async function updateTask(
       deadline: parsed.data.deadline ? new Date(parsed.data.deadline) : null,
     },
   });
+
+  if (deadlineChanged || statusChanged) {
+    const assignments = await db.taskAssignment.findMany({
+      where: { taskId: parsed.data.taskId },
+      include: { membership: { select: { userId: true } } },
+    });
+    const title = parsed.data.title;
+    const projectName = project.name;
+    for (const a of assignments) {
+      const assigneeUserId = a.membership.userId;
+      if (deadlineChanged) {
+        await sendProjectToPersonalAIMessage({
+          db,
+          projectId,
+          userId: assigneeUserId,
+          type: "deadline_changed",
+          content: `Deadline för uppgiften "${title}" i ${projectName} har ändrats.`,
+        });
+      }
+      if (statusChanged) {
+        await sendProjectToPersonalAIMessage({
+          db,
+          projectId,
+          userId: assigneeUserId,
+          type: "status_changed",
+          content: `Status för uppgiften "${title}" i ${projectName} är nu ${parsed.data.status}.`,
+        });
+      }
+    }
+  }
 
   const action: "updated" | "statusChanged" | "completed" =
     task.status !== parsed.data.status

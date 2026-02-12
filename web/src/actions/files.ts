@@ -19,6 +19,9 @@ import {
   projectObjectKey,
   putObjectToMinio,
 } from "@/lib/minio";
+import { processFileOcr } from "@/lib/ai/ocr";
+import { sendProjectToPersonalAIMessage } from "@/lib/ai/aimessage-triggers";
+import { logger } from "@/lib/logger";
 
 const uploadPreparationSchema = z.object({
   projectId: z.string().min(1),
@@ -54,6 +57,7 @@ export type FileItem = {
   size: number;
   bucket: string;
   key: string;
+  ocrText: string | null;
   createdAt: Date;
   previewUrl: string;
   downloadUrl: string;
@@ -200,6 +204,19 @@ export async function completeFileUpload(input: {
       actorUserId: userId,
     });
 
+    // Trigger OCR in background (fire-and-forget)
+    processFileOcr({
+      fileId: created.id,
+      projectId,
+      tenantId,
+      bucket: created.bucket,
+      key: created.key,
+      fileType: created.type,
+      fileName: created.name,
+    }).catch((err) => {
+      logger.error("Background OCR failed for file", { fileId: created.id, error: err instanceof Error ? err.message : String(err) });
+    });
+
     const previewUrl = await createPresignedDownloadUrl({
       bucket: created.bucket,
       key: created.key,
@@ -216,6 +233,7 @@ export async function completeFileUpload(input: {
         size: created.size,
         bucket: created.bucket,
         key: created.key,
+        ocrText: null,
         createdAt: created.createdAt,
         previewUrl,
         downloadUrl: previewUrl,
@@ -286,6 +304,38 @@ export async function uploadFile(
       actorUserId: userId,
     });
 
+    const project = await db.project.findUnique({
+      where: { id: projectId },
+      select: { name: true },
+    });
+    const projectMembers = await db.projectMember.findMany({
+      where: { projectId },
+      include: { membership: { select: { userId: true } } },
+    });
+    const content = `En ny fil har laddats upp i projektet ${project?.name ?? "projektet"}: ${created.name}.`;
+    for (const pm of projectMembers) {
+      await sendProjectToPersonalAIMessage({
+        db,
+        projectId,
+        userId: pm.membership.userId,
+        type: "file_uploaded",
+        content,
+      });
+    }
+
+    // Trigger OCR in background (fire-and-forget)
+    processFileOcr({
+      fileId: created.id,
+      projectId,
+      tenantId,
+      bucket: created.bucket,
+      key: created.key,
+      fileType: created.type,
+      fileName: created.name,
+    }).catch((err) => {
+      logger.error("Background OCR failed for file", { fileId: created.id, error: err instanceof Error ? err.message : String(err) });
+    });
+
     const previewUrl = await createPresignedDownloadUrl({
       bucket: created.bucket,
       key: created.key,
@@ -302,6 +352,7 @@ export async function uploadFile(
         size: created.size,
         bucket: created.bucket,
         key: created.key,
+        ocrText: null,
         createdAt: created.createdAt,
         previewUrl,
         downloadUrl: previewUrl,
@@ -346,6 +397,7 @@ export async function getProjectFiles(
           size: file.size,
           bucket: file.bucket,
           key: file.key,
+          ocrText: file.ocrText,
           createdAt: file.createdAt,
           previewUrl: downloadUrl,
           downloadUrl,
@@ -419,6 +471,50 @@ export async function deleteFile(input: {
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "DELETE_FILE_FAILED";
+    return { success: false, error: message };
+  }
+}
+
+const getFileOcrSchema = z.object({
+  projectId: z.string().min(1),
+  fileId: z.string().min(1),
+});
+
+export async function getFileOcrText(input: {
+  projectId: string;
+  fileId: string;
+}): Promise<
+  | { success: true; ocrText: string | null; chunkCount: number }
+  | { success: false; error: string }
+> {
+  const { tenantId, userId } = await requireAuth();
+  const parsed = getFileOcrSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+
+  const { projectId, fileId } = parsed.data;
+
+  try {
+    await requireProject(tenantId, projectId, userId);
+    const db = tenantDb(tenantId);
+
+    const file = await db.file.findFirst({
+      where: { id: fileId, projectId },
+      select: { ocrText: true },
+    });
+
+    if (!file) {
+      return { success: false, error: "FILE_NOT_FOUND" };
+    }
+
+    const chunkCount = await db.documentChunk.count({
+      where: { fileId },
+    });
+
+    return { success: true, ocrText: file.ocrText, chunkCount };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "FETCH_OCR_FAILED";
     return { success: false, error: message };
   }
 }

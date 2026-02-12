@@ -7,6 +7,7 @@ import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
 import { emitProjectUpdatedToProject } from "@/lib/socket";
+import { sendProjectToPersonalAIMessage } from "@/lib/ai/aimessage-triggers";
 import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -126,7 +127,6 @@ export async function createProject(
       name,
       description: description ?? null,
       address: address ?? null,
-      tenant: { connect: { id: tenantId } },
     },
   });
 
@@ -348,21 +348,30 @@ export async function updateProject(
       },
     });
 
+    const recipientUserIds = members
+      .map((member) => member.membership.userId)
+      .filter((memberUserId) => memberUserId !== userId);
     await Promise.all(
-      members
-        .map((member) => member.membership.userId)
-        .filter((memberUserId) => memberUserId !== userId)
-        .map((recipientUserId) =>
-          notifyProjectStatusChanged({
-            tenantId,
-            projectId,
-            recipientUserId,
-            projectName: name,
-            previousStatus: currentProject.status,
-            newStatus: status,
-          })
-        )
+      recipientUserIds.map((recipientUserId) =>
+        notifyProjectStatusChanged({
+          tenantId,
+          projectId,
+          recipientUserId,
+          projectName: name,
+          previousStatus: currentProject.status,
+          newStatus: status,
+        })
+      )
     );
+    for (const recipientUserId of recipientUserIds) {
+      await sendProjectToPersonalAIMessage({
+        db,
+        projectId,
+        userId: recipientUserId,
+        type: "project_status_changed",
+        content: `Projektet ${name} har ändrat status från ${currentProject.status} till ${status}.`,
+      });
+    }
   }
 
   revalidatePath("/[locale]/projects/[projectId]", "page");

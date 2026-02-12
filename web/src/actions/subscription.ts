@@ -185,3 +185,33 @@ export async function updateSubscriptionQuantity(
     quantity: parsed.data.quantity,
   });
 }
+
+/**
+ * Sync Stripe subscription quantity to the tenant's current membership count.
+ * Call after adding or removing a membership (invite accept, remove member).
+ * No auth check — callers must have already authorized the membership change.
+ */
+export async function syncSubscriptionQuantityForTenant(tenantId: string): Promise<void> {
+  const db = tenantDb(tenantId);
+  const count = await db.membership.count();
+  if (count < 1) return;
+
+  const subscription = await db.subscription.findUnique({
+    where: { tenantId },
+    select: { stripeSubscriptionId: true, status: true },
+  });
+
+  if (!subscription?.stripeSubscriptionId || subscription.status === "CANCELED") {
+    return;
+  }
+
+  const stripeSubscription = await stripe.subscriptions.retrieve(
+    subscription.stripeSubscriptionId
+  );
+  const firstItem = stripeSubscription.items.data[0];
+  if (!firstItem) return;
+
+  await stripe.subscriptionItems.update(firstItem.id, {
+    quantity: count,
+  });
+}
