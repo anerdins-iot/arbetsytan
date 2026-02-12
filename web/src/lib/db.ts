@@ -33,7 +33,6 @@ const DIRECT_TENANT_MODELS = [
 const PROJECT_SCOPED_MODELS = [
   "task",
   "activityLog",
-  "notification",
   "file",
   "documentChunk",
   "timeEntry",
@@ -45,6 +44,14 @@ const COMMENT_MODEL = "comment" as const;
 /** Conversation: personal (projectId null) or project.project.tenantId. */
 const CONVERSATION_TENANT_OR = (tenantId: string) => ({
   OR: [{ projectId: null }, { project: { tenantId } }] as const,
+});
+
+/** Notification: project.tenantId or user.memberships in tenant. */
+const NOTIFICATION_TENANT_OR = (tenantId: string) => ({
+  OR: [
+    { project: { tenantId } },
+    { projectId: null, user: { memberships: { some: { tenantId } } } },
+  ] as const,
 });
 
 /** Message is scoped via conversation (same OR as Conversation). */
@@ -113,6 +120,17 @@ function mergeWhereMessageTenant<T extends { where?: unknown }>(
   return {
     ...args,
     where: { AND: [existing, MESSAGE_CONVERSATION_FILTER(tenantId)] },
+  } as T;
+}
+
+function mergeWhereNotificationTenant<T extends { where?: unknown }>(
+  args: T,
+  tenantId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { AND: [existing, NOTIFICATION_TENANT_OR(tenantId)] },
   } as T;
 }
 
@@ -337,6 +355,31 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
     count: ({ args, query: run }) =>
       run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
+  };
+
+  // 7. Notification: scoped via project or user membership
+  query.notification = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    create: ({ args, query: run }) => run(args),
+    update: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereNotificationTenant(args as { where?: unknown }, tenantId)),
   };
 
   return { query };
