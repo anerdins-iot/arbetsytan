@@ -32,11 +32,11 @@
 **Input:** Block 7.1 klart, Block 6.2 klart (notifikationskanaler)
 **Output:** Profil- och preferenssida
 
-- [ ] Profilsida: namn, e-post, profilbild
-- [ ] Byta lösenord
-- [ ] Notifikationsinställningar: vilka kanaler (in-app, push, e-post) per händelsetyp
-- [ ] Dark mode-preferens
-- [ ] Språkval (svenska/engelska) — sparas i User.locale
+- [x] Profilsida: namn, e-post, profilbild
+- [x] Byta lösenord
+- [x] Notifikationsinställningar: vilka kanaler (in-app, push, e-post) per händelsetyp
+- [x] Dark mode-preferens
+- [x] Språkval (svenska/engelska) — sparas i User.locale
 
 **Verifiering:** Profil uppdateras, lösenord byts, preferenser sparas, `npm run build` OK
 

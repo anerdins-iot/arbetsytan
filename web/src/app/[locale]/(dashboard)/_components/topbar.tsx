@@ -344,13 +344,15 @@ export function Topbar({
         <Separator orientation="vertical" className="mx-1 h-6" />
 
         {/* User placeholder */}
-        <Button variant="ghost" size="sm" className="gap-2">
+        <Button variant="ghost" size="sm" className="gap-2" asChild>
+          <Link href="/settings/profile">
           <div className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <User className="size-4" />
           </div>
           <span className="hidden text-sm font-medium sm:inline-block">
-            {t("user")}
+            {t("profile")}
           </span>
+          </Link>
         </Button>
       </div>
     </header>

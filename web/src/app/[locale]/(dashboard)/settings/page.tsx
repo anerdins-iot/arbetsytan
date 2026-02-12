@@ -14,6 +14,7 @@ import { NotificationSettings } from "@/components/settings/notification-setting
 import { RolePermissionsMatrix } from "@/components/settings/role-permissions-matrix";
 import { InviteForm } from "@/components/invitations/invite-form";
 import { InvitationList } from "@/components/invitations/invitation-list";
+import { Link } from "@/i18n/routing";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -40,6 +41,20 @@ export default async function SettingsPage({ params }: Props) {
       <div>
         <h1 className="text-3xl font-bold text-foreground">{t("title")}</h1>
         <p className="mt-1 text-muted-foreground">{t("description")}</p>
+      </div>
+      <div className="rounded-lg border border-border bg-card p-6">
+        <h2 className="text-lg font-semibold text-card-foreground">
+          {t("profileLink.title")}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {t("profileLink.description")}
+        </p>
+        <Link
+          href="/settings/profile"
+          className="mt-4 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {t("profileLink.cta")}
+        </Link>
       </div>
       {preferencesResult.success && preferencesResult.preferences ? (
         <NotificationSettings initialPreferences={preferencesResult.preferences} />

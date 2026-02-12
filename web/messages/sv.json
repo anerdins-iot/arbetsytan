@@ -401,6 +401,11 @@
       "title": "Inbjudningar",
       "description": "Skicka och hantera inbjudningar till företaget."
     },
+    "profileLink": {
+      "title": "Personliga inställningar",
+      "description": "Hantera din profil, lösenord, språk, notiser och utseende.",
+      "cta": "Öppna personliga inställningar"
+    },
     "notifications": {
       "title": "Notifikationsinställningar",
       "saving": "Sparar...",
@@ -421,6 +426,82 @@
         "pushPermissionDenied": "Tillåt push-notiser i webbläsaren för att fortsätta.",
         "pushSetupFailed": "Kunde inte konfigurera push-notifikationer."
       }
+    },
+    "profile": {
+      "title": "Personliga inställningar",
+      "description": "Uppdatera profil, lösenord, språk och personliga preferenser.",
+      "profile": {
+        "title": "Profil",
+        "description": "Uppdatera dina kontouppgifter.",
+        "name": "Namn",
+        "email": "E-post",
+        "save": "Spara profil",
+        "saving": "Sparar...",
+        "saved": "Profilen har uppdaterats.",
+        "avatarLabel": "Profilbild",
+        "avatarHint": "Tillåtna format: JPG, PNG, WEBP. Max 5 MB.",
+        "avatarAlt": "Profilbild",
+        "errors": {
+          "emailInUse": "E-postadressen används redan av en annan användare.",
+          "avatarTooLarge": "Profilbilden är för stor.",
+          "avatarType": "Filtypen stöds inte för profilbilder.",
+          "avatarGeneric": "Kunde inte uppdatera profilbilden.",
+          "generic": "Kunde inte uppdatera profilen."
+        }
+      },
+      "password": {
+        "title": "Byt lösenord",
+        "description": "Välj ett nytt lösenord för ditt konto.",
+        "currentPassword": "Nuvarande lösenord",
+        "newPassword": "Nytt lösenord",
+        "confirmPassword": "Bekräfta nytt lösenord",
+        "save": "Byt lösenord",
+        "saving": "Sparar...",
+        "saved": "Lösenordet har uppdaterats.",
+        "errors": {
+          "invalidInput": "Kontrollera att alla fält är korrekt ifyllda.",
+          "passwordMismatch": "Det nya lösenordet och bekräftelsen matchar inte.",
+          "currentPasswordInvalid": "Nuvarande lösenord är fel.",
+          "passwordNotSet": "Det finns inget lösenord kopplat till kontot.",
+          "generic": "Kunde inte byta lösenord."
+        }
+      },
+      "notifications": {
+        "title": "Notifikationskanaler",
+        "description": "Välj vilka kanaler som ska användas per händelsetyp.",
+        "saved": "Inställningarna har sparats.",
+        "pushGlobalHint": "Push-kanalen sparas globalt och gäller alla händelsetyper.",
+        "table": {
+          "event": "Händelse",
+          "inApp": "In-app",
+          "push": "Push",
+          "email": "E-post"
+        },
+        "events": {
+          "taskAssigned": "Uppgift tilldelad",
+          "deadlineSoon": "Deadline snart",
+          "projectStatusChanged": "Projektstatus ändrad"
+        },
+        "errors": {
+          "generic": "Kunde inte spara notifikationsinställningarna."
+        }
+      },
+      "appearance": {
+        "title": "Utseende",
+        "description": "Anpassa hur appen visas för dig.",
+        "darkMode": "Mörkt läge",
+        "hint": "Temavalet sparas lokalt i din webbläsare."
+      },
+      "language": {
+        "title": "Språk",
+        "description": "Välj språk för gränssnittet.",
+        "label": "Språk",
+        "swedish": "Svenska",
+        "english": "Engelska",
+        "errors": {
+          "generic": "Kunde inte uppdatera språkvalet."
+        }
+      }
     }
   },
   "sidebar": {
@@ -431,6 +512,7 @@
   "topbar": {
     "notifications": "Notifikationer",
     "user": "Användare",
+    "profile": "Profil",
     "openMenu": "Öppna meny",
     "notificationPanel": {
       "title": "Notifikationer",

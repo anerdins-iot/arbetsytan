@@ -6,6 +6,10 @@ import { requireAuth } from "@/lib/auth";
 import { prisma, tenantDb } from "@/lib/db";
 import { emitNotificationToUser } from "@/lib/socket";
 import type { RealtimeNotification } from "@/lib/socket-events";
+import {
+  getNotificationPreferences as getStoredNotificationPreferences,
+  updateNotificationPreferences as updateStoredNotificationPreferences,
+} from "@/actions/notification-preferences";
 
 const notificationParamsSchema = z.record(z.string(), z.union([z.string(), z.number()]));
 
@@ -40,7 +44,20 @@ const listSchema = z.object({
   limit: z.number().int().min(1).max(100).default(20),
 });
 
+const channelPreferenceSchema = z.object({
+  inApp: z.boolean(),
+  push: z.boolean(),
+  email: z.boolean(),
+});
+
+const userNotificationPreferencesSchema = z.object({
+  taskAssigned: channelPreferenceSchema,
+  deadlineSoon: channelPreferenceSchema,
+  projectStatusChanged: channelPreferenceSchema,
+});
+
 export type NotificationItem = RealtimeNotification;
+export type UserNotificationPreferences = z.infer<typeof userNotificationPreferencesSchema>;
 
 async function resolveLocalizedText(input: z.infer<typeof createNotificationSchema>) {
   if (input.title && input.body) {
@@ -178,4 +195,65 @@ export async function markAllNotificationsRead(): Promise<{
   });
 
   return { success: true };
+}
+
+export async function getUserNotificationPreferences(): Promise<{
+  success: boolean;
+  preferences?: UserNotificationPreferences;
+  error?: string;
+}> {
+  const result = await getStoredNotificationPreferences();
+  if (!result.success || !result.preferences) {
+    return { success: false, error: "FAILED_TO_LOAD" };
+  }
+
+  return {
+    success: true,
+    preferences: {
+      taskAssigned: {
+        inApp: true,
+        push: result.preferences.pushEnabled,
+        email: result.preferences.emailTaskAssigned,
+      },
+      deadlineSoon: {
+        inApp: true,
+        push: result.preferences.pushEnabled,
+        email: result.preferences.emailDeadlineTomorrow,
+      },
+      projectStatusChanged: {
+        inApp: true,
+        push: result.preferences.pushEnabled,
+        email: result.preferences.emailProjectStatusChanged,
+      },
+    },
+  };
+}
+
+export async function updateNotificationPreferences(input: UserNotificationPreferences): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  await requireAuth();
+  const parsed = userNotificationPreferencesSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const pushValues = [
+    parsed.data.taskAssigned.push,
+    parsed.data.deadlineSoon.push,
+    parsed.data.projectStatusChanged.push,
+  ];
+
+  // Existing schema stores push as one global flag for all event types.
+  if (new Set(pushValues).size > 1) {
+    return { success: false, error: "PUSH_MUST_BE_GLOBAL" };
+  }
+
+  return updateStoredNotificationPreferences({
+    pushEnabled: parsed.data.taskAssigned.push,
+    emailTaskAssigned: parsed.data.taskAssigned.email,
+    emailDeadlineTomorrow: parsed.data.deadlineSoon.email,
+    emailProjectStatusChanged: parsed.data.projectStatusChanged.email,
+  });
 }

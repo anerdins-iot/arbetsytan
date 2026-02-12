@@ -401,6 +401,11 @@
       "title": "Invitations",
       "description": "Send and manage invitations to the company."
     },
+    "profileLink": {
+      "title": "Personal settings",
+      "description": "Manage your profile, password, language, notifications, and appearance.",
+      "cta": "Open personal settings"
+    },
     "notifications": {
       "title": "Notification settings",
       "saving": "Saving...",
@@ -421,6 +426,82 @@
         "pushPermissionDenied": "Allow browser notifications to continue.",
         "pushSetupFailed": "Could not configure push notifications."
       }
+    },
+    "profile": {
+      "title": "Personal settings",
+      "description": "Update your profile, password, language, and personal preferences.",
+      "profile": {
+        "title": "Profile",
+        "description": "Update your account details.",
+        "name": "Name",
+        "email": "Email",
+        "save": "Save profile",
+        "saving": "Saving...",
+        "saved": "Profile has been updated.",
+        "avatarLabel": "Profile image",
+        "avatarHint": "Allowed formats: JPG, PNG, WEBP. Max 5 MB.",
+        "avatarAlt": "Profile image",
+        "errors": {
+          "emailInUse": "This email address is already used by another account.",
+          "avatarTooLarge": "The profile image is too large.",
+          "avatarType": "This file type is not supported for profile images.",
+          "avatarGeneric": "Could not update the profile image.",
+          "generic": "Could not update profile."
+        }
+      },
+      "password": {
+        "title": "Change password",
+        "description": "Choose a new password for your account.",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm new password",
+        "save": "Change password",
+        "saving": "Saving...",
+        "saved": "Password has been updated.",
+        "errors": {
+          "invalidInput": "Please check that all fields are filled correctly.",
+          "passwordMismatch": "New password and confirmation do not match.",
+          "currentPasswordInvalid": "Current password is incorrect.",
+          "passwordNotSet": "No password is currently set on this account.",
+          "generic": "Could not change password."
+        }
+      },
+      "notifications": {
+        "title": "Notification channels",
+        "description": "Choose which channels are used per event type.",
+        "saved": "Settings saved.",
+        "pushGlobalHint": "Push is stored as a global setting and applies to all event types.",
+        "table": {
+          "event": "Event",
+          "inApp": "In-app",
+          "push": "Push",
+          "email": "Email"
+        },
+        "events": {
+          "taskAssigned": "Task assigned",
+          "deadlineSoon": "Deadline soon",
+          "projectStatusChanged": "Project status changed"
+        },
+        "errors": {
+          "generic": "Could not save notification settings."
+        }
+      },
+      "appearance": {
+        "title": "Appearance",
+        "description": "Customize how the app looks for you.",
+        "darkMode": "Dark mode",
+        "hint": "Theme choice is stored locally in your browser."
+      },
+      "language": {
+        "title": "Language",
+        "description": "Choose interface language.",
+        "label": "Language",
+        "swedish": "Swedish",
+        "english": "English",
+        "errors": {
+          "generic": "Could not update language preference."
+        }
+      }
     }
   },
   "sidebar": {
@@ -431,6 +512,7 @@
   "topbar": {
     "notifications": "Notifications",
     "user": "User",
+    "profile": "Profile",
     "openMenu": "Open menu",
     "notificationPanel": {
       "title": "Notifications",
