@@ -34,6 +34,7 @@ type ChatRequestBody = {
 };
 
 export async function POST(req: NextRequest) {
+  try {
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -225,6 +226,14 @@ export async function POST(req: NextRequest) {
     tools,
     stopWhen: stepCountIs(8),
     ...streamConfig,
+    onError: ({ error }) => {
+      logger.error("AI stream error", {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+        hasOpenaiKey: !!process.env.OPENAI_API_KEY,
+      });
+    },
     onFinish: async ({ text }) => {
       // Save assistant response to DB
       if (text && activeConversationId) {
@@ -262,6 +271,18 @@ export async function POST(req: NextRequest) {
   return result.toUIMessageStreamResponse({
     headers: responseHeaders,
   });
+  } catch (err) {
+    logger.error("AI chat route error", {
+      error: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+      hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+      hasOpenaiKey: !!process.env.OPENAI_API_KEY,
+    });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Internal server error" },
+      { status: 500 }
+    );
+  }
 }
 
 /** Extract text content from a UIMessage's parts array. */
