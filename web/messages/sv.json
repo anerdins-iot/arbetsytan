@@ -368,6 +368,35 @@
         "generic": "Kunde inte uppdatera användaren."
       }
     },
+    "permissions": {
+      "title": "Rättigheter per roll",
+      "description": "Styr vilka roller som får utföra olika handlingar i företaget.",
+      "permissionColumn": "Rättighet",
+      "roleAdmin": "Admin",
+      "roleProjectManager": "Projektledare",
+      "roleWorker": "Montör",
+      "adminFixed": "Admin har alltid fulla rättigheter.",
+      "errors": {
+        "saveFailed": "Kunde inte spara rättigheter."
+      },
+      "items": {
+        "canManageTenantSettings": "Hantera företagsinställningar",
+        "canManageTeam": "Hantera teammedlemmar",
+        "canChangeUserRoles": "Ändra användarroller",
+        "canRemoveUsers": "Ta bort användare",
+        "canManageRolePermissions": "Hantera rättighetssystemet",
+        "canInviteUsers": "Skicka inbjudningar",
+        "canCreateProject": "Skapa projekt",
+        "canUpdateProject": "Uppdatera projekt",
+        "canDeleteProject": "Ta bort projekt",
+        "canUploadFiles": "Ladda upp filer",
+        "canDeleteFiles": "Ta bort filer",
+        "canCreateTasks": "Skapa uppgifter",
+        "canUpdateTasks": "Uppdatera uppgifter",
+        "canDeleteTasks": "Ta bort uppgifter",
+        "canAssignTasks": "Tilldela uppgifter"
+      }
+    },
     "invitations": {
       "title": "Inbjudningar",
       "description": "Skicka och hantera inbjudningar till företaget."

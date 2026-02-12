@@ -368,6 +368,35 @@
         "generic": "Could not update the user."
       }
     },
+    "permissions": {
+      "title": "Role permissions",
+      "description": "Control what each role can do across the company.",
+      "permissionColumn": "Permission",
+      "roleAdmin": "Admin",
+      "roleProjectManager": "Project Manager",
+      "roleWorker": "Worker",
+      "adminFixed": "Admins always keep full permissions.",
+      "errors": {
+        "saveFailed": "Could not save permissions."
+      },
+      "items": {
+        "canManageTenantSettings": "Manage company settings",
+        "canManageTeam": "Manage team members",
+        "canChangeUserRoles": "Change user roles",
+        "canRemoveUsers": "Remove users",
+        "canManageRolePermissions": "Manage the permissions system",
+        "canInviteUsers": "Send invitations",
+        "canCreateProject": "Create projects",
+        "canUpdateProject": "Update projects",
+        "canDeleteProject": "Delete projects",
+        "canUploadFiles": "Upload files",
+        "canDeleteFiles": "Delete files",
+        "canCreateTasks": "Create tasks",
+        "canUpdateTasks": "Update tasks",
+        "canDeleteTasks": "Delete tasks",
+        "canAssignTasks": "Assign tasks"
+      }
+    },
     "invitations": {
       "title": "Invitations",
       "description": "Send and manage invitations to the company."

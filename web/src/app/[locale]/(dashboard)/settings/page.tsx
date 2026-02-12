@@ -3,10 +3,15 @@ import { getTranslations } from "next-intl/server";
 import { getNotificationPreferences } from "@/actions/notification-preferences";
 import { getInvitations } from "@/actions/invitations";
 import { requireAuth } from "@/lib/auth";
-import { getTenantMembers, getTenantSettings } from "@/actions/settings";
+import {
+  getRolePermissions,
+  getTenantMembers,
+  getTenantSettings,
+} from "@/actions/settings";
 import { CompanySettingsForm } from "@/components/settings/company-settings-form";
 import { MemberManagement } from "@/components/settings/member-management";
 import { NotificationSettings } from "@/components/settings/notification-settings";
+import { RolePermissionsMatrix } from "@/components/settings/role-permissions-matrix";
 import { InviteForm } from "@/components/invitations/invite-form";
 import { InvitationList } from "@/components/invitations/invitation-list";
 
@@ -21,13 +26,14 @@ export default async function SettingsPage({ params }: Props) {
   const { userId, role } = await requireAuth();
   const isAdmin = role === "ADMIN";
   const preferencesResult = await getNotificationPreferences();
-  const [tenant, members, invitations] = isAdmin
+  const [tenant, members, invitations, rolePermissions] = isAdmin
     ? await Promise.all([
         getTenantSettings(),
         getTenantMembers(),
         getInvitations(),
+        getRolePermissions(),
       ])
-    : [null, [], []];
+    : [null, [], [], null];
 
   return (
     <div className="space-y-6">
@@ -42,6 +48,12 @@ export default async function SettingsPage({ params }: Props) {
       {isAdmin && tenant ? (
         <>
           <CompanySettingsForm tenant={tenant} />
+          {rolePermissions ? (
+            <RolePermissionsMatrix
+              permissions={rolePermissions.permissions}
+              roles={rolePermissions.roles}
+            />
+          ) : null}
           <MemberManagement members={members} currentUserId={userId} />
           <div className="space-y-4 rounded-lg border border-border bg-card p-6">
             <div>

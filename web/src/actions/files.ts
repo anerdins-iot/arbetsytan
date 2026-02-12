@@ -3,7 +3,7 @@
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireProject } from "@/lib/auth";
+import { requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { emitFileCreatedToProject, emitFileDeletedToProject } from "@/lib/socket";
@@ -111,7 +111,7 @@ export async function prepareFileUpload(input: {
     }
   | { success: false; error: string }
 > {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canUploadFiles");
   const parsed = uploadPreparationSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "VALIDATION_ERROR" };
@@ -160,7 +160,7 @@ export async function completeFileUpload(input: {
     }
   | { success: false; error: string }
 > {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canUploadFiles");
   const parsed = completeUploadSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "VALIDATION_ERROR" };
@@ -230,7 +230,7 @@ export async function completeFileUpload(input: {
 export async function uploadFile(
   formData: FormData
 ): Promise<{ success: true; file: FileItem } | { success: false; error: string }> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canUploadFiles");
   const parsed = uploadFileFormSchema.safeParse({
     projectId: formData.get("projectId"),
     file: formData.get("file"),
@@ -370,7 +370,7 @@ export async function deleteFile(input: {
   projectId: string;
   fileId: string;
 }): Promise<{ success: true } | { success: false; error: string }> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canDeleteFiles");
   const parsed = deleteFileSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "VALIDATION_ERROR" };

@@ -2,8 +2,15 @@
 
 import { z } from "zod";
 import type { Role } from "../../generated/prisma/client";
-import { requireAuth, requireRole } from "@/lib/auth";
+import { hasPermission, requireAuth, requirePermission, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import {
+  PERMISSIONS,
+  type Permission,
+  type PermissionMap,
+  parsePermissionOverrides,
+  resolvePermissions,
+} from "@/lib/permissions";
 
 const updateTenantSchema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -18,6 +25,11 @@ const updateMembershipRoleSchema = z.object({
 
 const removeMembershipSchema = z.object({
   membershipId: z.string().min(1),
+});
+
+const updateRolePermissionsSchema = z.object({
+  role: z.enum(["ADMIN", "PROJECT_MANAGER", "WORKER"]),
+  permissions: z.record(z.string(), z.boolean()),
 });
 
 export type SettingsActionResult = {
@@ -41,8 +53,18 @@ export type TenantMember = {
   email: string;
 };
 
+export type RolePermissions = {
+  role: Role;
+  permissions: PermissionMap;
+};
+
+export type RolePermissionsResult = {
+  permissions: Permission[];
+  roles: RolePermissions[];
+};
+
 export async function getTenantSettings(): Promise<TenantSettings> {
-  const { tenantId } = await requireRole(["ADMIN"]);
+  const { tenantId } = await requirePermission("canManageTenantSettings");
   const db = tenantDb(tenantId);
 
   const tenant = await db.tenant.findUnique({
@@ -65,7 +87,7 @@ export async function getTenantSettings(): Promise<TenantSettings> {
 export async function updateTenant(
   formData: FormData
 ): Promise<SettingsActionResult> {
-  const { tenantId } = await requireRole(["ADMIN"]);
+  const { tenantId } = await requirePermission("canManageTenantSettings");
   const db = tenantDb(tenantId);
 
   const result = updateTenantSchema.safeParse({
@@ -101,7 +123,7 @@ export async function updateTenant(
 }
 
 export async function getTenantMembers(): Promise<TenantMember[]> {
-  const { tenantId } = await requireRole(["ADMIN"]);
+  const { tenantId } = await requirePermission("canManageTeam");
   const db = tenantDb(tenantId);
 
   const memberships = await db.membership.findMany({
@@ -129,7 +151,7 @@ export async function getTenantMembers(): Promise<TenantMember[]> {
 export async function updateMembershipRole(
   formData: FormData
 ): Promise<SettingsActionResult> {
-  const { tenantId } = await requireRole(["ADMIN"]);
+  const { tenantId } = await requirePermission("canChangeUserRoles");
   const db = tenantDb(tenantId);
 
   const result = updateMembershipRoleSchema.safeParse({
@@ -174,7 +196,7 @@ export async function updateMembershipRole(
 export async function removeMembership(
   formData: FormData
 ): Promise<SettingsActionResult> {
-  const { tenantId, userId } = await requireRole(["ADMIN"]);
+  const { tenantId, userId } = await requirePermission("canRemoveUsers");
   const db = tenantDb(tenantId);
 
   const result = removeMembershipSchema.safeParse({
@@ -219,7 +241,66 @@ export async function removeMembership(
   return { success: true };
 }
 
+export async function getRolePermissions(): Promise<RolePermissionsResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+  const roles: Role[] = ["ADMIN", "PROJECT_MANAGER", "WORKER"];
+
+  const resolvedRoles = await Promise.all(
+    roles.map(async (role) => {
+      const membership = await db.membership.findFirst({
+        where: { role },
+        select: { permissions: true },
+        orderBy: { updatedAt: "desc" },
+      });
+
+      return {
+        role,
+        permissions: resolvePermissions(
+          role,
+          parsePermissionOverrides(membership?.permissions)
+        ),
+      };
+    })
+  );
+
+  return {
+    permissions: [...PERMISSIONS],
+    roles: resolvedRoles,
+  };
+}
+
+export async function updateRolePermissions(input: {
+  role: Role;
+  permissions: Record<string, boolean>;
+}): Promise<SettingsActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const result = updateRolePermissionsSchema.safeParse(input);
+  if (!result.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const rolePermissions = resolvePermissions(
+    result.data.role,
+    parsePermissionOverrides(result.data.permissions)
+  );
+
+  await db.membership.updateMany({
+    where: { role: result.data.role },
+    data: {
+      permissions: rolePermissions,
+    },
+  });
+
+  return { success: true };
+}
+
 export async function isCurrentUserAdmin(): Promise<boolean> {
-  const { role } = await requireAuth();
-  return role === "ADMIN";
+  const { role, userId, tenantId } = await requireAuth();
+  if (role === "ADMIN") {
+    return true;
+  }
+  return hasPermission(userId, tenantId, "canManageRolePermissions");
 }

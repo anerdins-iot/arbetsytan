@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireProject } from "@/lib/auth";
+import { requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyTaskAssigned } from "@/lib/notification-delivery";
@@ -152,7 +152,7 @@ export async function updateTaskStatus(
   projectId: string,
   data: { taskId: string; status: string }
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canUpdateTasks");
   await requireProject(tenantId, projectId, userId);
 
   const parsed = updateTaskStatusSchema.safeParse(data);
@@ -214,7 +214,7 @@ export async function createTask(
   projectId: string,
   formData: FormData
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canCreateTasks");
   await requireProject(tenantId, projectId, userId);
 
   const raw = {
@@ -273,7 +273,7 @@ export async function assignTask(
   projectId: string,
   data: { taskId: string; membershipId: string }
 ): Promise<AssignTaskResult> {
-  const { tenantId, userId, user } = await requireAuth();
+  const { tenantId, userId, user } = await requirePermission("canAssignTasks");
   const project = await requireProject(tenantId, projectId, userId);
 
   const parsed = assignTaskSchema.safeParse(data);
@@ -375,7 +375,7 @@ export async function updateTask(
     deadline?: string;
   }
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canUpdateTasks");
   await requireProject(tenantId, projectId, userId);
 
   const parsed = updateTaskSchema.safeParse(data);
@@ -442,7 +442,7 @@ export async function deleteTask(
   projectId: string,
   data: { taskId: string }
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canDeleteTasks");
   await requireProject(tenantId, projectId, userId);
 
   const parsed = deleteTaskSchema.safeParse(data);
@@ -492,7 +492,7 @@ export async function unassignTask(
   projectId: string,
   data: { taskId: string; membershipId: string }
 ): Promise<AssignTaskResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canAssignTasks");
   await requireProject(tenantId, projectId, userId);
 
   const parsed = assignTaskSchema.safeParse(data);

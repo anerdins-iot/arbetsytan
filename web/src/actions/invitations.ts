@@ -3,7 +3,7 @@
 import crypto from "node:crypto";
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { requireRole, requireAuth, getSession } from "@/lib/auth";
+import { requirePermission, requireAuth, getSession } from "@/lib/auth";
 import { tenantDb, prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { signIn } from "@/lib/auth";
@@ -67,7 +67,7 @@ const INVITATION_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 export async function inviteUser(
   formData: FormData
 ): Promise<InvitationActionResult> {
-  const { userId, tenantId } = await requireRole(["ADMIN"]);
+  const { userId, tenantId } = await requirePermission("canInviteUsers");
 
   const raw = {
     email: formData.get("email"),
@@ -173,7 +173,7 @@ export async function inviteUser(
 // ─── Get Invitations (ADMIN) ──────────────────────────
 
 export async function getInvitations(): Promise<InvitationItem[]> {
-  const { tenantId } = await requireRole(["ADMIN"]);
+  const { tenantId } = await requirePermission("canInviteUsers");
   const db = tenantDb(tenantId);
 
   const invitations = await db.invitation.findMany({
@@ -195,7 +195,7 @@ export async function getInvitations(): Promise<InvitationItem[]> {
 export async function cancelInvitation(
   formData: FormData
 ): Promise<InvitationActionResult> {
-  const { tenantId } = await requireRole(["ADMIN"]);
+  const { tenantId } = await requirePermission("canInviteUsers");
 
   const raw = { invitationId: formData.get("invitationId") };
   const result = cancelInvitationSchema.safeParse(raw);

@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
-import { requireAuth, requireProject, requireRole } from "@/lib/auth";
+import { hasPermission, requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
@@ -99,7 +99,7 @@ export async function getProjects(options?: {
 export async function createProject(
   formData: FormData
 ): Promise<ProjectActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canCreateProject");
 
   const raw = {
     name: formData.get("name"),
@@ -258,13 +258,7 @@ export async function getProject(
       user: m.user,
     }));
 
-  // Only Admin or Project Manager can add/remove team members
-  const currentMembership = await db.membership.findFirst({
-    where: { userId },
-  });
-  const canManageTeam =
-    currentMembership?.role === "ADMIN" ||
-    currentMembership?.role === "PROJECT_MANAGER";
+  const canManageTeam = await hasPermission(userId, tenantId, "canManageTeam");
 
   return {
     success: true,
@@ -292,7 +286,7 @@ export async function updateProject(
   projectId: string,
   formData: FormData
 ): Promise<ProjectActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId } = await requirePermission("canUpdateProject");
   const currentProject = await requireProject(tenantId, projectId, userId);
 
   const raw = {
@@ -384,7 +378,7 @@ export async function addProjectMember(
   projectId: string,
   membershipId: string
 ): Promise<ProjectActionResult> {
-  const { tenantId, userId } = await requireRole(["ADMIN", "PROJECT_MANAGER"]);
+  const { tenantId, userId } = await requirePermission("canManageTeam");
   await requireProject(tenantId, projectId, userId);
   const parsed = addProjectMemberSchema.safeParse({ projectId, membershipId });
   if (!parsed.success) {
@@ -421,7 +415,7 @@ export async function removeProjectMember(
   projectId: string,
   membershipId: string
 ): Promise<ProjectActionResult> {
-  const { tenantId, userId } = await requireRole(["ADMIN", "PROJECT_MANAGER"]);
+  const { tenantId, userId } = await requirePermission("canManageTeam");
   await requireProject(tenantId, projectId, userId);
   const parsed = removeProjectMemberSchema.safeParse({ projectId, membershipId });
   if (!parsed.success) {

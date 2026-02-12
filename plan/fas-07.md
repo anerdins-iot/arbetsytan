@@ -21,10 +21,10 @@
 **Input:** Block 7.1 klart
 **Output:** Konfigurerbart rättighetssystem
 
-- [ ] Definiera konfigurerbara rättigheter per roll
-- [ ] UI för att ändra rättigheter per roll
-- [ ] Spara i Membership.permissions (JSON)
-- [ ] Alla Server Actions respekterar permissions
+- [x] Definiera konfigurerbara rättigheter per roll
+- [x] UI för att ändra rättigheter per roll
+- [x] Spara i Membership.permissions (JSON)
+- [x] Alla Server Actions respekterar permissions
 
 **Verifiering:** Rättigheter sparas och respekteras, alla Server Actions kontrollerar permissions, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 

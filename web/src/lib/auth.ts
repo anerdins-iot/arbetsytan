@@ -10,6 +10,11 @@ import bcrypt from "bcrypt";
 import { authConfig } from "./auth.config";
 import { prisma, tenantDb } from "./db";
 import type { Role } from "../../generated/prisma/client";
+import {
+  type Permission,
+  parsePermissionOverrides,
+  resolvePermissions,
+} from "./permissions";
 
 export type SessionUser = {
   id: string;
@@ -74,6 +79,52 @@ export async function requireRole(
   if (!roles.includes(authResult.role as Role)) {
     throw new Error("FORBIDDEN");
   }
+  return authResult;
+}
+
+export async function hasPermission(
+  userId: string,
+  tenantId: string,
+  permission: Permission
+): Promise<boolean> {
+  const db = tenantDb(tenantId);
+  const membership = await db.membership.findFirst({
+    where: { userId },
+    select: {
+      role: true,
+      permissions: true,
+    },
+  });
+
+  if (!membership) {
+    return false;
+  }
+
+  const resolved = resolvePermissions(
+    membership.role,
+    parsePermissionOverrides(membership.permissions)
+  );
+
+  return resolved[permission];
+}
+
+export async function requirePermission(
+  permissions: Permission | Permission[]
+): Promise<RequireAuthResult> {
+  const authResult = await requireAuth();
+  const required = Array.isArray(permissions) ? permissions : [permissions];
+
+  for (const permission of required) {
+    const allowed = await hasPermission(
+      authResult.userId,
+      authResult.tenantId,
+      permission
+    );
+    if (!allowed) {
+      throw new Error("FORBIDDEN");
+    }
+  }
+
   return authResult;
 }
 
