@@ -26,7 +26,7 @@ import {
   getSchedulableTools,
   getToolDefinition,
   type ToolParameter,
-} from "@/lib/ai/tool-registry";
+} from "@/lib/ai/tool-definitions";
 
 type CreateAutomationDialogProps = {
   open: boolean;

@@ -19,6 +19,8 @@ export const ACTIVITY_ENTITIES = [
   "file",
   "member",
   "comment",
+  "note",
+  "timeEntry",
 ] as const;
 
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];

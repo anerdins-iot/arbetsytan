@@ -93,6 +93,7 @@
     "tools": {
       "notify": "Send reminder",
       "createTask": "Create task",
+      "updateTask": "Update task",
       "createComment": "Add comment",
       "createTimeEntry": "Log time",
       "createNote": "Create note",
@@ -737,6 +738,36 @@
         "pushUnsupported": "Your browser does not support push notifications.",
         "pushPermissionDenied": "Allow browser notifications to continue.",
         "pushSetupFailed": "Could not configure push notifications."
+      }
+    },
+    "emailTemplates": {
+      "title": "Email templates",
+      "description": "Manage subject lines and HTML templates for system emails.",
+      "templateLabel": "Template type",
+      "localeLabel": "Language",
+      "localeSv": "Swedish",
+      "localeEn": "English",
+      "variablesLabel": "Available variables",
+      "subjectLabel": "Subject",
+      "htmlLabel": "HTML template",
+      "testDataLabel": "Test data (JSON, optional)",
+      "save": "Save template",
+      "preview": "Preview",
+      "reset": "Restore default",
+      "saved": "Template saved.",
+      "resetSuccess": "Template restored to default.",
+      "previewSubject": "Preview subject",
+      "previewFrameTitle": "Email template preview",
+      "errors": {
+        "saveFailed": "Could not save template.",
+        "resetFailed": "Could not restore template."
+      },
+      "names": {
+        "password-reset": "Password reset",
+        "invitation": "Company invitation",
+        "task-assigned": "Task assigned",
+        "deadline-reminder": "Deadline reminder",
+        "project-status-changed": "Project status changed"
       }
     },
     "profile": {

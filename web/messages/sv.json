@@ -93,6 +93,7 @@
     "tools": {
       "notify": "Skicka påminnelse",
       "createTask": "Skapa uppgift",
+      "updateTask": "Uppdatera uppgift",
       "createComment": "Lägg till kommentar",
       "createTimeEntry": "Registrera tid",
       "createNote": "Skapa anteckning",
@@ -737,6 +738,36 @@
         "pushUnsupported": "Din webbläsare stödjer inte push-notifikationer.",
         "pushPermissionDenied": "Tillåt push-notiser i webbläsaren för att fortsätta.",
         "pushSetupFailed": "Kunde inte konfigurera push-notifikationer."
+      }
+    },
+    "emailTemplates": {
+      "title": "E-postmallar",
+      "description": "Hantera ämnesrader och HTML-mallar för systemets e-postutskick.",
+      "templateLabel": "Malltyp",
+      "localeLabel": "Språk",
+      "localeSv": "Svenska",
+      "localeEn": "Engelska",
+      "variablesLabel": "Tillgängliga variabler",
+      "subjectLabel": "Ämnesrad",
+      "htmlLabel": "HTML-mall",
+      "testDataLabel": "Testdata (JSON, valfritt)",
+      "save": "Spara mall",
+      "preview": "Förhandsgranska",
+      "reset": "Återställ till standard",
+      "saved": "Mallen har sparats.",
+      "resetSuccess": "Mallen återställdes till standard.",
+      "previewSubject": "Förhandsgranskat ämne",
+      "previewFrameTitle": "Förhandsgranskning av e-postmall",
+      "errors": {
+        "saveFailed": "Kunde inte spara mallen.",
+        "resetFailed": "Kunde inte återställa mallen."
+      },
+      "names": {
+        "password-reset": "Lösenordsåterställning",
+        "invitation": "Företagsinbjudan",
+        "task-assigned": "Uppgift tilldelad",
+        "deadline-reminder": "Deadline-påminnelse",
+        "project-status-changed": "Projektstatus ändrad"
       }
     },
     "profile": {

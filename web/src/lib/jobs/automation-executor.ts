@@ -1,5 +1,12 @@
+/**
+ * Automation executor job.
+ * Processes pending/active automations whose triggerAt has passed.
+ * Runs the specified tool and updates the automation status.
+ */
+
 import { CronExpressionParser } from "cron-parser";
 import { prisma, tenantDb } from "@/lib/db";
+import { executeTool } from "@/lib/ai/tool-executors";
 
 export type AutomationExecutorResult = {
   processed: number;
@@ -32,6 +39,8 @@ export async function runAutomationExecutorJob(): Promise<AutomationExecutorResu
         actionTool: true,
         actionParams: true,
         status: true,
+        userId: true,
+        projectId: true,
       },
     });
 
@@ -43,14 +52,27 @@ export async function runAutomationExecutorJob(): Promise<AutomationExecutorResu
       let errorMessage: string | null = null;
 
       try {
-        // For now: only log actionTool and actionParams (real execution built later)
         console.info("[automation-executor] running", {
           automationId: automation.id,
           name: automation.name,
           actionTool: automation.actionTool,
-          actionParams: automation.actionParams,
         });
-        result = { actionTool: automation.actionTool, actionParams: automation.actionParams };
+
+        const toolResult = await executeTool(
+          automation.actionTool,
+          (automation.actionParams as Record<string, unknown>) ?? {},
+          {
+            tenantId: tenant.id,
+            userId: automation.userId,
+            projectId: automation.projectId,
+          }
+        );
+
+        if (!toolResult.success) {
+          throw new Error(toolResult.error ?? "Tool execution failed");
+        }
+
+        result = toolResult.data;
       } catch (err) {
         logStatus = "FAILED";
         errorMessage = err instanceof Error ? err.message : String(err);
@@ -60,6 +82,7 @@ export async function runAutomationExecutorJob(): Promise<AutomationExecutorResu
       const durationMs = Date.now() - startTime;
       if (logStatus === "SUCCESS") succeeded += 1;
 
+      // Create execution log
       try {
         await db.automationLog.create({
           data: {
@@ -74,6 +97,7 @@ export async function runAutomationExecutorJob(): Promise<AutomationExecutorResu
         console.error("[automation-executor] failed to create AutomationLog", automation.id, logErr);
       }
 
+      // Update automation status and schedule next run
       try {
         const nextTriggerAt = await (async (): Promise<Date | null> => {
           if (automation.recurrence) {
