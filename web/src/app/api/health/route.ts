@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   let dbStatus = "ok";
   try {
@@ -11,10 +13,15 @@ export async function GET() {
     dbStatus = "error";
   }
 
-  return NextResponse.json({
-    status: dbStatus === "ok" ? "ok" : "error",
-    database: dbStatus,
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-  });
+  // Return 200 even if database is down - container health is separate from db health
+  // This allows the container to start while database issues are investigated
+  return NextResponse.json(
+    {
+      status: dbStatus === "ok" ? "healthy" : "degraded",
+      database: dbStatus,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    },
+    { status: 200 }
+  );
 }
