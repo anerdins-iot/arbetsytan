@@ -19,6 +19,12 @@ import {
   listAutomations as listAutomationsAction,
   deleteAutomation as deleteAutomationAction,
 } from "@/actions/automations";
+import {
+  copyObjectInMinio,
+  projectObjectKey,
+  ensureTenantBucket,
+} from "@/lib/minio";
+import { randomUUID } from "node:crypto";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -746,6 +752,38 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  const getPersonalFiles = tool({
+    description:
+      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar namn, typ, storlek, datum och eventuell OCR-text.",
+    inputSchema: toolInputSchema(z.object({
+      limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
+    })),
+    execute: async ({ limit = 50 }) => {
+      const files = await db.file.findMany({
+        where: { projectId: null, uploadedById: userId },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          size: true,
+          createdAt: true,
+          ocrText: true,
+        },
+      });
+      return files.map((f) => ({
+        id: f.id,
+        name: f.name,
+        type: f.type,
+        size: f.size,
+        createdAt: f.createdAt.toISOString(),
+        hasOcrText: !!f.ocrText,
+        ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
+      }));
+    },
+  });
+
   const searchFiles = tool({
     description:
       "Söka i dokument (PDF, ritningar) över alla projekt användaren har tillgång till. Semantisk sökning; ange en fråga eller sökord.",
@@ -776,6 +814,87 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const result = await getOcrTextForFile({ fileId, projectId: pid, tenantId });
       if ("error" in result) return { error: result.error };
       return { fullText: result.fullText };
+    },
+  });
+
+  const analyzePersonalFile = tool({
+    description:
+      "Hämta fullständig OCR-text för en personlig fil (från getPersonalFiles). Returnerar den extraherade texten från filen.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("ID för den personliga filen (från getPersonalFiles)"),
+    })),
+    execute: async ({ fileId }) => {
+      const file = await db.file.findFirst({
+        where: { id: fileId, projectId: null, uploadedById: userId },
+        select: { id: true, name: true, ocrText: true },
+      });
+      if (!file) return { error: "Filen hittades inte eller du har inte behörighet." };
+      if (!file.ocrText) return { error: "Ingen OCR-text finns för denna fil. Filen kanske inte är analyserad ännu." };
+      return { fileName: file.name, fullText: file.ocrText };
+    },
+  });
+
+  const movePersonalFileToProject = tool({
+    description:
+      "Flytta eller kopiera en personlig fil till ett projekt. Filen kopieras till projektets fillagring och kan valfritt tas bort från personliga filer.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("ID för den personliga filen (från getPersonalFiles)"),
+      projectId: z.string().describe("Projektets ID dit filen ska flyttas"),
+      deleteOriginal: z.boolean().optional().default(false).describe("Om true tas originalfilen bort efter kopiering"),
+    })),
+    execute: async ({ fileId, projectId: pid, deleteOriginal = false }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const file = await db.file.findFirst({
+        where: { id: fileId, projectId: null, uploadedById: userId },
+        select: { id: true, name: true, type: true, size: true, bucket: true, key: true, ocrText: true },
+      });
+      if (!file) return { error: "Filen hittades inte eller du har inte behörighet." };
+
+      // Generera ny nyckel för projektfilen
+      const objectId = randomUUID();
+      const newKey = projectObjectKey(pid, file.name, objectId);
+      const bucket = await ensureTenantBucket(tenantId);
+
+      // Kopiera objektet i MinIO
+      try {
+        await copyObjectInMinio({
+          sourceBucket: file.bucket,
+          sourceKey: file.key,
+          destBucket: bucket,
+          destKey: newKey,
+        });
+      } catch (err) {
+        return { error: `Kunde inte kopiera filen: ${err instanceof Error ? err.message : String(err)}` };
+      }
+
+      // Skapa ny fil-post i projektet
+      const newFile = await db.file.create({
+        data: {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          bucket,
+          key: newKey,
+          projectId: pid,
+          uploadedById: userId,
+          ocrText: file.ocrText,
+        },
+      });
+
+      // Ta bort originalet om så önskas
+      if (deleteOriginal) {
+        await db.file.delete({ where: { id: fileId } });
+      }
+
+      return {
+        success: true,
+        newFileId: newFile.id,
+        projectId: pid,
+        message: deleteOriginal
+          ? `Filen "${file.name}" har flyttats till projektet.`
+          : `Filen "${file.name}" har kopierats till projektet.`,
+      };
     },
   });
 
@@ -1232,8 +1351,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     getProjectTimeSummary,
     // Filer
     getProjectFiles,
+    getPersonalFiles,
     searchFiles,
     analyzeDocument,
+    analyzePersonalFile,
+    movePersonalFileToProject,
     // Projektmedlemmar
     getProjectMembers,
     // Projektanteckningar

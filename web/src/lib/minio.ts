@@ -1,4 +1,5 @@
 import {
+  CopyObjectCommand,
   CreateBucketCommand,
   DeleteObjectCommand,
   GetObjectCommand,
@@ -12,6 +13,7 @@ import { z } from "zod";
 
 const minioEnvSchema = z.object({
   S3_ENDPOINT: z.string().min(1),
+  S3_PUBLIC_ENDPOINT: z.string().optional(), // For presigned URLs accessible from browser (HTTPS)
   S3_ACCESS_KEY: z.string().min(1),
   S3_SECRET_KEY: z.string().min(1),
   S3_BUCKET: z.string().min(1),
@@ -21,6 +23,7 @@ const minioEnvSchema = z.object({
 // Lazy initialization to avoid crashing at import time if S3 vars are missing
 let _minioEnv: z.infer<typeof minioEnvSchema> | null = null;
 let _minioClient: S3Client | null = null;
+let _minioPublicClient: S3Client | null = null;
 
 function getMinioEnv() {
   if (!_minioEnv) {
@@ -43,6 +46,28 @@ function getMinioClient(): S3Client {
     });
   }
   return _minioClient;
+}
+
+/**
+ * Get S3 client configured for public/browser access.
+ * Uses S3_PUBLIC_ENDPOINT if set, otherwise falls back to S3_ENDPOINT.
+ * This is needed when presigned URLs must be accessible from browsers over HTTPS.
+ */
+function getMinioPublicClient(): S3Client {
+  if (!_minioPublicClient) {
+    const env = getMinioEnv();
+    const publicEndpoint = env.S3_PUBLIC_ENDPOINT || env.S3_ENDPOINT;
+    _minioPublicClient = new S3Client({
+      endpoint: publicEndpoint,
+      region: env.S3_REGION,
+      credentials: {
+        accessKeyId: env.S3_ACCESS_KEY,
+        secretAccessKey: env.S3_SECRET_KEY,
+      },
+      forcePathStyle: true,
+    });
+  }
+  return _minioPublicClient;
 }
 
 export const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024; // 50MB
@@ -155,7 +180,8 @@ export async function createPresignedUploadUrl(params: {
     ContentType: params.contentType,
   });
 
-  return getSignedUrl(minioClient, command, {
+  // Use public client for presigned URLs (browser needs HTTPS access)
+  return getSignedUrl(getMinioPublicClient(), command, {
     expiresIn: params.expiresInSeconds ?? 60 * 10,
   });
 }
@@ -170,7 +196,8 @@ export async function createPresignedDownloadUrl(params: {
     Key: params.key,
   });
 
-  return getSignedUrl(minioClient, command, {
+  // Use public client for presigned URLs (browser needs HTTPS access)
+  return getSignedUrl(getMinioPublicClient(), command, {
     expiresIn: params.expiresInSeconds ?? 60 * 15,
   });
 }
@@ -183,6 +210,21 @@ export async function deleteObject(params: {
     new DeleteObjectCommand({
       Bucket: params.bucket,
       Key: params.key,
+    })
+  );
+}
+
+export async function copyObjectInMinio(params: {
+  sourceBucket: string;
+  sourceKey: string;
+  destBucket: string;
+  destKey: string;
+}): Promise<void> {
+  await minioClient.send(
+    new CopyObjectCommand({
+      Bucket: params.destBucket,
+      Key: params.destKey,
+      CopySource: `${params.sourceBucket}/${params.sourceKey}`,
     })
   );
 }
