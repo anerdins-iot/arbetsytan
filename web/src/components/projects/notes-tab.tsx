@@ -84,7 +84,7 @@ export function NotesTab({ projectId, initialNotes = [] }: NotesTabProps) {
               <SelectItem value="all">{t("categoryAll")}</SelectItem>
               {NOTE_CATEGORIES.map((cat) => (
                 <SelectItem key={cat} value={cat}>
-                  {t(`category.${cat}`)}
+                  {t(`categories.${cat}`)}
                 </SelectItem>
               ))}
             </SelectContent>

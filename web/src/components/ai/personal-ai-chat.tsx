@@ -28,6 +28,7 @@ import {
 } from "@/actions/conversations";
 import type { ConversationListItem } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
+import { MarkdownMessage } from "@/components/ai/markdown-message";
 
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
@@ -437,9 +438,7 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
                           part.type === "text"
                       )
                       .map((part, i) => (
-                        <p key={i} className="whitespace-pre-wrap">
-                          {part.text}
-                        </p>
+                        <MarkdownMessage key={i} content={part.text} />
                       ))}
                   </div>
                 </div>

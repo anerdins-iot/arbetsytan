@@ -68,7 +68,7 @@ async function main() {
     },
   });
 
-  await prisma.membership.upsert({
+  const adminMembership = await prisma.membership.upsert({
     where: {
       userId_tenantId: { userId: adminUser.id, tenantId: tenant.id },
     },
@@ -116,6 +116,23 @@ async function main() {
       tenantId: tenant.id,
     },
   });
+
+  // Koppla medlemmar till projektet via ProjectMember
+  for (const membership of [adminMembership, pmMembership, workerMembership]) {
+    await prisma.projectMember.upsert({
+      where: {
+        projectId_membershipId: {
+          projectId: project.id,
+          membershipId: membership.id,
+        },
+      },
+      update: {},
+      create: {
+        projectId: project.id,
+        membershipId: membership.id,
+      },
+    });
+  }
 
   const task1 = await prisma.task.create({
     data: {

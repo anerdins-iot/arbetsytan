@@ -179,11 +179,13 @@
       "selectCategory": "Välj kategori (valfritt)",
       "filterCategory": "Filtrera kategori",
       "categoryAll": "Alla kategorier",
-      "category.beslut": "Beslut",
-      "category.teknisk_info": "Teknisk info",
-      "category.kundönskemål": "Kundönskemål",
-      "category.viktig_info": "Viktig info",
-      "category.övrigt": "Övrigt",
+      "categories": {
+        "beslut": "Beslut",
+        "teknisk_info": "Teknisk info",
+        "kundönskemål": "Kundönskemål",
+        "viktig_info": "Viktig info",
+        "övrigt": "Övrigt"
+      },
       "searchPlaceholder": "Sök anteckningar...",
       "noNotes": "Inga anteckningar ännu",
       "noNotesDescription": "Skapa din första anteckning för att komma igång.",

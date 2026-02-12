@@ -179,11 +179,13 @@
       "selectCategory": "Select category (optional)",
       "filterCategory": "Filter category",
       "categoryAll": "All categories",
-      "category.beslut": "Decision",
-      "category.teknisk_info": "Technical info",
-      "category.kundönskemål": "Customer request",
-      "category.viktig_info": "Important info",
-      "category.övrigt": "Other",
+      "categories": {
+        "beslut": "Decision",
+        "teknisk_info": "Technical info",
+        "kundönskemål": "Customer request",
+        "viktig_info": "Important info",
+        "övrigt": "Other"
+      },
       "searchPlaceholder": "Search notes...",
       "noNotes": "No notes yet",
       "noNotesDescription": "Create your first note to get started.",

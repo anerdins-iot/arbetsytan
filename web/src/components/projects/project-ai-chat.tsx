@@ -17,6 +17,7 @@ import {
 import { getProjectConversations, getConversationWithMessages } from "@/actions/conversations";
 import type { ConversationListItem } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
+import { MarkdownMessage } from "@/components/ai/markdown-message";
 
 export type RagSource = {
   fileName: string;
@@ -239,9 +240,7 @@ export function ProjectAiChat({ projectId }: ProjectAiChatProps) {
                 {(message.parts ?? [])
                   .filter((part): part is { type: "text"; text: string } => part.type === "text")
                   .map((part, i) => (
-                    <p key={i} className="whitespace-pre-wrap">
-                      {part.text}
-                    </p>
+                    <MarkdownMessage key={i} content={part.text} />
                   ))}
               </div>
               {message.role === "assistant" &&

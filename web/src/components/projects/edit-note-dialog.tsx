@@ -128,7 +128,7 @@ export function EditNoteDialog({
                 <SelectContent>
                   {NOTE_CATEGORIES.map((cat) => (
                     <SelectItem key={cat} value={cat}>
-                      {t(`category.${cat}`)}
+                      {t(`categories.${cat}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>

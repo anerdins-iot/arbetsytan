@@ -85,7 +85,7 @@ export function NoteCard({ note, projectId, onUpdate }: NoteCardProps) {
               <div className="flex flex-wrap items-center gap-2">
                 {note.category && (
                   <Badge variant="secondary" className={CATEGORY_COLORS[note.category] || ""}>
-                    {t(`category.${note.category}`)}
+                    {t(`categories.${note.category}`)}
                   </Badge>
                 )}
                 {note.isPinned && (
