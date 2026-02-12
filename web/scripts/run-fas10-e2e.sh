@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+ROOT="$(pwd)"
+PID_FILE="${ROOT}/.dev-server.pid"
+SCREENSHOT_DIR="${ROOT}/../screenshots/fas-10"
+
+cleanup() {
+  if [ -f "$PID_FILE" ]; then
+    PID="$(cat "$PID_FILE")"
+    if kill -0 "$PID" 2>/dev/null; then
+      echo "Stopping dev server (PID $PID) and children..."
+      # Kill the process group to ensure child processes (next-server) are also stopped
+      kill -TERM -"$PID" 2>/dev/null || kill -TERM "$PID" 2>/dev/null || true
+      sleep 2
+      # If next-server is still running, kill it directly
+      CHILD_PID="$(ss -ltnp '( sport = :3000 )' 2>/dev/null | grep -oP 'pid=\K\d+' || true)"
+      if [ -n "$CHILD_PID" ] && kill -0 "$CHILD_PID" 2>/dev/null; then
+        echo "Killing remaining child process (PID $CHILD_PID)..."
+        kill -TERM "$CHILD_PID" 2>/dev/null || true
+      fi
+    fi
+    rm -f "$PID_FILE"
+  fi
+}
+trap cleanup EXIT
+
+if command -v curl >/dev/null 2>&1; then
+  check_port() {
+    curl -s -o /dev/null -w "%{http_code}" --connect-timeout 1 --max-time 2 http://localhost:3000 2>/dev/null || true
+  }
+else
+  check_port() {
+    (echo >/dev/tcp/localhost/3000) 2>/dev/null && echo "200" || echo ""
+  }
+fi
+
+if [ -f "$PID_FILE" ]; then
+  OLD_PID="$(cat "$PID_FILE")"
+  if kill -0 "$OLD_PID" 2>/dev/null; then
+    echo "Dev server already running (PID $OLD_PID). Stop it first or remove $PID_FILE."
+    exit 1
+  fi
+  rm -f "$PID_FILE"
+fi
+
+STATUS="$(check_port)"
+if [ "$STATUS" = "200" ] || [ "$STATUS" = "304" ] || [ "$STATUS" = "307" ] || [ "$STATUS" = "302" ]; then
+  echo "Port 3000 is already in use. Refusing to start another server."
+  exit 1
+fi
+
+if command -v ss >/dev/null 2>&1; then
+  if ss -ltn "( sport = :3000 )" | awk 'NR > 1 { found=1 } END { exit(found ? 0 : 1) }'; then
+    echo "Port 3000 has an existing listener. Refusing to start another server."
+    exit 1
+  fi
+fi
+
+mkdir -p "$SCREENSHOT_DIR"
+
+echo "Starting dev server..."
+npm run dev &
+echo $! >"$PID_FILE"
+echo "Dev server PID: $(cat "$PID_FILE")"
+
+echo "Waiting for server on http://localhost:3000..."
+for i in $(seq 1 120); do
+  STATUS="$(check_port)"
+  if [ "$STATUS" = "200" ] || [ "$STATUS" = "304" ] || [ "$STATUS" = "307" ] || [ "$STATUS" = "302" ]; then
+    echo "Server is up (HTTP $STATUS)."
+    break
+  fi
+  if [ "$i" -eq 120 ]; then
+    echo "Server did not start in time."
+    exit 1
+  fi
+  sleep 1
+done
+
+export PLAYWRIGHT_BROWSERS_PATH="$ROOT/../.playwright-browsers"
+
+if [ ! -d "$PLAYWRIGHT_BROWSERS_PATH/chromium-1208" ]; then
+  npx playwright install chromium 2>/dev/null || true
+fi
+
+npx playwright test e2e/fas-10-landing.spec.ts --project=chromium

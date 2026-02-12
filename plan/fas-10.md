@@ -24,17 +24,17 @@
 **Input:** Block 10.1 klart
 **Output:** Screenshots och verifiering av landningssidan
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Navigera till landningssidan (/)
-- [ ] Ta screenshot av hero-sektion (desktop)
-- [ ] Scrolla till funktionssektionen, ta screenshot
-- [ ] Scrolla till "Så fungerar det", ta screenshot
-- [ ] Scrolla till prissättning, ta screenshot
-- [ ] Scrolla till socialt bevis, ta screenshot
-- [ ] Scrolla till footer, ta screenshot
-- [ ] Ändra viewport till mobil (375px), ta screenshot av hela sidan
-- [ ] Verifiera att "Kom igång gratis"-knapp leder till registrering
-- [ ] Spara alla screenshots i `screenshots/fas-10/`
-- [ ] Stoppa dev-server
+- [x] Starta dev-server med PID-fil
+- [x] Navigera till landningssidan (/)
+- [x] Ta screenshot av hero-sektion (desktop)
+- [x] Scrolla till funktionssektionen, ta screenshot
+- [x] Scrolla till "Så fungerar det", ta screenshot
+- [x] Scrolla till prissättning, ta screenshot
+- [x] Scrolla till socialt bevis, ta screenshot
+- [x] Scrolla till footer, ta screenshot
+- [x] Ändra viewport till mobil (375px), ta screenshot av hela sidan
+- [x] Verifiera att "Kom igång gratis"-knapp leder till registrering
+- [x] Spara alla screenshots i `screenshots/fas-10/`
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, responsiv design fungerar, alla sektioner visas korrekt, inga konsolfel
