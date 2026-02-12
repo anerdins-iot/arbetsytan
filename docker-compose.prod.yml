@@ -38,6 +38,19 @@ services:
         condition: service_started
       minio:
         condition: service_started
+    networks:
+      - coolify
+      - default
+    labels:
+      - "traefik.enable=true"
+      # Main app (port 3000) - handled by Coolify automatically, but we add socket.io route
+      # Socket.IO endpoint (port 3001)
+      - "traefik.http.routers.app-socket.rule=Host(`arbetsytan.anerd.in`) && PathPrefix(`/socket.io`)"
+      - "traefik.http.routers.app-socket.entrypoints=https"
+      - "traefik.http.routers.app-socket.tls=true"
+      - "traefik.http.routers.app-socket.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.app-socket.service=app-socket"
+      - "traefik.http.services.app-socket.loadbalancer.server.port=3001"
 
   # ─────────────────────────────────────────
   # PostgreSQL Database (with pgvector)
@@ -73,6 +86,24 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
+    networks:
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      # S3 API endpoint (port 9000)
+      - "traefik.http.routers.minio-s3.rule=Host(`s3-arbetsytan.anerd.in`)"
+      - "traefik.http.routers.minio-s3.entrypoints=https"
+      - "traefik.http.routers.minio-s3.tls=true"
+      - "traefik.http.routers.minio-s3.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.minio-s3.service=minio-s3"
+      - "traefik.http.services.minio-s3.loadbalancer.server.port=9000"
+      # Console endpoint (port 9001) - optional
+      - "traefik.http.routers.minio-console.rule=Host(`s3-console-arbetsytan.anerd.in`)"
+      - "traefik.http.routers.minio-console.entrypoints=https"
+      - "traefik.http.routers.minio-console.tls=true"
+      - "traefik.http.routers.minio-console.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.minio-console.service=minio-console"
+      - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
 
   # ─────────────────────────────────────────
   # Redis (session cache, Socket.IO adapter)
@@ -82,6 +113,10 @@ services:
     restart: unless-stopped
     volumes:
       - redis_data:/data
+
+networks:
+  coolify:
+    external: true
 
 volumes:
   postgres_data:
