@@ -24,9 +24,9 @@
 - [x] Visa aktuell plan, status och nästa fakturadatum
 - [x] "Uppgradera/Ändra plan"-knapp → Stripe Customer Portal
 - [x] Hantera misslyckade betalningar (status PAST_DUE)
-- [x] Vid CANCELED: begränsa åtkomst men behåll data
+- [x] **FIX:** Vid CANCELED: använd `checkSubscriptionAccess()` för att begränsa åtkomst (funktionen finns men anropas inte)
 - [x] Räkna antal aktiva memberships per tenant
-- [x] Uppdatera Stripe-prenumeration vid tillägg/borttagning av användare
+- [x] **FIX:** Uppdatera Stripe-prenumeration vid tillägg/borttagning av användare — anropa `updateSubscriptionQuantity()` (funktionen finns men anropas inte)
 - [x] Visa kostnad per användare i inställningar
 
 **Verifiering:** Faktureringssida visar korrekt info, Customer Portal öppnas, användare räknas korrekt, `tenantDb(tenantId)` på alla queries, `npm run build` OK

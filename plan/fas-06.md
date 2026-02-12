@@ -7,21 +7,21 @@
 **Input:** Fas 2 klar (auth), Fas 3 klar (dashboard)
 **Output:** Fungerande notifikationssystem med Socket.IO
 
-- [ ] Konfigurera `socket.io` (server) och `socket.io-client` (klient) — redan installerade i Block 1.1A
-- [ ] Skapa Socket.IO-server i `web/src/lib/socket.ts` med säkerhetsmodell enligt `AI.md`:
+- [x] Konfigurera `socket.io` (server) och `socket.io-client` (klient) — redan installerade i Block 1.1A
+- [x] Skapa Socket.IO-server i `web/src/lib/socket.ts` med säkerhetsmodell enligt `AI.md`:
   - Autentisering vid anslutning: validera session (webb) eller JWT (mobil), avvisa ogiltiga
   - Extrahera `tenantId`, `userId`, `role` vid anslutning — lagra på socket-objektet
   - Klienten kan ALDRIG skicka eller överskriva dessa värden
-- [ ] Implementera rumsstruktur (server-hanterad, ej klient-styrd):
+- [x] Implementera rumsstruktur (server-hanterad, ej klient-styrd):
   - `tenant:{tenantId}` — joinas automatiskt vid anslutning
   - `user:{userId}` — joinas automatiskt vid anslutning
   - `project:{projectId}` — joinas efter `requireProject()`-validering
-- [ ] All emit sker till specifika rum — aldrig broadcast. Data filtreras i backend via `tenantDb(tenantId)` innan emit.
-- [ ] Klienten ansluter vid inloggning med `useSocket` hook
-- [ ] Skapa `createNotification`-funktion som sparar i DB + emittar via Socket.IO till `user:{userId}`-rum
-- [ ] Visa notifikationsklocka i topbar med antal olästa
-- [ ] Bygga notifikationspanel med lista och "markera som läst"
-- [ ] Server Action `markNotificationRead`
+- [x] All emit sker till specifika rum — aldrig broadcast. Data filtreras i backend via `tenantDb(tenantId)` innan emit.
+- [x] Klienten ansluter vid inloggning med `useSocket` hook
+- [x] Skapa `createNotification`-funktion som sparar i DB + emittar via Socket.IO till `user:{userId}`-rum
+- [x] Visa notifikationsklocka i topbar med antal olästa
+- [x] Bygga notifikationspanel med lista och "markera som läst"
+- [x] Server Action `markNotificationRead`
 
 **Verifiering:** Socket.IO-anslutning fungerar, autentisering avvisar ogiltiga sessioner/JWT, rum hanteras av server (klienten kan inte joina själv), data filtreras i backend, notifikationer visas i realtid, `npm run build` OK
 
@@ -53,10 +53,10 @@
 **Input:** Block 6.1 + 6.2 klara
 **Output:** Automatiska påminnelser
 
-- [ ] Bakgrundsjobb som kontrollerar uppgifter med deadline som inte uppdaterats
-- [ ] Konfigurerbar tröskel (t.ex. 2 dagar utan aktivitet innan deadline)
-- [ ] Skicka påminnelse till tilldelad person via notifikationssystemet
-- [ ] Regelbaserad kanalval: in-app alltid, push vid < 24h till deadline, e-post vid < 12h
+- [x] Bakgrundsjobb som kontrollerar uppgifter med deadline som inte uppdaterats
+- [x] Konfigurerbar tröskel (t.ex. 2 dagar utan aktivitet innan deadline)
+- [x] Skicka påminnelse till tilldelad person via notifikationssystemet
+- [x] Regelbaserad kanalval: in-app alltid, push vid < 24h till deadline, e-post vid < 12h
 
 **Verifiering:** Påminnelser triggas vid inaktivitet, rätt kanal väljs, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 
@@ -71,7 +71,7 @@
 - [ ] Verifiera att notis visas i realtid
 - [ ] Markera notis som läst, verifiera uppdatering
 - [x] Ta screenshot av push-inställningar (om implementerat)
-- [x] Spara alla screenshots i `screenshots/fas-06/`
+- [ ] **FIX:** Spara alla screenshots i `screenshots/fas-06/` (saknas i repot)
 - [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, realtidsuppdateringar fungerar, inga konsolfel

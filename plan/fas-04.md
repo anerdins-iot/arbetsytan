@@ -37,12 +37,13 @@
 **Input:** Block 4.1 klart, Mistral API-nyckel
 **Output:** Automatisk OCR vid filuppladdning
 
-- [ ] Skapa `web/src/lib/ai/ocr.ts` med Mistral OCR-integration
-- [ ] Vid uppladdning av PDF/bild: trigga OCR automatiskt
-- [ ] Spara extraherad text i `File.ocrText`
-- [ ] Chunka texten (500–1000 tokens per chunk)
-- [ ] Spara chunks i DocumentChunk med metadata (sidnummer, position)
-- [ ] Visa OCR-text kopplat till filen i UI
+- [x] Skapa `web/src/lib/ai/ocr.ts` med Mistral OCR-integration
+- [x] Vid uppladdning av PDF/bild: trigga OCR automatiskt
+- [x] Spara extraherad text i `File.ocrText`
+- [x] Chunka texten (500–1000 tokens per chunk)
+- [x] Spara chunks i DocumentChunk med metadata (sidnummer, position)
+- [x] Visa OCR-text kopplat till filen i UI
+- [x] **FIX:** Koppla embeddings till OCR — anropa `queueEmbeddingProcessing` efter chunkning
 
 **Verifiering:** OCR körs vid upload, text sparas, chunks skapas, text visas i UI, `npm run build` OK
 
@@ -50,13 +51,13 @@
 **Input:** Block 4.3 klart, OpenAI API-nyckel
 **Output:** Semantisk sökning i dokument
 
-- [ ] Skapa `web/src/lib/ai/embeddings.ts` med OpenAI embeddings-integration
-- [ ] Efter chunkning: generera embedding per chunk via OpenAI API
-- [ ] Spara vektor i DocumentChunk.embedding (raw SQL)
-- [ ] Skapa SQL-funktion för cosine similarity-sökning
-- [ ] Skapa `searchDocuments`-funktion filtrerat på projectId + tenantId
-- [ ] Bakgrundsbearbetning — använd queue eller async job (ej blockera upload)
-- [ ] Utöka `globalSearch` (från Block 3.9) med sökning i filnamn och dokumentinnehåll via embeddings
+- [x] Skapa `web/src/lib/ai/embeddings.ts` med OpenAI embeddings-integration
+- [x] Efter chunkning: generera embedding per chunk via OpenAI API
+- [x] Spara vektor i DocumentChunk.embedding (raw SQL)
+- [x] Skapa SQL-funktion för cosine similarity-sökning
+- [x] Skapa `searchDocuments`-funktion filtrerat på projectId + tenantId
+- [x] Bakgrundsbearbetning — använd queue eller async job (ej blockera upload)
+- [x] Utöka `globalSearch` (från Block 3.9) med sökning i filnamn och dokumentinnehåll via embeddings
 
 **Verifiering:** Embeddings genereras, vektorsökning returnerar relevanta resultat, `tenantDb(tenantId)` på alla queries, `requireProject()` för projektåtkomst, `npm run build` OK
 

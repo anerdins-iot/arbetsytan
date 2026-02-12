@@ -83,15 +83,15 @@
 **Input:** Block 2.1–2.5 klara
 **Output:** Screenshots och verifiering av alla auth-flöden
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Navigera till login-sidan, ta screenshot
-- [ ] Navigera till registreringssidan, ta screenshot
-- [ ] Testa registreringsformuläret (fyll i, verifiera redirect till dashboard)
-- [ ] Logga ut, testa inloggning med skapade credentials
-- [ ] Navigera till "glömt lösenord"-sidan, ta screenshot
-- [ ] Navigera till team-inställningar, ta screenshot av inbjudningsformuläret
-- [ ] Verifiera att oautentiserade requests redirectar till login
-- [ ] Spara alla screenshots i `screenshots/fas-02/`
-- [ ] Stoppa dev-server
+- [x] Starta dev-server med PID-fil
+- [x] Navigera till login-sidan, ta screenshot
+- [x] Navigera till registreringssidan, ta screenshot
+- [x] Testa registreringsformuläret (fyll i, verifiera redirect till dashboard)
+- [x] Logga ut, testa inloggning med skapade credentials
+- [x] Navigera till "glömt lösenord"-sidan, ta screenshot
+- [x] Navigera till team-inställningar, ta screenshot av inbjudningsformuläret
+- [x] Verifiera att oautentiserade requests redirectar till login
+- [x] Spara alla screenshots i `screenshots/fas-02/`
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, alla flöden fungerar, inga konsolfel
