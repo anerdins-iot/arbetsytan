@@ -7,6 +7,14 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ---
 
+### Projekt-AI skickade inget AIMessage vid task create/assign (Fas 5)
+**Problem:** Efter att projekt-AI skapade eller tilldelade en uppgift visade personlig AI "Du har inga olästa meddelanden från projekt-AI:er" — PROJECT_TO_PERSONAL-flödet syntes inte.
+**Orsak:** Projekt-AI använde bara createTask utan assignee; det fanns inget assignTask-verktyg som anropade sendProjectToPersonalAIMessage. Trigger fanns i actions/tasks.ts för UI men användes aldrig från AI-verktygen.
+**Lösning:** createTask i project-tools.ts fick valfri assigneeMembershipId och anropar sendProjectToPersonalAIMessage vid tilldelning. Nytt verktyg assignTask(taskId, membershipId) med samma trigger. Systemprompt för projekt-AI utökad så att den använder assigneeMembershipId eller assignTask när någon ska tilldelas.
+**Lärdom:** Alla triggers i AI.md (task_assigned etc.) måste anropas från AI-verktygen, inte bara från UI-actions.
+
+---
+
 ### Docker healthcheck: använd Node.js istället för curl/wget (Coolify deployment)
 **Problem:** Coolify markerade container som `exited:unhealthy` trots att Next.js-servern körs. HEALTHCHECK var kommenterad för att curl/wget inte fanns i node:22-alpine.
 **Orsak:** Cirkulärt beroende: healthcheck-verktyg saknades, så healthcheck disabled → container kunde inte rapporteras healthy → Coolify höll den exited.

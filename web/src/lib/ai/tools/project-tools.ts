@@ -11,6 +11,7 @@ import { getOcrTextForFile } from "@/lib/ai/ocr";
 import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
 import { buildSimplePdf } from "@/lib/reports/simple-content-pdf";
 import { buildSimpleDocx } from "@/lib/reports/simple-content-docx";
+import { sendProjectToPersonalAIMessage } from "@/lib/ai/aimessage-triggers";
 import type { TenantScopedClient } from "@/lib/db";
 
 export type ProjectToolsContext = {
@@ -61,14 +62,15 @@ export function createProjectTools(ctx: ProjectToolsContext) {
 
   const createTask = tool({
     description:
-      "Skapa en ny uppgift i projektet. Ange titel, valfritt beskrivning, prioritet (LOW, MEDIUM, HIGH, URGENT) och valfritt deadline (ISO-datum).",
+      "Skapa en ny uppgift i projektet. Ange titel, valfritt beskrivning, prioritet (LOW, MEDIUM, HIGH, URGENT) och valfritt deadline (ISO-datum). Om du tilldelar uppgiften till någon, ange assigneeMembershipId (membershipId från getProjectMembers) — då skickas ett meddelande till deras personliga AI.",
     inputSchema: toolInputSchema(z.object({
       title: z.string().describe("Uppgiftens titel"),
       description: z.string().optional().describe("Beskrivning av uppgiften"),
       priority: z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]).default("MEDIUM"),
       deadline: z.string().optional().describe("Deadline i ISO-format (YYYY-MM-DD)"),
+      assigneeMembershipId: z.string().optional().describe("MembershipId för den som ska tilldelas uppgiften (från getProjectMembers); skickar då notis till deras personliga AI"),
     })),
-    execute: async ({ title, description, priority, deadline }) => {
+    execute: async ({ title, description, priority, deadline, assigneeMembershipId }) => {
       const task = await db.task.create({
         data: {
           title,
@@ -79,6 +81,39 @@ export function createProjectTools(ctx: ProjectToolsContext) {
           projectId,
         },
       });
+
+      if (assigneeMembershipId) {
+        const membership = await db.membership.findFirst({
+          where: { id: assigneeMembershipId, tenantId },
+          include: { user: { select: { id: true } } },
+        });
+        if (membership) {
+          const existing = await db.taskAssignment.findFirst({
+            where: { taskId: task.id, membershipId: assigneeMembershipId },
+          });
+          if (!existing) {
+            await db.taskAssignment.create({
+              data: {
+                taskId: task.id,
+                membershipId: assigneeMembershipId,
+              },
+            });
+            const project = await db.project.findUnique({
+              where: { id: projectId },
+              select: { name: true },
+            });
+            const projectName = project?.name ?? "projektet";
+            await sendProjectToPersonalAIMessage({
+              db,
+              projectId,
+              userId: membership.user.id,
+              type: "task_assigned",
+              content: `Du har tilldelats uppgiften "${task.title}" i projektet ${projectName}.`,
+            });
+          }
+        }
+      }
+
       return { id: task.id, title: task.title, status: task.status, message: "Uppgift skapad." };
     },
   });
@@ -112,6 +147,52 @@ export function createProjectTools(ctx: ProjectToolsContext) {
         },
       });
       return { id: task.id, title: task.title, status: task.status, message: "Uppgift uppdaterad." };
+    },
+  });
+
+  const assignTask = tool({
+    description:
+      "Tilldela en befintlig uppgift till en projektmedlem. Ange taskId och membershipId (från getProjectMembers). Skickar automatiskt ett meddelande till medlemmens personliga AI.",
+    inputSchema: toolInputSchema(z.object({
+      taskId: z.string().describe("Uppgiftens ID"),
+      membershipId: z.string().describe("MembershipId för den som ska tilldelas (från getProjectMembers)"),
+    })),
+    execute: async ({ taskId, membershipId }) => {
+      const task = await db.task.findFirst({
+        where: { id: taskId, projectId },
+        select: { id: true, title: true },
+      });
+      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+
+      const membership = await db.membership.findFirst({
+        where: { id: membershipId, tenantId },
+        include: { user: { select: { id: true } } },
+      });
+      if (!membership) return { error: "Medlemmen hittades inte." };
+
+      const existing = await db.taskAssignment.findFirst({
+        where: { taskId, membershipId },
+      });
+      if (existing) return { error: "Uppgiften är redan tilldelad denna person." };
+
+      await db.taskAssignment.create({
+        data: { taskId, membershipId },
+      });
+
+      const project = await db.project.findUnique({
+        where: { id: projectId },
+        select: { name: true },
+      });
+      const projectName = project?.name ?? "projektet";
+      await sendProjectToPersonalAIMessage({
+        db,
+        projectId,
+        userId: membership.user.id,
+        type: "task_assigned",
+        content: `Du har tilldelats uppgiften "${task.title}" i projektet ${projectName}.`,
+      });
+
+      return { id: task.id, message: "Uppgift tilldelad; användaren har fått ett meddelande i sin personliga AI." };
     },
   });
 
@@ -344,6 +425,7 @@ export function createProjectTools(ctx: ProjectToolsContext) {
     getProjectTasks,
     createTask,
     updateTask,
+    assignTask,
     getProjectFiles,
     searchProjectDocuments,
     getProjectMembers,

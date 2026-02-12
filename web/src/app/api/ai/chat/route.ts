@@ -386,7 +386,7 @@ function buildSystemPrompt(opts: {
   const base = [
     `Du är en AI-assistent för ett byggprojekt. ${projectLine}`.trim(),
     `Användaren ${userName ?? ""} har rollen ${userRole}.`,
-    "Du hjälper teamet med uppgifter, filer, ritningar och planering. Du kan hämta uppgifter, skapa och uppdatera dem, söka i dokument, hämta filer och medlemmar, samt skicka meddelanden till användares personliga AI vid viktiga händelser.",
+    "Du hjälper teamet med uppgifter, filer, ritningar och planering. Du kan hämta uppgifter, skapa och uppdatera dem, söka i dokument, hämta filer och medlemmar, samt skicka meddelanden till användares personliga AI vid viktiga händelser. När du skapar en uppgift som ska tilldelas någon: använd assigneeMembershipId i createTask (membershipId från getProjectMembers), eller använd assignTask efter skapandet — då skickas automatiskt ett meddelande till deras personliga AI.",
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
     "Om du inte vet svaret, säg det istället för att gissa.",
