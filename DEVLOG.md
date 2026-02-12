@@ -126,3 +126,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** API-route för lazy init kördes även i buildfasen med flera workers/processer.
 **Lösning:** I `/api/socket` returnera tidigt när `NEXT_PHASE === "phase-production-build"` och hoppa över serverstart i build.
 **Lärdom:** Runtime-init (ports/listeners) måste vara build-säkert i Next.js App Router; guarda mot buildfas innan side effects.
+
+### web-push saknade TypeScript-typer i Next.js build (Block 6.2)
+**Problem:** `npm run build` stoppade på `Could not find a declaration file for module 'web-push'` trots installerat paket.
+**Orsak:** `web-push` exponerar inte inbyggda typer i den här setupen och `@types/web-push` löste inte importen via Turbopack/TS.
+**Lösning:** Lade till lokal deklarationsfil `src/types/web-push.d.ts` med minsta API-signaturer som används (`setVapidDetails`, `sendNotification`).
+**Lärdom:** För JS-bibliotek utan stabila typer i Next.js 16/Turbopack, lös med lokal `.d.ts` istället för att blockera bygget.

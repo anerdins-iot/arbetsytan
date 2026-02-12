@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
+import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
 import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -332,6 +333,35 @@ export async function updateProject(
     previousStatus: currentProject.status,
     newStatus: status,
   });
+
+  if (action === "statusChanged") {
+    const members = await db.projectMember.findMany({
+      where: { projectId },
+      include: {
+        membership: {
+          select: {
+            userId: true,
+          },
+        },
+      },
+    });
+
+    await Promise.all(
+      members
+        .map((member) => member.membership.userId)
+        .filter((memberUserId) => memberUserId !== userId)
+        .map((recipientUserId) =>
+          notifyProjectStatusChanged({
+            tenantId,
+            projectId,
+            recipientUserId,
+            projectName: name,
+            previousStatus: currentProject.status,
+            newStatus: status,
+          })
+        )
+    );
+  }
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
   revalidatePath("/[locale]/projects", "page");

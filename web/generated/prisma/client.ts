@@ -125,6 +125,16 @@ export type AIMessage = Prisma.AIMessageModel
  */
 export type Notification = Prisma.NotificationModel
 /**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
  * Model Comment
  * 
  */

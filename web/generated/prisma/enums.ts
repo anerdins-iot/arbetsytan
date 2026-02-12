@@ -98,6 +98,15 @@ export const NotificationChannel = {
 export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
 
 
+export const NotificationEventType = {
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  DEADLINE_SOON: 'DEADLINE_SOON',
+  PROJECT_STATUS_CHANGED: 'PROJECT_STATUS_CHANGED'
+} as const
+
+export type NotificationEventType = (typeof NotificationEventType)[keyof typeof NotificationEventType]
+
+
 export const SubscriptionStatus = {
   ACTIVE: 'ACTIVE',
   PAST_DUE: 'PAST_DUE',

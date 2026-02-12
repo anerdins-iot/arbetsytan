@@ -3,6 +3,7 @@
 import type { Prisma } from "../../generated/prisma/client";
 import { requireAuth } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { notifyDeadlineSoon } from "@/lib/notification-delivery";
 
 export type DashboardTask = {
   id: string;
@@ -122,6 +123,26 @@ export async function getMyTasksToday(): Promise<{
     },
     orderBy: { task: { deadline: { sort: "asc", nulls: "last" } } },
   });
+
+  const nowTs = Date.now();
+  const soonLimit = nowTs + 24 * 60 * 60 * 1000;
+  await Promise.all(
+    assignments.map(async (assignment) => {
+      const deadline = assignment.task.deadline?.getTime();
+      if (!deadline) return;
+      if (deadline < nowTs || deadline > soonLimit) return;
+
+      await notifyDeadlineSoon({
+        tenantId,
+        projectId: assignment.task.project.id,
+        taskId: assignment.task.id,
+        taskTitle: assignment.task.title,
+        userId,
+        projectName: assignment.task.project.name,
+        deadline: assignment.task.deadline!,
+      });
+    })
+  );
 
   const tasks: DashboardTask[] = assignments.map((a) => ({
     id: a.task.id,

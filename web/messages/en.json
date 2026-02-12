@@ -21,6 +21,32 @@
     "newComment": {
       "title": "New comment",
       "body": "New comment on task: {taskTitle}"
+    },
+    "taskAssigned": {
+      "title": "New assigned task",
+      "body": "{assignedBy} assigned you the task \"{taskTitle}\" in {projectName}."
+    },
+    "deadlineTomorrow": {
+      "title": "Deadline within 24 hours",
+      "body": "Task \"{taskTitle}\" in {projectName} is due {deadline}."
+    },
+    "projectStatusChanged": {
+      "title": "Project status updated",
+      "body": "Project {projectName} changed from {previousStatus} to {newStatus}."
+    }
+  },
+  "notificationEmails": {
+    "taskAssigned": {
+      "subject": "New assigned task in {projectName}",
+      "body": "<p>You have been assigned the task <strong>{taskTitle}</strong> by {assignedBy}.</p><p>Project: {projectName}</p><p><a href=\"{projectUrl}\">Open project</a></p>"
+    },
+    "deadlineTomorrow": {
+      "subject": "Deadline tomorrow: {taskTitle}",
+      "body": "<p>Reminder: Task <strong>{taskTitle}</strong> in {projectName} is due {deadline}.</p><p><a href=\"{projectUrl}\">Open project</a></p>"
+    },
+    "projectStatusChanged": {
+      "subject": "Project status changed: {projectName}",
+      "body": "<p>Project <strong>{projectName}</strong> changed from {previousStatus} to {newStatus}.</p><p><a href=\"{projectUrl}\">Open project</a></p>"
     }
   },
   "dashboard": {
@@ -308,7 +334,28 @@
   },
   "settings": {
     "title": "Settings",
-    "description": "Manage your account and company settings"
+    "description": "Manage your account and company settings",
+    "notifications": {
+      "title": "Notification settings",
+      "saving": "Saving...",
+      "savedAuto": "Saved automatically",
+      "push": {
+        "enabled": "Enable push notifications",
+        "description": "Receive push alerts when tasks are assigned and when deadlines are close."
+      },
+      "email": {
+        "title": "Send email for",
+        "taskAssigned": "Task assigned",
+        "deadlineTomorrow": "Deadline tomorrow",
+        "projectStatusChanged": "Project status changed"
+      },
+      "errors": {
+        "saveFailed": "Could not save settings.",
+        "pushUnsupported": "Your browser does not support push notifications.",
+        "pushPermissionDenied": "Allow browser notifications to continue.",
+        "pushSetupFailed": "Could not configure push notifications."
+      }
+    }
   },
   "sidebar": {
     "brand": "ArbetsYtan",

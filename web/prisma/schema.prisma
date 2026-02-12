@@ -23,6 +23,8 @@ model Tenant {
   projects     Project[]
   invitations  Invitation[]
   subscription Subscription?
+  notificationPreferences NotificationPreference[]
+  pushSubscriptions       PushSubscription[]
 }
 
 model User {
@@ -47,6 +49,8 @@ model User {
   aiMessages       AIMessage[]
   notifications    Notification[]
   activityLogs     ActivityLog[]
+  notificationPreferences NotificationPreference[]
+  pushSubscriptions       PushSubscription[]
 }
 
 model Membership {
@@ -201,6 +205,7 @@ model Task {
   assignments TaskAssignment[]
   comments    Comment[]
   timeEntries TimeEntry[]
+  notifications Notification[]
 }
 
 enum TaskStatus {
@@ -349,6 +354,7 @@ model Notification {
   title     String
   body      String
   channel   NotificationChannel
+  eventType NotificationEventType?
   read      Boolean           @default(false)
   sent      Boolean           @default(false)
   createdAt DateTime          @default(now())
@@ -357,12 +363,54 @@ model Notification {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectId String?
   project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id], onDelete: SetNull)
 }
 
 enum NotificationChannel {
   IN_APP
   PUSH
   EMAIL
+}
+
+enum NotificationEventType {
+  TASK_ASSIGNED
+  DEADLINE_SOON
+  PROJECT_STATUS_CHANGED
+}
+
+model NotificationPreference {
+  id        String   @id @default(cuid())
+  pushEnabled               Boolean @default(false)
+  emailTaskAssigned         Boolean @default(true)
+  emailDeadlineTomorrow     Boolean @default(true)
+  emailProjectStatusChanged Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, tenantId])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String
+  p256dhKey String
+  authKey   String
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId   String
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, endpoint])
 }
 
 // ─────────────────────────────────────────

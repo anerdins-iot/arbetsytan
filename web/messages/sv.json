@@ -21,6 +21,32 @@
     "newComment": {
       "title": "Ny kommentar",
       "body": "Ny kommentar på uppgift: {taskTitle}"
+    },
+    "taskAssigned": {
+      "title": "Ny tilldelad uppgift",
+      "body": "{assignedBy} tilldelade dig uppgiften \"{taskTitle}\" i {projectName}."
+    },
+    "deadlineTomorrow": {
+      "title": "Deadline inom 24 timmar",
+      "body": "Uppgiften \"{taskTitle}\" i {projectName} har deadline {deadline}."
+    },
+    "projectStatusChanged": {
+      "title": "Projektstatus uppdaterad",
+      "body": "Projektet {projectName} ändrades från {previousStatus} till {newStatus}."
+    }
+  },
+  "notificationEmails": {
+    "taskAssigned": {
+      "subject": "Ny tilldelad uppgift i {projectName}",
+      "body": "<p>Du har blivit tilldelad uppgiften <strong>{taskTitle}</strong> av {assignedBy}.</p><p>Projekt: {projectName}</p><p><a href=\"{projectUrl}\">Öppna projektet</a></p>"
+    },
+    "deadlineTomorrow": {
+      "subject": "Deadline imorgon: {taskTitle}",
+      "body": "<p>Påminnelse: Uppgiften <strong>{taskTitle}</strong> i {projectName} har deadline {deadline}.</p><p><a href=\"{projectUrl}\">Öppna projektet</a></p>"
+    },
+    "projectStatusChanged": {
+      "subject": "Projektstatus ändrad: {projectName}",
+      "body": "<p>Projektet <strong>{projectName}</strong> har ändrats från {previousStatus} till {newStatus}.</p><p><a href=\"{projectUrl}\">Öppna projektet</a></p>"
     }
   },
   "dashboard": {
@@ -308,7 +334,28 @@
   },
   "settings": {
     "title": "Inställningar",
-    "description": "Hantera ditt konto och företagsinställningar"
+    "description": "Hantera ditt konto och företagsinställningar",
+    "notifications": {
+      "title": "Notifikationsinställningar",
+      "saving": "Sparar...",
+      "savedAuto": "Sparas automatiskt",
+      "push": {
+        "enabled": "Aktivera push-notifikationer",
+        "description": "Få pushnotiser när du blir tilldelad uppgifter och när deadlines närmar sig."
+      },
+      "email": {
+        "title": "Skicka e-post för",
+        "taskAssigned": "Uppgift tilldelad",
+        "deadlineTomorrow": "Deadline imorgon",
+        "projectStatusChanged": "Projektstatus ändrad"
+      },
+      "errors": {
+        "saveFailed": "Kunde inte spara inställningar.",
+        "pushUnsupported": "Din webbläsare stödjer inte push-notifikationer.",
+        "pushPermissionDenied": "Tillåt push-notiser i webbläsaren för att fortsätta.",
+        "pushSetupFailed": "Kunde inte konfigurera push-notifikationer."
+      }
+    }
   },
   "sidebar": {
     "brand": "ArbetsYtan",

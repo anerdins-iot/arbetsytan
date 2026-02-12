@@ -68,6 +68,8 @@ export const ModelName = {
   Message: 'Message',
   AIMessage: 'AIMessage',
   Notification: 'Notification',
+  NotificationPreference: 'NotificationPreference',
+  PushSubscription: 'PushSubscription',
   Comment: 'Comment',
   ActivityLog: 'ActivityLog',
   TimeEntry: 'TimeEntry',
@@ -311,14 +313,46 @@ export const NotificationScalarFieldEnum = {
   title: 'title',
   body: 'body',
   channel: 'channel',
+  eventType: 'eventType',
   read: 'read',
   sent: 'sent',
   createdAt: 'createdAt',
   userId: 'userId',
-  projectId: 'projectId'
+  projectId: 'projectId',
+  taskId: 'taskId'
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  pushEnabled: 'pushEnabled',
+  emailTaskAssigned: 'emailTaskAssigned',
+  emailDeadlineTomorrow: 'emailDeadlineTomorrow',
+  emailProjectStatusChanged: 'emailProjectStatusChanged',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  tenantId: 'tenantId'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  endpoint: 'endpoint',
+  p256dhKey: 'p256dhKey',
+  authKey: 'authKey',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  tenantId: 'tenantId'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
 
 
 export const CommentScalarFieldEnum = {

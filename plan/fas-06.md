@@ -29,12 +29,12 @@
 **Input:** Block 6.1 klart, Resend konfigurerat (Block 2.4)
 **Output:** Push- och e-postnotifikationer
 
-- [ ] Implementera Web Push API — service worker, subscription, VAPID-nycklar
-- [ ] Skicka push-notis vid viktiga händelser (deadline < 24h, uppgift tilldelad)
-- [ ] Exponera push-subscription-registrering i inställningar
-- [ ] Skicka e-post via Resend vid kritiska händelser
-- [ ] Mallar för: uppgift tilldelad, deadline imorgon, projektstatusändring
-- [ ] Inställningar per användare: vilka händelser triggar e-post
+- [x] Implementera Web Push API — service worker, subscription, VAPID-nycklar
+- [x] Skicka push-notis vid viktiga händelser (deadline < 24h, uppgift tilldelad)
+- [x] Exponera push-subscription-registrering i inställningar
+- [x] Skicka e-post via Resend vid kritiska händelser
+- [x] Mallar för: uppgift tilldelad, deadline imorgon, projektstatusändring
+- [x] Inställningar per användare: vilka händelser triggar e-post
 
 **Verifiering:** Push-notis skickas, e-post skickas, inställningar sparas, `npm run build` OK
 

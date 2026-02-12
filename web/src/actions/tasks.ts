@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
+import { notifyTaskAssigned } from "@/lib/notification-delivery";
 import type { TaskStatus, Priority } from "../../generated/prisma/client";
 
 // ─────────────────────────────────────────
@@ -255,8 +256,8 @@ export async function assignTask(
   projectId: string,
   data: { taskId: string; membershipId: string }
 ): Promise<AssignTaskResult> {
-  const { tenantId, userId } = await requireAuth();
-  await requireProject(tenantId, projectId, userId);
+  const { tenantId, userId, user } = await requireAuth();
+  const project = await requireProject(tenantId, projectId, userId);
 
   const parsed = assignTaskSchema.safeParse(data);
   if (!parsed.success) {
@@ -276,6 +277,13 @@ export async function assignTask(
   // Verify membership belongs to tenant
   const membership = await db.membership.findUnique({
     where: { id: parsed.data.membershipId },
+    include: {
+      user: {
+        select: {
+          id: true,
+        },
+      },
+    },
   });
   if (!membership) {
     return { success: false, error: "MEMBER_NOT_FOUND" };
@@ -311,6 +319,18 @@ export async function assignTask(
       membershipId: parsed.data.membershipId,
     }
   );
+
+  if (membership.user.id !== userId) {
+    await notifyTaskAssigned({
+      tenantId,
+      projectId,
+      taskId: task.id,
+      taskTitle: task.title,
+      assignedToUserId: membership.user.id,
+      assignedByName: user.name ?? user.email ?? "",
+      projectName: project.name,
+    });
+  }
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
