@@ -319,6 +319,11 @@
     "notifications": "Notifikationer",
     "user": "Användare",
     "openMenu": "Öppna meny",
+    "notificationPanel": {
+      "title": "Notifikationer",
+      "empty": "Inga notifikationer ännu",
+      "markAllRead": "Markera alla"
+    },
     "search": {
       "placeholder": "Sök projekt och uppgifter...",
       "minCharacters": "Skriv minst 2 tecken för att söka.",

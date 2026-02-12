@@ -14,7 +14,7 @@ import { Bell, CheckCheck } from "lucide-react";
 import {
   markNotificationRead,
   markAllNotificationsRead,
-} from "@/actions/dashboard";
+} from "@/actions/notifications";
 import { useRouter } from "@/i18n/routing";
 import type { DashboardNotification } from "@/actions/dashboard";
 
@@ -39,7 +39,7 @@ export function NotificationList({ notifications }: NotificationListProps) {
 
   function handleMarkRead(id: string) {
     startTransition(async () => {
-      await markNotificationRead(id);
+      await markNotificationRead({ notificationId: id });
       router.refresh();
     });
   }

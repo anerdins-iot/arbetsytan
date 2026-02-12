@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
-import { createNotification } from "@/lib/notifications";
+import { createNotification } from "@/actions/notifications";
 
 // ─────────────────────────────────────────
 // Types

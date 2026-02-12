@@ -1,21 +1,41 @@
 "use client"
 
-import { useRef, useState } from "react"
-import { useTranslations } from "next-intl"
-import { Bell, Menu, Search, User } from "lucide-react"
+import { useCallback, useRef, useState, useTransition } from "react"
+import { useLocale, useTranslations } from "next-intl"
+import { Bell, CheckCheck, Menu, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Link } from "@/i18n/routing"
 import { globalSearch, type GlobalSearchResult } from "@/actions/search"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  markAllNotificationsRead,
+  markNotificationRead,
+  type NotificationItem,
+} from "@/actions/notifications"
+import { useSocket } from "@/hooks/use-socket"
 
 type TopbarProps = {
   onMobileMenuToggle: () => void
+  initialNotifications: NotificationItem[]
+  initialUnreadCount: number
 }
 
-export function Topbar({ onMobileMenuToggle }: TopbarProps) {
+export function Topbar({
+  onMobileMenuToggle,
+  initialNotifications,
+  initialUnreadCount,
+}: TopbarProps) {
   const t = useTranslations("topbar")
+  const locale = useLocale()
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<GlobalSearchResult>({
     projects: [],
@@ -24,11 +44,30 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
   const [isSearching, setIsSearching] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [hasError, setHasError] = useState(false)
+  const [notifications, setNotifications] = useState(initialNotifications)
+  const [unreadCount, setUnreadCount] = useState(initialUnreadCount)
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false)
+  const [isNotificationsPending, startNotificationsTransition] = useTransition()
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const requestIdRef = useRef(0)
 
   const hasQuery = query.trim().length >= 2
   const hasResults = results.projects.length > 0 || results.tasks.length > 0
+
+  const handleRealtimeNotification = useCallback((incoming: NotificationItem) => {
+    setNotifications((current) => {
+      const withoutDuplicate = current.filter((item) => item.id !== incoming.id)
+      return [incoming, ...withoutDuplicate].slice(0, 20)
+    })
+    if (!incoming.read) {
+      setUnreadCount((current) => current + 1)
+    }
+  }, [])
+
+  useSocket({
+    enabled: true,
+    onNotification: handleRealtimeNotification,
+  })
 
   function clearDebounce() {
     if (debounceRef.current) {
@@ -79,6 +118,40 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
         }
       }
     }, 300)
+  }
+
+  function formatNotificationDate(value: string): string {
+    const date = new Date(value)
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: "short",
+      timeStyle: "short",
+    }).format(date)
+  }
+
+  function handleMarkNotificationRead(notificationId: string) {
+    startNotificationsTransition(async () => {
+      const result = await markNotificationRead({ notificationId })
+      if (!result.success) return
+
+      setNotifications((current) =>
+        current.map((notification) =>
+          notification.id === notificationId ? { ...notification, read: true } : notification
+        )
+      )
+      setUnreadCount((current) => Math.max(0, current - 1))
+    })
+  }
+
+  function handleMarkAllRead() {
+    startNotificationsTransition(async () => {
+      const result = await markAllNotificationsRead()
+      if (!result.success) return
+
+      setNotifications((current) =>
+        current.map((notification) => ({ ...notification, read: true }))
+      )
+      setUnreadCount(0)
+    })
   }
 
   return (
@@ -192,10 +265,81 @@ export function Topbar({ onMobileMenuToggle }: TopbarProps) {
       <div className="ml-auto flex items-center gap-1">
         <ModeToggle />
 
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="size-5" />
-          <span className="sr-only">{t("notifications")}</span>
-        </Button>
+        <DropdownMenu open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="size-5" />
+              {unreadCount > 0 ? (
+                <span className="absolute -right-0.5 -top-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold text-primary-foreground">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              ) : null}
+              <span className="sr-only">{t("notifications")}</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[22rem] p-0">
+            <div className="flex items-center justify-between px-3 py-2">
+              <DropdownMenuLabel className="p-0">
+                {t("notificationPanel.title")}
+              </DropdownMenuLabel>
+              {unreadCount > 0 ? (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 gap-1 px-2"
+                  onClick={handleMarkAllRead}
+                  disabled={isNotificationsPending}
+                >
+                  <CheckCheck className="size-3.5" />
+                  {t("notificationPanel.markAllRead")}
+                </Button>
+              ) : null}
+            </div>
+            <DropdownMenuSeparator />
+            <div className="max-h-96 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <p className="px-3 py-4 text-sm text-muted-foreground">
+                  {t("notificationPanel.empty")}
+                </p>
+              ) : (
+                <ul className="divide-y">
+                  {notifications.map((notification) => (
+                    <li key={notification.id} className="px-3 py-2">
+                      <button
+                        type="button"
+                        className="w-full text-left"
+                        onClick={() => {
+                          if (!notification.read) {
+                            handleMarkNotificationRead(notification.id)
+                          }
+                        }}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <p
+                            className={`text-sm ${
+                              notification.read ? "font-normal" : "font-medium"
+                            }`}
+                          >
+                            {notification.title}
+                          </p>
+                          {!notification.read ? (
+                            <span className="mt-1 size-2 shrink-0 rounded-full bg-primary" />
+                          ) : null}
+                        </div>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {notification.body}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          {formatNotificationDate(notification.createdAt)}
+                        </p>
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <Separator orientation="vertical" className="mx-1 h-6" />
 

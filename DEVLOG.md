@@ -120,3 +120,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** mergeWhereTenantId använde relationPath som literal nyckel (`"task.project": { tenantId }`) istället för nästlat objekt. Comment har ingen direkt project-relation utan task.project.
 **Lösning:** Introducerade nestedTenantFilter() som bygger `task: { project: { tenantId } }` från "task.project". Separerat Comment i egen extension med path "task.project".
 **Lärdom:** Nästlade Prisma-filtren måste vara objekt, inte punktnotation som nyckel. Modeller med indirekt tenant-koppling (Comment → Task → Project) behöver egen relationPath.
+
+### Socket.IO i App Router: build triggar API-route och kan ge EADDRINUSE (Block 6.1)
+**Problem:** `next build` körde `/api/socket` under static generation, vilket försökte starta Socket.IO-servern flera gånger och gav `EADDRINUSE`.
+**Orsak:** API-route för lazy init kördes även i buildfasen med flera workers/processer.
+**Lösning:** I `/api/socket` returnera tidigt när `NEXT_PHASE === "phase-production-build"` och hoppa över serverstart i build.
+**Lärdom:** Runtime-init (ports/listeners) måste vara build-säkert i Next.js App Router; guarda mot buildfas innan side effects.

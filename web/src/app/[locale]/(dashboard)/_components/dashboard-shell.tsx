@@ -5,12 +5,19 @@ import { useTranslations } from "next-intl"
 import { Sidebar } from "./sidebar"
 import { Topbar } from "./topbar"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import type { NotificationItem } from "@/actions/notifications"
 
 type DashboardShellProps = {
   children: React.ReactNode
+  initialNotifications: NotificationItem[]
+  initialUnreadCount: number
 }
 
-export function DashboardShell({ children }: DashboardShellProps) {
+export function DashboardShell({
+  children,
+  initialNotifications,
+  initialUnreadCount,
+}: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const t = useTranslations("sidebar")
@@ -40,7 +47,11 @@ export function DashboardShell({ children }: DashboardShellProps) {
 
       {/* Main content area */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar onMobileMenuToggle={handleMobileMenuToggle} />
+        <Topbar
+          onMobileMenuToggle={handleMobileMenuToggle}
+          initialNotifications={initialNotifications}
+          initialUnreadCount={initialUnreadCount}
+        />
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>

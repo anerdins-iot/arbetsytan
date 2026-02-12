@@ -319,6 +319,11 @@
     "notifications": "Notifications",
     "user": "User",
     "openMenu": "Open menu",
+    "notificationPanel": {
+      "title": "Notifications",
+      "empty": "No notifications yet",
+      "markAllRead": "Mark all"
+    },
     "search": {
       "placeholder": "Search projects and tasks...",
       "minCharacters": "Type at least 2 characters to search.",
