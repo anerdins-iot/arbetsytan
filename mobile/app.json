@@ -31,7 +31,20 @@
     },
     "plugins": [
       "expo-router",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "color": "#2563eb"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Appen behöver åtkomst till dina bilder för att ladda upp filer.",
+          "cameraPermission": "Appen behöver kameraåtkomst för att ta bilder."
+        }
+      ]
     ]
   }
 }

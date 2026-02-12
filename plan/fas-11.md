@@ -22,11 +22,11 @@
 **Input:** Block 11.1 + Fas 3 + Fas 4 + Fas 5 klara
 **Output:** Alla grundskärmar
 
-- [ ] Dashboard med "mina uppgifter"
-- [ ] Projektlista
-- [ ] Projektvy med uppgifter och filer
-- [ ] AI-chatt (personlig + projekt)
-- [ ] Inställningar
+- [x] Dashboard med "mina uppgifter"
+- [x] Projektlista
+- [x] Projektvy med uppgifter och filer
+- [x] AI-chatt (personlig + projekt)
+- [x] Inställningar
 
 **Verifiering:** Alla skärmar renderas, data hämtas från API med JWT, API-endpoints använder `tenantDb(tenantId)` och `requireProject()`, AI-chatt skyddas med JWT + tenantId, navigation fungerar
 

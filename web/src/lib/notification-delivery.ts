@@ -3,6 +3,7 @@ import { prisma, tenantDb } from "@/lib/db";
 import { emitNotificationToUser } from "@/lib/socket";
 import { sendEmail } from "@/lib/email";
 import { sendPushToSubscriptions } from "@/lib/push";
+import { sendExpoPush } from "@/lib/expo-push";
 
 type EventType = "TASK_ASSIGNED" | "DEADLINE_SOON" | "PROJECT_STATUS_CHANGED";
 
@@ -154,6 +155,7 @@ async function sendPushIfEnabled(args: {
   const db = tenantDb(args.tenantId);
   if (!args.enabled) return;
 
+  // Web push (browser subscriptions)
   const subscriptions = await db.pushSubscription.findMany({
     where: { userId: args.userId },
     select: { endpoint: true, p256dhKey: true, authKey: true },
@@ -171,6 +173,24 @@ async function sendPushIfEnabled(args: {
     });
   }
 
+  // Expo push (mobile app)
+  let expoPushSent = false;
+  const user = await prisma.user.findUnique({
+    where: { id: args.userId },
+    select: { pushToken: true },
+  });
+
+  if (user?.pushToken) {
+    expoPushSent = await sendExpoPush(user.pushToken, {
+      title: args.title,
+      body: args.body,
+      data: {
+        projectId: args.projectId,
+        ...(args.taskId ? { taskId: args.taskId } : {}),
+      },
+    });
+  }
+
   await db.notification.create({
     data: {
       user: { connect: { id: args.userId } },
@@ -180,7 +200,7 @@ async function sendPushIfEnabled(args: {
       body: args.body,
       channel: "PUSH",
       eventType: args.eventType,
-      sent: pushResult.sentCount > 0,
+      sent: pushResult.sentCount > 0 || expoPushSent,
     },
   });
 }

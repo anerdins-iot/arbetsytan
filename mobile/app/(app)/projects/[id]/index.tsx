@@ -12,6 +12,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { apiFetch } from "../../../../lib/api";
+import {
+  getSocket,
+  joinProject,
+  SOCKET_EVENTS,
+  type RealtimeTaskEvent,
+  type RealtimeFileEvent,
+  type RealtimeProjectUpdatedEvent,
+} from "../../../../lib/socket";
+import { ImagePickerButton } from "../../../../components/ImagePickerButton";
 
 type Assignee = {
   id: string;
@@ -90,6 +99,41 @@ export default function ProjectDetailScreen() {
     fetchProject();
   }, [fetchProject]);
 
+  // Join project room and listen for real-time updates
+  useEffect(() => {
+    if (!id) return;
+    const socket = getSocket();
+    if (!socket) return;
+
+    joinProject(id);
+
+    const handleTaskChange = (_event: RealtimeTaskEvent) => {
+      fetchProject();
+    };
+    const handleFileChange = (_event: RealtimeFileEvent) => {
+      fetchProject();
+    };
+    const handleProjectUpdate = (_event: RealtimeProjectUpdatedEvent) => {
+      fetchProject();
+    };
+
+    socket.on(SOCKET_EVENTS.taskCreated, handleTaskChange);
+    socket.on(SOCKET_EVENTS.taskUpdated, handleTaskChange);
+    socket.on(SOCKET_EVENTS.taskDeleted, handleTaskChange);
+    socket.on(SOCKET_EVENTS.fileCreated, handleFileChange);
+    socket.on(SOCKET_EVENTS.fileDeleted, handleFileChange);
+    socket.on(SOCKET_EVENTS.projectUpdated, handleProjectUpdate);
+
+    return () => {
+      socket.off(SOCKET_EVENTS.taskCreated, handleTaskChange);
+      socket.off(SOCKET_EVENTS.taskUpdated, handleTaskChange);
+      socket.off(SOCKET_EVENTS.taskDeleted, handleTaskChange);
+      socket.off(SOCKET_EVENTS.fileCreated, handleFileChange);
+      socket.off(SOCKET_EVENTS.fileDeleted, handleFileChange);
+      socket.off(SOCKET_EVENTS.projectUpdated, handleProjectUpdate);
+    };
+  }, [id, fetchProject]);
+
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchProject();
@@ -157,6 +201,12 @@ export default function ProjectDetailScreen() {
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>{section.title}</Text>
+            {section.title.startsWith("Filer") && id && (
+              <ImagePickerButton
+                projectId={id}
+                onUploadComplete={() => fetchProject()}
+              />
+            )}
           </View>
         )}
         renderItem={({ item, section }) => {
@@ -243,6 +293,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     paddingTop: 16,
     paddingBottom: 8,
+    gap: 8,
   },
   sectionTitle: {
     fontSize: 15,

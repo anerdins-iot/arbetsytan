@@ -2,6 +2,7 @@ import { getToken } from "next-auth/jwt";
 import { Server, type Socket } from "socket.io";
 import { z } from "zod";
 import { requireProject } from "@/lib/auth";
+import { verifyAccessToken } from "@/lib/auth-mobile";
 import {
   SOCKET_EVENTS,
   projectRoom,
@@ -59,6 +60,20 @@ async function authenticateSocket(socket: Socket): Promise<SocketAuthData> {
 
   const authToken =
     typeof socket.handshake.auth?.token === "string" ? socket.handshake.auth.token : undefined;
+
+  // Try mobile JWT first (sent via handshake auth.token)
+  if (authToken) {
+    const mobilePayload = verifyAccessToken(authToken);
+    if (mobilePayload) {
+      return {
+        userId: mobilePayload.userId,
+        tenantId: mobilePayload.tenantId,
+        role: mobilePayload.role,
+      };
+    }
+  }
+
+  // Fall back to Auth.js session token (web clients via cookie or authorization header)
   const authorizationHeader =
     typeof socket.handshake.headers.authorization === "string"
       ? socket.handshake.headers.authorization

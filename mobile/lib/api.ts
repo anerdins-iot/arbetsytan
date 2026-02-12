@@ -42,8 +42,10 @@ export async function apiFetch(
 ): Promise<Response> {
   const accessToken = await getAccessToken();
 
+  const isFormData = options.body instanceof FormData;
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    // Don't set Content-Type for FormData — fetch sets it with boundary automatically
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(options.headers as Record<string, string>),
   };
 

@@ -11,6 +11,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { apiFetch } from "../../lib/api";
+import {
+  getSocket,
+  SOCKET_EVENTS,
+  type RealtimeTaskEvent,
+  type RealtimeNotification,
+} from "../../lib/socket";
+import { useAuth } from "../../lib/auth-context";
+import { cacheSet, cacheGet } from "../../lib/offline-cache";
 
 type Task = {
   id: string;
@@ -21,6 +29,8 @@ type Task = {
   projectId: string;
   projectName: string;
 };
+
+const TASKS_CACHE_KEY = "dashboard_tasks";
 
 const statusColors: Record<string, string> = {
   TODO: "#6b7280",
@@ -40,25 +50,70 @@ export default function DashboardScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isOffline, setIsOffline] = useState(false);
   const router = useRouter();
+  const { user } = useAuth();
+  const tenantId = user?.tenantId ?? "";
 
   const fetchTasks = useCallback(async () => {
     try {
       setError(null);
+      setIsOffline(false);
       const res = await apiFetch("/api/mobile/tasks");
       if (!res.ok) throw new Error("Kunde inte h\u00e4mta uppgifter");
       const data = await res.json();
       setTasks(data.tasks);
+
+      // Cache tasks for offline use
+      if (tenantId) {
+        cacheSet(tenantId, TASKS_CACHE_KEY, data.tasks);
+      }
     } catch (err) {
+      // Try to load from cache when offline
+      if (tenantId) {
+        const cached = await cacheGet<Task[]>(tenantId, TASKS_CACHE_KEY);
+        if (cached) {
+          setTasks(cached);
+          setIsOffline(true);
+          setError(null);
+          return;
+        }
+      }
       setError(err instanceof Error ? err.message : "N\u00e5got gick fel");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [tenantId]);
 
   useEffect(() => {
     fetchTasks();
+  }, [fetchTasks]);
+
+  // Listen for real-time task and notification updates
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleTaskChange = (_event: RealtimeTaskEvent) => {
+      fetchTasks();
+    };
+
+    const handleNotification = (_notification: RealtimeNotification) => {
+      fetchTasks();
+    };
+
+    socket.on(SOCKET_EVENTS.taskCreated, handleTaskChange);
+    socket.on(SOCKET_EVENTS.taskUpdated, handleTaskChange);
+    socket.on(SOCKET_EVENTS.taskDeleted, handleTaskChange);
+    socket.on(SOCKET_EVENTS.notificationNew, handleNotification);
+
+    return () => {
+      socket.off(SOCKET_EVENTS.taskCreated, handleTaskChange);
+      socket.off(SOCKET_EVENTS.taskUpdated, handleTaskChange);
+      socket.off(SOCKET_EVENTS.taskDeleted, handleTaskChange);
+      socket.off(SOCKET_EVENTS.notificationNew, handleNotification);
+    };
   }, [fetchTasks]);
 
   const onRefresh = useCallback(() => {
@@ -76,6 +131,11 @@ export default function DashboardScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={["bottom"]}>
+      {isOffline && (
+        <View style={styles.offlineBanner}>
+          <Text style={styles.offlineText}>Offline — visar cachad data</Text>
+        </View>
+      )}
       {error ? (
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
@@ -145,6 +205,17 @@ const styles = StyleSheet.create({
   },
   list: {
     padding: 16,
+  },
+  offlineBanner: {
+    backgroundColor: "#fef3c7",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    alignItems: "center",
+  },
+  offlineText: {
+    fontSize: 13,
+    color: "#92400e",
+    fontWeight: "500",
   },
   card: {
     backgroundColor: "#fff",

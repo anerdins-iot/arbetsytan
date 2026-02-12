@@ -8,6 +8,8 @@ import {
 } from "react";
 import { saveTokens, clearTokens, getAccessToken } from "./token-storage";
 import { loginApi, type LoginResponse } from "./api";
+import { connectSocket, disconnectSocket } from "./socket";
+import { registerForPushNotifications } from "./push-notifications";
 
 type AuthUser = {
   id: string;
@@ -79,6 +81,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           tenantId: payload.tenantId as string,
           role: payload.role as string,
         });
+
+        // Connect socket and register push after session restore
+        connectSocket();
+        registerForPushNotifications();
       } catch {
         await clearTokens();
       } finally {
@@ -92,9 +98,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data: LoginResponse = await loginApi(email, password);
     await saveTokens(data.accessToken, data.refreshToken);
     setUser(data.user);
+    connectSocket();
+    registerForPushNotifications();
   }, []);
 
   const logout = useCallback(async () => {
+    disconnectSocket();
     await clearTokens();
     setUser(null);
   }, []);
