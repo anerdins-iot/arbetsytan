@@ -7,12 +7,12 @@
 **Input:** Fas 2 klar (registrering), `/workspace/docs/stripe.md`
 **Output:** Stripe-integration med trial
 
-- [ ] Konfigurera Stripe med produkter och priser
-- [ ] Skapa webhook-endpoint `web/src/app/api/webhooks/stripe/route.ts`
-- [ ] Hantera events: checkout.session.completed, invoice.paid, customer.subscription.updated/deleted
-- [ ] Vid registrering: skapa Stripe Customer + 14-dagars trial
-- [ ] Spara stripeCustomerId på Tenant
-- [ ] Skapa Subscription-post i DB
+- [x] Konfigurera Stripe med produkter och priser
+- [x] Skapa webhook-endpoint `web/src/app/api/webhooks/stripe/route.ts`
+- [x] Hantera events: checkout.session.completed, invoice.paid, customer.subscription.updated/deleted
+- [x] Vid registrering: skapa Stripe Customer + 14-dagars trial
+- [x] Spara stripeCustomerId på Tenant
+- [x] Skapa Subscription-post i DB
 
 **Verifiering:** Webhook tar emot events, webhook validerar och kopplar events till rätt tenant via `stripeCustomerId` (ingen cross-tenant-läckage), trial skapas vid registrering, Subscription sparas i DB, `npm run build` OK
 

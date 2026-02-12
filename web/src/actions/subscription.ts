@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 
@@ -99,7 +99,7 @@ export async function createCheckoutSession(priceId: string): Promise<{ url: str
 }
 
 export async function createBillingPortalSession(): Promise<{ url: string }> {
-  const { tenantId } = await requireAuth();
+  const { tenantId } = await requireRole(["ADMIN"]);
   const db = tenantDb(tenantId);
 
   const tenant = await db.tenant.findUnique({
@@ -118,4 +118,70 @@ export async function createBillingPortalSession(): Promise<{ url: string }> {
   });
 
   return { url: portalSession.url };
+}
+
+export async function getMemberCount(): Promise<number> {
+  const { tenantId } = await requireAuth();
+  const db = tenantDb(tenantId);
+
+  return db.membership.count();
+}
+
+/**
+ * Check if the tenant has an active subscription (ACTIVE or TRIALING).
+ * Returns true if access should be granted, false if restricted.
+ */
+export async function checkSubscriptionAccess(): Promise<boolean> {
+  const { tenantId } = await requireAuth();
+  const db = tenantDb(tenantId);
+
+  const subscription = await db.subscription.findUnique({
+    where: { tenantId },
+    select: { status: true },
+  });
+
+  if (!subscription) return false;
+  return subscription.status === "ACTIVE" || subscription.status === "TRIALING";
+}
+
+const quantitySchema = z.object({
+  quantity: z.number().int().min(1).max(1000),
+});
+
+export async function updateSubscriptionQuantity(
+  quantity: number
+): Promise<void> {
+  const parsed = quantitySchema.safeParse({ quantity });
+  if (!parsed.success) {
+    throw new Error("INVALID_QUANTITY");
+  }
+
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const subscription = await db.subscription.findUnique({
+    where: { tenantId },
+    select: { stripeSubscriptionId: true, status: true },
+  });
+
+  if (!subscription?.stripeSubscriptionId) {
+    throw new Error("NO_ACTIVE_SUBSCRIPTION");
+  }
+
+  if (subscription.status === "CANCELED") {
+    throw new Error("SUBSCRIPTION_CANCELED");
+  }
+
+  const stripeSubscription = await stripe.subscriptions.retrieve(
+    subscription.stripeSubscriptionId
+  );
+
+  const firstItem = stripeSubscription.items.data[0];
+  if (!firstItem) {
+    throw new Error("NO_SUBSCRIPTION_ITEM");
+  }
+
+  await stripe.subscriptionItems.update(firstItem.id, {
+    quantity: parsed.data.quantity,
+  });
 }

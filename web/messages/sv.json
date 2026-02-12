@@ -489,6 +489,44 @@
       "description": "Hantera din profil, lösenord, språk, notiser och utseende.",
       "cta": "Öppna personliga inställningar"
     },
+    "billingLink": {
+      "title": "Fakturering",
+      "description": "Hantera prenumeration, betalningsmetod och se kostnader.",
+      "cta": "Öppna fakturering"
+    },
+    "billing": {
+      "title": "Fakturering",
+      "description": "Hantera din prenumeration och betalningsinformation.",
+      "currentPlan": "Aktuell plan",
+      "plan": "Plan",
+      "status": "Status",
+      "nextInvoice": "Nästa fakturadatum",
+      "trialEnds": "Testperioden slutar",
+      "canceledAt": "Avslutad",
+      "noSubscription": "Ingen aktiv prenumeration",
+      "noSubscriptionDescription": "Ditt företag har ingen aktiv prenumeration. Kontakta support för att komma igång.",
+      "managePlan": "Hantera prenumeration",
+      "managePlanDescription": "Ändra plan, uppdatera betalningsmetod eller avsluta prenumeration via Stripe.",
+      "openPortal": "Öppna kundportal",
+      "openingPortal": "Öppnar...",
+      "portalError": "Kunde inte öppna kundportalen. Försök igen.",
+      "statuses": {
+        "ACTIVE": "Aktiv",
+        "TRIALING": "Testperiod",
+        "PAST_DUE": "Betalning förfallen",
+        "CANCELED": "Avslutad"
+      },
+      "pastDueWarning": "Din senaste betalning misslyckades. Uppdatera din betalningsmetod för att undvika avbrott i tjänsten.",
+      "canceledWarning": "Din prenumeration är avslutad. Data sparas men åtkomst till funktioner är begränsad.",
+      "teamSize": "Teamstorlek",
+      "teamSizeDescription": "Antal aktiva användare i företaget.",
+      "activeMembers": "{count, plural, =1 {1 användare} other {# användare}}",
+      "costPerUser": "Kostnad per användare",
+      "costPerUserDescription": "Prisuppgifter baserat på antal användare.",
+      "pricePerUser": "{price} kr/användare/månad",
+      "totalMonthlyCost": "Total månadskostnad: {total} kr",
+      "adminOnly": "Endast administratörer kan hantera fakturering."
+    },
     "notifications": {
       "title": "Notifikationsinställningar",
       "saving": "Sparar...",

@@ -489,6 +489,44 @@
       "description": "Manage your profile, password, language, notifications, and appearance.",
       "cta": "Open personal settings"
     },
+    "billingLink": {
+      "title": "Billing",
+      "description": "Manage subscription, payment method and view costs.",
+      "cta": "Open billing"
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Manage your subscription and payment information.",
+      "currentPlan": "Current plan",
+      "plan": "Plan",
+      "status": "Status",
+      "nextInvoice": "Next invoice date",
+      "trialEnds": "Trial ends",
+      "canceledAt": "Canceled",
+      "noSubscription": "No active subscription",
+      "noSubscriptionDescription": "Your company has no active subscription. Contact support to get started.",
+      "managePlan": "Manage subscription",
+      "managePlanDescription": "Change plan, update payment method or cancel subscription via Stripe.",
+      "openPortal": "Open customer portal",
+      "openingPortal": "Opening...",
+      "portalError": "Could not open the customer portal. Please try again.",
+      "statuses": {
+        "ACTIVE": "Active",
+        "TRIALING": "Trial",
+        "PAST_DUE": "Past due",
+        "CANCELED": "Canceled"
+      },
+      "pastDueWarning": "Your last payment failed. Update your payment method to avoid service interruption.",
+      "canceledWarning": "Your subscription has been canceled. Data is preserved but access to features is restricted.",
+      "teamSize": "Team size",
+      "teamSizeDescription": "Number of active users in the company.",
+      "activeMembers": "{count, plural, =1 {1 user} other {# users}}",
+      "costPerUser": "Cost per user",
+      "costPerUserDescription": "Pricing based on number of users.",
+      "pricePerUser": "{price} SEK/user/month",
+      "totalMonthlyCost": "Total monthly cost: {total} SEK",
+      "adminOnly": "Only administrators can manage billing."
+    },
     "notifications": {
       "title": "Notification settings",
       "saving": "Saving...",
