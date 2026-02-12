@@ -111,6 +111,48 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Responsiv design — mobil först
 - Stöd för dark mode
 
+## CRUD-paritet: AI + UI
+
+**KRITISK REGEL:** Alla funktioner som byggs MÅSTE ha fullständig CRUD-åtkomst i BÅDE AI och UI.
+
+| Funktion | UI-åtkomst | AI-åtkomst |
+|----------|-----------|------------|
+| Projekt | Skapa, läs, uppdatera, arkivera | `createProject`, `listProjects`, `updateProject`, `archiveProject` |
+| Uppgifter | Skapa, läs, uppdatera, radera | `createTask`, `listTasks`, `updateTask`, `deleteTask` |
+| Kommentarer | Skapa, läs, uppdatera, radera | `addComment`, `listComments`, `updateComment`, `deleteComment` |
+| Tidrapporter | Skapa, läs, uppdatera, radera | `logTime`, `listTimeEntries`, `updateTimeEntry`, `deleteTimeEntry` |
+| Filer | Ladda upp, läs, radera | `uploadFile`, `listFiles`, `deleteFile` |
+| Anteckningar | Skapa, läs, uppdatera, radera | `createNote`, `listNotes`, `updateNote`, `deleteNote` |
+| Projektmedlemmar | Lägg till, ta bort, lista | `addMember`, `removeMember`, `listMembers` |
+
+### Checklista vid ny funktionalitet
+
+1. **Prisma-modell** — Skapa/uppdatera schema, kör migration
+2. **Server Actions** — CRUD-funktioner i `web/src/actions/`
+3. **UI-komponenter** — Dialoger, formulär, listor i `web/src/components/`
+4. **AI-verktyg** — Motsvarande tools i `web/src/lib/ai/tools/`
+   - Projekt-AI: `project-tools.ts`
+   - Personlig AI: `personal-tools.ts`
+   - Delad logik: `shared-tools.ts`
+5. **Översättningar** — Texter i `messages/sv.json` och `messages/en.json`
+6. **Seed-data** — Testdata i `prisma/seed.ts`
+
+### AI-verktyg som MÅSTE finnas
+
+**Projekt-AI** (arbetar inom ett projekt):
+- Uppgifter: create, list, update, delete, assign, complete
+- Kommentarer: add, list, update, delete
+- Tid: log, list, update, delete
+- Filer: list, search, delete
+- Anteckningar: create, list, update, delete
+- Medlemmar: list, add, remove
+- Rapport: generateProjectReport
+
+**Personlig AI** (användarens alla projekt):
+- Alla ovanstående verktyg med `projectId` som parameter
+- Översikt: listProjects, searchAcrossProjects
+- Personliga anteckningar: create, list, update, delete (utan projektkontext)
+
 ## Förbjudet
 
 - Hårdkodade färger eller spacing — se `/workspace/docs/tailwind.md`
