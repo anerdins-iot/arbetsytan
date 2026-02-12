@@ -76,6 +76,28 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Debug: runtime ENV visibility (Next.js standalone may not load Coolify ENV at runtime)
+  const providerKey = provider ?? "CLAUDE";
+  logger.info("AI chat ENV check", {
+    hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
+    anthropicKeyLength: process.env.ANTHROPIC_API_KEY?.length ?? 0,
+    hasOpenaiKey: !!process.env.OPENAI_API_KEY,
+    openaiKeyLength: process.env.OPENAI_API_KEY?.length ?? 0,
+    relevantEnvKeys: Object.keys(process.env).filter(
+      (k) => k.includes("ANTHROPIC") || k.includes("OPENAI") || k.includes("MISTRAL")
+    ),
+  });
+
+  // Ensure AI provider API key is configured (fail fast with clear error)
+  const envKey = getRequiredEnvKeyForProvider(providerKey);
+  if (!envKey || !process.env[envKey]?.trim()) {
+    logger.warn("AI chat: missing API key for provider", { provider: providerKey, envKey });
+    return NextResponse.json(
+      { error: "AI provider not configured. Check server environment variables." },
+      { status: 503 }
+    );
+  }
+
   // Get or create conversation
   let activeConversationId = conversationId;
   let conversationSummary: string | null = null;
@@ -161,7 +183,6 @@ export async function POST(req: NextRequest) {
   }
 
   // Select AI model
-  const providerKey = provider ?? "CLAUDE";
   const model = getModel(providerKey);
 
   // Build tools and system prompt by conversation type
@@ -216,7 +237,18 @@ export async function POST(req: NextRequest) {
   });
 
   // Convert UI messages to model messages for streamText
-  const modelMessages = await convertToModelMessages(messages);
+  let modelMessages;
+  try {
+    modelMessages = await convertToModelMessages(messages);
+  } catch (convertErr) {
+    logger.error("AI chat: invalid message format", {
+      error: convertErr instanceof Error ? convertErr.message : String(convertErr),
+    });
+    return NextResponse.json(
+      { error: "Invalid message format" },
+      { status: 400 }
+    );
+  }
 
   // Stream the response (with tools for project and personal AI)
   const result = streamText({
@@ -282,6 +314,20 @@ export async function POST(req: NextRequest) {
       { error: err instanceof Error ? err.message : "Internal server error" },
       { status: 500 }
     );
+  }
+}
+
+/** Env var name required for each chat provider. */
+function getRequiredEnvKeyForProvider(provider: ProviderKey): string | null {
+  switch (provider) {
+    case "CLAUDE":
+      return "ANTHROPIC_API_KEY";
+    case "OPENAI":
+      return "OPENAI_API_KEY";
+    case "MISTRAL":
+      return "MISTRAL_API_KEY";
+    default:
+      return null;
   }
 }
 
