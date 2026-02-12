@@ -60,6 +60,19 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 # Copy Prisma generated client — without this the app crashes at startup
 COPY --from=builder /app/generated ./generated
 
+# Copy Prisma CLI, schema, config and migrations for migrate deploy
+# Stored in /app/prisma-deploy to avoid conflicts with standalone node_modules
+COPY --from=builder /app/node_modules/prisma /app/prisma-deploy/node_modules/prisma
+COPY --from=builder /app/node_modules/@prisma /app/prisma-deploy/node_modules/@prisma
+COPY --from=builder /app/node_modules/dotenv /app/prisma-deploy/node_modules/dotenv
+COPY --from=builder /app/prisma /app/prisma-deploy/prisma
+COPY --from=builder /app/prisma.config.ts /app/prisma-deploy/prisma.config.ts
+COPY --from=builder /app/package.json /app/prisma-deploy/package.json
+
+# Entrypoint script: run migrations then start server
+COPY --chown=nextjs:nodejs docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
 USER nextjs
 
 EXPOSE 3000
@@ -72,4 +85,4 @@ ENV HOSTNAME="0.0.0.0"
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 
-CMD ["node", "server.js"]
+CMD ["/app/docker-entrypoint.sh"]
