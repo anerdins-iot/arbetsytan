@@ -7,11 +7,31 @@ async function main() {
   const testPasswordHash = await bcrypt.hash("password123", 12);
   const tenant = await prisma.tenant.upsert({
     where: { id: "seed-tenant-1" },
-    update: {},
+    update: { stripeCustomerId: "cus_seed_test_001" },
     create: {
       id: "seed-tenant-1",
       name: "Anerdins El",
       orgNumber: "556677-8899",
+      stripeCustomerId: "cus_seed_test_001",
+    },
+  });
+
+  const trialEnd = new Date();
+  trialEnd.setDate(trialEnd.getDate() + 14);
+  const periodEnd = new Date();
+  periodEnd.setDate(periodEnd.getDate() + 30);
+
+  await prisma.subscription.upsert({
+    where: { tenantId: tenant.id },
+    update: {},
+    create: {
+      tenantId: tenant.id,
+      stripeSubscriptionId: "sub_seed_test_001",
+      stripePriceId: "price_seed_test_001",
+      status: "TRIALING",
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: periodEnd,
+      trialEndsAt: trialEnd,
     },
   });
 

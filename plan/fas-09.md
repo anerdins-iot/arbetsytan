@@ -20,14 +20,14 @@
 **Input:** Block 9.1 klart
 **Output:** Faktureringssida med prenumerationshantering
 
-- [ ] Bygga faktureringssida i inställningar
-- [ ] Visa aktuell plan, status och nästa fakturadatum
-- [ ] "Uppgradera/Ändra plan"-knapp → Stripe Customer Portal
-- [ ] Hantera misslyckade betalningar (status PAST_DUE)
-- [ ] Vid CANCELED: begränsa åtkomst men behåll data
-- [ ] Räkna antal aktiva memberships per tenant
-- [ ] Uppdatera Stripe-prenumeration vid tillägg/borttagning av användare
-- [ ] Visa kostnad per användare i inställningar
+- [x] Bygga faktureringssida i inställningar
+- [x] Visa aktuell plan, status och nästa fakturadatum
+- [x] "Uppgradera/Ändra plan"-knapp → Stripe Customer Portal
+- [x] Hantera misslyckade betalningar (status PAST_DUE)
+- [x] Vid CANCELED: begränsa åtkomst men behåll data
+- [x] Räkna antal aktiva memberships per tenant
+- [x] Uppdatera Stripe-prenumeration vid tillägg/borttagning av användare
+- [x] Visa kostnad per användare i inställningar
 
 **Verifiering:** Faktureringssida visar korrekt info, Customer Portal öppnas, användare räknas korrekt, `tenantDb(tenantId)` på alla queries, `npm run build` OK
 
@@ -35,13 +35,13 @@
 **Input:** Block 9.1–9.2 klara
 **Output:** Screenshots och verifiering av betalning
 
-- [ ] Starta dev-server med PID-fil
-- [ ] Logga in som admin och navigera till fakturering
-- [ ] Ta screenshot av faktureringssidan (plan, status, nästa faktura)
-- [ ] Klicka på "Uppgradera plan" och verifiera att Stripe portal öppnas
-- [ ] Ta screenshot av kostnad per användare
-- [ ] Verifiera att trial-status visas korrekt för nya konton
-- [ ] Spara alla screenshots i `screenshots/fas-09/`
-- [ ] Stoppa dev-server
+- [x] Starta dev-server med PID-fil
+- [x] Logga in som admin och navigera till fakturering
+- [x] Ta screenshot av faktureringssidan (plan, status, nästa faktura)
+- [x] Klicka på "Uppgradera plan" och verifiera att Stripe portal öppnas
+- [x] Ta screenshot av kostnad per användare
+- [x] Verifiera att trial-status visas korrekt för nya konton
+- [x] Spara alla screenshots i `screenshots/fas-09/`
+- [x] Stoppa dev-server
 
 **Verifiering:** Alla screenshots sparade, Stripe-integration fungerar, inga konsolfel
