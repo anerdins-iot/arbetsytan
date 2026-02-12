@@ -61,7 +61,7 @@ export default function PersonalAIScreen() {
       const errorMsg: ChatMessage = {
         id: `error-${Date.now()}`,
         role: "assistant",
-        content: "Kunde inte skicka meddelande. F\u00f6rs\u00f6k igen.",
+        content: "Kunde inte skicka meddelande. Försök igen.",
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -81,7 +81,7 @@ export default function PersonalAIScreen() {
             <Ionicons name="chatbubble-ellipses-outline" size={48} color="#d1d5db" />
             <Text style={styles.emptyTitle}>Personlig AI-assistent</Text>
             <Text style={styles.emptyText}>
-              St\u00e4ll fr\u00e5gor om ditt arbete
+              Ställ frågor om ditt arbete
             </Text>
           </View>
         ) : (

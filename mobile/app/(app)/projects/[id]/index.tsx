@@ -82,13 +82,13 @@ export default function ProjectDetailScreen() {
     try {
       setError(null);
       const res = await apiFetch(`/api/mobile/projects/${id}`);
-      if (!res.ok) throw new Error("Kunde inte h\u00e4mta projekt");
+      if (!res.ok) throw new Error("Kunde inte hämta projekt");
       const data = await res.json();
       setProject(data.project);
       setTasks(data.tasks);
       setFiles(data.files);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "N\u00e5got gick fel");
+      setError(err instanceof Error ? err.message : "Något gick fel");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -154,7 +154,7 @@ export default function ProjectDetailScreen() {
         <Stack.Screen options={{ title: "Fel" }} />
         <Text style={styles.errorText}>{error ?? "Projekt hittades inte"}</Text>
         <Pressable style={styles.retryButton} onPress={fetchProject}>
-          <Text style={styles.retryText}>F\u00f6rs\u00f6k igen</Text>
+          <Text style={styles.retryText}>Försök igen</Text>
         </Pressable>
       </SafeAreaView>
     );

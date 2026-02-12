@@ -28,7 +28,7 @@ export default function SettingsScreen() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Utseende</Text>
         <View style={styles.row}>
-          <Text style={styles.label}>M\u00f6rkt l\u00e4ge</Text>
+          <Text style={styles.label}>Mörkt läge</Text>
           <Switch
             value={darkMode}
             onValueChange={setDarkMode}

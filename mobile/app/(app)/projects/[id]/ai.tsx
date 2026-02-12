@@ -63,7 +63,7 @@ export default function ProjectAIScreen() {
       const errorMsg: ChatMessage = {
         id: `error-${Date.now()}`,
         role: "assistant",
-        content: "Kunde inte skicka meddelande. F\u00f6rs\u00f6k igen.",
+        content: "Kunde inte skicka meddelande. Försök igen.",
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
@@ -82,7 +82,7 @@ export default function ProjectAIScreen() {
           <View style={styles.emptyState}>
             <Ionicons name="chatbubble-ellipses-outline" size={48} color="#d1d5db" />
             <Text style={styles.emptyText}>
-              St\u00e4ll en fr\u00e5ga om projektet
+              Ställ en fråga om projektet
             </Text>
           </View>
         ) : (

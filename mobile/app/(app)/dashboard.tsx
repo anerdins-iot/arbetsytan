@@ -39,10 +39,10 @@ const statusColors: Record<string, string> = {
 };
 
 const priorityLabels: Record<string, string> = {
-  LOW: "L\u00e5g",
+  LOW: "Låg",
   MEDIUM: "Medium",
-  HIGH: "H\u00f6g",
-  URGENT: "Br\u00e5dskande",
+  HIGH: "Hög",
+  URGENT: "Brådskande",
 };
 
 export default function DashboardScreen() {
@@ -60,7 +60,7 @@ export default function DashboardScreen() {
       setError(null);
       setIsOffline(false);
       const res = await apiFetch("/api/mobile/tasks");
-      if (!res.ok) throw new Error("Kunde inte h\u00e4mta uppgifter");
+      if (!res.ok) throw new Error("Kunde inte hämta uppgifter");
       const data = await res.json();
       setTasks(data.tasks);
 
@@ -79,7 +79,7 @@ export default function DashboardScreen() {
           return;
         }
       }
-      setError(err instanceof Error ? err.message : "N\u00e5got gick fel");
+      setError(err instanceof Error ? err.message : "Något gick fel");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -140,7 +140,7 @@ export default function DashboardScreen() {
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.retryButton} onPress={fetchTasks}>
-            <Text style={styles.retryText}>F\u00f6rs\u00f6k igen</Text>
+            <Text style={styles.retryText}>Försök igen</Text>
           </Pressable>
         </View>
       ) : tasks.length === 0 ? (

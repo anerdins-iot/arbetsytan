@@ -46,11 +46,11 @@ export default function ProjectsScreen() {
     try {
       setError(null);
       const res = await apiFetch("/api/mobile/projects");
-      if (!res.ok) throw new Error("Kunde inte h\u00e4mta projekt");
+      if (!res.ok) throw new Error("Kunde inte hämta projekt");
       const data = await res.json();
       setProjects(data.projects);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "N\u00e5got gick fel");
+      setError(err instanceof Error ? err.message : "Något gick fel");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -80,7 +80,7 @@ export default function ProjectsScreen() {
         <View style={styles.errorBox}>
           <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.retryButton} onPress={fetchProjects}>
-            <Text style={styles.retryText}>F\u00f6rs\u00f6k igen</Text>
+            <Text style={styles.retryText}>Försök igen</Text>
           </Pressable>
         </View>
       ) : projects.length === 0 ? (
