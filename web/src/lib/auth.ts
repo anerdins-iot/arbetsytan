@@ -15,6 +15,7 @@ import {
   parsePermissionOverrides,
   resolvePermissions,
 } from "./permissions";
+import { logger } from "./logger";
 
 export type SessionUser = {
   id: string;
@@ -223,6 +224,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.role = (user as { role?: string }).role;
       }
       return token;
+    },
+  },
+  events: {
+    signIn: async ({ user }) => {
+      logger.info("User signed in", { userId: user.id, email: user.email });
+    },
+    signOut: async () => {
+      logger.info("User signed out");
+    },
+    createUser: async ({ user }) => {
+      logger.info("User created", { userId: user.id, email: user.email });
     },
   },
 });

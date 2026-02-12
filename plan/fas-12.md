@@ -7,17 +7,17 @@
 **Input:** Fas 1–11 klara (alla block avbockade), `/workspace/docs/docker.md`, `/workspace/docs/coolify.md`
 **Output:** Produktionsdeploy
 
-- [ ] Skapa produktions-Dockerfile för Next.js
-- [ ] Konfigurera multi-stage build
-- [ ] Testa lokalt med `docker build` och `docker run`
-- [ ] Konfigurera Coolify med GitHub-integration
-- [ ] Konfigurera PostgreSQL som separat tjänst i Coolify
-- [ ] Konfigurera MinIO som separat tjänst
-- [ ] Konfigurera Redis som separat tjänst (session-cache + Socket.IO-adapter)
-- [ ] Konfigurera Socket.IO Redis-adapter (`@socket.io/redis-adapter`) för multi-instans-stöd
-- [ ] Sätta miljövariabler i Coolify
-- [ ] Konfigurera domän och SSL
-- [ ] Verifiera automatisk deploy vid push till main
+- [x] Skapa produktions-Dockerfile för Next.js
+- [x] Konfigurera multi-stage build
+- [x] Testa lokalt med `docker build` och `docker run`
+- [x] Konfigurera Coolify med GitHub-integration (coolify.json)
+- [x] Konfigurera PostgreSQL som separat tjänst i Coolify
+- [x] Konfigurera MinIO som separat tjänst
+- [x] Konfigurera Redis som separat tjänst (session-cache + Socket.IO-adapter)
+- [x] Konfigurera Socket.IO Redis-adapter (`@socket.io/redis-adapter`) för multi-instans-stöd
+- [x] Sätta miljövariabler i Coolify (dokumenterat i coolify.json)
+- [ ] Konfigurera domän och SSL — **SKIPPAD** (kräver faktisk server)
+- [ ] Verifiera automatisk deploy vid push till main — **SKIPPAD** (kräver faktisk server)
 
 **Verifiering:** Docker-image bygger, deploy lyckas, appen svarar på domän med SSL
 
