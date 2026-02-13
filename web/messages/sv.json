@@ -1026,6 +1026,7 @@
     "errorAlreadyMember": "Denna person är redan medlem i teamet.",
     "errorAlreadyInvited": "Det finns redan en väntande inbjudan till denna e-postadress.",
     "errorEmailSendFailed": "Kunde inte skicka e-post. Försök igen senare.",
+    "errorForbidden": "Du har inte behörighet att skicka inbjudningar.",
     "errorGeneric": "Något gick fel. Försök igen.",
     "emailSubject": "Du har blivit inbjuden till {tenantName} — ArbetsYtan",
     "emailBody": "<p>Du har blivit inbjuden till <strong>{tenantName}</strong> på ArbetsYtan.</p><p><a href=\"{inviteUrl}\">Klicka här för att acceptera inbjudan</a></p><p>Länken gäller i 7 dagar.</p>",

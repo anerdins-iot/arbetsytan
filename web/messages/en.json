@@ -1026,6 +1026,7 @@
     "errorAlreadyMember": "This person is already a member of the team.",
     "errorAlreadyInvited": "There is already a pending invitation for this email address.",
     "errorEmailSendFailed": "Could not send email. Please try again later.",
+    "errorForbidden": "You do not have permission to send invitations.",
     "errorGeneric": "Something went wrong. Please try again.",
     "emailSubject": "You have been invited to {tenantName} — ArbetsYtan",
     "emailBody": "<p>You have been invited to <strong>{tenantName}</strong> on ArbetsYtan.</p><p><a href=\"{inviteUrl}\">Click here to accept the invitation</a></p><p>This link is valid for 7 days.</p>",

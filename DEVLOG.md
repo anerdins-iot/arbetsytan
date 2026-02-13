@@ -205,3 +205,9 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Lösning:** Agenter kör `npm start` istället (produktionsserver). Nya skript skapade: `/workspace/web/scripts/start-server.sh` (dödar befintlig process på porten automatiskt, startar server, väntar tills redo) och `stop-server.sh`. Build körs alltid innan tester så cachen finns.
 **Lärdom:** Agenter behöver inte hot reload — produktionsservern är snabbare och stabilare.
 **TODO:** `/workspace/docs/docker.md` avsnitt "4. Dev-server i agent- och testmiljö" behöver uppdateras till att peka på de nya skripten istället för manuella PID-kommandon. Docs-mappen är read-only så detta måste göras externt.
+
+### MinIO filuppladdning: net::ERR_CERT_AUTHORITY_INVALID (testrapport 2026-02-13)
+**Problem:** Filuppladdning från webbläsaren misslyckas med SSL/certifikatfel (net::ERR_CERT_AUT). Presigned URLs pekar på MinIO-endpoint som webbläsaren inte litar på.
+**Orsak:** S3_PUBLIC_ENDPOINT eller S3_ENDPOINT används för presigned URL. Om det är HTTPS med självsignerat cert eller fel cert accepterar webbläsaren inte anropet.
+**Lösning:** I dev: använd HTTP (t.ex. S3_ENDPOINT=http://localhost:9000) och sätt inte S3_PUBLIC_ENDPOINT. I produktion: MinIO bakom proxy med giltigt TLS-certifikat, eller S3_PUBLIC_ENDPOINT med publik HTTPS-URL som webbläsaren litar på. Kommentar i .env.local.example tillagd.
+**Lärdom:** Presigned URLs anropas från webbläsaren; certifikatet måste vara betrott. Lokal dev = HTTP, produktion = giltig HTTPS.

@@ -44,6 +44,10 @@ export function InviteForm() {
         setError(t("errorAlreadyInvited"));
       } else if (result.error === "EMAIL_SEND_FAILED") {
         setError(t("errorEmailSendFailed"));
+      } else if (result.error === "FORBIDDEN") {
+        setError(t("errorForbidden"));
+      } else if (result.error === "INVITATION_CREATE_FAILED") {
+        setError(t("errorGeneric"));
       } else {
         setError(t("errorGeneric"));
       }

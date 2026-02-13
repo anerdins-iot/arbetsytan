@@ -69,7 +69,18 @@ const INVITATION_EXPIRY_MS = 7 * 24 * 60 * 60 * 1000;
 export async function inviteUser(
   formData: FormData
 ): Promise<InvitationActionResult> {
-  const { userId, tenantId } = await requirePermission("canInviteUsers");
+  let userId: string;
+  let tenantId: string;
+  try {
+    const auth = await requirePermission("canInviteUsers");
+    userId = auth.userId;
+    tenantId = auth.tenantId;
+  } catch (err) {
+    if (err instanceof Error && err.message === "FORBIDDEN") {
+      return { success: false, error: "FORBIDDEN" };
+    }
+    throw err;
+  }
 
   const raw = {
     email: formData.get("email"),
@@ -124,48 +135,63 @@ export async function inviteUser(
   const token = crypto.randomBytes(32).toString("hex");
   const expiresAt = new Date(Date.now() + INVITATION_EXPIRY_MS);
 
-  await db.invitation.create({
-    data: {
-      email: normalizedEmail,
-      role: role as Role,
-      token,
-      expiresAt,
-      invitedById: userId,
-      tenant: { connect: { id: tenantId } },
-    },
-  });
+  try {
+    await db.invitation.create({
+      data: {
+        email: normalizedEmail,
+        role: role as Role,
+        token,
+        expiresAt,
+        invitedById: userId,
+        tenantId,
+      },
+    });
+  } catch (err) {
+    console.error("[invitations] inviteUser create failed:", err);
+    return {
+      success: false,
+      error: "INVITATION_CREATE_FAILED",
+    };
+  }
 
   // Send invitation email
-  const baseUrl = getAppBaseUrl();
+  try {
+    const baseUrl = getAppBaseUrl();
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+    });
+    const inviter = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { name: true, email: true },
+    });
 
-  const tenant = await prisma.tenant.findUnique({
-    where: { id: tenantId },
-  });
-  const inviter = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { name: true, email: true },
-  });
+    const inviteUrl = `${baseUrl}/sv/invite/${token}`;
+    const renderedTemplate = await renderEmailTemplate({
+      tenantId,
+      name: "invitation",
+      locale: "sv",
+      variables: {
+        tenantName: tenant?.name ?? "",
+        inviteUrl,
+        inviterName: inviter?.name ?? inviter?.email ?? "En kollega",
+        appName: "ArbetsYtan",
+      },
+    });
 
-  const inviteUrl = `${baseUrl}/sv/invite/${token}`;
-  const renderedTemplate = await renderEmailTemplate({
-    tenantId,
-    name: "invitation",
-    locale: "sv",
-    variables: {
-      tenantName: tenant?.name ?? "",
-      inviteUrl,
-      inviterName: inviter?.name ?? inviter?.email ?? "En kollega",
-      appName: "ArbetsYtan",
-    },
-  });
+    const sendResult = await sendEmail({
+      to: normalizedEmail,
+      subject: renderedTemplate.subject,
+      html: renderedTemplate.html,
+    });
 
-  const sendResult = await sendEmail({
-    to: normalizedEmail,
-    subject: renderedTemplate.subject,
-    html: renderedTemplate.html,
-  });
-
-  if (!sendResult.success) {
+    if (!sendResult.success) {
+      return {
+        success: false,
+        error: "EMAIL_SEND_FAILED",
+      };
+    }
+  } catch (err) {
+    console.error("[invitations] inviteUser email send failed:", err);
     return {
       success: false,
       error: "EMAIL_SEND_FAILED",
