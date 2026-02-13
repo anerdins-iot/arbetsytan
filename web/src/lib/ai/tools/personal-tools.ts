@@ -2,8 +2,9 @@
  * Personal AI tools. All use tenantDb(tenantId). Conversation owned by userId.
  * Personlig AI har direkt tillgång till användarens projekt via projectId-parameter.
  */
-import { tool } from "ai";
+import { tool, generateText } from "ai";
 import { z } from "zod";
+import { openai } from "@ai-sdk/openai";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject } from "@/lib/auth";
 import type { TenantScopedClient } from "@/lib/db";
@@ -12,6 +13,7 @@ import {
   updateTaskShared,
   searchDocumentsAcrossProjects,
   parseScheduleFromText,
+  generatePdfDocument,
 } from "@/lib/ai/tools/shared-tools";
 import { getOcrTextForFile } from "@/lib/ai/ocr";
 import {
@@ -664,6 +666,146 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           .map(([weekStart, mins]) => ({ weekStart, totalMinutes: mins, hours: Math.floor(mins / 60), remainingMinutes: mins % 60 }))
           .sort((a, b) => b.weekStart.localeCompare(a.weekStart))
           .slice(0, 12),
+      };
+    },
+  });
+
+  // ─── Projektrapport ────────────────────────────────────
+
+  const generateProjectReport = tool({
+    description:
+      "Generera en projektrapport (PDF) för ett projekt. Hämtar uppgifter, tidsrapporter och medlemmar, skapar en AI-sammanfattning och sparar som PDF i projektets fillista. Kräver OPENAI_API_KEY.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      reportType: z.enum(["weekly", "monthly", "custom"]).describe("Typ av rapport: weekly (senaste 7 dagar), monthly (senaste 30 dagar), custom (använd dateRange)"),
+      dateRange: z.object({
+        start: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("Startdatum YYYY-MM-DD"),
+        end: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("Slutdatum YYYY-MM-DD"),
+      }).optional().describe("Valfritt datumintervall för reportType custom"),
+    })),
+    execute: async ({ projectId: pid, reportType, dateRange }) => {
+      const project = await requireProject(tenantId, pid, userId);
+
+      if (!process.env.OPENAI_API_KEY) {
+        return { error: "Rapportgenerering kräver OPENAI_API_KEY. Kontakta administratören." };
+      }
+
+      const now = new Date();
+      const toDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      let fromDate: Date;
+      if (reportType === "weekly") {
+        fromDate = new Date(toDate);
+        fromDate.setDate(fromDate.getDate() - 7);
+      } else if (reportType === "monthly") {
+        fromDate = new Date(toDate);
+        fromDate.setDate(fromDate.getDate() - 30);
+      } else {
+        if (dateRange?.start && dateRange?.end) {
+          fromDate = new Date(dateRange.start);
+          toDate.setTime(new Date(dateRange.end).getTime());
+        } else {
+          fromDate = new Date(toDate);
+          fromDate.setDate(fromDate.getDate() - 30);
+        }
+      }
+
+      const tasks = await db.task.findMany({
+        where: { projectId: pid },
+        select: { id: true, title: true, status: true, priority: true, deadline: true },
+        orderBy: [{ status: "asc" }, { deadline: "asc" }],
+      });
+
+      const timeEntries = await db.timeEntry.findMany({
+        where: {
+          projectId: pid,
+          date: { gte: fromDate, lte: toDate },
+        },
+        include: { task: { select: { id: true, title: true } } },
+        orderBy: { date: "desc" },
+      });
+
+      const userIds = [...new Set(timeEntries.map((e) => e.userId))];
+      const { prisma } = await import("@/lib/db");
+      const users = await prisma.user.findMany({
+        where: { id: { in: userIds } },
+        select: { id: true, name: true, email: true },
+      });
+      const userMap = new Map(users.map((u) => [u.id, u]));
+
+      const members = await db.projectMember.findMany({
+        where: { projectId: pid },
+        include: {
+          membership: {
+            include: { user: { select: { name: true, email: true } } },
+          },
+        },
+      });
+
+      const timeSummary = timeEntries.reduce((sum, e) => sum + e.minutes, 0);
+      const dataForAi = {
+        projectName: project.name,
+        reportType,
+        period: { from: fromDate.toISOString().split("T")[0], to: toDate.toISOString().split("T")[0] },
+        tasks: tasks.map((t) => ({
+          title: t.title,
+          status: t.status,
+          priority: t.priority,
+          deadline: t.deadline?.toISOString().split("T")[0] ?? null,
+        })),
+        timeEntriesSummary: {
+          totalMinutes: timeSummary,
+          totalHours: Math.floor(timeSummary / 60),
+          entries: timeEntries.slice(0, 50).map((e) => {
+            const u = userMap.get(e.userId);
+            return {
+              date: e.date.toISOString().split("T")[0],
+              task: e.task?.title ?? null,
+              minutes: e.minutes,
+              user: u ? (u.name ?? u.email) : "Okänd",
+            };
+          }),
+        },
+        members: members.map((m) => ({
+          name: m.membership.user.name ?? m.membership.user.email,
+          email: m.membership.user.email,
+        })),
+      };
+
+      const prompt = `Skriv en kort projektrapport på svenska baserat på följande data. Använd stycken med rubriker som "Översikt", "Uppgifter", "Tidsrapportering", "Medlemmar". Var koncis och professionell. Data (JSON):\n${JSON.stringify(dataForAi, null, 2)}`;
+
+      let summary: string;
+      try {
+        const result = await generateText({
+          model: openai("gpt-4o"),
+          prompt,
+          maxOutputTokens: 2000,
+        });
+        summary = result.text;
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return { error: `Kunde inte generera rapporttext: ${msg}` };
+      }
+
+      const periodLabel = `${fromDate.toISOString().split("T")[0]}-${toDate.toISOString().split("T")[0]}`;
+      const fileName = `projektrapport-${reportType}-${periodLabel}.pdf`;
+      const pdfResult = await generatePdfDocument({
+        db,
+        tenantId,
+        projectId: pid,
+        userId,
+        fileName,
+        title: `Projektrapport: ${project.name} (${reportType})`,
+        content: summary,
+      });
+
+      if ("error" in pdfResult) {
+        return { error: pdfResult.error };
+      }
+
+      return {
+        fileId: pdfResult.fileId,
+        name: pdfResult.name,
+        message: `Rapporten "${pdfResult.name}" har sparats i projektets fillista.`,
       };
     },
   });
@@ -1692,6 +1834,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     updateTimeEntry,
     deleteTimeEntry,
     getProjectTimeSummary,
+    generateProjectReport,
     // Filer
     getProjectFiles,
     getPersonalFiles,
