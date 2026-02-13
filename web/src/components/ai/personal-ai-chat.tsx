@@ -14,6 +14,7 @@ import {
   Image as ImageIcon,
   Loader2,
   FolderOpen,
+  PanelRightClose,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -88,9 +89,11 @@ type PersonalAiChatProps = {
   onOpenChange: (open: boolean) => void;
   /** Projekt-ID från URL (synkas automatiskt) */
   initialProjectId?: string | null;
+  /** Renderingsläge: sheet (overlay) eller docked (fast sidebar) */
+  mode?: "sheet" | "docked";
 };
 
-export function PersonalAiChat({ open, onOpenChange, initialProjectId }: PersonalAiChatProps) {
+export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet" }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
@@ -454,6 +457,382 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId }: Persona
     return <FileText className="size-4 shrink-0" />;
   };
 
+  // Header content shared by both modes
+  const headerContent = (
+    <div className="flex items-center justify-between border-b border-border px-4 py-3">
+      <div className="flex items-center gap-2 font-semibold">
+        <MessageCircle className="size-5 text-muted-foreground" />
+        {t("title")}
+      </div>
+      {mode === "docked" && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-7 text-muted-foreground hover:text-foreground"
+          onClick={() => onOpenChange(false)}
+        >
+          <PanelRightClose className="size-4" />
+        </Button>
+      )}
+    </div>
+  );
+
+  // Chat body content shared by both modes
+  const chatBody = (
+    <div
+      className={cn(
+        "flex flex-1 flex-col overflow-hidden",
+        isDragOver && "ring-2 ring-primary ring-inset bg-primary/5"
+      )}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      {/* Projekt-väljare och historik-bar */}
+      <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
+        <div className="flex items-center gap-2">
+          <ProjectSelector
+            projects={projectList}
+            currentProjectId={activeProjectId}
+            onSelect={setActiveProjectId}
+            disabled={isLoading}
+          />
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={startNewConversation}
+            className="text-muted-foreground"
+          >
+            {t("newConversation")}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            aria-label={t("history")}
+            onClick={() => setHistoryOpen((o) => !o)}
+          >
+            <History className="size-4" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Konversationshistorik-lista */}
+      {historyOpen && (
+        <div className="border-b border-border bg-muted/30 px-4 py-3">
+          {loadingHistory ? (
+            <p className="text-sm text-muted-foreground">{t("loading")}</p>
+          ) : conversations.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {t("noConversations")}
+            </p>
+          ) : (
+            <div className="flex max-h-40 flex-col gap-1 overflow-y-auto">
+              {conversations.map((c) => (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => loadConversation(c.id)}
+                  className={cn(
+                    "flex flex-col items-start rounded-md border border-transparent px-3 py-2 text-left text-sm transition-colors hover:bg-muted hover:border-border",
+                    conversationId === c.id && "bg-muted border-border"
+                  )}
+                >
+                  <span className="line-clamp-1 font-medium text-foreground">
+                    {c.title || t("newConversation")}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {formatConversationDate(c.updatedAt)} ·{" "}
+                    {t("messageCount", { count: c.messageCount })}
+                  </span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Drag-and-drop overlay */}
+      {isDragOver && (
+        <div className="flex items-center justify-center border-2 border-dashed border-primary bg-primary/5 px-4 py-6">
+          <p className="text-sm font-medium text-primary">
+            {t("dropFiles")}
+          </p>
+        </div>
+      )}
+
+      {/* Meddelandelista */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Briefing */}
+        {briefingData && messages.length === 0 && (
+          <DailyBriefing data={briefingData} />
+        )}
+
+        {/* Project context */}
+        {projectContext && messages.length === 0 && !isLoadingContext && (
+          <ProjectContextCard context={projectContext} />
+        )}
+
+        {messages.length === 0 && !error && !briefingData && !isLoadingBriefing && !projectContext && !isLoadingContext && (
+          <div className="flex h-full flex-col items-center justify-center p-4 text-center text-muted-foreground">
+            <MessageCircle className="mb-2 size-10 opacity-50" />
+            <p className="text-sm">{t("placeholder")}</p>
+          </div>
+        )}
+        <div className="space-y-4 p-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={cn(
+                "flex flex-col gap-1",
+                message.role === "user" ? "items-end" : "items-start"
+              )}
+            >
+              {/* Rendera message parts */}
+              {(message.parts ?? []).map((part, i) => {
+                // Text content
+                if (part.type === "text") {
+                  return (
+                    <div
+                      key={i}
+                      className={cn(
+                        "max-w-[85%] rounded-lg px-3 py-2 text-sm",
+                        message.role === "user"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground"
+                      )}
+                    >
+                      <MarkdownMessage content={part.text} />
+                    </div>
+                  );
+                }
+
+                // Tool invocations with email preview
+                // AI SDK v6 uses "tool-{toolName}" as part.type, not "tool-invocation"
+                const isToolPart = part.type.startsWith("tool-") && part.type !== "tool-invocation";
+                if (isToolPart && (part as { state?: string }).state === "output-available") {
+                  const result = (part as { output?: Record<string, unknown> }).output;
+                  if (result?.__emailPreview) {
+                    const emailData = result as unknown as EmailPreviewData & {
+                      __emailPreview: true;
+                      memberIds?: string[];
+                      attachments?: EmailAttachment[];
+                    };
+
+                    // Convert EmailAttachment to EmailAttachmentInput for server action
+                    const attachmentInputs: EmailAttachmentInput[] = (emailData.attachments ?? []).map((a) => ({
+                      fileId: a.fileId,
+                      fileName: a.fileName,
+                      source: a.source,
+                      projectId: a.projectId,
+                    }));
+
+                    const handleSend = async () => {
+                      if (emailData.type === "external") {
+                        const formData = new FormData();
+                        formData.set("recipients", emailData.recipients.join(","));
+                        formData.set("subject", emailData.subject);
+                        formData.set("body", emailData.body);
+                        if (emailData.replyTo) formData.set("replyTo", emailData.replyTo);
+                        return sendExternalEmail(formData, attachmentInputs);
+                      } else {
+                        // Team email
+                        return sendToTeamMembers(
+                          emailData.memberIds ?? [],
+                          emailData.subject,
+                          emailData.body,
+                          attachmentInputs
+                        );
+                      }
+                    };
+
+                    return (
+                      <EmailPreviewCard
+                        key={i}
+                        data={{
+                          type: emailData.type,
+                          recipients: emailData.recipients,
+                          subject: emailData.subject,
+                          body: emailData.body,
+                          replyTo: emailData.replyTo,
+                          attachments: emailData.attachments,
+                        }}
+                        onSend={handleSend}
+                      />
+                    );
+                  }
+                }
+
+                return null;
+              })}
+            </div>
+          ))}
+        </div>
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Uppladdade filer */}
+      {uploadedFiles.length > 0 && (
+        <div className="border-t border-border px-3 py-2">
+          <div className="flex flex-wrap gap-2">
+            {uploadedFiles.map((file) => (
+              <div
+                key={file.id}
+                className={cn(
+                  "flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs",
+                  file.status === "error"
+                    ? "border-destructive/50 bg-destructive/10 text-destructive"
+                    : file.status === "done"
+                      ? "border-border bg-muted text-foreground"
+                      : "border-border bg-muted/50 text-muted-foreground"
+                )}
+              >
+                {file.status === "uploading" || file.status === "analyzing" ? (
+                  <Loader2 className="size-3.5 animate-spin shrink-0" />
+                ) : (
+                  getFileIcon(file.type)
+                )}
+                <span className="max-w-[120px] truncate">{file.name}</span>
+                {file.status === "uploading" && (
+                  <span className="text-muted-foreground">{t("uploading")}</span>
+                )}
+                {file.status === "analyzing" && (
+                  <span className="text-muted-foreground">{t("analyzing")}</span>
+                )}
+                {file.error && (
+                  <span className="text-destructive">{file.error}</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => removeUploadedFile(file.id)}
+                  className="ml-auto rounded p-0.5 hover:bg-muted-foreground/20"
+                >
+                  <X className="size-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Felmeddelande */}
+      {error && (
+        <div className="border-t border-border bg-destructive/10 px-4 py-2 text-sm text-destructive">
+          {t("error")}
+        </div>
+      )}
+
+      {/* Aktiv projektindikator */}
+      {activeProjectId && (
+        <div className="flex items-center gap-1.5 border-t border-border bg-accent/50 px-4 py-1.5">
+          <FolderOpen className="size-3.5 text-accent-foreground/70" />
+          <span className="text-xs font-medium text-accent-foreground/70">
+            {projectList.find((p) => p.id === activeProjectId)?.name}
+          </span>
+        </div>
+      )}
+
+      {/* Inmatningsfält */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex items-end gap-2 border-t border-border p-3"
+      >
+        {/* Gem-ikon för filuppladdning */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.xlsx"
+          multiple
+          onChange={(e) => {
+            if (e.target.files && e.target.files.length > 0) {
+              handleFileSelect(e.target.files);
+              e.target.value = "";
+            }
+          }}
+        />
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="shrink-0 text-muted-foreground hover:text-foreground"
+          onClick={() => fileInputRef.current?.click()}
+          aria-label={t("attachFile")}
+          disabled={isLoading}
+        >
+          <Paperclip className="size-4" />
+        </Button>
+
+        {/* Voice mode controls */}
+        <VoiceModeToggle
+          onVoiceInput={handleVoiceInput}
+          voiceModeEnabled={voiceModeEnabled}
+          onVoiceModeToggle={setVoiceModeEnabled}
+          disabled={isLoading}
+          ttsProvider={ttsProvider}
+          onTtsProviderChange={setTtsProvider}
+          speakRef={speakRef}
+          stopRef={stopSpeakingRef}
+          isSpeakingRef={isSpeakingRef}
+          onConversationModeChange={setIsConversationMode}
+          triggerConversationRecording={triggerConversationRecording}
+        />
+
+        <Textarea
+          value={inputValue}
+          onChange={handleInputChange}
+          placeholder={t("placeholder")}
+          disabled={isLoading}
+          rows={1}
+          className="min-h-10 min-w-0 flex-1 resize-none"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
+        />
+        {isLoading ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="shrink-0"
+            onClick={() => stop()}
+            aria-label={t("loading")}
+          >
+            <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          </Button>
+        ) : (
+          <Button
+            type="submit"
+            size="icon"
+            className="shrink-0"
+            disabled={!inputValue.trim()}
+            aria-label={t("send")}
+          >
+            <Send className="size-4" />
+          </Button>
+        )}
+      </form>
+    </div>
+  );
+
+  // Docked mode: render as a static sidebar panel
+  if (mode === "docked") {
+    return (
+      <div className="flex h-full w-96 shrink-0 flex-col border-l border-border bg-card">
+        {headerContent}
+        {chatBody}
+      </div>
+    );
+  }
+
+  // Sheet mode: render as overlay (default)
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
@@ -466,347 +845,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId }: Persona
             {t("title")}
           </SheetTitle>
         </SheetHeader>
-
-        <div
-          className={cn(
-            "flex flex-1 flex-col overflow-hidden",
-            isDragOver && "ring-2 ring-primary ring-inset bg-primary/5"
-          )}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          {/* Projekt-väljare och historik-bar */}
-          <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
-            <div className="flex items-center gap-2">
-              <ProjectSelector
-                projects={projectList}
-                currentProjectId={activeProjectId}
-                onSelect={setActiveProjectId}
-                disabled={isLoading}
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={startNewConversation}
-                className="text-muted-foreground"
-              >
-                {t("newConversation")}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label={t("history")}
-                onClick={() => setHistoryOpen((o) => !o)}
-              >
-                <History className="size-4" />
-              </Button>
-            </div>
-          </div>
-
-          {/* Konversationshistorik-lista */}
-          {historyOpen && (
-            <div className="border-b border-border bg-muted/30 px-4 py-3">
-              {loadingHistory ? (
-                <p className="text-sm text-muted-foreground">{t("loading")}</p>
-              ) : conversations.length === 0 ? (
-                <p className="text-sm text-muted-foreground">
-                  {t("noConversations")}
-                </p>
-              ) : (
-                <div className="flex max-h-40 flex-col gap-1 overflow-y-auto">
-                  {conversations.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      onClick={() => loadConversation(c.id)}
-                      className={cn(
-                        "flex flex-col items-start rounded-md border border-transparent px-3 py-2 text-left text-sm transition-colors hover:bg-muted hover:border-border",
-                        conversationId === c.id && "bg-muted border-border"
-                      )}
-                    >
-                      <span className="line-clamp-1 font-medium text-foreground">
-                        {c.title || t("newConversation")}
-                      </span>
-                      <span className="text-xs text-muted-foreground">
-                        {formatConversationDate(c.updatedAt)} ·{" "}
-                        {t("messageCount", { count: c.messageCount })}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Drag-and-drop overlay */}
-          {isDragOver && (
-            <div className="flex items-center justify-center border-2 border-dashed border-primary bg-primary/5 px-4 py-6">
-              <p className="text-sm font-medium text-primary">
-                {t("dropFiles")}
-              </p>
-            </div>
-          )}
-
-          {/* Meddelandelista */}
-          <div className="flex-1 overflow-y-auto">
-            {/* Briefing */}
-            {briefingData && messages.length === 0 && (
-              <DailyBriefing data={briefingData} />
-            )}
-
-            {/* Project context */}
-            {projectContext && messages.length === 0 && !isLoadingContext && (
-              <ProjectContextCard context={projectContext} />
-            )}
-
-            {messages.length === 0 && !error && !briefingData && !isLoadingBriefing && !projectContext && !isLoadingContext && (
-              <div className="flex h-full flex-col items-center justify-center p-4 text-center text-muted-foreground">
-                <MessageCircle className="mb-2 size-10 opacity-50" />
-                <p className="text-sm">{t("placeholder")}</p>
-              </div>
-            )}
-            <div className="space-y-4 p-4">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "flex flex-col gap-1",
-                    message.role === "user" ? "items-end" : "items-start"
-                  )}
-                >
-                  {/* Rendera message parts */}
-                  {(message.parts ?? []).map((part, i) => {
-                    // Text content
-                    if (part.type === "text") {
-                      return (
-                        <div
-                          key={i}
-                          className={cn(
-                            "max-w-[85%] rounded-lg px-3 py-2 text-sm",
-                            message.role === "user"
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted text-foreground"
-                          )}
-                        >
-                          <MarkdownMessage content={part.text} />
-                        </div>
-                      );
-                    }
-
-                    // Tool invocations with email preview
-                    // AI SDK v6 uses "tool-{toolName}" as part.type, not "tool-invocation"
-                    const isToolPart = part.type.startsWith("tool-") && part.type !== "tool-invocation";
-                    if (isToolPart && (part as { state?: string }).state === "output-available") {
-                      const result = (part as { output?: Record<string, unknown> }).output;
-                      if (result?.__emailPreview) {
-                        const emailData = result as unknown as EmailPreviewData & {
-                          __emailPreview: true;
-                          memberIds?: string[];
-                          attachments?: EmailAttachment[];
-                        };
-
-                        // Convert EmailAttachment to EmailAttachmentInput for server action
-                        const attachmentInputs: EmailAttachmentInput[] = (emailData.attachments ?? []).map((a) => ({
-                          fileId: a.fileId,
-                          fileName: a.fileName,
-                          source: a.source,
-                          projectId: a.projectId,
-                        }));
-
-                        const handleSend = async () => {
-                          if (emailData.type === "external") {
-                            const formData = new FormData();
-                            formData.set("recipients", emailData.recipients.join(","));
-                            formData.set("subject", emailData.subject);
-                            formData.set("body", emailData.body);
-                            if (emailData.replyTo) formData.set("replyTo", emailData.replyTo);
-                            return sendExternalEmail(formData, attachmentInputs);
-                          } else {
-                            // Team email
-                            return sendToTeamMembers(
-                              emailData.memberIds ?? [],
-                              emailData.subject,
-                              emailData.body,
-                              attachmentInputs
-                            );
-                          }
-                        };
-
-                        return (
-                          <EmailPreviewCard
-                            key={i}
-                            data={{
-                              type: emailData.type,
-                              recipients: emailData.recipients,
-                              subject: emailData.subject,
-                              body: emailData.body,
-                              replyTo: emailData.replyTo,
-                              attachments: emailData.attachments,
-                            }}
-                            onSend={handleSend}
-                          />
-                        );
-                      }
-                    }
-
-                    return null;
-                  })}
-                </div>
-              ))}
-            </div>
-            <div ref={messagesEndRef} />
-          </div>
-
-          {/* Uppladdade filer */}
-          {uploadedFiles.length > 0 && (
-            <div className="border-t border-border px-3 py-2">
-              <div className="flex flex-wrap gap-2">
-                {uploadedFiles.map((file) => (
-                  <div
-                    key={file.id}
-                    className={cn(
-                      "flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs",
-                      file.status === "error"
-                        ? "border-destructive/50 bg-destructive/10 text-destructive"
-                        : file.status === "done"
-                          ? "border-border bg-muted text-foreground"
-                          : "border-border bg-muted/50 text-muted-foreground"
-                    )}
-                  >
-                    {file.status === "uploading" || file.status === "analyzing" ? (
-                      <Loader2 className="size-3.5 animate-spin shrink-0" />
-                    ) : (
-                      getFileIcon(file.type)
-                    )}
-                    <span className="max-w-[120px] truncate">{file.name}</span>
-                    {file.status === "uploading" && (
-                      <span className="text-muted-foreground">{t("uploading")}</span>
-                    )}
-                    {file.status === "analyzing" && (
-                      <span className="text-muted-foreground">{t("analyzing")}</span>
-                    )}
-                    {file.error && (
-                      <span className="text-destructive">{file.error}</span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeUploadedFile(file.id)}
-                      className="ml-auto rounded p-0.5 hover:bg-muted-foreground/20"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Felmeddelande */}
-          {error && (
-            <div className="border-t border-border bg-destructive/10 px-4 py-2 text-sm text-destructive">
-              {t("error")}
-            </div>
-          )}
-
-          {/* Aktiv projektindikator */}
-          {activeProjectId && (
-            <div className="flex items-center gap-1.5 border-t border-border bg-accent/50 px-4 py-1.5">
-              <FolderOpen className="size-3.5 text-accent-foreground/70" />
-              <span className="text-xs font-medium text-accent-foreground/70">
-                {projectList.find((p) => p.id === activeProjectId)?.name}
-              </span>
-            </div>
-          )}
-
-          {/* Inmatningsfält */}
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-end gap-2 border-t border-border p-3"
-          >
-            {/* Gem-ikon för filuppladdning */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.xlsx"
-              multiple
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  handleFileSelect(e.target.files);
-                  e.target.value = "";
-                }
-              }}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="shrink-0 text-muted-foreground hover:text-foreground"
-              onClick={() => fileInputRef.current?.click()}
-              aria-label={t("attachFile")}
-              disabled={isLoading}
-            >
-              <Paperclip className="size-4" />
-            </Button>
-
-            {/* Voice mode controls */}
-            <VoiceModeToggle
-              onVoiceInput={handleVoiceInput}
-              voiceModeEnabled={voiceModeEnabled}
-              onVoiceModeToggle={setVoiceModeEnabled}
-              disabled={isLoading}
-              ttsProvider={ttsProvider}
-              onTtsProviderChange={setTtsProvider}
-              speakRef={speakRef}
-              stopRef={stopSpeakingRef}
-              isSpeakingRef={isSpeakingRef}
-              onConversationModeChange={setIsConversationMode}
-              triggerConversationRecording={triggerConversationRecording}
-            />
-
-            <Textarea
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder={t("placeholder")}
-              disabled={isLoading}
-              rows={1}
-              className="min-h-10 min-w-0 flex-1 resize-none"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-            />
-            {isLoading ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                className="shrink-0"
-                onClick={() => stop()}
-                aria-label={t("loading")}
-              >
-                <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              </Button>
-            ) : (
-              <Button
-                type="submit"
-                size="icon"
-                className="shrink-0"
-                disabled={!inputValue.trim()}
-                aria-label={t("send")}
-              >
-                <Send className="size-4" />
-              </Button>
-            )}
-          </form>
-        </div>
+        {chatBody}
       </SheetContent>
     </Sheet>
   );

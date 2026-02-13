@@ -1,13 +1,16 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { useTranslations } from "next-intl"
 import { usePathname } from "next/navigation"
 import { Sidebar } from "./sidebar"
 import { Topbar } from "./topbar"
 import { PersonalAiChat } from "@/components/ai/personal-ai-chat"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import type { NotificationItem } from "@/actions/notifications"
+
+const AI_CHAT_STORAGE_KEY = "ay-ai-chat-open"
 
 type DashboardShellProps = {
   children: React.ReactNode
@@ -24,8 +27,27 @@ export function DashboardShell({
 }: DashboardShellProps) {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  // Kontrollera AI-chattpanelens öppet/stängt-tillstånd från topbar
-  const [aiChatOpen, setAiChatOpen] = useState(false)
+
+  // AI chat state with localStorage persistence
+  const [aiChatOpen, setAiChatOpen] = useState(() => {
+    if (typeof window === "undefined") return false
+    try {
+      return localStorage.getItem(AI_CHAT_STORAGE_KEY) === "true"
+    } catch {
+      return false
+    }
+  })
+
+  // Persist AI chat open state to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(AI_CHAT_STORAGE_KEY, String(aiChatOpen))
+    } catch {
+      // Ignore storage errors
+    }
+  }, [aiChatOpen])
+
+  const isDesktop = useMediaQuery("(min-width: 1280px)")
   const t = useTranslations("sidebar")
   const pathname = usePathname()
 
@@ -41,6 +63,10 @@ export function DashboardShell({
 
   const handleMobileMenuToggle = useCallback(() => {
     setMobileOpen((prev) => !prev)
+  }, [])
+
+  const handleAiChatOpenChange = useCallback((open: boolean) => {
+    setAiChatOpen(open)
   }, [])
 
   return (
@@ -72,8 +98,22 @@ export function DashboardShell({
         </main>
       </div>
 
-      {/* Personlig AI-chatt (styrs från topbar-ikonen) */}
-      <PersonalAiChat open={aiChatOpen} onOpenChange={setAiChatOpen} initialProjectId={urlProjectId} />
+      {/* Personlig AI-chatt: dockad på xl+, sheet på mindre skärmar */}
+      {isDesktop && aiChatOpen ? (
+        <PersonalAiChat
+          open={aiChatOpen}
+          onOpenChange={handleAiChatOpenChange}
+          initialProjectId={urlProjectId}
+          mode="docked"
+        />
+      ) : (
+        <PersonalAiChat
+          open={!isDesktop && aiChatOpen}
+          onOpenChange={handleAiChatOpenChange}
+          initialProjectId={urlProjectId}
+          mode="sheet"
+        />
+      )}
     </div>
   )
 }
