@@ -82,11 +82,11 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
         className="relative flex h-[220px] cursor-pointer flex-col transition-colors hover:bg-accent/50"
         onClick={() => openModal("view")}
       >
-        <CardHeader className="flex-shrink-0 pb-2">
+        <CardHeader className="flex-shrink-0 pb-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               {note.title && (
-                <h3 className="mb-1 truncate font-semibold text-foreground">{note.title}</h3>
+                <h3 className="mb-0.5 truncate font-semibold text-foreground">{note.title}</h3>
               )}
               <div className="flex flex-wrap items-center gap-1.5">
                 {note.category && (
@@ -138,7 +138,7 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
             </DropdownMenu>
           </div>
         </CardHeader>
-        <CardContent className="min-h-0 flex-1 overflow-hidden pb-2">
+        <CardContent className="min-h-0 flex-1 overflow-hidden pt-1 pb-2">
           <NoteCardMarkdown content={note.content} />
         </CardContent>
         <CardFooter className="flex-shrink-0 pt-0 text-xs text-muted-foreground">
