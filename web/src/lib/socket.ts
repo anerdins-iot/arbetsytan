@@ -14,6 +14,7 @@ import {
   type RealtimeNotification,
   type RealtimeProjectUpdatedEvent,
   type RealtimeTaskEvent,
+  type RealtimeTimeEntryEvent,
 } from "@/lib/socket-events";
 
 type SocketAuthData = {
@@ -222,6 +223,30 @@ export function emitTaskUpdatedToProject(projectId: string, payload: RealtimeTas
 export function emitTaskDeletedToProject(projectId: string, payload: RealtimeTaskEvent): void {
   const io = getSocketServer();
   io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.taskDeleted, payload);
+}
+
+export function emitTimeEntryCreatedToProject(
+  projectId: string,
+  payload: RealtimeTimeEntryEvent
+): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.timeEntryCreated, payload);
+}
+
+export function emitTimeEntryUpdatedToProject(
+  projectId: string,
+  payload: RealtimeTimeEntryEvent
+): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.timeEntryUpdated, payload);
+}
+
+export function emitTimeEntryDeletedToProject(
+  projectId: string,
+  payload: RealtimeTimeEntryEvent
+): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.timeEntryDeleted, payload);
 }
 
 export function emitFileCreatedToProject(projectId: string, payload: RealtimeFileEvent): void {

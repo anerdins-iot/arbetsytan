@@ -8,6 +8,7 @@ import {
   type RealtimeNotification,
   type RealtimeProjectUpdatedEvent,
   type RealtimeTaskEvent,
+  type RealtimeTimeEntryEvent,
 } from "@/lib/socket-events";
 
 type SocketStatus = "connecting" | "connected" | "disconnected";
@@ -18,6 +19,9 @@ type UseSocketOptions = {
   onTaskCreated?: (event: RealtimeTaskEvent) => void;
   onTaskUpdated?: (event: RealtimeTaskEvent) => void;
   onTaskDeleted?: (event: RealtimeTaskEvent) => void;
+  onTimeEntryCreated?: (event: RealtimeTimeEntryEvent) => void;
+  onTimeEntryUpdated?: (event: RealtimeTimeEntryEvent) => void;
+  onTimeEntryDeleted?: (event: RealtimeTimeEntryEvent) => void;
   onFileCreated?: (event: RealtimeFileEvent) => void;
   onFileDeleted?: (event: RealtimeFileEvent) => void;
   onProjectUpdated?: (event: RealtimeProjectUpdatedEvent) => void;
@@ -48,6 +52,9 @@ export function useSocket({
   onTaskCreated,
   onTaskUpdated,
   onTaskDeleted,
+  onTimeEntryCreated,
+  onTimeEntryUpdated,
+  onTimeEntryDeleted,
   onFileCreated,
   onFileDeleted,
   onProjectUpdated,
@@ -92,6 +99,15 @@ export function useSocket({
     const handleTaskDeleted = (payload: RealtimeTaskEvent) => {
       onTaskDeleted?.(payload);
     };
+    const handleTimeEntryCreated = (payload: RealtimeTimeEntryEvent) => {
+      onTimeEntryCreated?.(payload);
+    };
+    const handleTimeEntryUpdated = (payload: RealtimeTimeEntryEvent) => {
+      onTimeEntryUpdated?.(payload);
+    };
+    const handleTimeEntryDeleted = (payload: RealtimeTimeEntryEvent) => {
+      onTimeEntryDeleted?.(payload);
+    };
     const handleFileCreated = (payload: RealtimeFileEvent) => {
       onFileCreated?.(payload);
     };
@@ -109,6 +125,9 @@ export function useSocket({
     connection.on(SOCKET_EVENTS.taskCreated, handleTaskCreated);
     connection.on(SOCKET_EVENTS.taskUpdated, handleTaskUpdated);
     connection.on(SOCKET_EVENTS.taskDeleted, handleTaskDeleted);
+    connection.on(SOCKET_EVENTS.timeEntryCreated, handleTimeEntryCreated);
+    connection.on(SOCKET_EVENTS.timeEntryUpdated, handleTimeEntryUpdated);
+    connection.on(SOCKET_EVENTS.timeEntryDeleted, handleTimeEntryDeleted);
     connection.on(SOCKET_EVENTS.fileCreated, handleFileCreated);
     connection.on(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
     connection.on(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
@@ -123,6 +142,9 @@ export function useSocket({
       connection.off(SOCKET_EVENTS.taskCreated, handleTaskCreated);
       connection.off(SOCKET_EVENTS.taskUpdated, handleTaskUpdated);
       connection.off(SOCKET_EVENTS.taskDeleted, handleTaskDeleted);
+      connection.off(SOCKET_EVENTS.timeEntryCreated, handleTimeEntryCreated);
+      connection.off(SOCKET_EVENTS.timeEntryUpdated, handleTimeEntryUpdated);
+      connection.off(SOCKET_EVENTS.timeEntryDeleted, handleTimeEntryDeleted);
       connection.off(SOCKET_EVENTS.fileCreated, handleFileCreated);
       connection.off(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
       connection.off(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
@@ -140,6 +162,9 @@ export function useSocket({
     onTaskCreated,
     onTaskDeleted,
     onTaskUpdated,
+    onTimeEntryCreated,
+    onTimeEntryUpdated,
+    onTimeEntryDeleted,
   ]);
 
   const joinProjectRoom = useMemo(

@@ -10,6 +10,7 @@ import { logActivity } from "@/lib/activity-log";
 import {
   emitTaskCreatedToProject,
   emitTaskUpdatedToProject,
+  emitTimeEntryCreatedToProject,
 } from "@/lib/socket";
 import { sendEmail } from "@/lib/email";
 import { sendPushToSubscriptions } from "@/lib/push";
@@ -366,6 +367,12 @@ const executeCreateTimeEntry: ToolExecutor = async (params, ctx) => {
       ...(taskId ? { task: { connect: { id: taskId } } } : {}),
       userId: ctx.userId,
     },
+  });
+
+  emitTimeEntryCreatedToProject(projectId, {
+    projectId,
+    timeEntryId: timeEntry.id,
+    actorUserId: ctx.userId,
   });
 
   await logActivity(ctx.tenantId, projectId, ctx.userId, "created", "timeEntry", timeEntry.id, {

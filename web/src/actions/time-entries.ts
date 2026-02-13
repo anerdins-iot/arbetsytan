@@ -4,6 +4,11 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import {
+  emitTimeEntryCreatedToProject,
+  emitTimeEntryDeletedToProject,
+  emitTimeEntryUpdatedToProject,
+} from "@/lib/socket";
 
 const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -172,6 +177,12 @@ export async function createTimeEntry(input: {
     },
   });
 
+  emitTimeEntryCreatedToProject(task.project.id, {
+    projectId: task.project.id,
+    timeEntryId: created.id,
+    actorUserId: userId,
+  });
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
   revalidatePath("/[locale]/projects/[projectId]/time", "page");
   revalidatePath("/[locale]/time", "page");
@@ -279,6 +290,12 @@ export async function updateTimeEntry(
     },
   });
 
+  emitTimeEntryUpdatedToProject(updated.projectId, {
+    projectId: updated.projectId,
+    timeEntryId: updated.id,
+    actorUserId: userId,
+  });
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
   revalidatePath("/[locale]/projects/[projectId]/time", "page");
   revalidatePath("/[locale]/time", "page");
@@ -303,6 +320,13 @@ export async function deleteTimeEntry(id: string): Promise<ActionResult> {
   }
 
   await requireProject(tenantId, existing.projectId, userId);
+
+  emitTimeEntryDeletedToProject(existing.projectId, {
+    projectId: existing.projectId,
+    timeEntryId: existing.id,
+    actorUserId: userId,
+  });
+
   await db.timeEntry.delete({ where: { id: existing.id } });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");

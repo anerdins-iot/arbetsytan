@@ -4,6 +4,9 @@ export const SOCKET_EVENTS = {
   taskCreated: "task:created",
   taskUpdated: "task:updated",
   taskDeleted: "task:deleted",
+  timeEntryCreated: "timeEntry:created",
+  timeEntryUpdated: "timeEntry:updated",
+  timeEntryDeleted: "timeEntry:deleted",
   fileCreated: "file:created",
   fileDeleted: "file:deleted",
   projectUpdated: "project:updated",
@@ -21,6 +24,12 @@ export type RealtimeNotification = {
 export type RealtimeTaskEvent = {
   projectId: string;
   taskId: string;
+  actorUserId: string;
+};
+
+export type RealtimeTimeEntryEvent = {
+  projectId: string;
+  timeEntryId: string;
   actorUserId: string;
 };
 
