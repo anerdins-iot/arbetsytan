@@ -2095,6 +2095,63 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  // ─── Notifikationsinställningar (egna) ─────────────────
+
+  const getNotificationSettings = tool({
+    description:
+      "Hämta användarens notifikationsinställningar: push-notiser och e-post för tilldelade uppgifter, deadline imorgon och projektstatusändringar.",
+    inputSchema: toolInputSchema(z.object({
+      _: z.string().optional().describe("Ignored"),
+    })),
+    execute: async () => {
+      const result = await getNotificationPreferences();
+      if (!result.success || !result.preferences) {
+        return { error: "Kunde inte hämta notifikationsinställningar." };
+      }
+      return {
+        pushEnabled: result.preferences.pushEnabled,
+        emailTaskAssigned: result.preferences.emailTaskAssigned,
+        emailDeadlineTomorrow: result.preferences.emailDeadlineTomorrow,
+        emailProjectStatusChanged: result.preferences.emailProjectStatusChanged,
+      };
+    },
+  });
+
+  const updateNotificationSettings = tool({
+    description:
+      "Uppdatera användarens notifikationsinställningar. Slå på eller av push-notiser och e-post för tilldelade uppgifter, deadline imorgon och projektstatusändringar. Ange endast de fält som ska ändras; övriga behålls.",
+    inputSchema: toolInputSchema(z.object({
+      pushEnabled: z.boolean().optional().describe("Push-notiser på enheten (på/av)"),
+      emailTaskAssigned: z.boolean().optional().describe("E-post när användaren tilldelas en uppgift"),
+      emailDeadlineTomorrow: z.boolean().optional().describe("E-post när deadline är imorgon"),
+      emailProjectStatusChanged: z.boolean().optional().describe("E-post vid projektstatusändring"),
+    })),
+    execute: async (input) => {
+      const current = await getNotificationPreferences();
+      if (!current.success || !current.preferences) {
+        return { error: "Kunde inte hämta nuvarande inställningar." };
+      }
+      const merged = {
+        pushEnabled: input.pushEnabled ?? current.preferences.pushEnabled,
+        emailTaskAssigned: input.emailTaskAssigned ?? current.preferences.emailTaskAssigned,
+        emailDeadlineTomorrow: input.emailDeadlineTomorrow ?? current.preferences.emailDeadlineTomorrow,
+        emailProjectStatusChanged: input.emailProjectStatusChanged ?? current.preferences.emailProjectStatusChanged,
+      };
+      const result = await updateNotificationPreferences(merged);
+      if (!result.success) {
+        return { error: result.error ?? "Kunde inte uppdatera notifikationsinställningar." };
+      }
+      return {
+        success: true,
+        message: "Notifikationsinställningar har uppdaterats.",
+        pushEnabled: merged.pushEnabled,
+        emailTaskAssigned: merged.emailTaskAssigned,
+        emailDeadlineTomorrow: merged.emailDeadlineTomorrow,
+        emailProjectStatusChanged: merged.emailProjectStatusChanged,
+      };
+    },
+  });
+
   const getProjectMembersForEmailTool = tool({
     description:
       "Hämta medlemmar i ett SPECIFIKT projekt som kan ta emot e-post. Kräver projectId. Returnerar userId, namn, e-post och roll för varje projektmedlem.",
@@ -2253,5 +2310,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     getTeamMembersForEmailTool,
     getProjectsForEmailTool,
     getProjectMembersForEmailTool,
+    // Notifikationsinställningar
+    getNotificationSettings,
+    updateNotificationSettings,
   };
 }
