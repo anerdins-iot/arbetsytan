@@ -14,7 +14,8 @@ export type ToolCategory =
   | "notification"
   | "project"
   | "report"
-  | "automation";
+  | "automation"
+  | "email";
 
 export interface ToolParameter {
   name: string;
@@ -325,13 +326,15 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: "notify",
     category: "notification",
-    description: "Send a notification to the user (reminder, alert).",
+    description: "Send a notification to the user via in-app, email, and push (based on user preferences).",
     availableIn: ["project", "personal"],
     requiresProjectId: false,
     schedulable: true,
     parameters: [
       { name: "message", type: "string", required: true, description: "Notification message" },
       { name: "title", type: "string", required: false, description: "Notification title" },
+      { name: "sendEmail", type: "boolean", required: false, description: "Also send via email (default: true if user has email enabled)" },
+      { name: "sendPush", type: "boolean", required: false, description: "Also send push notification (default: true if user has push enabled)" },
     ],
   },
   // ─── Automation ───────────────────────────────────────
@@ -371,6 +374,77 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
     schedulable: false,
     parameters: [
       { name: "automationId", type: "string", required: true, description: "Automation ID" },
+    ],
+  },
+  // ─── Email ─────────────────────────────────────────────
+  {
+    name: "prepareEmailToExternalRecipients",
+    category: "email",
+    description: "Prepare an email to external recipients. Returns a preview for user confirmation before sending.",
+    availableIn: ["personal"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [
+      { name: "recipients", type: "string", required: true, description: "Comma-separated list of email addresses" },
+      { name: "subject", type: "string", required: true, description: "Email subject" },
+      { name: "body", type: "string", required: true, description: "Email body text" },
+      { name: "replyTo", type: "string", required: false, description: "Optional reply-to address" },
+    ],
+  },
+  {
+    name: "prepareEmailToTeamMembers",
+    category: "email",
+    description: "Prepare an email to team members. Returns a preview for user confirmation before sending.",
+    availableIn: ["personal"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [
+      { name: "memberIds", type: "string", required: true, description: "Comma-separated list of member IDs" },
+      { name: "subject", type: "string", required: true, description: "Email subject" },
+      { name: "body", type: "string", required: true, description: "Email body text" },
+    ],
+  },
+  {
+    name: "getTeamMembersForEmailTool",
+    category: "email",
+    description: "Get list of all company team members that can receive emails.",
+    availableIn: ["personal"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [],
+  },
+  {
+    name: "getProjectMembersForEmailTool",
+    category: "email",
+    description: "Get list of members in a specific project that can receive emails.",
+    availableIn: ["personal", "project"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID to get members from" },
+    ],
+  },
+  {
+    name: "getProjectsForEmailTool",
+    category: "email",
+    description: "Get list of projects with member counts that the user has access to.",
+    availableIn: ["personal"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [],
+  },
+  {
+    name: "prepareEmailToProjectMembers",
+    category: "email",
+    description: "Prepare an email to project members. Returns a preview for user confirmation before sending.",
+    availableIn: ["personal", "project"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID" },
+      { name: "memberIds", type: "string", required: false, description: "Comma-separated member IDs (optional - all project members if omitted)" },
+      { name: "subject", type: "string", required: true, description: "Email subject" },
+      { name: "body", type: "string", required: true, description: "Email body text" },
     ],
   },
 ];

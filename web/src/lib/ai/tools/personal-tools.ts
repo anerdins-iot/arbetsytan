@@ -25,6 +25,19 @@ import {
   ensureTenantBucket,
 } from "@/lib/minio";
 import { randomUUID } from "node:crypto";
+import {
+  EMAIL_TEMPLATE_LOCALES,
+  EMAIL_TEMPLATE_NAMES,
+  EMAIL_TEMPLATE_VARIABLES,
+  applyTemplateVariables,
+  getDefaultEmailTemplate,
+} from "@/lib/email-templates";
+import {
+  sendExternalEmail as sendExternalEmailAction,
+  sendToTeamMembers as sendToTeamMembersAction,
+  getTeamMembersForEmail,
+  getProjectsWithMembersForEmail,
+} from "@/actions/send-email";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -1324,6 +1337,411 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  const ensureAdmin = async () => {
+    const adminMembership = await db.membership.findFirst({
+      where: { userId, role: "ADMIN" },
+      select: { id: true },
+    });
+    if (!adminMembership) {
+      return { error: "Endast admins kan hantera e-postmallar." };
+    }
+    return null;
+  };
+
+  // ─── Email templates (Admin only) ─────────────────────
+
+  const listEmailTemplates = tool({
+    description:
+      "Lista alla e-postmallar (sv/en) med ämnesrad, variabler och om mallen är anpassad eller standard.",
+    inputSchema: toolInputSchema(
+      z.object({
+        _: z.string().optional().describe("Ignored"),
+      })
+    ),
+    execute: async () => {
+      const adminError = await ensureAdmin();
+      if (adminError) return adminError;
+
+      const customRows = await db.emailTemplate.findMany({
+        select: {
+          name: true,
+          locale: true,
+          subject: true,
+          htmlTemplate: true,
+        },
+      });
+
+      const customMap = new Map<string, { subject: string }>();
+      for (const row of customRows as Array<{
+        name: string;
+        locale: string;
+        subject: string;
+      }>) {
+        customMap.set(`${row.name}:${row.locale}`, { subject: row.subject });
+      }
+
+      const templates: Array<{
+        name: string;
+        locale: string;
+        subject: string;
+        variables: string[];
+        isCustom: boolean;
+      }> = [];
+
+      for (const name of EMAIL_TEMPLATE_NAMES) {
+        for (const locale of EMAIL_TEMPLATE_LOCALES) {
+          const custom = customMap.get(`${name}:${locale}`);
+          const fallback = getDefaultEmailTemplate(name, locale);
+          if (!fallback) continue;
+          templates.push({
+            name,
+            locale,
+            subject: custom?.subject ?? fallback.subject,
+            variables: EMAIL_TEMPLATE_VARIABLES[name],
+            isCustom: Boolean(custom),
+          });
+        }
+      }
+
+      return { templates };
+    },
+  });
+
+  const getEmailTemplate = tool({
+    description:
+      "Hämta en specifik e-postmall med subject, HTML och tillgängliga variabler. Kräver name och locale (sv/en).",
+    inputSchema: toolInputSchema(
+      z.object({
+        name: z.enum(EMAIL_TEMPLATE_NAMES),
+        locale: z.enum(EMAIL_TEMPLATE_LOCALES),
+      })
+    ),
+    execute: async ({ name, locale }) => {
+      const adminError = await ensureAdmin();
+      if (adminError) return adminError;
+
+      const custom = await db.emailTemplate.findFirst({
+        where: { name, locale },
+        select: { subject: true, htmlTemplate: true },
+      });
+      const fallback = getDefaultEmailTemplate(name, locale);
+
+      if (!fallback) {
+        return { error: `Template ${name} (${locale}) not found` };
+      }
+
+      return {
+        name,
+        locale,
+        subject: custom?.subject ?? fallback.subject,
+        htmlTemplate: custom?.htmlTemplate ?? fallback.htmlTemplate,
+        variables: EMAIL_TEMPLATE_VARIABLES[name],
+        isCustom: Boolean(custom),
+      };
+    },
+  });
+
+  const updateEmailTemplate = tool({
+    description:
+      "Uppdatera en e-postmall för tenanten. Ange name, locale, subject och htmlTemplate. Endast admins.",
+    inputSchema: toolInputSchema(
+      z.object({
+        name: z.enum(EMAIL_TEMPLATE_NAMES),
+        locale: z.enum(EMAIL_TEMPLATE_LOCALES),
+        subject: z.string().min(1).max(300),
+        htmlTemplate: z.string().min(1).max(100000),
+      })
+    ),
+    execute: async ({ name, locale, subject, htmlTemplate }) => {
+      const adminError = await ensureAdmin();
+      if (adminError) return adminError;
+
+      await db.emailTemplate.upsert({
+        where: {
+          tenantId_name_locale: {
+            tenantId,
+            name,
+            locale,
+          },
+        },
+        update: {
+          subject,
+          htmlTemplate,
+          variables: EMAIL_TEMPLATE_VARIABLES[name],
+        },
+        create: {
+          tenantId,
+          name,
+          locale,
+          subject,
+          htmlTemplate,
+          variables: EMAIL_TEMPLATE_VARIABLES[name],
+        },
+      });
+
+      return {
+        success: true,
+        message: "E-postmallen har uppdaterats.",
+      };
+    },
+  });
+
+  const previewEmailTemplate = tool({
+    description:
+      "Förhandsgranska en e-postmall med testdata. Returnerar renderad subject och HTML. Endast admins.",
+    inputSchema: toolInputSchema(
+      z.object({
+        name: z.enum(EMAIL_TEMPLATE_NAMES),
+        locale: z.enum(EMAIL_TEMPLATE_LOCALES),
+        testData: z.record(z.string(), z.string()).optional(),
+      })
+    ),
+    execute: async ({ name, locale, testData }) => {
+      const adminError = await ensureAdmin();
+      if (adminError) return adminError;
+
+      const custom = await db.emailTemplate.findFirst({
+        where: { name, locale },
+        select: { subject: true, htmlTemplate: true },
+      });
+      const fallback = getDefaultEmailTemplate(name, locale);
+
+      if (!fallback) {
+        return { error: `Template ${name} (${locale}) not found` };
+      }
+
+      const template = {
+        subject: custom?.subject ?? fallback.subject,
+        htmlTemplate: custom?.htmlTemplate ?? fallback.htmlTemplate,
+      };
+
+      const defaultTestData: Record<string, string> = {
+        appName: "ArbetsYtan",
+        projectName: "Demo Project",
+        projectUrl: "https://app.arbetsytan.se/sv/projects/demo",
+        taskTitle: "Test task",
+        assignedBy: "Projektledare",
+        deadline: "2026-02-20 10:00",
+        previousStatus: "ACTIVE",
+        newStatus: "PAUSED",
+        inviteUrl: "https://app.arbetsytan.se/sv/invite/demo",
+        tenantName: "Demo AB",
+        inviterName: "Admin User",
+        resetUrl: "https://app.arbetsytan.se/sv/reset-password?token=demo",
+        supportEmail: "support@arbetsytan.se",
+      };
+
+      const variables = { ...defaultTestData, ...(testData ?? {}) };
+
+      return {
+        subject: applyTemplateVariables(template.subject, variables),
+        html: applyTemplateVariables(template.htmlTemplate, variables),
+        variablesUsed: EMAIL_TEMPLATE_VARIABLES[name],
+      };
+    },
+  });
+
+  // ─── Skicka e-post ──────────────────────────────────────
+
+  const prepareEmailToExternalRecipients = tool({
+    description:
+      "Förbered e-post till externa mottagare. Returnerar en förhandsgranskning som visas för användaren med en skicka-knapp. Mailet skickas INTE förrän användaren klickar på knappen. Kan bifoga filer från användarens personliga lagring eller projektfiler.",
+    inputSchema: toolInputSchema(
+      z.object({
+        recipients: z
+          .array(z.string().email())
+          .min(1)
+          .describe("Lista med e-postadresser"),
+        subject: z.string().min(1).max(300).describe("Ämnesrad"),
+        body: z.string().min(1).max(50000).describe("Meddelandetext (klartext, blir HTML-formaterad)"),
+        replyTo: z.string().email().optional().describe("Svara-till adress"),
+        attachments: z
+          .array(
+            z.object({
+              fileId: z.string().describe("Fil-ID från personlig lagring eller projekt"),
+              fileName: z.string().describe("Filnamn som visas"),
+              source: z.enum(["personal", "project"]).describe("Källa: personal eller project"),
+              projectId: z.string().optional().describe("Projekt-ID om source är project"),
+            })
+          )
+          .optional()
+          .describe("Filer att bifoga"),
+      })
+    ),
+    execute: async ({ recipients, subject, body, replyTo, attachments }) => {
+      // Return special format that the chat UI will render as EmailPreviewCard
+      return {
+        __emailPreview: true,
+        type: "external" as const,
+        recipients,
+        subject,
+        body,
+        replyTo,
+        attachments: attachments ?? [],
+        message: `E-post förberedd för ${recipients.length} mottagare${attachments?.length ? ` med ${attachments.length} bifogade filer` : ""}. Användaren måste klicka på "Skicka"-knappen för att skicka.`,
+      };
+    },
+  });
+
+  const prepareEmailToTeamMembers = tool({
+    description:
+      "Förbered e-post till teammedlemmar. Returnerar en förhandsgranskning som visas för användaren med en skicka-knapp. Mailet skickas INTE förrän användaren klickar på knappen. Använd getTeamMembersForEmail först för att se tillgängliga medlemmar. Kan bifoga filer.",
+    inputSchema: toolInputSchema(
+      z.object({
+        memberIds: z
+          .array(z.string())
+          .min(1)
+          .describe("Lista med användar-ID:n (från getTeamMembersForEmail)"),
+        memberEmails: z
+          .array(z.string())
+          .optional()
+          .describe("E-postadresser för visning (valfritt)"),
+        subject: z.string().min(1).max(300).describe("Ämnesrad"),
+        body: z.string().min(1).max(50000).describe("Meddelandetext (klartext)"),
+        attachments: z
+          .array(
+            z.object({
+              fileId: z.string().describe("Fil-ID från personlig lagring eller projekt"),
+              fileName: z.string().describe("Filnamn som visas"),
+              source: z.enum(["personal", "project"]).describe("Källa: personal eller project"),
+              projectId: z.string().optional().describe("Projekt-ID om source är project"),
+            })
+          )
+          .optional()
+          .describe("Filer att bifoga"),
+      })
+    ),
+    execute: async ({ memberIds, memberEmails, subject, body, attachments }) => {
+      // Return special format that the chat UI will render as EmailPreviewCard
+      return {
+        __emailPreview: true,
+        type: "team" as const,
+        memberIds,
+        recipients: memberEmails ?? memberIds,
+        subject,
+        body,
+        attachments: attachments ?? [],
+        message: `E-post förberedd för ${memberIds.length} teammedlem(mar)${attachments?.length ? ` med ${attachments.length} bifogade filer` : ""}. Användaren måste klicka på "Skicka"-knappen för att skicka.`,
+      };
+    },
+  });
+
+  const getTeamMembersForEmailTool = tool({
+    description:
+      "Hämta lista över ALLA teammedlemmar i företaget som kan ta emot e-post. Använd detta för att skicka till hela företaget. Returnerar id, namn, e-post och roll.",
+    inputSchema: toolInputSchema(z.object({})),
+    execute: async () => {
+      const members = await getTeamMembersForEmail();
+      return {
+        members,
+        hint: "Dessa är alla medlemmar i företaget. Använd prepareEmailToTeamMembers för att skicka till dem.",
+      };
+    },
+  });
+
+  const getProjectsForEmailTool = tool({
+    description:
+      "Hämta lista över projekt som användaren har tillgång till, med antal medlemmar per projekt. Använd detta för att välja projekt innan du hämtar projektmedlemmar.",
+    inputSchema: toolInputSchema(z.object({})),
+    execute: async () => {
+      const projects = await getProjectsWithMembersForEmail();
+      return {
+        projects: projects.map(p => ({
+          id: p.id,
+          name: p.name,
+          memberCount: p.members.length,
+        })),
+        hint: "Använd getProjectMembersForEmailTool med ett projektId för att se medlemmarna.",
+      };
+    },
+  });
+
+  const getProjectMembersForEmailTool = tool({
+    description:
+      "Hämta medlemmar i ett SPECIFIKT projekt som kan ta emot e-post. Kräver projectId. Returnerar userId, namn, e-post och roll för varje projektmedlem.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      await requireProject(tenantId, pid, userId);
+      const projects = await getProjectsWithMembersForEmail();
+      const project = projects.find(p => p.id === pid);
+      if (!project) {
+        return { error: "Projektet hittades inte eller du har inte behörighet." };
+      }
+      return {
+        projectId: project.id,
+        projectName: project.name,
+        members: project.members.map(m => ({
+          userId: m.userId,
+          name: m.name,
+          email: m.email,
+          role: m.role,
+        })),
+        hint: "Använd prepareEmailToProjectMembers för att skicka e-post till dessa medlemmar.",
+      };
+    },
+  });
+
+  const prepareEmailToProjectMembers = tool({
+    description:
+      "Förbered e-post till projektmedlemmar. Returnerar en förhandsgranskning som visas för användaren med en skicka-knapp. Mailet skickas INTE förrän användaren klickar på knappen. Använd getProjectMembersForEmailTool först för att se medlemmar i projektet.",
+    inputSchema: toolInputSchema(
+      z.object({
+        projectId: z.string().describe("Projektets ID"),
+        memberIds: z
+          .array(z.string())
+          .optional()
+          .describe("Lista med användar-ID:n. Om tom skickas till ALLA projektmedlemmar."),
+        subject: z.string().min(1).max(300).describe("Ämnesrad"),
+        body: z.string().min(1).max(50000).describe("Meddelandetext (klartext)"),
+        attachments: z
+          .array(
+            z.object({
+              fileId: z.string().describe("Fil-ID från personlig lagring eller projekt"),
+              fileName: z.string().describe("Filnamn som visas"),
+              source: z.enum(["personal", "project"]).describe("Källa: personal eller project"),
+              projectId: z.string().optional().describe("Projekt-ID om source är project"),
+            })
+          )
+          .optional()
+          .describe("Filer att bifoga"),
+      })
+    ),
+    execute: async ({ projectId: pid, memberIds, subject, body, attachments }) => {
+      await requireProject(tenantId, pid, userId);
+      const projects = await getProjectsWithMembersForEmail();
+      const project = projects.find(p => p.id === pid);
+      if (!project) {
+        return { error: "Projektet hittades inte." };
+      }
+
+      // Om memberIds inte anges, skicka till alla projektmedlemmar
+      const targetMembers = memberIds && memberIds.length > 0
+        ? project.members.filter(m => memberIds.includes(m.userId))
+        : project.members;
+
+      if (targetMembers.length === 0) {
+        return { error: "Inga medlemmar valda eller hittades i projektet." };
+      }
+
+      // Return special format that the chat UI will render as EmailPreviewCard
+      return {
+        __emailPreview: true,
+        type: "project" as const,
+        projectId: pid,
+        projectName: project.name,
+        memberIds: targetMembers.map(m => m.userId),
+        recipients: targetMembers.map(m => m.email),
+        recipientNames: targetMembers.map(m => m.name),
+        subject,
+        body,
+        attachments: attachments ?? [],
+        message: `E-post förberedd för ${targetMembers.length} projektmedlem(mar) i "${project.name}"${attachments?.length ? ` med ${attachments.length} bifogade filer` : ""}. Användaren måste klicka på "Skicka"-knappen för att skicka.`,
+      };
+    },
+  });
+
   return {
     // AIMessages
     getUnreadAIMessages,
@@ -1373,5 +1791,17 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     createAutomation,
     listAutomations,
     deleteAutomation,
+    // E-postmallar (admin)
+    listEmailTemplates,
+    getEmailTemplate,
+    updateEmailTemplate,
+    previewEmailTemplate,
+    // Skicka e-post (förbereder preview, användaren skickar via knapp)
+    prepareEmailToExternalRecipients,
+    prepareEmailToTeamMembers,
+    prepareEmailToProjectMembers,
+    getTeamMembersForEmailTool,
+    getProjectsForEmailTool,
+    getProjectMembersForEmailTool,
   };
 }

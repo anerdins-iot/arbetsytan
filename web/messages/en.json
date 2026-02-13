@@ -7,6 +7,7 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "automations": "Automations",
+    "email": "Email",
     "myTimes": "My time",
     "settings": "Settings"
   },
@@ -18,6 +19,44 @@
     "edit": "Edit",
     "close": "Close",
     "loading": "Loading..."
+  },
+  "email": {
+    "title": "Email",
+    "description": "Send emails to team members or external recipients",
+    "recipients": "Recipients",
+    "selectRecipients": "Choose who will receive your message",
+    "recipientType": "Recipient type",
+    "projectMembers": "Project members",
+    "companyMembers": "Entire company",
+    "externalRecipients": "External recipients",
+    "project": "Project",
+    "selectProject": "Select project",
+    "noProjects": "You are not a member of any projects",
+    "selectProjectFirst": "Select a project to see members",
+    "selected": "selected",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "noTeamMembers": "No members in this project",
+    "emailAddresses": "Email addresses",
+    "emailAddressesPlaceholder": "name@example.com\nother@company.com",
+    "emailAddressesHint": "Enter one email address per line or separate with commas",
+    "compose": "Compose message",
+    "composeDescription": "Write subject and message",
+    "subject": "Subject",
+    "subjectPlaceholder": "Subject line for the email",
+    "message": "Message",
+    "messagePlaceholder": "Write your message here...",
+    "attachments": "Attachments",
+    "selectAttachments": "Select attachments",
+    "selectAttachmentsDescription": "Select files to attach to the email",
+    "addAttachment": "Add attachment",
+    "send": "Send email",
+    "sending": "Sending...",
+    "success": "Email has been sent!",
+    "errors": {
+      "noRecipients": "You must select at least one recipient",
+      "sendFailed": "Could not send email"
+    }
   },
   "automations": {
     "title": "Automations",
@@ -676,6 +715,10 @@
       "title": "Invitations",
       "description": "Send and manage invitations to the company."
     },
+    "emailTemplates": {
+      "title": "Email Templates",
+      "description": "Customize email messages sent from the system. You can change the subject line and HTML content for each template."
+    },
     "profileLink": {
       "title": "Personal settings",
       "description": "Manage your profile, password, language, notifications, and appearance.",
@@ -751,6 +794,7 @@
       "subjectLabel": "Subject",
       "htmlLabel": "HTML template",
       "testDataLabel": "Test data (JSON, optional)",
+      "testDataPlaceholder": "{ \"projectName\": \"Test project\" }",
       "save": "Save template",
       "preview": "Preview",
       "reset": "Restore default",

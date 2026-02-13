@@ -7,6 +7,7 @@
     "dashboard": "Dashboard",
     "projects": "Projekt",
     "automations": "Automatiseringar",
+    "email": "E-post",
     "myTimes": "Mina tider",
     "settings": "Inställningar"
   },
@@ -18,6 +19,44 @@
     "edit": "Redigera",
     "close": "Stäng",
     "loading": "Laddar..."
+  },
+  "email": {
+    "title": "E-post",
+    "description": "Skicka e-post till teammedlemmar eller externa mottagare",
+    "recipients": "Mottagare",
+    "selectRecipients": "Välj vem som ska ta emot ditt meddelande",
+    "recipientType": "Typ av mottagare",
+    "projectMembers": "Projektmedlemmar",
+    "companyMembers": "Hela företaget",
+    "externalRecipients": "Externa mottagare",
+    "project": "Projekt",
+    "selectProject": "Välj projekt",
+    "noProjects": "Du är inte med i några projekt",
+    "selectProjectFirst": "Välj ett projekt för att se medlemmar",
+    "selected": "valda",
+    "selectAll": "Välj alla",
+    "deselectAll": "Avmarkera alla",
+    "noTeamMembers": "Inga medlemmar i projektet",
+    "emailAddresses": "E-postadresser",
+    "emailAddressesPlaceholder": "namn@exempel.se\nannan@foretag.com",
+    "emailAddressesHint": "Ange en e-postadress per rad eller separera med kommatecken",
+    "compose": "Skriv meddelande",
+    "composeDescription": "Skriv ämne och meddelande",
+    "subject": "Ämne",
+    "subjectPlaceholder": "Ämnesrad för e-postmeddelandet",
+    "message": "Meddelande",
+    "messagePlaceholder": "Skriv ditt meddelande här...",
+    "attachments": "Bifogade filer",
+    "selectAttachments": "Välj bilagor",
+    "selectAttachmentsDescription": "Välj filer att bifoga i e-postmeddelandet",
+    "addAttachment": "Lägg till bilaga",
+    "send": "Skicka e-post",
+    "sending": "Skickar...",
+    "success": "E-postmeddelandet har skickats!",
+    "errors": {
+      "noRecipients": "Du måste välja minst en mottagare",
+      "sendFailed": "Kunde inte skicka e-postmeddelandet"
+    }
   },
   "automations": {
     "title": "Automatiseringar",
@@ -676,6 +715,10 @@
       "title": "Inbjudningar",
       "description": "Skicka och hantera inbjudningar till företaget."
     },
+    "emailTemplates": {
+      "title": "E-postmallar",
+      "description": "Anpassa e-postmeddelanden som skickas från systemet. Du kan ändra ämnesrad och HTML-innehåll för varje mall."
+    },
     "profileLink": {
       "title": "Personliga inställningar",
       "description": "Hantera din profil, lösenord, språk, notiser och utseende.",
@@ -751,6 +794,7 @@
       "subjectLabel": "Ämnesrad",
       "htmlLabel": "HTML-mall",
       "testDataLabel": "Testdata (JSON, valfritt)",
+      "testDataPlaceholder": "{ \"projectName\": \"Testprojekt\" }",
       "save": "Spara mall",
       "preview": "Förhandsgranska",
       "reset": "Återställ till standard",

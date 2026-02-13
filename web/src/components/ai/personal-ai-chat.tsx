@@ -30,6 +30,8 @@ import type { ConversationListItem } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle } from "@/components/ai/voice-mode-toggle";
+import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
+import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 
 // Formatera datum för konversationshistorik
@@ -486,23 +488,83 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
                     message.role === "user" ? "items-end" : "items-start"
                   )}
                 >
-                  <div
-                    className={cn(
-                      "max-w-[85%] rounded-lg px-3 py-2 text-sm",
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-foreground"
-                    )}
-                  >
-                    {(message.parts ?? [])
-                      .filter(
-                        (part): part is { type: "text"; text: string } =>
-                          part.type === "text"
-                      )
-                      .map((part, i) => (
-                        <MarkdownMessage key={i} content={part.text} />
-                      ))}
-                  </div>
+                  {/* Rendera message parts */}
+                  {(message.parts ?? []).map((part, i) => {
+                    // Text content
+                    if (part.type === "text") {
+                      return (
+                        <div
+                          key={i}
+                          className={cn(
+                            "max-w-[85%] rounded-lg px-3 py-2 text-sm",
+                            message.role === "user"
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-foreground"
+                          )}
+                        >
+                          <MarkdownMessage content={part.text} />
+                        </div>
+                      );
+                    }
+
+                    // Tool invocations with email preview
+                    // AI SDK v6 uses "tool-{toolName}" as part.type, not "tool-invocation"
+                    const isToolPart = part.type.startsWith("tool-") && part.type !== "tool-invocation";
+                    if (isToolPart && (part as { state?: string }).state === "output-available") {
+                      const result = (part as { output?: Record<string, unknown> }).output;
+                      if (result?.__emailPreview) {
+                        const emailData = result as unknown as EmailPreviewData & {
+                          __emailPreview: true;
+                          memberIds?: string[];
+                          attachments?: EmailAttachment[];
+                        };
+
+                        // Convert EmailAttachment to EmailAttachmentInput for server action
+                        const attachmentInputs: EmailAttachmentInput[] = (emailData.attachments ?? []).map((a) => ({
+                          fileId: a.fileId,
+                          fileName: a.fileName,
+                          source: a.source,
+                          projectId: a.projectId,
+                        }));
+
+                        const handleSend = async () => {
+                          if (emailData.type === "external") {
+                            const formData = new FormData();
+                            formData.set("recipients", emailData.recipients.join(","));
+                            formData.set("subject", emailData.subject);
+                            formData.set("body", emailData.body);
+                            if (emailData.replyTo) formData.set("replyTo", emailData.replyTo);
+                            return sendExternalEmail(formData, attachmentInputs);
+                          } else {
+                            // Team email
+                            return sendToTeamMembers(
+                              emailData.memberIds ?? [],
+                              emailData.subject,
+                              emailData.body,
+                              attachmentInputs
+                            );
+                          }
+                        };
+
+                        return (
+                          <EmailPreviewCard
+                            key={i}
+                            data={{
+                              type: emailData.type,
+                              recipients: emailData.recipients,
+                              subject: emailData.subject,
+                              body: emailData.body,
+                              replyTo: emailData.replyTo,
+                              attachments: emailData.attachments,
+                            }}
+                            onSend={handleSend}
+                          />
+                        );
+                      }
+                    }
+
+                    return null;
+                  })}
                 </div>
               ))}
             </div>

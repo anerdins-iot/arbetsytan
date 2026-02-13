@@ -204,6 +204,7 @@ export type TenantWhereInput = {
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
+  emailTemplates?: Prisma.EmailTemplateListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
@@ -220,6 +221,7 @@ export type TenantOrderByWithRelationInput = {
   subscription?: Prisma.SubscriptionOrderByWithRelationInput
   notificationPreferences?: Prisma.NotificationPreferenceOrderByRelationAggregateInput
   pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
+  emailTemplates?: Prisma.EmailTemplateOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -239,6 +241,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
+  emailTemplates?: Prisma.EmailTemplateListRelationFilter
 }, "id" | "stripeCustomerId">
 
 export type TenantOrderByWithAggregationInput = {
@@ -281,6 +284,7 @@ export type TenantCreateInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
@@ -297,6 +301,7 @@ export type TenantUncheckedCreateInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
@@ -313,6 +318,7 @@ export type TenantUpdateInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
@@ -329,6 +335,7 @@ export type TenantUncheckedUpdateInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
@@ -464,6 +471,20 @@ export type TenantUpdateOneRequiredWithoutNotificationPreferencesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutNotificationPreferencesInput, Prisma.TenantUpdateWithoutNotificationPreferencesInput>, Prisma.TenantUncheckedUpdateWithoutNotificationPreferencesInput>
 }
 
+export type TenantCreateNestedOneWithoutEmailTemplatesInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailTemplatesInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutEmailTemplatesNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailTemplatesInput
+  upsert?: Prisma.TenantUpsertWithoutEmailTemplatesInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailTemplatesInput, Prisma.TenantUpdateWithoutEmailTemplatesInput>, Prisma.TenantUncheckedUpdateWithoutEmailTemplatesInput>
+}
+
 export type TenantCreateNestedOneWithoutPushSubscriptionsInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionsInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutPushSubscriptionsInput
@@ -505,6 +526,7 @@ export type TenantCreateWithoutMembershipsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutMembershipsInput = {
@@ -520,6 +542,7 @@ export type TenantUncheckedCreateWithoutMembershipsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutMembershipsInput = {
@@ -551,6 +574,7 @@ export type TenantUpdateWithoutMembershipsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutMembershipsInput = {
@@ -566,6 +590,7 @@ export type TenantUncheckedUpdateWithoutMembershipsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutInvitationsInput = {
@@ -581,6 +606,7 @@ export type TenantCreateWithoutInvitationsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutInvitationsInput = {
@@ -596,6 +622,7 @@ export type TenantUncheckedCreateWithoutInvitationsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutInvitationsInput = {
@@ -627,6 +654,7 @@ export type TenantUpdateWithoutInvitationsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutInvitationsInput = {
@@ -642,6 +670,7 @@ export type TenantUncheckedUpdateWithoutInvitationsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutProjectsInput = {
@@ -657,6 +686,7 @@ export type TenantCreateWithoutProjectsInput = {
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutProjectsInput = {
@@ -672,6 +702,7 @@ export type TenantUncheckedCreateWithoutProjectsInput = {
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutProjectsInput = {
@@ -703,6 +734,7 @@ export type TenantUpdateWithoutProjectsInput = {
   subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutProjectsInput = {
@@ -718,6 +750,7 @@ export type TenantUncheckedUpdateWithoutProjectsInput = {
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutNotificationPreferencesInput = {
@@ -733,6 +766,7 @@ export type TenantCreateWithoutNotificationPreferencesInput = {
   invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -748,6 +782,7 @@ export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -779,6 +814,7 @@ export type TenantUpdateWithoutNotificationPreferencesInput = {
   invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -793,6 +829,87 @@ export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
   projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutEmailTemplatesInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  address?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutEmailTemplatesInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  address?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutEmailTemplatesInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
+}
+
+export type TenantUpsertWithoutEmailTemplatesInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailTemplatesInput, Prisma.TenantUncheckedUpdateWithoutEmailTemplatesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutEmailTemplatesInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailTemplatesInput, Prisma.TenantUncheckedUpdateWithoutEmailTemplatesInput>
+}
+
+export type TenantUpdateWithoutEmailTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutEmailTemplatesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
 }
 
@@ -809,6 +926,7 @@ export type TenantCreateWithoutPushSubscriptionsInput = {
   invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
   subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -824,6 +942,7 @@ export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
   subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -855,6 +974,7 @@ export type TenantUpdateWithoutPushSubscriptionsInput = {
   invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
   subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -870,6 +990,7 @@ export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutSubscriptionInput = {
@@ -885,6 +1006,7 @@ export type TenantCreateWithoutSubscriptionInput = {
   invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutSubscriptionInput = {
@@ -900,6 +1022,7 @@ export type TenantUncheckedCreateWithoutSubscriptionInput = {
   invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutSubscriptionInput = {
@@ -931,6 +1054,7 @@ export type TenantUpdateWithoutSubscriptionInput = {
   invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutSubscriptionInput = {
@@ -946,6 +1070,7 @@ export type TenantUncheckedUpdateWithoutSubscriptionInput = {
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 
@@ -959,6 +1084,7 @@ export type TenantCountOutputType = {
   invitations: number
   notificationPreferences: number
   pushSubscriptions: number
+  emailTemplates: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -967,6 +1093,7 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   invitations?: boolean | TenantCountOutputTypeCountInvitationsArgs
   notificationPreferences?: boolean | TenantCountOutputTypeCountNotificationPreferencesArgs
   pushSubscriptions?: boolean | TenantCountOutputTypeCountPushSubscriptionsArgs
+  emailTemplates?: boolean | TenantCountOutputTypeCountEmailTemplatesArgs
 }
 
 /**
@@ -1014,6 +1141,13 @@ export type TenantCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runt
   where?: Prisma.PushSubscriptionWhereInput
 }
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountEmailTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailTemplateWhereInput
+}
+
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1029,6 +1163,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   subscription?: boolean | Prisma.Tenant$subscriptionArgs<ExtArgs>
   notificationPreferences?: boolean | Prisma.Tenant$notificationPreferencesArgs<ExtArgs>
   pushSubscriptions?: boolean | Prisma.Tenant$pushSubscriptionsArgs<ExtArgs>
+  emailTemplates?: boolean | Prisma.Tenant$emailTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
@@ -1070,6 +1205,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   subscription?: boolean | Prisma.Tenant$subscriptionArgs<ExtArgs>
   notificationPreferences?: boolean | Prisma.Tenant$notificationPreferencesArgs<ExtArgs>
   pushSubscriptions?: boolean | Prisma.Tenant$pushSubscriptionsArgs<ExtArgs>
+  emailTemplates?: boolean | Prisma.Tenant$emailTemplatesArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1084,6 +1220,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
     notificationPreferences: Prisma.$NotificationPreferencePayload<ExtArgs>[]
     pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
+    emailTemplates: Prisma.$EmailTemplatePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1493,6 +1630,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   subscription<T extends Prisma.Tenant$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   notificationPreferences<T extends Prisma.Tenant$notificationPreferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$notificationPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pushSubscriptions<T extends Prisma.Tenant$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailTemplates<T extends Prisma.Tenant$emailTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$emailTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2053,6 +2191,30 @@ export type Tenant$pushSubscriptionsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.PushSubscriptionScalarFieldEnum | Prisma.PushSubscriptionScalarFieldEnum[]
+}
+
+/**
+ * Tenant.emailTemplates
+ */
+export type Tenant$emailTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailTemplate
+   */
+  select?: Prisma.EmailTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailTemplate
+   */
+  omit?: Prisma.EmailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailTemplateInclude<ExtArgs> | null
+  where?: Prisma.EmailTemplateWhereInput
+  orderBy?: Prisma.EmailTemplateOrderByWithRelationInput | Prisma.EmailTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.EmailTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailTemplateScalarFieldEnum | Prisma.EmailTemplateScalarFieldEnum[]
 }
 
 /**

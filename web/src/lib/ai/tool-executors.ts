@@ -4,13 +4,16 @@
  * Import this only from server-side code.
  */
 
-import { tenantDb } from "@/lib/db";
+import { prisma, tenantDb } from "@/lib/db";
 import { createNotification } from "@/actions/notifications";
 import { logActivity } from "@/lib/activity-log";
 import {
   emitTaskCreatedToProject,
   emitTaskUpdatedToProject,
 } from "@/lib/socket";
+import { sendEmail } from "@/lib/email";
+import { sendPushToSubscriptions } from "@/lib/push";
+import { sendExpoPush } from "@/lib/expo-push";
 import type { Priority, TaskStatus } from "../../../generated/prisma/client";
 import { getToolDefinition } from "./tool-definitions";
 
@@ -42,7 +45,11 @@ export type ToolExecutor = (
 const executeNotify: ToolExecutor = async (params, ctx) => {
   const message = String(params.message ?? "Påminnelse");
   const title = params.title ? String(params.title) : "Automatisering";
+  const sendEmailParam = params.sendEmail !== false; // Default true
+  const sendPushParam = params.sendPush !== false; // Default true
+  const db = tenantDb(ctx.tenantId);
 
+  // 1. Create in-app notification
   const res = await createNotification({
     userId: ctx.userId,
     tenantId: ctx.tenantId,
@@ -54,7 +61,96 @@ const executeNotify: ToolExecutor = async (params, ctx) => {
   if (!res.success) {
     return { success: false, error: res.error };
   }
-  return { success: true, data: { notificationId: res.notification?.id } };
+
+  // 2. Get user info and preferences for email/push
+  const [user, preferences] = await Promise.all([
+    prisma.user.findUnique({
+      where: { id: ctx.userId },
+      select: { email: true, locale: true, pushToken: true },
+    }),
+    prisma.notificationPreference.findUnique({
+      where: { userId_tenantId: { userId: ctx.userId, tenantId: ctx.tenantId } },
+    }),
+  ]);
+
+  const results: { inApp: boolean; email?: boolean; push?: boolean } = {
+    inApp: true,
+  };
+
+  // 3. Send email if enabled and user has email
+  // Respects both the param and user's email preferences
+  const shouldSendEmail = sendEmailParam && user?.email && preferences?.emailDeadlineTomorrow !== false;
+  if (shouldSendEmail && user?.email) {
+    const appUrl = process.env.APP_URL ?? process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const locale = user.locale === "en" ? "en" : "sv";
+    const projectLink = ctx.projectId
+      ? `<p><a href="${appUrl}/${locale}/projects/${ctx.projectId}" style="color: #2563eb;">Visa projekt</a></p>`
+      : "";
+
+    const emailResult = await sendEmail({
+      to: user.email,
+      subject: `${title} - Arbetsytan`,
+      html: `
+        <div style="font-family: system-ui, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h2 style="color: #1a1a1a; margin-bottom: 16px;">${title}</h2>
+          <p style="color: #4a4a4a; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">${message}</p>
+          ${projectLink}
+          <hr style="border: none; border-top: 1px solid #e5e5e5; margin: 24px 0;" />
+          <p style="color: #888; font-size: 12px;">
+            ${locale === "sv" ? "Detta är en automatisk påminnelse från Arbetsytan." : "This is an automated reminder from Arbetsytan."}
+          </p>
+        </div>
+      `,
+    });
+    results.email = emailResult.success;
+    if (!emailResult.success) {
+      console.warn("[executeNotify] Email failed:", emailResult.error);
+    }
+  }
+
+  // 4. Send push notification if enabled
+  const shouldSendPush = sendPushParam && preferences?.pushEnabled;
+  if (shouldSendPush) {
+    // Web push
+    const subscriptions = await db.pushSubscription.findMany({
+      where: { userId: ctx.userId },
+      select: { endpoint: true, p256dhKey: true, authKey: true },
+    });
+
+    if (subscriptions.length > 0) {
+      const pushResult = await sendPushToSubscriptions(subscriptions, {
+        title,
+        body: message,
+        url: ctx.projectId ? `/projects/${ctx.projectId}` : "/automations",
+      });
+      results.push = pushResult.sentCount > 0;
+
+      // Clean up invalid endpoints
+      if (pushResult.invalidEndpoints.length > 0) {
+        await db.pushSubscription.deleteMany({
+          where: { endpoint: { in: pushResult.invalidEndpoints } },
+        });
+      }
+    }
+
+    // Expo push (mobile)
+    if (user?.pushToken) {
+      const expoPushSent = await sendExpoPush(user.pushToken, {
+        title,
+        body: message,
+        data: ctx.projectId ? { projectId: ctx.projectId } : {},
+      });
+      if (expoPushSent) results.push = true;
+    }
+  }
+
+  return {
+    success: true,
+    data: {
+      notificationId: res.notification?.id,
+      channels: results,
+    }
+  };
 };
 
 const executeCreateTask: ToolExecutor = async (params, ctx) => {

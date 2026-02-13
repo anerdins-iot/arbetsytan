@@ -26,6 +26,7 @@ model Tenant {
   subscription Subscription?
   notificationPreferences NotificationPreference[]
   pushSubscriptions       PushSubscription[]
+  emailTemplates          EmailTemplate[]
 }
 
 model User {
@@ -398,6 +399,23 @@ model NotificationPreference {
   tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([userId, tenantId])
+}
+
+model EmailTemplate {
+  id           String   @id @default(cuid())
+  name         String
+  subject      String
+  htmlTemplate String   @db.Text
+  variables    Json     @default("[]")
+  locale       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenantId String
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, name, locale])
+  @@index([tenantId, locale])
 }
 
 model PushSubscription {

@@ -130,6 +130,11 @@ export type Notification = Prisma.NotificationModel
  */
 export type NotificationPreference = Prisma.NotificationPreferenceModel
 /**
+ * Model EmailTemplate
+ * 
+ */
+export type EmailTemplate = Prisma.EmailTemplateModel
+/**
  * Model PushSubscription
  * 
  */

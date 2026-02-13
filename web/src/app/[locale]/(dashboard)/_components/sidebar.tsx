@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl"
 import { usePathname } from "@/i18n/routing"
 import { Link } from "@/i18n/routing"
-import { Hammer, LayoutDashboard, FolderOpen, Clock3, Settings, PanelLeftClose, PanelLeft, Zap } from "lucide-react"
+import { Hammer, LayoutDashboard, FolderOpen, Clock3, Settings, PanelLeftClose, PanelLeft, Zap, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -18,6 +18,7 @@ const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, labelKey: "dashboard" as const },
   { href: "/projects", icon: FolderOpen, labelKey: "projects" as const },
   { href: "/automations", icon: Zap, labelKey: "automations" as const },
+  { href: "/email", icon: Mail, labelKey: "email" as const },
   { href: "/time", icon: Clock3, labelKey: "myTimes" as const },
 ] as const
 

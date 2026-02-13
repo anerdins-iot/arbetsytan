@@ -69,6 +69,7 @@ export const ModelName = {
   AIMessage: 'AIMessage',
   Notification: 'Notification',
   NotificationPreference: 'NotificationPreference',
+  EmailTemplate: 'EmailTemplate',
   PushSubscription: 'PushSubscription',
   Comment: 'Comment',
   ActivityLog: 'ActivityLog',
@@ -342,6 +343,21 @@ export const NotificationPreferenceScalarFieldEnum = {
 } as const
 
 export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
+
+
+export const EmailTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  subject: 'subject',
+  htmlTemplate: 'htmlTemplate',
+  variables: 'variables',
+  locale: 'locale',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
+} as const
+
+export type EmailTemplateScalarFieldEnum = (typeof EmailTemplateScalarFieldEnum)[keyof typeof EmailTemplateScalarFieldEnum]
 
 
 export const PushSubscriptionScalarFieldEnum = {

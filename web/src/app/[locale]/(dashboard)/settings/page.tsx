@@ -12,6 +12,8 @@ import { CompanySettingsForm } from "@/components/settings/company-settings-form
 import { MemberManagement } from "@/components/settings/member-management";
 import { NotificationSettings } from "@/components/settings/notification-settings";
 import { RolePermissionsMatrix } from "@/components/settings/role-permissions-matrix";
+import { EmailTemplateManager } from "@/components/settings/email-template-manager";
+import { listEmailTemplates } from "@/actions/email-templates";
 import { InviteForm } from "@/components/invitations/invite-form";
 import { InvitationList } from "@/components/invitations/invitation-list";
 import { Link } from "@/i18n/routing";
@@ -27,14 +29,15 @@ export default async function SettingsPage({ params }: Props) {
   const { userId, role } = await requireAuth();
   const isAdmin = role === "ADMIN";
   const preferencesResult = await getNotificationPreferences();
-  const [tenant, members, invitations, rolePermissions] = isAdmin
+  const [tenant, members, invitations, rolePermissions, emailTemplates] = isAdmin
     ? await Promise.all([
         getTenantSettings(),
         getTenantMembers(),
         getInvitations(),
         getRolePermissions(),
+        listEmailTemplates(),
       ])
-    : [null, [], [], null];
+    : [null, [], [], null, []];
 
   return (
     <div className="space-y-6">
@@ -85,6 +88,7 @@ export default async function SettingsPage({ params }: Props) {
               roles={rolePermissions.roles}
             />
           ) : null}
+          <EmailTemplateManager templates={emailTemplates} />
           <MemberManagement members={members} currentUserId={userId} />
           <div className="space-y-4 rounded-lg border border-border bg-card p-6">
             <div>

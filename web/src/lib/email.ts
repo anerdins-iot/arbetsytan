@@ -13,20 +13,28 @@ const resend = process.env.RESEND_API_KEY
 const DEFAULT_FROM =
   process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
 
+export type EmailAttachment = {
+  filename: string;
+  content: Buffer | string;
+  contentType?: string;
+};
+
 export type SendEmailOptions = {
   to: string;
   subject: string;
   html: string;
   from?: string;
+  replyTo?: string;
+  attachments?: EmailAttachment[];
 };
 
 /**
  * Sends an email via Resend.
- * Returns { success: true } or { success: false, error: string }.
+ * Returns { success: true, messageId } or { success: false, error }.
  */
 export async function sendEmail(
   options: SendEmailOptions
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; messageId?: string }> {
   if (!resend) {
     return {
       success: false,
@@ -35,11 +43,17 @@ export async function sendEmail(
   }
 
   try {
-    const { error } = await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: options.from ?? DEFAULT_FROM,
       to: options.to,
       subject: options.subject,
       html: options.html,
+      replyTo: options.replyTo,
+      attachments: options.attachments?.map((a) => ({
+        filename: a.filename,
+        content: a.content,
+        content_type: a.contentType,
+      })),
     });
 
     if (error) {
@@ -49,7 +63,7 @@ export async function sendEmail(
       };
     }
 
-    return { success: true };
+    return { success: true, messageId: data?.id };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return {
