@@ -54,6 +54,7 @@ export function AutomationCard({
     ? new Date(nextRun).toLocaleString("sv-SE", {
         dateStyle: "short",
         timeStyle: "short",
+        timeZone: automation.timezone ?? "Europe/Stockholm",
       })
     : "—";
 
