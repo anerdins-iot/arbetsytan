@@ -198,6 +198,20 @@
       "tasks": "{count, plural, =0 {No tasks} =1 {1 task} other {# tasks}}",
       "unread": "{count, plural, =1 {1 unread} other {# unread}}",
       "deadlinesTitle": "Upcoming deadlines"
+    },
+    "projectContext": {
+      "status": {
+        "PLANNING": "Planning",
+        "ACTIVE": "Active",
+        "PAUSED": "Paused",
+        "COMPLETED": "Completed",
+        "ARCHIVED": "Archived"
+      },
+      "tasksTodo": "{count, plural, =0 {0 to do} =1 {1 to do} other {# to do}}",
+      "tasksInProgress": "{count, plural, =0 {0 in progress} =1 {1 in progress} other {# in progress}}",
+      "tasksDone": "{count, plural, =0 {0 done} =1 {1 done} other {# done}}",
+      "deadlinesTitle": "Upcoming deadlines",
+      "members": "{count, plural, =1 {1 member} other {# members}}"
     }
   },
   "notifications": {

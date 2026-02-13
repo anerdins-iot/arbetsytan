@@ -38,6 +38,9 @@ import { getProjects } from "@/actions/projects";
 import { getDailyBriefing } from "@/actions/briefing";
 import type { DailyBriefing as DailyBriefingData } from "@/actions/briefing";
 import { DailyBriefing } from "@/components/ai/daily-briefing";
+import { getProjectContext } from "@/actions/project-context";
+import type { ProjectContextResult } from "@/actions/project-context";
+import { ProjectContextCard } from "@/components/ai/project-context-card";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 
 // Formatera datum för konversationshistorik
@@ -95,6 +98,8 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
   const [isDragOver, setIsDragOver] = useState(false);
   const [briefingData, setBriefingData] = useState<DailyBriefingData | null>(null);
   const [isLoadingBriefing, setIsLoadingBriefing] = useState(false);
+  const [projectContext, setProjectContext] = useState<ProjectContextResult | null>(null);
+  const [isLoadingContext, setIsLoadingContext] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -212,6 +217,26 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
     };
     void loadBriefing();
   }, [open, briefingData]);
+
+  // Load project context when activeProjectId changes
+  useEffect(() => {
+    if (!activeProjectId) {
+      setProjectContext(null);
+      return;
+    }
+    const loadContext = async () => {
+      setIsLoadingContext(true);
+      try {
+        const ctx = await getProjectContext(activeProjectId);
+        setProjectContext(ctx);
+      } catch {
+        setProjectContext(null);
+      } finally {
+        setIsLoadingContext(false);
+      }
+    };
+    void loadContext();
+  }, [activeProjectId]);
 
   const loadConversations = useCallback(async () => {
     setLoadingHistory(true);
@@ -525,7 +550,12 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
               <DailyBriefing data={briefingData} />
             )}
 
-            {messages.length === 0 && !error && !briefingData && !isLoadingBriefing && (
+            {/* Project context */}
+            {projectContext && messages.length === 0 && !isLoadingContext && (
+              <ProjectContextCard context={projectContext} />
+            )}
+
+            {messages.length === 0 && !error && !briefingData && !isLoadingBriefing && !projectContext && !isLoadingContext && (
               <div className="flex h-full flex-col items-center justify-center p-4 text-center text-muted-foreground">
                 <MessageCircle className="mb-2 size-10 opacity-50" />
                 <p className="text-sm">{t("placeholder")}</p>
