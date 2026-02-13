@@ -6,6 +6,7 @@ import crypto from "node:crypto";
 import { prisma } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
+import { getAppBaseUrl, renderEmailTemplate } from "@/lib/email-templates";
 import { stripe } from "@/lib/stripe";
 
 // Auth actions run without session (registration/login). Global prisma is correct
@@ -252,22 +253,28 @@ export async function requestPasswordReset(
     },
   });
 
-  const baseUrl =
-    process.env.APP_URL?.replace(/\/$/, "") ??
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    "http://localhost:3000";
+  const baseUrl = getAppBaseUrl();
   const locale = user.locale === "en" ? "en" : "sv";
   const resetUrl = `${baseUrl}/${locale}/reset-password?token=${encodeURIComponent(token)}`;
-
-  const { getTranslations } = await import("next-intl/server");
-  const t = await getTranslations({ locale, namespace: "auth" });
-  const subject = t("resetEmailSubject");
-  const html = t("resetEmailBody", { resetUrl });
+  const membership = await prisma.membership.findFirst({
+    where: { userId: user.id },
+    select: { tenantId: true },
+  });
+  const renderedTemplate = await renderEmailTemplate({
+    tenantId: membership?.tenantId,
+    name: "password-reset",
+    locale,
+    variables: {
+      resetUrl,
+      appName: "ArbetsYtan",
+      supportEmail: "support@arbetsytan.se",
+    },
+  });
 
   const sendResult = await sendEmail({
     to: email,
-    subject,
-    html,
+    subject: renderedTemplate.subject,
+    html: renderedTemplate.html,
   });
 
   if (!sendResult.success) {

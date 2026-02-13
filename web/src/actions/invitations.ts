@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { requirePermission, requireAuth, getSession } from "@/lib/auth";
 import { tenantDb, prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
+import { getAppBaseUrl, renderEmailTemplate } from "@/lib/email-templates";
 import { signIn } from "@/lib/auth";
 import { updateSubscriptionQuantity } from "@/actions/subscription";
 import type { Role, InvitationStatus } from "../../generated/prisma/client";
@@ -135,30 +136,33 @@ export async function inviteUser(
   });
 
   // Send invitation email
-  const baseUrl =
-    process.env.APP_URL?.replace(/\/$/, "") ??
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    "http://localhost:3000";
+  const baseUrl = getAppBaseUrl();
 
   const tenant = await prisma.tenant.findUnique({
     where: { id: tenantId },
   });
+  const inviter = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, email: true },
+  });
 
   const inviteUrl = `${baseUrl}/sv/invite/${token}`;
-
-  const { getTranslations } = await import("next-intl/server");
-  const t = await getTranslations({ locale: "sv", namespace: "invitations" });
-
-  const subject = t("emailSubject", { tenantName: tenant?.name ?? "" });
-  const html = t("emailBody", {
-    tenantName: tenant?.name ?? "",
-    inviteUrl,
+  const renderedTemplate = await renderEmailTemplate({
+    tenantId,
+    name: "invitation",
+    locale: "sv",
+    variables: {
+      tenantName: tenant?.name ?? "",
+      inviteUrl,
+      inviterName: inviter?.name ?? inviter?.email ?? "En kollega",
+      appName: "ArbetsYtan",
+    },
   });
 
   const sendResult = await sendEmail({
     to: normalizedEmail,
-    subject,
-    html,
+    subject: renderedTemplate.subject,
+    html: renderedTemplate.html,
   });
 
   if (!sendResult.success) {
