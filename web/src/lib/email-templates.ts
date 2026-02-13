@@ -170,9 +170,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </p>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{resetUrl}}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Återställ lösenord</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{resetUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Återställ lösenord
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{resetUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Eller klicka här: {{resetUrl}}</a>
+          </p>
         </div>
 
         <div style="background-color: #fef3c7; border-radius: 8px; padding: 16px; margin-top: 24px;">
@@ -201,9 +212,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </p>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{resetUrl}}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Reset password</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{resetUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Reset password
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{resetUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Or click here: {{resetUrl}}</a>
+          </p>
         </div>
 
         <div style="background-color: #fef3c7; border-radius: 8px; padding: 16px; margin-top: 24px;">
@@ -240,13 +262,24 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </p>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{inviteUrl}}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Acceptera inbjudan</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{inviteUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Acceptera inbjudan
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{inviteUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Eller klicka här: {{inviteUrl}}</a>
+          </p>
         </div>
 
         <div style="background-color: #f3f4f6; border-radius: 8px; padding: 16px; margin-top: 24px;">
-          <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">
+          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.5;">
             Denna inbjudan är giltig i 7 dagar. Om länken inte fungerar, kontakta personen som bjöd in dig.
           </p>
         </div>
@@ -276,13 +309,24 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </p>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{inviteUrl}}" style="height:48px;v-text-anchor:middle;width:220px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Accept invitation</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{inviteUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Accept invitation
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{inviteUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Or click here: {{inviteUrl}}</a>
+          </p>
         </div>
 
         <div style="background-color: #f3f4f6; border-radius: 8px; padding: 16px; margin-top: 24px;">
-          <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">
+          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.5;">
             This invitation is valid for 7 days. If the link doesn't work, contact the person who invited you.
           </p>
         </div>
@@ -328,9 +372,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{projectUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Visa uppgift</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{projectUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Visa uppgift
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{projectUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Eller klicka här: {{projectUrl}}</a>
+          </p>
         </div>
       `,
       footerText: "Du får detta mail eftersom du har notifikationer aktiverade.",
@@ -371,9 +426,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{projectUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">View task</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{projectUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             View task
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{projectUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Or click here: {{projectUrl}}</a>
+          </p>
         </div>
       `,
       footerText: "You receive this email because you have notifications enabled.",
@@ -419,9 +485,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{projectUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" strokecolor="#dc2626" fillcolor="#dc2626">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Öppna uppgift</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{projectUrl}}" style="display: inline-block; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">
             Öppna uppgift
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{projectUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Eller klicka här: {{projectUrl}}</a>
+          </p>
         </div>
       `,
       footerText: "Du får detta mail eftersom du har deadline-påminnelser aktiverade.",
@@ -464,9 +541,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{projectUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" strokecolor="#dc2626" fillcolor="#dc2626">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Open task</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{projectUrl}}" style="display: inline-block; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);">
             Open task
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{projectUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Or click here: {{projectUrl}}</a>
+          </p>
         </div>
       `,
       footerText: "You receive this email because you have deadline reminders enabled.",
@@ -512,9 +600,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{projectUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Öppna projekt</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{projectUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Öppna projekt
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{projectUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Eller klicka här: {{projectUrl}}</a>
+          </p>
         </div>
       `,
       footerText: "Du får detta mail eftersom du har notifikationer aktiverade.",
@@ -557,9 +656,20 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
 
         <div style="text-align: center; margin: 32px 0;">
+          <!--[if mso]>
+          <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="{{projectUrl}}" style="height:48px;v-text-anchor:middle;width:200px;" arcsize="17%" strokecolor="${BRAND.primary}" fillcolor="${BRAND.primary}">
+            <w:anchorlock/>
+            <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:600;">Open project</center>
+          </v:roundrect>
+          <![endif]-->
+          <!--[if !mso]><!-->
           <a href="{{projectUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
             Open project
           </a>
+          <!--<![endif]-->
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{projectUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Or click here: {{projectUrl}}</a>
+          </p>
         </div>
       `,
       footerText: "You receive this email because you have notifications enabled.",
