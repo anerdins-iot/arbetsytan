@@ -189,6 +189,15 @@
       "holdToTalk": "Hold = talk, release = send",
       "clickOnce": "Click 1x = record, auto-send",
       "clickTwice": "Click 2x = conversation mode"
+    },
+    "briefing": {
+      "greetingMorning": "Good morning!",
+      "greetingAfternoon": "Good afternoon!",
+      "greetingEvening": "Good evening!",
+      "projects": "{count, plural, =0 {No projects} =1 {1 project} other {# projects}}",
+      "tasks": "{count, plural, =0 {No tasks} =1 {1 task} other {# tasks}}",
+      "unread": "{count, plural, =1 {1 unread} other {# unread}}",
+      "deadlinesTitle": "Upcoming deadlines"
     }
   },
   "notifications": {

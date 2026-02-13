@@ -35,6 +35,9 @@ import { ProjectSelector } from "@/components/ai/project-selector";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
 import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
 import { getProjects } from "@/actions/projects";
+import { getDailyBriefing } from "@/actions/briefing";
+import type { DailyBriefing as DailyBriefingData } from "@/actions/briefing";
+import { DailyBriefing } from "@/components/ai/daily-briefing";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 
 // Formatera datum för konversationshistorik
@@ -90,6 +93,8 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [briefingData, setBriefingData] = useState<DailyBriefingData | null>(null);
+  const [isLoadingBriefing, setIsLoadingBriefing] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -190,6 +195,23 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
     };
     void loadProjects();
   }, [open]);
+
+  // Load briefing when chat opens
+  useEffect(() => {
+    if (!open || briefingData) return;
+    const loadBriefing = async () => {
+      setIsLoadingBriefing(true);
+      try {
+        const data = await getDailyBriefing();
+        setBriefingData(data);
+      } catch {
+        // Silently fail — briefing is non-critical
+      } finally {
+        setIsLoadingBriefing(false);
+      }
+    };
+    void loadBriefing();
+  }, [open, briefingData]);
 
   const loadConversations = useCallback(async () => {
     setLoadingHistory(true);
@@ -497,14 +519,19 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
           )}
 
           {/* Meddelandelista */}
-          <div className="flex-1 overflow-y-auto p-4">
-            {messages.length === 0 && !error && (
-              <div className="flex h-full flex-col items-center justify-center text-center text-muted-foreground">
+          <div className="flex-1 overflow-y-auto">
+            {/* Briefing */}
+            {briefingData && messages.length === 0 && (
+              <DailyBriefing data={briefingData} />
+            )}
+
+            {messages.length === 0 && !error && !briefingData && !isLoadingBriefing && (
+              <div className="flex h-full flex-col items-center justify-center p-4 text-center text-muted-foreground">
                 <MessageCircle className="mb-2 size-10 opacity-50" />
                 <p className="text-sm">{t("placeholder")}</p>
               </div>
             )}
-            <div className="space-y-4">
+            <div className="space-y-4 p-4">
               {messages.map((message) => (
                 <div
                   key={message.id}

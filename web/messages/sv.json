@@ -189,6 +189,15 @@
       "holdToTalk": "Håll in = prata, släpp = skicka",
       "clickOnce": "Klicka 1x = spela in, auto-skicka",
       "clickTwice": "Klicka 2x = konversationsläge"
+    },
+    "briefing": {
+      "greetingMorning": "God morgon!",
+      "greetingAfternoon": "God dag!",
+      "greetingEvening": "God kväll!",
+      "projects": "{count, plural, =0 {Inga projekt} =1 {1 projekt} other {# projekt}}",
+      "tasks": "{count, plural, =0 {Inga uppgifter} =1 {1 uppgift} other {# uppgifter}}",
+      "unread": "{count, plural, =1 {1 oläst} other {# olästa}}",
+      "deadlinesTitle": "Kommande deadlines"
     }
   },
   "notifications": {
