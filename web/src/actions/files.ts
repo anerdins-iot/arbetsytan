@@ -20,7 +20,6 @@ import {
   putObjectToMinio,
 } from "@/lib/minio";
 import { processFileOcr } from "@/lib/ai/ocr";
-import { sendProjectToPersonalAIMessage } from "@/lib/ai/aimessage-triggers";
 import { logger } from "@/lib/logger";
 
 const uploadPreparationSchema = z.object({
@@ -318,25 +317,6 @@ export async function uploadFile(
       fileId: created.id,
       actorUserId: userId,
     });
-
-    const project = await db.project.findUnique({
-      where: { id: projectId },
-      select: { name: true },
-    });
-    const projectMembers = await db.projectMember.findMany({
-      where: { projectId },
-      include: { membership: { select: { userId: true } } },
-    });
-    const content = `En ny fil har laddats upp i projektet ${project?.name ?? "projektet"}: ${created.name}.`;
-    for (const pm of projectMembers) {
-      await sendProjectToPersonalAIMessage({
-        db,
-        projectId,
-        userId: pm.membership.userId,
-        type: "file_uploaded",
-        content,
-      });
-    }
 
     // Trigger OCR in background (fire-and-forget)
     processFileOcr({

@@ -48,77 +48,6 @@ export type PersonalToolsContext = {
 export function createPersonalTools(ctx: PersonalToolsContext) {
   const { db, tenantId, userId } = ctx;
 
-  // ─── AIMessages ───────────────────────────────────────
-
-  const getUnreadAIMessages = tool({
-    description:
-      "Hämta användarens olästa AIMessages från projekt-AI:er. Börja alltid med att anropa detta för att se om det finns nya notiser (uppgifter, deadlines, etc.).",
-    inputSchema: toolInputSchema(z.object({
-      limit: z.number().min(1).max(50).default(20).describe("Max antal meddelanden"),
-    })),
-    execute: async ({ limit }: { limit: number }) => {
-      const messages = await db.aIMessage.findMany({
-        where: { userId, read: false, direction: "PROJECT_TO_PERSONAL" },
-        orderBy: { createdAt: "desc" },
-        take: limit,
-        include: {
-          project: { select: { id: true, name: true } },
-        },
-      });
-      return messages.map((m) => ({
-        id: m.id,
-        type: m.type,
-        content: m.content,
-        projectName: m.project.name,
-        projectId: m.project.id,
-        createdAt: m.createdAt.toISOString(),
-      }));
-    },
-  });
-
-  const markAIMessageRead = tool({
-    description: "Markera ett AIMessage som läst. Ange meddelandets id.",
-    inputSchema: toolInputSchema(z.object({
-      messageId: z.string().describe("AIMessage-id att markera som läst"),
-    })),
-    execute: async ({ messageId }) => {
-      const msg = await db.aIMessage.findFirst({
-        where: { id: messageId, userId },
-      });
-      if (!msg) return { error: "Meddelandet hittades inte." };
-      await db.aIMessage.update({
-        where: { id: messageId },
-        data: { read: true },
-      });
-      return { success: true, message: "Markerat som läst." };
-    },
-  });
-
-  const sendAIMessageToProject = tool({
-    description:
-      "Skicka ett meddelande till projekt-AI:n (t.ex. att användaren bekräftat en uppgift eller svarar på en fråga). Ange projectId, typ och innehåll. Använd parentId för att svara på ett tidigare meddelande (trådning).",
-    inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
-      type: z.string().describe("Typ, t.ex. task_acknowledged, question, status_update"),
-      content: z.string().describe("Meddelandets innehåll på svenska"),
-      parentId: z.string().optional().describe("ID på det AIMessage detta är svar på (trådning)"),
-    })),
-    execute: async ({ projectId: pid, type, content, parentId }) => {
-      await requireProject(tenantId, pid, userId);
-      await db.aIMessage.create({
-        data: {
-          direction: "PERSONAL_TO_PROJECT",
-          type,
-          content,
-          userId,
-          projectId: pid,
-          parentId: parentId ?? null,
-        },
-      });
-      return { success: true, message: "Meddelande skickat till projekt-AI." };
-    },
-  });
-
   // ─── Projektlista och översikt ────────────────────────
 
   const getProjectList = tool({
@@ -1743,10 +1672,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   return {
-    // AIMessages
-    getUnreadAIMessages,
-    markAIMessageRead,
-    sendAIMessageToProject,
     // Projektlista
     getProjectList,
     // Uppgifter

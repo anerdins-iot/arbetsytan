@@ -7,7 +7,6 @@ import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
 import { emitProjectUpdatedToProject } from "@/lib/socket";
-import { sendProjectToPersonalAIMessage } from "@/lib/ai/aimessage-triggers";
 import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -364,15 +363,6 @@ export async function updateProject(
         })
       )
     );
-    for (const recipientUserId of recipientUserIds) {
-      await sendProjectToPersonalAIMessage({
-        db,
-        projectId,
-        userId: recipientUserId,
-        type: "project_status_changed",
-        content: `Projektet ${name} har ändrat status från ${currentProject.status} till ${status}.`,
-      });
-    }
   }
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
