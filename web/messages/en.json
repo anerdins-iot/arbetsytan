@@ -387,6 +387,7 @@
       "deleted": "Note deleted",
       "contentRequired": "Content is required",
       "characters": "characters",
+      "preview": "Preview",
       "categoryManager": {
         "title": "Manage categories",
         "description": "Create and edit categories for your notes",

@@ -387,6 +387,7 @@
       "deleted": "Anteckningen togs bort",
       "contentRequired": "Innehåll krävs",
       "characters": "tecken",
+      "preview": "Förhandsgranska",
       "categoryManager": {
         "title": "Hantera kategorier",
         "description": "Skapa och redigera kategorier för dina anteckningar",

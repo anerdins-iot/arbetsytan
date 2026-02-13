@@ -15,7 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteNote, toggleNotePin, type NoteItem } from "@/actions/notes";
 import type { NoteCategoryItem } from "@/actions/note-categories";
-import { EditNoteDialog } from "./edit-note-dialog";
+import { NoteModal } from "./note-modal";
+import { NoteCardMarkdown } from "./note-card-markdown";
 
 type NoteCardProps = {
   note: NoteItem;
@@ -26,11 +27,13 @@ type NoteCardProps = {
 
 export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProps) {
   const t = useTranslations("projects.notes");
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"view" | "edit">("view");
   const [isPending, startTransition] = useTransition();
 
   // Toggle pin-status
-  const handleTogglePin = () => {
+  const handleTogglePin = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     startTransition(async () => {
       const result = await toggleNotePin(projectId, note.id);
       if (result.success) {
@@ -42,7 +45,8 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
   };
 
   // Ta bort anteckning
-  const handleDelete = () => {
+  const handleDelete = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (!confirm(t("confirmDelete"))) return;
 
     startTransition(async () => {
@@ -55,9 +59,10 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
     });
   };
 
-  // Trunkera innehållet till 150 tecken
-  const truncatedContent =
-    note.content.length > 150 ? note.content.substring(0, 150) + "..." : note.content;
+  const openModal = (mode: "view" | "edit" = "view") => {
+    setModalMode(mode);
+    setIsModalOpen(true);
+  };
 
   // Formatera datum
   const formattedDate = new Date(note.createdAt).toLocaleDateString("sv-SE", {
@@ -73,17 +78,21 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
 
   return (
     <>
-      <Card className="relative flex flex-col">
-        <CardHeader className="pb-3">
+      <Card
+        className="relative flex h-[220px] cursor-pointer flex-col transition-colors hover:bg-accent/50"
+        onClick={() => openModal("view")}
+      >
+        <CardHeader className="flex-shrink-0 pb-2">
           <div className="flex items-start justify-between gap-2">
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               {note.title && (
-                <h3 className="mb-1 font-semibold text-foreground line-clamp-2">{note.title}</h3>
+                <h3 className="mb-1 truncate font-semibold text-foreground">{note.title}</h3>
               )}
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="flex flex-wrap items-center gap-1.5">
                 {note.category && (
                   <Badge
                     variant="secondary"
+                    className="text-xs"
                     style={
                       categoryMatch?.color
                         ? {
@@ -98,31 +107,30 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
                   </Badge>
                 )}
                 {note.isPinned && (
-                  <Badge variant="outline" className="gap-1">
+                  <Badge variant="outline" className="gap-1 text-xs">
                     <Pin className="size-3" />
-                    {t("pinned")}
                   </Badge>
                 )}
               </div>
             </div>
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="size-8" disabled={isPending}>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" size="icon" className="size-8 flex-shrink-0" disabled={isPending}>
                   <MoreVertical className="size-4" />
                   <span className="sr-only">{t("actions")}</span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={handleTogglePin}>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleTogglePin(); }}>
                   <Pin className="mr-2 size-4" />
                   {note.isPinned ? t("unpin") : t("pin")}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsEditDialogOpen(true)}>
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); openModal("edit"); }}>
                   <Edit className="mr-2 size-4" />
                   {t("edit")}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem onClick={(e) => { e.stopPropagation(); handleDelete(); }} className="text-destructive">
                   <Trash2 className="mr-2 size-4" />
                   {t("delete")}
                 </DropdownMenuItem>
@@ -130,25 +138,26 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
             </DropdownMenu>
           </div>
         </CardHeader>
-        <CardContent className="flex-1 pb-3">
-          <p className="whitespace-pre-wrap text-sm text-muted-foreground">{truncatedContent}</p>
+        <CardContent className="min-h-0 flex-1 overflow-hidden pb-2">
+          <NoteCardMarkdown content={note.content} />
         </CardContent>
-        <CardFooter className="pt-0 text-xs text-muted-foreground">
+        <CardFooter className="flex-shrink-0 pt-0 text-xs text-muted-foreground">
           <div className="flex w-full items-center justify-between">
-            <span>{note.createdBy.name || note.createdBy.email}</span>
-            <span>{formattedDate}</span>
+            <span className="truncate">{note.createdBy.name || note.createdBy.email}</span>
+            <span className="flex-shrink-0">{formattedDate}</span>
           </div>
         </CardFooter>
       </Card>
 
-      {/* Edit dialog */}
-      <EditNoteDialog
+      {/* Universal note modal */}
+      <NoteModal
         projectId={projectId}
         note={note}
-        open={isEditDialogOpen}
-        onOpenChange={setIsEditDialogOpen}
-        onSuccess={onUpdate}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onUpdate={onUpdate}
         categories={categories}
+        initialMode={modalMode}
       />
     </>
   );

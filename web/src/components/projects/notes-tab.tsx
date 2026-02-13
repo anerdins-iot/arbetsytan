@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getNotes, type NoteItem } from "@/actions/notes";
 import { getNoteCategories, type NoteCategoryItem } from "@/actions/note-categories";
 import { NoteCard } from "./note-card";
-import { CreateNoteDialog } from "./create-note-dialog";
+import { NoteModal } from "./note-modal";
 import { NoteCategoryManager } from "./note-category-manager";
 
 type NotesTabProps = {
@@ -27,7 +27,7 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
   const [categories, setCategories] = useState<NoteCategoryItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -87,6 +87,12 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socketCategoryVersion]);
 
+  // Callback for when notes or categories change
+  const handleUpdate = () => {
+    loadNotes();
+    loadCategories();
+  };
+
   // Filtrera och sortera anteckningar (pinnade först)
   const filteredNotes = notes;
 
@@ -127,7 +133,7 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
             <Settings className="size-4" />
           </Button>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
+        <Button onClick={() => setIsCreateModalOpen(true)}>
           <Plus className="mr-2 size-4" />
           {t("createNote")}
         </Button>
@@ -150,7 +156,7 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
               : t("noNotesDescription")}
           </p>
           {!searchQuery && categoryFilter === "all" && (
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Button onClick={() => setIsCreateModalOpen(true)}>
               <Plus className="mr-2 size-4" />
               {t("createFirstNote")}
             </Button>
@@ -159,17 +165,17 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredNotes.map((note) => (
-            <NoteCard key={note.id} note={note} projectId={projectId} onUpdate={loadNotes} categories={categories} />
+            <NoteCard key={note.id} note={note} projectId={projectId} onUpdate={handleUpdate} categories={categories} />
           ))}
         </div>
       )}
 
-      {/* Create dialog */}
-      <CreateNoteDialog
+      {/* Create modal (using NoteModal in create mode) */}
+      <NoteModal
         projectId={projectId}
-        open={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-        onSuccess={loadNotes}
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onUpdate={handleUpdate}
         categories={categories}
       />
 
