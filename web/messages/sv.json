@@ -314,8 +314,7 @@
       "files": "Filer",
       "time": "Tid",
       "notes": "Anteckningar",
-      "automations": "Automatiseringar",
-      "ai": "AI"
+      "automations": "Automatiseringar"
     },
     "notes": {
       "createNote": "Ny anteckning",
@@ -361,19 +360,6 @@
       "deleted": "Anteckningen togs bort",
       "contentRequired": "Innehåll krävs",
       "characters": "tecken"
-    },
-    "aiChat": {
-      "placeholder": "Fråga om projektet, filer eller uppgifter…",
-      "send": "Skicka",
-      "newConversation": "Ny konversation",
-      "history": "Konversationshistorik",
-      "sources": "Källor",
-      "sourceFrom": "Från {fileName}",
-      "sourcePage": "Sida {page}",
-      "noConversations": "Inga konversationer ännu.",
-      "loading": "Laddar…",
-      "error": "Något gick fel. Försök igen.",
-      "messageCount": "{count} medd."
     },
     "files": {
       "title": "Ladda upp filer",

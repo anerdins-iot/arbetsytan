@@ -21,7 +21,6 @@ import { TimeEntryForm } from "@/components/time/time-entry-form";
 import { TimeEntryList } from "@/components/time/time-entry-list";
 import { TimeSummary } from "@/components/time/time-summary";
 import { ProjectExportPanel } from "./project-export-panel";
-import { ProjectAiChat } from "./project-ai-chat";
 import { NotesTab } from "./notes-tab";
 import type { NoteItem } from "@/actions/notes";
 import type { AutomationItem } from "@/actions/automations";
@@ -38,7 +37,7 @@ type ProjectViewProps = {
   timeSummary?: ProjectTimeSummary | null;
   notes?: NoteItem[];
   automations?: AutomationItem[];
-  initialTab?: "overview" | "tasks" | "files" | "time" | "ai" | "notes" | "automations";
+  initialTab?: "overview" | "tasks" | "files" | "time" | "notes" | "automations";
   initialTaskId?: string;
 };
 
@@ -115,7 +114,6 @@ export function ProjectView({
           <TabsTrigger value="time">{t("tabs.time")}</TabsTrigger>
           <TabsTrigger value="notes">{t("tabs.notes")}</TabsTrigger>
           <TabsTrigger value="automations">{t("tabs.automations")}</TabsTrigger>
-          <TabsTrigger value="ai">{t("tabs.ai")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
@@ -152,9 +150,6 @@ export function ProjectView({
           <AutomationsManager initialAutomations={automations} projectId={project.id} />
         </TabsContent>
 
-        <TabsContent value="ai" className="mt-6">
-          <ProjectAiChat projectId={project.id} />
-        </TabsContent>
       </Tabs>
     </div>
   );

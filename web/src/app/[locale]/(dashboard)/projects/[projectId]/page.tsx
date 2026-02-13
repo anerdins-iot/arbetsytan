@@ -23,7 +23,7 @@ async function ProjectContent({
   initialTaskId,
 }: {
   projectId: string;
-  initialTab?: "overview" | "tasks" | "files" | "time" | "ai" | "notes" | "automations";
+  initialTab?: "overview" | "tasks" | "files" | "time" | "notes" | "automations";
   initialTaskId?: string;
 }) {
   const [
@@ -89,13 +89,12 @@ export default async function ProjectPage({ params, searchParams }: Props) {
     "tasks",
     "files",
     "time",
-    "ai",
     "notes",
     "automations",
   ]);
   const initialTab =
     tab && validTabs.has(tab)
-      ? (tab as "overview" | "tasks" | "files" | "time" | "ai" | "notes" | "automations")
+      ? (tab as "overview" | "tasks" | "files" | "time" | "notes" | "automations")
       : undefined;
   const initialTaskId = taskId?.trim() ? taskId : undefined;
 

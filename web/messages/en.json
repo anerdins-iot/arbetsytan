@@ -314,8 +314,7 @@
       "files": "Files",
       "time": "Time",
       "notes": "Notes",
-      "automations": "Automations",
-      "ai": "AI"
+      "automations": "Automations"
     },
     "notes": {
       "createNote": "New note",
@@ -361,19 +360,6 @@
       "deleted": "Note deleted",
       "contentRequired": "Content is required",
       "characters": "characters"
-    },
-    "aiChat": {
-      "placeholder": "Ask about the project, files or tasks…",
-      "send": "Send",
-      "newConversation": "New conversation",
-      "history": "Conversation history",
-      "sources": "Sources",
-      "sourceFrom": "From {fileName}",
-      "sourcePage": "Page {page}",
-      "noConversations": "No conversations yet.",
-      "loading": "Loading…",
-      "error": "Something went wrong. Please try again.",
-      "messageCount": "{count} msgs"
     },
     "files": {
       "title": "Upload files",
