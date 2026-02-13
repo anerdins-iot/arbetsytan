@@ -43,9 +43,9 @@ const uploadFileFormSchema = z.object({
   file: z.instanceof(File),
 });
 
-const projectIdSchema = z.string().uuid();
+const projectIdSchema = z.string().min(1);
 const deleteFileSchema = z.object({
-  projectId: z.string().uuid(),
+  projectId: z.string().min(1),
   fileId: z.string().min(1),
 });
 
