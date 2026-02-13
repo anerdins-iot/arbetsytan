@@ -148,9 +148,14 @@ export async function getNotes(
       where.category = options.category;
     }
     if (options?.search) {
-      where.OR = [
-        { title: { contains: options.search, mode: "insensitive" } },
-        { content: { contains: options.search, mode: "insensitive" } },
+      // Use AND to combine search with other filters
+      where.AND = [
+        {
+          OR: [
+            { title: { contains: options.search, mode: "insensitive" } },
+            { content: { contains: options.search, mode: "insensitive" } },
+          ],
+        },
       ];
     }
 
