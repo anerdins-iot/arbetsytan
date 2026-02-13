@@ -115,6 +115,8 @@ export function ProjectFilesUpload({
         return t("errorStorage");
       case "FILE_NOT_FOUND":
         return t("errorFileNotFound");
+      case "DELETE_NOT_ALLOWED":
+        return t("errorDeleteNotAllowed");
       case "DELETE_FILE_FAILED":
       case "FETCH_FILES_FAILED":
         return t("errorGeneric");

@@ -447,9 +447,10 @@ export async function deleteFile(input: {
   projectId: string;
   fileId: string;
 }): Promise<{ success: true } | { success: false; error: string }> {
-  const { tenantId, userId } = await requirePermission("canDeleteFiles");
+  const { tenantId, userId, role } = await requireAuth();
   const parsed = deleteFileSchema.safeParse(input);
   if (!parsed.success) {
+    logger.warn("deleteFile validation failed", { input, errors: parsed.error.flatten() });
     return { success: false, error: "VALIDATION_ERROR" };
   }
 
@@ -458,15 +459,46 @@ export async function deleteFile(input: {
   try {
     await requireProject(tenantId, projectId, userId);
     const db = tenantDb(tenantId);
+
+    // Fetch file with uploadedById to check ownership
     const file = await db.file.findFirst({
       where: {
         id: fileId,
         projectId,
       },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        size: true,
+        bucket: true,
+        key: true,
+        uploadedById: true,
+      },
     });
 
     if (!file) {
+      logger.warn("deleteFile: file not found", { projectId, fileId, userId });
       return { success: false, error: "FILE_NOT_FOUND" };
+    }
+
+    // Permission check:
+    // 1. File owner can always delete their own files
+    // 2. ADMIN can delete any file
+    // 3. PROJECT_MANAGER can delete any file in projects they manage
+    const isOwner = file.uploadedById === userId;
+    const isAdmin = role === "ADMIN";
+    const isProjectManager = role === "PROJECT_MANAGER";
+
+    if (!isOwner && !isAdmin && !isProjectManager) {
+      logger.warn("deleteFile: permission denied", {
+        projectId,
+        fileId,
+        userId,
+        fileOwnerId: file.uploadedById,
+        userRole: role,
+      });
+      return { success: false, error: "DELETE_NOT_ALLOWED" };
     }
 
     await deleteObject({
@@ -496,6 +528,7 @@ export async function deleteFile(input: {
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "DELETE_FILE_FAILED";
+    logger.error("deleteFile failed", { projectId, fileId, error: message });
     return { success: false, error: message };
   }
 }

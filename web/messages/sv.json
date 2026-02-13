@@ -431,6 +431,7 @@
       "errorFileTooLarge": "Filen är för stor. Max 50 MB per fil.",
       "errorFileType": "Filtypen stöds inte.",
       "errorFileNotFound": "Filen hittades inte.",
+      "errorDeleteNotAllowed": "Du kan bara ta bort filer du själv har laddat upp.",
       "errorTenantLimit": "Tenantens lagringsgräns är uppnådd.",
       "errorStorage": "Kunde inte ladda upp till lagringen.",
       "errorGeneric": "Något gick fel vid uppladdning. Försök igen.",

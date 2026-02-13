@@ -431,6 +431,7 @@
       "errorFileTooLarge": "File is too large. Max 50 MB per file.",
       "errorFileType": "File type is not supported.",
       "errorFileNotFound": "File not found.",
+      "errorDeleteNotAllowed": "You can only delete files you uploaded yourself.",
       "errorTenantLimit": "Tenant storage limit has been reached.",
       "errorStorage": "Could not upload to storage.",
       "errorGeneric": "Something went wrong during upload. Please try again.",
