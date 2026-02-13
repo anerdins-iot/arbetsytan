@@ -775,7 +775,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId }: Persona
               placeholder={t("placeholder")}
               disabled={isLoading}
               rows={1}
-              className="min-h-10 resize-none"
+              className="min-h-10 min-w-0 flex-1 resize-none"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();

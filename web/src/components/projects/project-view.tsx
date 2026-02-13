@@ -127,14 +127,16 @@ export function ProjectView({
       </div>
 
       <Tabs defaultValue={initialTab}>
-        <TabsList>
-          <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
-          <TabsTrigger value="tasks">{t("tabs.tasks")}</TabsTrigger>
-          <TabsTrigger value="files">{t("tabs.files")}</TabsTrigger>
-          <TabsTrigger value="time">{t("tabs.time")}</TabsTrigger>
-          <TabsTrigger value="notes">{t("tabs.notes")}</TabsTrigger>
-          <TabsTrigger value="automations">{t("tabs.automations")}</TabsTrigger>
-        </TabsList>
+        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <TabsList>
+            <TabsTrigger value="overview">{t("tabs.overview")}</TabsTrigger>
+            <TabsTrigger value="tasks">{t("tabs.tasks")}</TabsTrigger>
+            <TabsTrigger value="files">{t("tabs.files")}</TabsTrigger>
+            <TabsTrigger value="time">{t("tabs.time")}</TabsTrigger>
+            <TabsTrigger value="notes">{t("tabs.notes")}</TabsTrigger>
+            <TabsTrigger value="automations">{t("tabs.automations")}</TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview" className="mt-6">
           <ProjectOverview project={project} recentActivity={recentActivity} />

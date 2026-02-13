@@ -286,10 +286,10 @@ export function VoiceModeToggle({
 
   return (
     <TooltipProvider>
-      <div className="flex items-center gap-1">
+      <div className="flex shrink-0 items-center gap-1">
         {/* Recording indicator with audio level */}
         {isRecording && (
-          <div className="flex items-center gap-2 rounded-md bg-destructive/10 px-2 py-1 text-xs text-destructive">
+          <div className="flex items-center gap-1.5 rounded-md bg-destructive/10 px-2 py-1 text-xs text-destructive">
             {/* Audio level indicator */}
             <div className="flex h-3 items-end gap-0.5">
               {[...Array(5)].map((_, i) => (
@@ -309,7 +309,7 @@ export function VoiceModeToggle({
             </div>
             <span>{formatDuration(duration)}</span>
             {getModeText() && (
-              <span className="text-destructive/70">({getModeText()})</span>
+              <span className="hidden text-destructive/70 sm:inline">({getModeText()})</span>
             )}
             <Button
               type="button"
@@ -325,17 +325,17 @@ export function VoiceModeToggle({
 
         {/* Transcribing indicator */}
         {isTranscribing && (
-          <div className="flex items-center gap-2 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
             <Loader2 className="size-3 animate-spin" />
-            <span>{t("transcribing")}</span>
+            <span className="hidden sm:inline">{t("transcribing")}</span>
           </div>
         )}
 
         {/* Conversation mode active indicator (when not recording) */}
         {isConversationMode && !isRecording && !isTranscribing && (
-          <div className="flex items-center gap-2 rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
+          <div className="flex items-center gap-1.5 rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
             <MessageSquare className="size-3" />
-            <span>{t("conversationMode")}</span>
+            <span className="hidden sm:inline">{t("conversationMode")}</span>
             <Button
               type="button"
               variant="ghost"
