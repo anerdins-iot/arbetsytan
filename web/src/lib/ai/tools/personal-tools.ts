@@ -12,6 +12,8 @@ import {
   createProject as createProjectAction,
   updateProject as updateProjectAction,
   archiveProject as archiveProjectAction,
+  addProjectMember as addProjectMemberAction,
+  removeProjectMember as removeProjectMemberAction,
 } from "@/actions/projects";
 import {
   createTaskShared,
@@ -332,11 +334,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const assignTask = tool({
     description:
-      "Tilldela en uppgift till en projektmedlem. Kräver projectId, taskId och membershipId (från getProjectMembers).",
+      "Tilldela en uppgift till en projektmedlem. Kräver projectId, taskId och membershipId (från listMembers).",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       taskId: z.string().describe("Uppgiftens ID"),
-      membershipId: z.string().describe("MembershipId för den som ska tilldelas (från getProjectMembers)"),
+      membershipId: z.string().describe("MembershipId för den som ska tilldelas (från listMembers)"),
     })),
     execute: async ({ projectId: pid, taskId, membershipId }) => {
       await requireProject(tenantId, pid, userId);
@@ -1109,7 +1111,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   // ─── Projektmedlemmar ─────────────────────────────────
 
-  const getProjectMembers = tool({
+  const listMembers = tool({
     description: "Hämta medlemmar i ett projekt med namn, e-post och membershipId.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
@@ -1131,6 +1133,67 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         userName: m.membership.user.name ?? m.membership.user.email,
         email: m.membership.user.email,
       }));
+    },
+  });
+
+  const getAvailableMembers = tool({
+    description: "Hämta en lista över teammedlemmar i företaget som kan läggas till i projektet.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      await requireProject(tenantId, pid, userId);
+      
+      // Hämta alla medlemmar i tenanten
+      const allMemberships = await db.membership.findMany({
+        include: {
+          user: { select: { id: true, name: true, email: true } },
+        },
+      });
+
+      // Hämta befintliga projektmedlemmar
+      const existingMembers = await db.projectMember.findMany({
+        where: { projectId: pid },
+        select: { membershipId: true },
+      });
+      const existingIds = new Set(existingMembers.map(m => m.membershipId));
+
+      // Filtrera ut de som redan är med i projektet
+      return allMemberships
+        .filter(m => !existingIds.has(m.id))
+        .map((m) => ({
+          membershipId: m.id,
+          userName: m.user.name ?? m.user.email,
+          email: m.user.email,
+        }));
+    },
+  });
+
+  const addMember = tool({
+    description: "Lägg till en teammedlem i ett projekt. Kräver projectId och membershipId (från getAvailableMembers).",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      membershipId: z.string().describe("Medlemmens membershipId"),
+    })),
+    execute: async ({ projectId: pid, membershipId }) => {
+      await requirePermission("canManageTeam");
+      const result = await addProjectMemberAction(pid, membershipId);
+      if (!result.success) return { error: result.error || "Kunde inte lägga till medlemmen." };
+      return { success: true, message: "Medlemmen har lagts till i projektet." };
+    },
+  });
+
+  const removeMember = tool({
+    description: "Ta bort en medlem från ett projekt. Kräver projectId och membershipId (från listMembers).",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      membershipId: z.string().describe("Medlemmens membershipId"),
+    })),
+    execute: async ({ projectId: pid, membershipId }) => {
+      await requirePermission("canManageTeam");
+      const result = await removeProjectMemberAction(pid, membershipId);
+      if (!result.success) return { error: result.error || "Kunde inte ta bort medlemmen." };
+      return { success: true, message: "Medlemmen har tagits bort från projektet." };
     },
   });
 
@@ -1971,7 +2034,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     analyzePersonalFile,
     movePersonalFileToProject,
     // Projektmedlemmar
-    getProjectMembers,
+    listMembers,
+    getAvailableMembers,
+    addMember,
+    removeMember,
     // Projektanteckningar
     getProjectNotes,
     createNote: createProjectNote,

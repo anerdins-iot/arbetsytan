@@ -376,6 +376,53 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       { name: "automationId", type: "string", required: true, description: "Automation ID" },
     ],
   },
+  // ─── Member ───────────────────────────────────────────
+  {
+    name: "listMembers",
+    category: "member",
+    description: "Get list of members in a project.",
+    availableIn: ["project", "personal"],
+    requiresProjectId: true,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID" },
+    ],
+  },
+  {
+    name: "getAvailableMembers",
+    category: "member",
+    description: "Get list of company members that can be added to a project.",
+    availableIn: ["project", "personal"],
+    requiresProjectId: true,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID" },
+    ],
+  },
+  {
+    name: "addMember",
+    category: "member",
+    description: "Add a member to a project.",
+    availableIn: ["project", "personal"],
+    requiresProjectId: true,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID" },
+      { name: "membershipId", type: "string", required: true, description: "Membership ID to add" },
+    ],
+  },
+  {
+    name: "removeMember",
+    category: "member",
+    description: "Remove a member from a project.",
+    availableIn: ["project", "personal"],
+    requiresProjectId: true,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID" },
+      { name: "membershipId", type: "string", required: true, description: "Membership ID to remove" },
+    ],
+  },
   // ─── Email ─────────────────────────────────────────────
   {
     name: "prepareEmailToExternalRecipients",
