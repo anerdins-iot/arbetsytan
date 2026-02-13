@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/db";
 
 async function main() {
-  /** Shared test password for seed users: admin@example.com, pm@example.com, montor@example.com → "password123" */
+  /** Shared test password for seed users: fredrik@anerdins.se, pm@example.com, montor@example.com → "password123" */
   const testPasswordHash = await bcrypt.hash("password123", 12);
   const tenant = await prisma.tenant.upsert({
     where: { id: "seed-tenant-1" },
@@ -36,11 +36,11 @@ async function main() {
   });
 
   const adminUser = await prisma.user.upsert({
-    where: { email: "admin@example.com" },
+    where: { email: "fredrik@anerdins.se" },
     update: { password: testPasswordHash },
     create: {
-      name: "Anna Admin",
-      email: "admin@example.com",
+      name: "Fredrik Admin",
+      email: "fredrik@anerdins.se",
       locale: "sv",
       password: testPasswordHash,
     },

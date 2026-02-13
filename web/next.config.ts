@@ -6,7 +6,8 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   output: 'standalone',
-  cacheComponents: true,
+  // cacheComponents disabled due to next-intl/setRequestLocale conflicts with prerendering
+  // Re-enable when proper Suspense boundaries are in place
 };
 
 export default withSentryConfig(withNextIntl(nextConfig), {
