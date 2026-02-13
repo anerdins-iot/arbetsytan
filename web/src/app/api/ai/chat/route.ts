@@ -205,6 +205,7 @@ export async function POST(req: NextRequest) {
   const systemPrompt = buildSystemPrompt({
     userName: user.name ?? undefined,
     userRole: role,
+    projectId: projectId ?? undefined,
     projectContext,
     ragContext,
     checkUnreadOnStart: isFirstTurn,
@@ -328,6 +329,7 @@ function extractTextFromParts(message: UIMessage): string {
 function buildSystemPrompt(opts: {
   userName?: string;
   userRole: string;
+  projectId?: string;
   projectContext?: {
     name: string;
     address: string | null;
@@ -339,7 +341,7 @@ function buildSystemPrompt(opts: {
   checkUnreadOnStart?: boolean;
   conversationSummary?: string | null;
 }): string {
-  const { userName, userRole, projectContext, ragContext, checkUnreadOnStart, conversationSummary } = opts;
+  const { userName, userRole, projectId, projectContext, ragContext, checkUnreadOnStart, conversationSummary } = opts;
 
   const summaryBlock =
     conversationSummary && conversationSummary.trim()
@@ -351,18 +353,29 @@ function buildSystemPrompt(opts: {
       ? " Användaren har precis öppnat chatten — anropa getUnreadAIMessages nu och sammanfatta eventuella olästa meddelanden från projekt-AI:er."
       : " Börja alltid med att kolla om det finns olästa meddelanden från projekt-AI:er (använd verktyget getUnreadAIMessages).";
 
-  const parts: string[] = [
+  const parts: string[] = [];
+
+  // When project is selected: lead with explicit context so the model always knows the active project
+  if (projectContext && projectId) {
+    parts.push(
+      "[Kontext: Användaren jobbar just nu med projektet \"" + projectContext.name + "\".]",
+      "",
+      "AKTIVT PROJEKT:",
+      "- Projektnamn: " + projectContext.name,
+      "- ID: " + projectId,
+      "- Alla frågor om 'projektet', 'detta projekt' eller 'mitt projekt' refererar till detta projekt.",
+      "- Använd alltid detta projectId i verktygsanrop som kräver projektkontext.",
+      "- Övrig info: status " + projectContext.status + ", adress " + (projectContext.address ?? "ej angiven") + ", " + projectContext.taskCount + " uppgifter, " + projectContext.memberCount + " medlemmar.",
+      ""
+    );
+  }
+
+  parts.push(
     `Du är en personlig arbetsassistent åt ${userName ?? "användaren"}.`,
     `Användaren har rollen ${userRole}.`,
     "Du hjälper med personliga saker och med projekt — användaren kan byta projekt när som helst. Du har tillgång till verktyg för alla användarens projekt (ange projectId när du arbetar i ett specifikt projekt).",
     unreadHint,
-  ];
-
-  if (projectContext) {
-    parts.push(
-      `Just nu är användaren i projektet "${projectContext.name}" (status ${projectContext.status}, adress ${projectContext.address ?? "ej angiven"}, ${projectContext.taskCount} uppgifter, ${projectContext.memberCount} medlemmar). Du kan använda detta projekts-ID i verktygsanrop när frågan gäller detta projekt.`
-    );
-  }
+  );
 
   parts.push(
     "Svara på svenska, var konkret och kort.",

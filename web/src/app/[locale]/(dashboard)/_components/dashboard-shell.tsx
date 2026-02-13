@@ -1,7 +1,8 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useMemo } from "react"
 import { useTranslations } from "next-intl"
+import { usePathname } from "next/navigation"
 import { Sidebar } from "./sidebar"
 import { Topbar } from "./topbar"
 import { PersonalAiChat } from "@/components/ai/personal-ai-chat"
@@ -26,6 +27,13 @@ export function DashboardShell({
   // Kontrollera AI-chattpanelens öppet/stängt-tillstånd från topbar
   const [aiChatOpen, setAiChatOpen] = useState(false)
   const t = useTranslations("sidebar")
+  const pathname = usePathname()
+
+  // Extrahera projektId från URL: /[locale]/projects/[projectId]
+  const urlProjectId = useMemo(() => {
+    const match = pathname.match(/^\/[^/]+\/projects\/([^/]+)/)
+    return match ? match[1] : null
+  }, [pathname])
 
   const handleSidebarToggle = useCallback(() => {
     setSidebarCollapsed((prev) => !prev)
@@ -65,7 +73,7 @@ export function DashboardShell({
       </div>
 
       {/* Personlig AI-chatt (styrs från topbar-ikonen) */}
-      <PersonalAiChat open={aiChatOpen} onOpenChange={setAiChatOpen} />
+      <PersonalAiChat open={aiChatOpen} onOpenChange={setAiChatOpen} initialProjectId={urlProjectId} />
     </div>
   )
 }

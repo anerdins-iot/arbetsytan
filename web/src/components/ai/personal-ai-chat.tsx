@@ -86,9 +86,11 @@ type PersonalAiChatProps = {
   open: boolean;
   /** Callback för att ändra öppet/stängt-tillstånd */
   onOpenChange: (open: boolean) => void;
+  /** Projekt-ID från URL (synkas automatiskt) */
+  initialProjectId?: string | null;
 };
 
-export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
+export function PersonalAiChat({ open, onOpenChange, initialProjectId }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
@@ -108,6 +110,13 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
   const [projectList, setProjectList] = useState<Array<{ id: string; name: string }>>([]);
   const activeProjectIdRef = useRef<string | null>(null);
   activeProjectIdRef.current = activeProjectId;
+
+  // Sync activeProjectId with URL-based initialProjectId
+  useEffect(() => {
+    if (initialProjectId) {
+      setActiveProjectId(initialProjectId);
+    }
+  }, [initialProjectId]);
 
   // Voice mode state
   const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
