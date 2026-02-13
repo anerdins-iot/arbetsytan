@@ -551,6 +551,158 @@ Sätt `AUTH_SECRET` som miljövariabel i produktion. Samma secret måste använd
 
 ---
 
+## Mobil/Expo-autentisering
+
+### Begränsningar med Auth.js i Expo
+
+Auth.js förutsätter httpOnly cookies för session-hantering. Detta fungerar INTE i React Native/Expo som saknar webbläsare-kontext. Auth.js har inget officiellt Expo-stöd.
+
+### Rekommenderad lösning för Expo
+
+**OAuth-flöden:**
+- Använd `expo-auth-session` för Google, GitHub, Discord etc.
+- Följer PKCE-flöde (Proof Key for Code Exchange)
+- Hanterar redirect till app automatiskt
+
+**Token-lagring:**
+- Spara access/refresh tokens med `expo-secure-store` (krypterad lagring)
+- Använd ALDRIG `AsyncStorage` för tokens (okrypterat)
+
+**WebView OAuth:**
+- Använd ALDRIG WebView för OAuth (säkerhetsrisk — användaren ser inte riktig URL)
+- Expo öppnar system-webbläsare istället
+
+---
+
+## Dual Auth-strategi (Webb + Mobil)
+
+### Backend-for-Frontend (BFF) Pattern
+
+En backend kan stödja båda auth-typerna samtidigt:
+
+**Webb:** Secure httpOnly cookies (server-side sessions)
+- Session-token i cookie
+- CSRF-skydd inkluderat
+- Auth.js standardflöde
+
+**Mobil:** JWT Bearer tokens (stateless)
+- `Authorization: Bearer <token>` header
+- Ingen cookie-support krävs
+- Längre TTL än cookies (refresh tokens)
+
+### Implementering
+
+Backend detekterar klient-typ baserat på header:
+
+```typescript
+// API route — stödjer både cookie-auth och Bearer token
+export async function GET(req: Request) {
+  // Försök cookie-auth först (Next.js/webb)
+  const session = await auth()
+  if (session?.user) {
+    return Response.json({ user: session.user })
+  }
+
+  // Fallback: Bearer token (Expo/mobil)
+  const authHeader = req.headers.get("authorization")
+  if (authHeader?.startsWith("Bearer ")) {
+    const token = authHeader.substring(7)
+    const user = await verifyJWT(token)
+    if (user) {
+      return Response.json({ user })
+    }
+  }
+
+  return Response.json({ error: "Unauthorized" }, { status: 401 })
+}
+```
+
+**Login-endpoints:**
+- `/api/auth/[...nextauth]` — Auth.js för webb (cookies)
+- `/api/mobile/login` — Custom endpoint för Expo (returnerar JWT)
+
+---
+
+## Låst konto-hantering
+
+### Prisma Schema
+
+Lägg till i User-modellen:
+
+```prisma
+model User {
+  // ... existing fields
+  failedLoginAttempts Int      @default(0)
+  lockedAt            DateTime?
+}
+```
+
+### Implementering i Credentials Provider
+
+```typescript
+Credentials({
+  async authorize(credentials) {
+    const { email, password } = loginSchema.parse(credentials)
+
+    const user = await db.user.findUnique({ where: { email } })
+    if (!user || !user.hashedPassword) return null
+
+    // Kontrollera om kontot är låst
+    if (user.lockedAt) {
+      const lockDuration = 15 * 60 * 1000 // 15 min
+      const isStillLocked = Date.now() - user.lockedAt.getTime() < lockDuration
+
+      if (isStillLocked) {
+        throw new Error("Kontot är låst. Försök igen senare.")
+      }
+
+      // Lås har gått ut — återställ
+      await db.user.update({
+        where: { id: user.id },
+        data: { lockedAt: null, failedLoginAttempts: 0 },
+      })
+    }
+
+    const isValid = await bcrypt.compare(password, user.hashedPassword)
+
+    if (!isValid) {
+      const newAttempts = user.failedLoginAttempts + 1
+      const shouldLock = newAttempts >= 5
+
+      await db.user.update({
+        where: { id: user.id },
+        data: {
+          failedLoginAttempts: newAttempts,
+          lockedAt: shouldLock ? new Date() : null,
+        },
+      })
+
+      if (shouldLock) {
+        throw new Error("För många misslyckade försök. Kontot är låst i 15 minuter.")
+      }
+
+      return null
+    }
+
+    // Lyckad inloggning — återställ räknare
+    await db.user.update({
+      where: { id: user.id },
+      data: { failedLoginAttempts: 0, lockedAt: null },
+    })
+
+    return { id: user.id, email: user.email, name: user.name }
+  },
+})
+```
+
+**Viktiga detaljer:**
+- Kontrollera låsstatus INNAN lösenordsjämförelse (förhindra timing attacks)
+- Lås efter 5 misslyckade försök (anpassningsbart)
+- Automatisk timeout efter 15 minuter (eller permanent tills admin låser upp)
+- Återställ räknare vid lyckad inloggning
+
+---
+
 ## Referenser
 
 - [Auth.js Dokumentation](https://authjs.dev/)
@@ -559,3 +711,5 @@ Sätt `AUTH_SECRET` som miljövariabel i produktion. Samma secret måste använd
 - [Prisma Adapter](https://authjs.dev/getting-started/adapters/prisma)
 - [Session Strategies](https://authjs.dev/concepts/session-strategies)
 - [Next.js Authentication Tutorial](https://nextjs.org/learn/dashboard-app/adding-authentication)
+- [Expo Auth Session](https://docs.expo.dev/guides/authentication/)
+- [Expo Secure Store](https://docs.expo.dev/versions/latest/sdk/securestore/)

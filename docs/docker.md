@@ -339,6 +339,26 @@ Se `/workspace/docs/coolify.md` för detaljerad Coolify-konfiguration.
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 ```
 
+### PostgreSQL med pgvector
+
+Standard `postgres:16-alpine` innehåller **inte** pgvector-extension. Använd `pgvector/pgvector`-imagen istället:
+
+```yaml
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    # Resten samma som vanlig postgres-config
+    shm_size: '1g'  # Krävs för HNSW-index
+```
+
+Efter start, aktivera extension i din init-script eller via Prisma:
+
+```sql
+CREATE EXTENSION IF NOT EXISTS vector;
+```
+
+**HNSW-index kräver shared memory:** Sätt `shm_size: '1g'` eller högre i compose-filen, annars får du fel vid indexering.
+
 ### Prisma (körs från hosten)
 
 ```bash
@@ -386,6 +406,40 @@ docker compose down -v
 # Rensa allt
 docker compose down --rmi all -v
 ```
+
+---
+
+## Healthcheck för Node.js Alpine
+
+Alpine-baserade images inkluderar inte `curl` eller `wget` — att lägga till dem ökar image-storleken onödigt. Använd Node.js inbyggda `http`-modul istället:
+
+```dockerfile
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+```
+
+**Viktigt:** Health-endpointen (`/api/health`) ska returnera 200 så länge **containern själv** är frisk, oberoende av externa tjänster (databas, Redis, etc.). Detta låter containern starta medan problem med externa dependencies undersöks separat.
+
+---
+
+## MinIO
+
+**CPU-krav:** Sedan november 2023 kräver MinIO x86-64-v2-instruktioner. Äldre CPU:er (särskilt virtualiserade miljöer och vissa cloud-providers) får felet:
+
+```
+Fatal glibc error: CPU does not support x86-64-v2
+```
+
+**Lösning:** Använd `-cpuv1`-taggen för äldre CPU:er:
+
+```yaml
+services:
+  minio:
+    image: minio/minio:RELEASE.2025-01-01T00-00-00Z-cpuv1
+    # ...
+```
+
+Moderna servrar (fysiska maskiner, nya VPS:er) behöver inte cpuv1-taggen — använd standard-imagen.
 
 ---
 

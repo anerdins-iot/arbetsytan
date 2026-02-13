@@ -364,6 +364,33 @@ export async function searchProducts(query: string) {
 }
 ```
 
+### pgvector och Unsupported-typer
+
+Prisma har ingen native vektor-typ för pgvector. Om du lägger till embedding-kolumner via raw SQL, upptäcker Prisma dem som schema-drift och försöker droppa dem vid `migrate dev`.
+
+**Lösning:** Deklarera kolumnen med `Unsupported()` i schemat:
+
+```prisma
+model Document {
+  id        String  @id @default(cuid())
+  content   String
+  embedding Unsupported("vector(1536)")?
+}
+```
+
+Detta inkluderar kolumnen i Prismas diffberäkning utan att Prisma försöker hantera den. Vektorsökningar görs fortfarande via `$queryRaw`:
+
+```typescript
+const results = await prisma.$queryRaw`
+  SELECT id, content
+  FROM "Document"
+  ORDER BY embedding <-> ${embedding}::vector
+  LIMIT 10
+`
+```
+
+**ALDRIG** hantera pgvector-kolumner enbart via raw SQL-migrationer — det skapar permanent schema-drift som Prisma ständigt försöker korrigera.
+
 ---
 
 ## Docker

@@ -108,14 +108,13 @@ const nextConfig = {
 }
 ```
 
-> ✅ **`cacheComponents: true` är rekommenderat** för alla produktionsappar. Det ger bättre prestanda genom att statiska delar cachas vid build-time.
+> ✅ **`cacheComponents: true` är rekommenderat** för alla produktionsappar.
 >
-> **Hantera dynamiska sidor korrekt:**
-> - Sidor med databasanrop (Prisma/DB) → lägg till `export const dynamic = 'force-dynamic'` eller wrappa i `<Suspense>`
-> - Icke-deterministiska anrop (`new Date()`, `Math.random()`) → flytta till dynamiska komponenter eller Client Components
-> - Client Components med `usePathname()`/`useSearchParams()` → wrappa i `<Suspense>`
+> **Mental model-förändring:** Med `cacheComponents: true` är allt **dynamiskt per default**. Du måste **opt-in till caching** med `'use cache'` direktivet, inte opt-out med `export const dynamic`.
 >
-> **Typiskt mönster:** Statiska sidor (startsida, om-oss, priser) cachas automatiskt. Dynamiska sidor (dashboard, admin, sökresultat) markeras med `force-dynamic`.
+> **Viktigt:** `export const dynamic = 'force-dynamic'` är **INKOMPATIBELT** med `cacheComponents: true`. Använd istället:
+> - `'use cache'` + `cacheLife()` för att cacha komponenter/funktioner
+> - `<Suspense>` för att kombinera statiskt skal med dynamiska delar
 
 ### 5. Parallel Routes
 
@@ -138,7 +137,13 @@ AMP är helt borttaget från Next.js 16.
 
 ## Cache Components (`use cache`)
 
-Next.js 16 introducerar **explicit opt-in caching** istället för implicit caching:
+Next.js 16 introducerar **explicit opt-in caching** med `cacheComponents: true`.
+
+### Mental model
+
+**Med `cacheComponents: false` (default):** Allt är dynamiskt.
+
+**Med `cacheComponents: true`:** Allt är dynamiskt per default. Du måste **opt-in** till caching med `'use cache'`.
 
 ### Aktivera
 
@@ -167,21 +172,7 @@ async function getProducts() {
 
 Inbyggda profiler: `'seconds'`, `'minutes'`, `'hours'`, `'days'`, `'weeks'`
 
-**Egna profiler:**
-
-```typescript
-// next.config.ts
-const nextConfig = {
-  cacheComponents: true,
-  cacheLife: {
-    blog: {
-      stale: 3600,      // 1 timme - klient använder cache utan check
-      revalidate: 900,  // 15 min - bakgrundsuppdatering
-      expire: 86400,    // 1 dag - cache raderas
-    },
-  },
-}
-```
+Egna profiler definieras i `next.config.ts` under `cacheLife`.
 
 ### Cache-invalidering
 
@@ -192,7 +183,6 @@ import { updateTag, revalidateTag } from 'next/cache'
 
 export async function updateProduct(id: string) {
   await db.products.update(id, { ... })
-
   updateTag('products')           // Soft invalidate
   // eller
   revalidateTag('products')       // Hard invalidate
@@ -203,23 +193,35 @@ export async function updateProduct(id: string) {
 
 ## Dynamisk rendering
 
-När `cacheComponents: true` är aktiverat är standardbeteendet att Server Components kan cachelagras vid build-time. För att tvinga dynamisk rendering:
+### Med `cacheComponents: false` (default)
 
-### På sidnivå
+Använd `export const dynamic = 'force-dynamic'` för att tvinga dynamisk rendering:
 
 ```typescript
 // app/dashboard/page.tsx
 export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
-  const stats = await db.stats.getCurrent() // Hämtas vid varje request
+  const stats = await db.stats.getCurrent()
   return <Dashboard stats={stats} />
 }
 ```
 
-### Med Suspense-boundaries
+### Med `cacheComponents: true`
 
-Kombinera statiskt skal med dynamiska delar genom `<Suspense>`:
+**VIKTIGT:** `export const dynamic` är **INKOMPATIBELT** med `cacheComponents: true`. Använd istället:
+
+**1. Opt-in till caching med `'use cache'`:**
+
+```typescript
+async function getProducts() {
+  'use cache'
+  cacheLife('hours')
+  return db.products.findMany()
+}
+```
+
+**2. Kombinera statiskt/dynamiskt med `<Suspense>`:**
 
 ```typescript
 import { Suspense } from 'react'
@@ -227,23 +229,14 @@ import { Suspense } from 'react'
 export default function Page() {
   return (
     <div>
-      <h1>Produkter</h1> {/* Statiskt — cachas */}
+      <h1>Produkter</h1> {/* Dynamiskt (default) */}
       <Suspense fallback={<p>Laddar...</p>}>
-        <DynamicProductList /> {/* Dynamiskt — renderas vid request */}
+        <CachedProductList /> {/* Använder 'use cache' internt */}
       </Suspense>
     </div>
   )
 }
 ```
-
-### Relation till `cacheComponents`
-
-| Scenario | Rendering |
-|----------|-----------|
-| `cacheComponents: false` (default) | Allt renderas dynamiskt |
-| `cacheComponents: true` utan `'use cache'` | Komponenter kan prerenderas vid build |
-| `cacheComponents: true` + `export const dynamic = 'force-dynamic'` | Sidan renderas vid varje request |
-| `cacheComponents: true` + `'use cache'` + `cacheLife()` | Explicit cachning med kontrollerad livslängd |
 
 ---
 
@@ -356,6 +349,24 @@ export async function createPost(formData: FormData) {
 }
 ```
 
+**VIKTIGT:** Filer med `'use server'` får **ENDAST exportera async funktioner**. Inga konstanter, typer eller andra värden.
+
+```typescript
+// ❌ FEL - konstanter i 'use server'-fil
+'use server'
+export const MAX_FILE_SIZE = 5_000_000
+export async function uploadFile(formData: FormData) { ... }
+
+// ✅ RÄTT - flytta konstanter till separat fil
+// constants.ts (utan 'use server')
+export const MAX_FILE_SIZE = 5_000_000
+
+// actions.ts
+'use server'
+import { MAX_FILE_SIZE } from './constants'
+export async function uploadFile(formData: FormData) { ... }
+```
+
 ### Användning i formulär
 
 ```typescript
@@ -412,12 +423,16 @@ Turbopack är nu default bundler i Next.js 16:
 - **5-10x snabbare** Fast Refresh
 - **2-5x snabbare** builds
 
+### Fallback till webpack
+
 För att använda webpack istället:
 
 ```bash
 next dev --webpack
 next build --webpack
 ```
+
+**Sandbox-miljöer:** Om Turbopack ger ENOENT-fel (filändringar inte detekteras korrekt i vissa container-miljöer), använd `--webpack` som fallback.
 
 ---
 
@@ -436,6 +451,30 @@ npm install next@16.0.9 react@latest react-dom@latest
 ## Dev-server i agent-miljö
 
 När en agent startar `next dev` (t.ex. för Playwright-tester) ska den **stoppa servern med PID**, aldrig med `pkill -f`. Annars kan agentens egen process dödas. Se `/workspace/docs/docker.md` avsnitt **"Dev-server i agent- och testmiljö (Playwright)"** för exakta kommandon (spara PID i `.dev-server.pid`, kill endast den).
+
+### Socket.IO och runtime-init
+
+Om `next.config.ts` initialiserar Socket.IO-klienter eller andra runtime-resurser, guarda mot buildfas:
+
+```typescript
+// next.config.ts
+import { PHASE_PRODUCTION_BUILD } from 'next/constants'
+
+const nextConfig = (phase: string) => {
+  // Undvik runtime-init vid build
+  if (phase !== PHASE_PRODUCTION_BUILD) {
+    initSocketIO()
+  }
+
+  return {
+    // ...config
+  }
+}
+
+export default nextConfig
+```
+
+Detta förhindrar att build-processen försöker ansluta till tjänster som inte finns i build-miljön.
 
 ---
 
