@@ -162,7 +162,7 @@ export async function POST(req: NextRequest) {
           fileName: chunk.fileName,
           page: chunk.page,
           similarity: chunk.similarity,
-          excerpt: chunk.content.slice(0, 120) + (chunk.content.length > 120 ? "…" : ""),
+          excerpt: chunk.content.slice(0, 120) + (chunk.content.length > 120 ? "..." : ""),
         }));
       }
     } catch (ragErr) {
@@ -284,7 +284,8 @@ export async function POST(req: NextRequest) {
     "X-Conversation-Id": activeConversationId,
   };
   if (ragSources.length > 0) {
-    responseHeaders["X-Sources"] = JSON.stringify(ragSources);
+    // Base64 encode to avoid ByteString errors with Unicode characters in excerpts
+    responseHeaders["X-Sources"] = Buffer.from(JSON.stringify(ragSources), "utf-8").toString("base64");
   }
 
   return result.toUIMessageStreamResponse({
