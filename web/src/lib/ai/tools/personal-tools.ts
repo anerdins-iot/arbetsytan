@@ -35,7 +35,12 @@ import {
 } from "@/lib/minio";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
-import { emitProjectUpdatedToProject } from "@/lib/socket";
+import {
+  emitProjectUpdatedToProject,
+  emitTimeEntryCreatedToProject,
+  emitTimeEntryDeletedToProject,
+  emitTimeEntryUpdatedToProject,
+} from "@/lib/socket";
 import { randomUUID } from "node:crypto";
 import {
   EMAIL_TEMPLATE_LOCALES,
@@ -50,6 +55,11 @@ import {
   getTeamMembersForEmail,
   getProjectsWithMembersForEmail,
 } from "@/actions/send-email";
+import {
+  inviteUser as inviteUserAction,
+  getInvitations as getInvitationsAction,
+  cancelInvitation as cancelInvitationAction,
+} from "@/actions/invitations";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -614,6 +624,12 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         include: { task: { select: { title: true } } },
       });
 
+      emitTimeEntryCreatedToProject(pid, {
+        projectId: pid,
+        timeEntryId: created.id,
+        actorUserId: userId,
+      });
+
       return {
         id: created.id,
         taskId: created.taskId,
@@ -677,6 +693,12 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         include: { task: { select: { title: true } } },
       });
 
+      emitTimeEntryUpdatedToProject(pid, {
+        projectId: pid,
+        timeEntryId: updated.id,
+        actorUserId: userId,
+      });
+
       return {
         id: updated.id,
         taskId: updated.taskId,
@@ -706,6 +728,12 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         include: { task: { select: { title: true } } },
       });
       if (!existing) return { error: "Tidsrapporten hittades inte eller saknar behörighet." };
+
+      emitTimeEntryDeletedToProject(pid, {
+        projectId: pid,
+        timeEntryId: existing.id,
+        actorUserId: userId,
+      });
 
       await db.timeEntry.delete({ where: { id: existing.id } });
 
@@ -1194,6 +1222,78 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const result = await removeProjectMemberAction(pid, membershipId);
       if (!result.success) return { error: result.error || "Kunde inte ta bort medlemmen." };
       return { success: true, message: "Medlemmen har tagits bort från projektet." };
+    },
+  });
+
+  // ─── Inbjudningar (Invitations) ───────────────────────
+
+  const sendInvitation = tool({
+    description: "Skicka en inbjudan till en ny användare via e-post. Endast admins kan skicka inbjudningar.",
+    inputSchema: toolInputSchema(z.object({
+      email: z.string().email().describe("E-postadress till den som ska bjudas in"),
+      role: z.enum(["ADMIN", "PROJECT_MANAGER", "WORKER"]).describe("Roll för den nya användaren"),
+    })),
+    execute: async ({ email, role }) => {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("role", role);
+
+      const result = await inviteUserAction(formData);
+
+      if (!result.success) {
+        if (result.error === "FORBIDDEN") {
+          return { error: "Du har inte behörighet att skicka inbjudningar." };
+        }
+        if (result.error === "ALREADY_MEMBER") {
+          return { error: `Användaren med e-post ${email} är redan medlem i företaget.` };
+        }
+        if (result.error === "ALREADY_INVITED") {
+          return { error: `En inbjudan har redan skickats till ${email} och väntar på svar.` };
+        }
+        return { error: result.error || "Kunde inte skicka inbjudan." };
+      }
+
+      return {
+        success: true,
+        message: `En inbjudan har skickats till ${email} med rollen ${role}.`,
+      };
+    },
+  });
+
+  const listInvitations = tool({
+    description: "Lista alla skickade inbjudningar och deras status (ADMIN).",
+    inputSchema: toolInputSchema(z.object({
+      _: z.string().optional().describe("Ignored"),
+    })),
+    execute: async () => {
+      try {
+        const invitations = await getInvitationsAction();
+        return { invitations };
+      } catch (err) {
+        return { error: "Du har inte behörighet att lista inbjudningar eller så uppstod ett fel." };
+      }
+    },
+  });
+
+  const cancelInvitation = tool({
+    description: "Avbryt/ta bort en skickad inbjudan som inte har accepterats än (ADMIN).",
+    inputSchema: toolInputSchema(z.object({
+      invitationId: z.string().describe("ID för inbjudan som ska avbrytas"),
+    })),
+    execute: async ({ invitationId }) => {
+      const formData = new FormData();
+      formData.append("invitationId", invitationId);
+
+      const result = await cancelInvitationAction(formData);
+
+      if (!result.success) {
+        return { error: result.error || "Kunde inte avbryta inbjudan." };
+      }
+
+      return {
+        success: true,
+        message: "Inbjudan har avbrutits och tagits bort.",
+      };
     },
   });
 
@@ -2038,6 +2138,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     getAvailableMembers,
     addMember,
     removeMember,
+    // Inbjudningar
+    sendInvitation,
+    listInvitations,
+    cancelInvitation,
     // Projektanteckningar
     getProjectNotes,
     createNote: createProjectNote,
