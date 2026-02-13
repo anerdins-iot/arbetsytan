@@ -1,2 +1,0 @@
-[    8921ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://arbetsytan.anerd.in/sv/login:0
-[    8992ms] [ERROR] Error: An error occurred in the Server Components render. The specific message is omitted in production builds to avoid leaking sensitive details. A digest property is included on this error instance which may provide additional details about the nature of the error. @ https://arbetsytan.anerd.in/_next/static/chunks/05dba496af881de4.js:1
