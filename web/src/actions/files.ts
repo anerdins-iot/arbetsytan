@@ -362,9 +362,12 @@ export async function uploadFile(
 export async function getProjectFiles(
   projectId: string
 ): Promise<{ success: true; files: FileItem[] } | { success: false; error: string }> {
+  logger.info("getProjectFiles called", { projectId });
   const { tenantId, userId } = await requireAuth();
+  logger.info("getProjectFiles auth", { tenantId, userId });
   const parsed = projectIdSchema.safeParse(projectId);
   if (!parsed.success) {
+    logger.warn("getProjectFiles validation failed", { projectId, errors: parsed.error.flatten() });
     return { success: false, error: "VALIDATION_ERROR" };
   }
   const validatedProjectId = parsed.data;
@@ -378,6 +381,7 @@ export async function getProjectFiles(
       where: { projectId: validatedProjectId },
       orderBy: { createdAt: "desc" },
     });
+    logger.info("getProjectFiles db query result", { projectId: validatedProjectId, fileCount: files.length });
 
     // Promise.allSettled så att en felande presigned URL inte fäller hela listan (t.ex. för AI-genererade filer)
     const results = await Promise.allSettled(
@@ -424,9 +428,11 @@ export async function getProjectFiles(
       };
     });
 
+    logger.info("getProjectFiles success", { projectId: validatedProjectId, returnedCount: filesWithUrls.length });
     return { success: true, files: filesWithUrls };
   } catch (error) {
     const message = error instanceof Error ? error.message : "FETCH_FILES_FAILED";
+    logger.error("getProjectFiles failed", { projectId, error: message, stack: error instanceof Error ? error.stack : undefined });
     return { success: false, error: message };
   }
 }

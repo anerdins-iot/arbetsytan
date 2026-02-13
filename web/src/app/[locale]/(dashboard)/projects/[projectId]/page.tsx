@@ -1,6 +1,9 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+
+export const dynamic = "force-dynamic";
+
 import { getProject } from "@/actions/projects";
 import { getTasks } from "@/actions/tasks";
 import { getCommentsByTask } from "@/actions/comments";
