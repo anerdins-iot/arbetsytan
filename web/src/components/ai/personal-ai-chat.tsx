@@ -739,85 +739,94 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       {/* Inmatningsfält */}
       <form
         onSubmit={handleSubmit}
-        className="flex items-end gap-2 border-t border-border p-3"
+        className="flex flex-col gap-2 border-t border-border p-3"
       >
-        {/* Gem-ikon för filuppladdning */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.xlsx"
-          multiple
-          onChange={(e) => {
-            if (e.target.files && e.target.files.length > 0) {
-              handleFileSelect(e.target.files);
-              e.target.value = "";
-            }
-          }}
-        />
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="shrink-0 text-muted-foreground hover:text-foreground"
-          onClick={() => fileInputRef.current?.click()}
-          aria-label={t("attachFile")}
-          disabled={isLoading}
-        >
-          <Paperclip className="size-4" />
-        </Button>
-
-        {/* Voice mode controls */}
-        <VoiceModeToggle
-          onVoiceInput={handleVoiceInput}
-          voiceModeEnabled={voiceModeEnabled}
-          onVoiceModeToggle={setVoiceModeEnabled}
-          disabled={isLoading}
-          ttsProvider={ttsProvider}
-          onTtsProviderChange={setTtsProvider}
-          speakRef={speakRef}
-          stopRef={stopSpeakingRef}
-          isSpeakingRef={isSpeakingRef}
-          onConversationModeChange={setIsConversationMode}
-          triggerConversationRecording={triggerConversationRecording}
-        />
-
+        {/* Textarea - större och full bredd */}
         <Textarea
           value={inputValue}
           onChange={handleInputChange}
           placeholder={t("placeholder")}
-          disabled={isLoading}
-          rows={1}
-          className="min-h-10 min-w-0 flex-1 resize-none"
+          rows={3}
+          className="min-h-20 w-full resize-none"
           onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
+            if (e.key === "Enter" && !e.shiftKey && !isLoading) {
               e.preventDefault();
               handleSubmit();
             }
           }}
         />
-        {isLoading ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className="shrink-0"
-            onClick={() => stop()}
-            aria-label={t("loading")}
-          >
-            <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-          </Button>
-        ) : (
-          <Button
-            type="submit"
-            size="icon"
-            className="shrink-0"
-            disabled={!inputValue.trim()}
-            aria-label={t("send")}
-          >
-            <Send className="size-4" />
-          </Button>
-        )}
+
+        {/* Verktygsfält under textarea */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            {/* Gem-ikon för filuppladdning */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.xlsx"
+              multiple
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  handleFileSelect(e.target.files);
+                  e.target.value = "";
+                }
+              }}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-8 text-muted-foreground hover:text-foreground"
+              onClick={() => fileInputRef.current?.click()}
+              aria-label={t("attachFile")}
+              disabled={isLoading}
+            >
+              <Paperclip className="size-4" />
+            </Button>
+
+            {/* Voice mode controls */}
+            <VoiceModeToggle
+              onVoiceInput={handleVoiceInput}
+              voiceModeEnabled={voiceModeEnabled}
+              onVoiceModeToggle={setVoiceModeEnabled}
+              disabled={isLoading}
+              ttsProvider={ttsProvider}
+              onTtsProviderChange={setTtsProvider}
+              speakRef={speakRef}
+              stopRef={stopSpeakingRef}
+              isSpeakingRef={isSpeakingRef}
+              onConversationModeChange={setIsConversationMode}
+              triggerConversationRecording={triggerConversationRecording}
+            />
+          </div>
+
+          {/* Skicka-knapp */}
+          {isLoading ? (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => stop()}
+              aria-label={t("loading")}
+            >
+              <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+              {t("loading")}
+            </Button>
+          ) : (
+            <Button
+              type="submit"
+              size="sm"
+              className="gap-2"
+              disabled={!inputValue.trim()}
+              aria-label={t("send")}
+            >
+              <Send className="size-4" />
+              {t("send")}
+            </Button>
+          )}
+        </div>
       </form>
     </div>
   );
