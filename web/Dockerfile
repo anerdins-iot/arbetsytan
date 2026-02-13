@@ -50,14 +50,22 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Copy package files for tsx
+COPY --from=builder /app/package.json ./package.json
+
+# Copy node_modules (needed for tsx and socket.io)
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy custom server
+COPY --from=builder /app/server.ts ./server.ts
+
 # Copy public assets
 COPY --from=builder /app/public ./public
 
-# Copy standalone output
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy Next.js build output (not standalone - we use custom server)
+COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 
-# Copy Prisma generated client — without this the app crashes at startup
+# Copy Prisma generated client
 COPY --from=builder /app/generated ./generated
 
 # Copy migration SQL files and runner scripts
@@ -76,8 +84,6 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Health check: test if Next.js server is responding
-# Using node to check HTTP endpoint since curl/wget may not be in alpine
-# The health endpoint returns 200 even if database is down, allowing container to start
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD node -e "require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
 

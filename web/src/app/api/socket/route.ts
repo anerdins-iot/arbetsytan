@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
-import { getSocketServer } from "@/lib/socket";
 
+// Socket.IO is now integrated into the custom server (server.ts)
+// This endpoint is kept for backwards compatibility but does nothing
 export async function GET() {
-  if (process.env.NEXT_PHASE === "phase-production-build") {
-    return NextResponse.json({ ok: true, skipped: true });
-  }
-
-  getSocketServer();
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, message: "Socket.IO runs via custom server" });
 }

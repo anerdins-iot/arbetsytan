@@ -30,14 +30,12 @@ type UseSocketResult = {
 };
 
 function getSocketUrl(): string {
-  if (process.env.NEXT_PUBLIC_SOCKET_URL) {
-    return process.env.NEXT_PUBLIC_SOCKET_URL;
-  }
+  // Socket.IO now runs on the same port as Next.js via custom server
+  // Use window.location.origin for automatic protocol/host detection
   if (typeof window === "undefined") {
-    return "http://localhost:3001";
+    return "http://localhost:3000";
   }
-  const port = process.env.NEXT_PUBLIC_SOCKET_PORT ?? "3001";
-  return `${window.location.protocol}//${window.location.hostname}:${port}`;
+  return window.location.origin;
 }
 
 function getSocketPath(): string {
@@ -69,9 +67,6 @@ export function useSocket({
     }
 
     setStatus("connecting");
-
-    // Starts the server lazily in the Next.js process.
-    void fetch("/api/socket", { method: "GET", cache: "no-store" }).catch(() => null);
 
     const connection = io(getSocketUrl(), {
       path: getSocketPath(),

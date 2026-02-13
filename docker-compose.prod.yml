@@ -11,7 +11,6 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-      - "3001:3001"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/myapp
@@ -29,8 +28,6 @@ services:
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - MISTRAL_API_KEY=${MISTRAL_API_KEY}
-      - SOCKET_PORT=3001
-      - NEXT_PUBLIC_SOCKET_URL=${NEXT_PUBLIC_SOCKET_URL}
     depends_on:
       db:
         condition: service_healthy
@@ -74,7 +71,25 @@ services:
     command: server /data --console-address ":9001"
     volumes:
       - minio_data:/data
-    # NOTE: MinIO is accessed internally, not exposed via Traefik
+    networks:
+      - default
+      - coolify
+    labels:
+      - "traefik.enable=true"
+      # S3 API (port 9000) - for presigned URLs
+      - "traefik.http.routers.minio-s3.rule=Host(`s3-arbetsytan.anerd.in`)"
+      - "traefik.http.routers.minio-s3.entrypoints=https"
+      - "traefik.http.routers.minio-s3.tls=true"
+      - "traefik.http.routers.minio-s3.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.minio-s3.service=minio-s3"
+      - "traefik.http.services.minio-s3.loadbalancer.server.port=9000"
+      # Console (port 9001) - optional admin UI
+      - "traefik.http.routers.minio-console.rule=Host(`s3-console-arbetsytan.anerd.in`)"
+      - "traefik.http.routers.minio-console.entrypoints=https"
+      - "traefik.http.routers.minio-console.tls=true"
+      - "traefik.http.routers.minio-console.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.minio-console.service=minio-console"
+      - "traefik.http.services.minio-console.loadbalancer.server.port=9001"
 
   # ─────────────────────────────────────────
   # Redis (session cache, Socket.IO adapter)
@@ -84,6 +99,10 @@ services:
     restart: unless-stopped
     volumes:
       - redis_data:/data
+
+networks:
+  coolify:
+    external: true
 
 volumes:
   postgres_data:

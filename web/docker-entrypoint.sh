@@ -9,5 +9,5 @@ if [ "$RUN_SEED" = "true" ]; then
   node seed.mjs || echo "Warning: Seed script failed (see logs above)"
 fi
 
-echo "Starting Next.js server..."
-exec node server.js
+echo "Starting Next.js server with Socket.IO..."
+exec npx tsx server.ts
