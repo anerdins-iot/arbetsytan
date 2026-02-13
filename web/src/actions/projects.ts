@@ -7,7 +7,7 @@ import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
 import { emitProjectUpdatedToProject } from "@/lib/socket";
-import type { ProjectStatus, TaskStatus } from "../../generated/prisma/client";
+import type { Project, ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
   projectId: z.string().min(1),
@@ -36,6 +36,7 @@ export type ProjectActionResult = {
   success: boolean;
   error?: string;
   fieldErrors?: Record<string, string[]>;
+  project?: Project;
 };
 
 export type ProjectWithCounts = {
@@ -137,7 +138,7 @@ export async function createProject(
 
   revalidatePath("/[locale]/projects", "page");
 
-  return { success: true };
+  return { success: true, project };
 }
 
 // ─────────────────────────────────────────
@@ -310,7 +311,7 @@ export async function updateProject(
   const { name, description, address, status } = result.data;
   const db = tenantDb(tenantId);
 
-  await db.project.update({
+  const project = await db.project.update({
     where: { id: projectId },
     data: {
       name,
@@ -330,6 +331,8 @@ export async function updateProject(
   });
 
   if (action === "statusChanged") {
+// ... (omitting for brevity, but matching correctly)
+// Wait, I should provide enough context.
     emitProjectUpdatedToProject(projectId, {
       projectId,
       actorUserId: userId,
@@ -368,7 +371,74 @@ export async function updateProject(
   revalidatePath("/[locale]/projects/[projectId]", "page");
   revalidatePath("/[locale]/projects", "page");
 
-  return { success: true };
+  return { success: true, project };
+}
+
+/**
+ * Archive a project by setting its status to ARCHIVED.
+ * Requires auth + canUpdateProject permission.
+ */
+export async function archiveProject(
+  projectId: string
+): Promise<ProjectActionResult> {
+  const { tenantId, userId } = await requirePermission("canUpdateProject");
+  const currentProject = await requireProject(tenantId, projectId, userId);
+
+  if (currentProject.status === "ARCHIVED") {
+    return { success: false, error: "ALREADY_ARCHIVED" };
+  }
+
+  const db = tenantDb(tenantId);
+  const project = await db.project.update({
+    where: { id: projectId },
+    data: { status: "ARCHIVED" },
+  });
+
+  await logActivity(tenantId, projectId, userId, "statusChanged", "project", projectId, {
+    name: project.name,
+    previousStatus: currentProject.status,
+    newStatus: "ARCHIVED",
+  });
+
+  emitProjectUpdatedToProject(projectId, {
+    projectId,
+    actorUserId: userId,
+    previousStatus: currentProject.status,
+    newStatus: "ARCHIVED",
+  });
+
+  const members = await db.projectMember.findMany({
+    where: { projectId },
+    include: {
+      membership: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  });
+
+  const recipientUserIds = members
+    .map((member) => member.membership.userId)
+    .filter((memberUserId) => memberUserId !== userId);
+
+  await Promise.all(
+    recipientUserIds.map((recipientUserId) =>
+      notifyProjectStatusChanged({
+        tenantId,
+        projectId,
+        recipientUserId,
+        projectName: project.name,
+        previousStatus: currentProject.status,
+        newStatus: "ARCHIVED",
+      })
+    )
+  );
+
+  revalidatePath("/[locale]/projects/[projectId]", "page");
+  revalidatePath("/[locale]/projects", "page");
+
+  return { success: true, project };
 }
 
 /**

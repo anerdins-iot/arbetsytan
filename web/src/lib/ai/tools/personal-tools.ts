@@ -6,8 +6,13 @@ import { tool, generateText } from "ai";
 import { z } from "zod";
 import { openai } from "@ai-sdk/openai";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
-import { requireProject } from "@/lib/auth";
+import { requireProject, requirePermission } from "@/lib/auth";
 import type { TenantScopedClient } from "@/lib/db";
+import {
+  createProject as createProjectAction,
+  updateProject as updateProjectAction,
+  archiveProject as archiveProjectAction,
+} from "@/actions/projects";
 import {
   createTaskShared,
   updateTaskShared,
@@ -26,6 +31,9 @@ import {
   projectObjectKey,
   ensureTenantBucket,
 } from "@/lib/minio";
+import { logActivity } from "@/lib/activity-log";
+import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
+import { emitProjectUpdatedToProject } from "@/lib/socket";
 import { randomUUID } from "node:crypto";
 import {
   EMAIL_TEMPLATE_LOCALES,
@@ -66,6 +74,123 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         orderBy: { name: "asc" },
       });
       return projects.map((p) => ({ id: p.id, name: p.name, status: p.status }));
+    },
+  });
+
+  // ─── Projekthantering (Create/Update/Archive) ────────
+
+  const createProject = tool({
+    description:
+      "Skapa ett nytt projekt. Kräver att användaren har behörighet att skapa projekt. Ange namn, valfritt beskrivning och adress.",
+    inputSchema: toolInputSchema(z.object({
+      name: z.string().min(1).max(200).describe("Projektets namn"),
+      description: z.string().max(2000).optional().describe("Beskrivning av projektet"),
+      address: z.string().max(500).optional().describe("Projektets adress"),
+    })),
+    execute: async ({ name, description, address }) => {
+      await requirePermission("canCreateProject");
+
+      const formData = new FormData();
+      formData.append("name", name);
+      if (description) formData.append("description", description);
+      if (address) formData.append("address", address);
+
+      const result = await createProjectAction(formData);
+
+      if (!result.success || !result.project) {
+        return { error: result.error || "Kunde inte skapa projektet." };
+      }
+
+      const project = result.project;
+
+      return {
+        id: project.id,
+        name: project.name,
+        description: project.description,
+        status: project.status,
+        address: project.address,
+        message: `Projektet "${project.name}" har skapats.`,
+      };
+    },
+  });
+
+  const updateProject = tool({
+    description:
+      "Uppdatera projektinformation. Kräver projectId. Ange de fält som ska ändras: namn, beskrivning, status eller adress.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      name: z.string().min(1).max(200).optional().describe("Nytt namn"),
+      description: z.string().max(2000).optional().nullable().describe("Ny beskrivning"),
+      status: z.enum(["ACTIVE", "PAUSED", "COMPLETED"]).optional().describe("Ny status (använd archiveProject för att arkivera)"),
+      address: z.string().max(500).optional().nullable().describe("Ny adress"),
+    })),
+    execute: async ({ projectId: pid, name, description, status, address }) => {
+      await requirePermission("canUpdateProject");
+      const currentProject = await requireProject(tenantId, pid, userId);
+
+      const formData = new FormData();
+      formData.append("name", name ?? currentProject.name);
+      if (description !== undefined) {
+        formData.append("description", description ?? "");
+      } else if (currentProject.description) {
+        formData.append("description", currentProject.description);
+      }
+      if (address !== undefined) {
+        formData.append("address", address ?? "");
+      } else if (currentProject.address) {
+        formData.append("address", currentProject.address);
+      }
+      formData.append("status", status ?? currentProject.status);
+
+      const result = await updateProjectAction(pid, formData);
+
+      if (!result.success || !result.project) {
+        return { error: result.error || "Kunde inte uppdatera projektet." };
+      }
+
+      const updated = result.project;
+      const statusChanged = status !== undefined && currentProject.status !== status;
+
+      return {
+        id: updated.id,
+        name: updated.name,
+        description: updated.description,
+        status: updated.status,
+        address: updated.address,
+        message: statusChanged
+          ? `Projektet "${updated.name}" har uppdaterats. Status ändrad från ${currentProject.status} till ${status}.`
+          : `Projektet "${updated.name}" har uppdaterats.`,
+      };
+    },
+  });
+
+  const archiveProject = tool({
+    description:
+      "Arkivera ett projekt. Sätter projektets status till ARCHIVED. Kan inte ångras via detta verktyg — använd updateProject för att ändra tillbaka.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("ID för projektet som ska arkiveras"),
+      confirmArchive: z.boolean().describe("Måste vara true för att bekräfta arkivering"),
+    })),
+    execute: async ({ projectId: pid, confirmArchive }) => {
+      if (!confirmArchive) {
+        return { error: "Arkivering avbröts: confirmArchive måste vara true." };
+      }
+
+      await requirePermission("canUpdateProject");
+      const result = await archiveProjectAction(pid);
+
+      if (!result.success || !result.project) {
+        return { error: result.error || "Kunde inte arkivera projektet." };
+      }
+
+      const updated = result.project;
+
+      return {
+        id: updated.id,
+        name: updated.name,
+        status: updated.status,
+        message: `Projektet "${updated.name}" har arkiverats.`,
+      };
     },
   });
 
@@ -1814,8 +1939,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   return {
-    // Projektlista
+    // Projektlista och hantering
     getProjectList,
+    createProject,
+    updateProject,
+    archiveProject,
     // Uppgifter
     getUserTasks,
     getProjectTasks,
