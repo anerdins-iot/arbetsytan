@@ -1,8 +1,7 @@
 /**
  * POST /api/ai/chat — AI chat streaming endpoint.
- * Supports both personal and project conversations.
- * For project chats: RAG, tools (tasks, files, search, members, send AIMessage).
- * For personal: tools (unread AIMessages, mark read, send to project, user tasks, projects, search, create/update task).
+ * Personal AI only. Frontend sends projectId in request body when a project is selected.
+ * RAG uses request projectId when present. All conversations are PERSONAL.
  * Uses Vercel AI SDK for streaming via SSE.
  */
 import { streamText, stepCountIs, type UIMessage, convertToModelMessages } from "ai";
@@ -11,7 +10,6 @@ import { getSession, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { getModel, streamConfig, type ProviderKey } from "@/lib/ai/providers";
 import { searchDocuments } from "@/lib/ai/embeddings";
-import { createProjectTools } from "@/lib/ai/tools/project-tools";
 import { createPersonalTools } from "@/lib/ai/tools/personal-tools";
 import { summarizeConversationIfNeeded } from "@/lib/ai/summarize-conversation";
 import { MESSAGE_SUMMARY_THRESHOLD } from "@/lib/ai/conversation-config";
@@ -23,8 +21,6 @@ export type RagSource = {
   similarity: number;
   excerpt: string;
 };
-
-type ConversationType = "PERSONAL" | "PROJECT";
 
 type ChatRequestBody = {
   messages: UIMessage[];
@@ -60,12 +56,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Determine conversation type
-  const conversationType: ConversationType = projectId
-    ? "PROJECT"
-    : "PERSONAL";
-
-  // Validate project access if project-scoped
+  // Validate project access when projectId is provided
   if (projectId) {
     try {
       await requireProject(tenantId, projectId, userId);
@@ -110,11 +101,11 @@ export async function POST(req: NextRequest) {
 
     const conversation = await db.conversation.create({
       data: {
-        type: conversationType,
+        type: "PERSONAL",
         title,
         provider: provider ?? "CLAUDE",
         userId,
-        projectId: projectId ?? null,
+        projectId: null,
       },
     });
     activeConversationId = conversation.id;
@@ -124,7 +115,6 @@ export async function POST(req: NextRequest) {
       where: {
         id: activeConversationId,
         userId,
-        ...(projectId ? { projectId } : {}),
       },
       select: { id: true, summary: true },
     });
@@ -137,7 +127,7 @@ export async function POST(req: NextRequest) {
     conversationSummary = existing.summary;
   }
 
-  // Save the latest user message to DB
+  // Save the latest user message to DB (with projectId when provided)
   const lastUserMessage = messages[messages.length - 1];
   if (lastUserMessage && lastUserMessage.role === "user") {
     await db.message.create({
@@ -145,6 +135,7 @@ export async function POST(req: NextRequest) {
         role: "USER",
         content: extractTextFromParts(lastUserMessage),
         conversationId: activeConversationId,
+        projectId: projectId ?? null,
       },
     });
   }
@@ -185,14 +176,12 @@ export async function POST(req: NextRequest) {
   // Select AI model
   const model = getModel(providerKey);
 
-  // Build tools and system prompt by conversation type
-  const tools =
-    conversationType === "PROJECT" && projectId
-      ? createProjectTools({ db, tenantId, userId, projectId })
-      : createPersonalTools({ db, tenantId, userId });
+  // Always use personal tools (they accept projectId per call when user works in a project)
+  const tools = createPersonalTools({ db, tenantId, userId });
 
+  // Project context for system prompt when request has projectId
   let projectContext: { name: string; address: string | null; status: string; taskCount: number; memberCount: number } | undefined;
-  if (projectId && conversationType === "PROJECT") {
+  if (projectId) {
     const [project, taskCount, memberCount] = await Promise.all([
       db.project.findUnique({
         where: { id: projectId },
@@ -212,26 +201,22 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  const isPersonalFirstTurn =
-    conversationType === "PERSONAL" &&
-    messages.filter((m) => m.role === "user").length <= 1;
+  const isFirstTurn = messages.filter((m) => m.role === "user").length <= 1;
   const systemPrompt = buildSystemPrompt({
-    conversationType,
     userName: user.name ?? undefined,
     userRole: role,
-    projectName: projectContext?.name,
     projectContext,
     ragContext,
-    checkUnreadOnStart: isPersonalFirstTurn,
+    checkUnreadOnStart: isFirstTurn,
     conversationSummary,
   });
 
   logger.info("AI chat request", {
     userId,
     tenantId,
-    conversationType,
     provider: providerKey,
     conversationId: activeConversationId,
+    projectId: projectId ?? null,
     messageCount: messages.length,
     ragChunks: ragSources.length,
   });
@@ -267,13 +252,14 @@ export async function POST(req: NextRequest) {
       });
     },
     onFinish: async ({ text }) => {
-      // Save assistant response to DB
+      // Save assistant response to DB (with same projectId as request)
       if (text && activeConversationId) {
         await db.message.create({
           data: {
             role: "ASSISTANT",
             content: text,
             conversationId: activeConversationId,
+            projectId: projectId ?? null,
           },
         });
         const count = await db.message.count({
@@ -340,10 +326,8 @@ function extractTextFromParts(message: UIMessage): string {
 }
 
 function buildSystemPrompt(opts: {
-  conversationType: ConversationType;
   userName?: string;
   userRole: string;
-  projectName?: string;
   projectContext?: {
     name: string;
     address: string | null;
@@ -355,43 +339,38 @@ function buildSystemPrompt(opts: {
   checkUnreadOnStart?: boolean;
   conversationSummary?: string | null;
 }): string {
-  const { conversationType, userName, userRole, projectName, projectContext, ragContext, checkUnreadOnStart, conversationSummary } = opts;
+  const { userName, userRole, projectContext, ragContext, checkUnreadOnStart, conversationSummary } = opts;
 
   const summaryBlock =
     conversationSummary && conversationSummary.trim()
       ? `\n\nTidigare sammanfattning av konversationen:\n${conversationSummary}`
       : "";
 
-  if (conversationType === "PERSONAL") {
-    const unreadHint =
-      opts.checkUnreadOnStart === true
-        ? " Användaren har precis öppnat chatten — anropa getUnreadAIMessages nu och sammanfatta eventuella olästa meddelanden från projekt-AI:er."
-        : " Börja alltid med att kolla om det finns olästa meddelanden från projekt-AI:er (använd verktyget getUnreadAIMessages).";
-    return [
-      `Du är en personlig arbetsassistent åt ${userName ?? "användaren"}.`,
-      `Användaren har rollen ${userRole}.`,
-      "Du hjälper med daglig planering, uppgifter och att hålla koll på vad som händer i projekten.",
-      unreadHint,
-      "Svara på svenska, var konkret och kort.",
-      "Om du inte vet svaret, säg det istället för att gissa.",
-      summaryBlock,
-    ].join(" ");
+  const unreadHint =
+    checkUnreadOnStart === true
+      ? " Användaren har precis öppnat chatten — anropa getUnreadAIMessages nu och sammanfatta eventuella olästa meddelanden från projekt-AI:er."
+      : " Börja alltid med att kolla om det finns olästa meddelanden från projekt-AI:er (använd verktyget getUnreadAIMessages).";
+
+  const parts: string[] = [
+    `Du är en personlig arbetsassistent åt ${userName ?? "användaren"}.`,
+    `Användaren har rollen ${userRole}.`,
+    "Du hjälper med personliga saker och med projekt — användaren kan byta projekt när som helst. Du har tillgång till verktyg för alla användarens projekt (ange projectId när du arbetar i ett specifikt projekt).",
+    unreadHint,
+  ];
+
+  if (projectContext) {
+    parts.push(
+      `Just nu är användaren i projektet "${projectContext.name}" (status ${projectContext.status}, adress ${projectContext.address ?? "ej angiven"}, ${projectContext.taskCount} uppgifter, ${projectContext.memberCount} medlemmar). Du kan använda detta projekts-ID i verktygsanrop när frågan gäller detta projekt.`
+    );
   }
 
-  const projectLine = projectContext
-    ? `Projektet heter ${projectContext.name}, status ${projectContext.status}, adress ${projectContext.address ?? "ej angiven"}, ${projectContext.taskCount} uppgifter och ${projectContext.memberCount} medlemmar.`
-    : projectName
-      ? `Projektet heter ${projectName}.`
-      : "";
-  const base = [
-    `Du är en AI-assistent för ett byggprojekt. ${projectLine}`.trim(),
-    `Användaren ${userName ?? ""} har rollen ${userRole}.`,
-    "Du hjälper teamet med uppgifter, filer, ritningar och planering. Du kan hämta uppgifter, skapa och uppdatera dem, söka i dokument, hämta filer och medlemmar, samt skicka meddelanden till användares personliga AI vid viktiga händelser. När du skapar en uppgift som ska tilldelas någon: använd assigneeMembershipId i createTask (membershipId från getProjectMembers), eller använd assignTask efter skapandet — då skickas automatiskt ett meddelande till deras personliga AI.",
+  parts.push(
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
     "Om du inte vet svaret, säg det istället för att gissa.",
-    summaryBlock,
-  ].join(" ");
+    summaryBlock
+  );
 
+  const base = parts.join(" ");
   return ragContext ? base + ragContext : base;
 }
