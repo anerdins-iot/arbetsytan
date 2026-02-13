@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { ActivityLogItem } from "@/actions/activity-log";
 import { ACTIVITY_ACTIONS, ACTIVITY_ENTITIES } from "@/lib/activity-log";
+import { formatActivityMetadata } from "@/lib/format-activity-metadata";
 
 type ProjectActivityLogProps = {
   locale: string;
@@ -49,18 +50,6 @@ function formatDateTime(value: string, locale: string): string {
     hour: "2-digit",
     minute: "2-digit",
   });
-}
-
-function formatMetadata(metadata: unknown): string | null {
-  if (!metadata || typeof metadata !== "object") {
-    return null;
-  }
-
-  try {
-    return JSON.stringify(metadata);
-  } catch {
-    return null;
-  }
 }
 
 export async function ProjectActivityLog({
@@ -157,7 +146,11 @@ export async function ProjectActivityLog({
             <p className="text-sm text-muted-foreground">{t("empty")}</p>
           ) : (
             items.map((item) => {
-              const metadata = formatMetadata(item.metadata);
+              const metadata = formatActivityMetadata(item.metadata, {
+                entity: item.entity,
+                action: item.action,
+                locale,
+              });
               return (
                 <div
                   key={item.id}

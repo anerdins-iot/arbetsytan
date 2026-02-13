@@ -47,6 +47,7 @@ import { Separator } from "@/components/ui/separator";
 import { updateProject, addProjectMember, removeProjectMember } from "@/actions/projects";
 import type { ProjectDetail } from "@/actions/projects";
 import type { ActivityLogItem } from "@/actions/activity-log";
+import { formatActivityMetadata } from "@/lib/format-activity-metadata";
 
 type ProjectOverviewProps = {
   project: ProjectDetail;
@@ -305,10 +306,11 @@ export function ProjectOverview({ project, recentActivity }: ProjectOverviewProp
               <p className="text-sm text-muted-foreground">{tActivity("empty")}</p>
             ) : (
               recentActivity.map((item) => {
-                const metadata =
-                  item.metadata && typeof item.metadata === "object"
-                    ? JSON.stringify(item.metadata)
-                    : null;
+                const metadata = formatActivityMetadata(item.metadata, {
+                  entity: item.entity,
+                  action: item.action,
+                  locale,
+                });
 
                 return (
                   <div

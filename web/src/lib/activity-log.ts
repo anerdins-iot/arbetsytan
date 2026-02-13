@@ -26,6 +26,8 @@ export const ACTIVITY_ENTITIES = [
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
 export type ActivityEntity = (typeof ACTIVITY_ENTITIES)[number];
 
+export { formatActivityMetadata } from "./format-activity-metadata";
+
 /**
  * Creates an activity log entry scoped to tenant + project.
  * Call this from server actions when a meaningful project event happens.
