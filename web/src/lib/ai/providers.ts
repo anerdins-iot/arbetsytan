@@ -12,7 +12,7 @@ export type ProviderKey = "CLAUDE" | "OPENAI" | "MISTRAL";
 
 /** Default chat model per provider. */
 const MODEL_IDS: Record<ProviderKey, string> = {
-  CLAUDE: "claude-sonnet-4-5-20250929",
+  CLAUDE: "claude-haiku-4-5-20251001",
   OPENAI: "gpt-4o",
   MISTRAL: "mistral-large-latest",
 };
