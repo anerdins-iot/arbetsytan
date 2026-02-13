@@ -29,6 +29,7 @@ const DIRECT_TENANT_MODELS = [
   "pushSubscription",
   "automation",
   "emailTemplate",
+  "documentChunk",
 ] as const;
 
 /** Models scoped via direct project relation. */
@@ -36,13 +37,15 @@ const PROJECT_SCOPED_MODELS = [
   "task",
   "activityLog",
   "file",
-  "documentChunk",
   "timeEntry",
   "note",
 ] as const;
 
 /** Comment is scoped via task.project (no direct project relation). */
 const COMMENT_MODEL = "comment" as const;
+
+/** AutomationLog is scoped via automation. */
+const AUTOMATION_LOG_MODEL = "automationLog" as const;
 
 /** Conversation: personal (projectId null) or project.project.tenantId. */
 const CONVERSATION_TENANT_OR = (tenantId: string) => ({
@@ -244,6 +247,26 @@ function createTenantExtension(tenantId: string) {
     },
   };
 
+  // 2c. AutomationLog is scoped via automation
+  query[AUTOMATION_LOG_MODEL] = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
+    findUnique: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, automation: { tenantId } } });
+    },
+    findUniqueOrThrow: ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      return run({ ...a, where: { ...a.where, automation: { tenantId } } });
+    },
+    count: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
+  };
+
   // 3. Handle ProjectMember (scoped via project)
   query.projectMember = {
     findMany: ({ args, query: run }) =>
@@ -409,6 +432,7 @@ export type TenantScopedClient = Omit<
   | "message"
   | "note"
   | "emailTemplate"
+  | "automationLog"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -429,6 +453,7 @@ export type TenantScopedClient = Omit<
   message: PrismaClient["message"];
   note: PrismaClient["note"];
   emailTemplate: PrismaClient["emailTemplate"];
+  automationLog: PrismaClient["automationLog"];
 };
 
 /**

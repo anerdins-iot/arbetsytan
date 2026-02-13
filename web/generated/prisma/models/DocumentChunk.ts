@@ -15,6 +15,7 @@ import type * as Prisma from "../internal/prismaNamespace"
 /**
  * Model DocumentChunk
  * Vektorsökning via pgvector. Se AI.md för arkitektur.
+ * Tenant-isolerad: alla rader har tenantId. Projektfiler har projectId; personliga filer har userId.
  */
 export type DocumentChunkModel = runtime.Types.Result.DefaultSelection<Prisma.$DocumentChunkPayload>
 
@@ -40,7 +41,9 @@ export type DocumentChunkMinAggregateOutputType = {
   page: number | null
   createdAt: Date | null
   fileId: string | null
+  tenantId: string | null
   projectId: string | null
+  userId: string | null
 }
 
 export type DocumentChunkMaxAggregateOutputType = {
@@ -49,7 +52,9 @@ export type DocumentChunkMaxAggregateOutputType = {
   page: number | null
   createdAt: Date | null
   fileId: string | null
+  tenantId: string | null
   projectId: string | null
+  userId: string | null
 }
 
 export type DocumentChunkCountAggregateOutputType = {
@@ -59,7 +64,9 @@ export type DocumentChunkCountAggregateOutputType = {
   page: number
   createdAt: number
   fileId: number
+  tenantId: number
   projectId: number
+  userId: number
   _all: number
 }
 
@@ -78,7 +85,9 @@ export type DocumentChunkMinAggregateInputType = {
   page?: true
   createdAt?: true
   fileId?: true
+  tenantId?: true
   projectId?: true
+  userId?: true
 }
 
 export type DocumentChunkMaxAggregateInputType = {
@@ -87,7 +96,9 @@ export type DocumentChunkMaxAggregateInputType = {
   page?: true
   createdAt?: true
   fileId?: true
+  tenantId?: true
   projectId?: true
+  userId?: true
 }
 
 export type DocumentChunkCountAggregateInputType = {
@@ -97,7 +108,9 @@ export type DocumentChunkCountAggregateInputType = {
   page?: true
   createdAt?: true
   fileId?: true
+  tenantId?: true
   projectId?: true
+  userId?: true
   _all?: true
 }
 
@@ -194,7 +207,9 @@ export type DocumentChunkGroupByOutputType = {
   page: number | null
   createdAt: Date
   fileId: string
-  projectId: string
+  tenantId: string
+  projectId: string | null
+  userId: string | null
   _count: DocumentChunkCountAggregateOutputType | null
   _avg: DocumentChunkAvgAggregateOutputType | null
   _sum: DocumentChunkSumAggregateOutputType | null
@@ -227,9 +242,13 @@ export type DocumentChunkWhereInput = {
   page?: Prisma.IntNullableFilter<"DocumentChunk"> | number | null
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
   fileId?: Prisma.StringFilter<"DocumentChunk"> | string
-  projectId?: Prisma.StringFilter<"DocumentChunk"> | string
+  tenantId?: Prisma.StringFilter<"DocumentChunk"> | string
+  projectId?: Prisma.StringNullableFilter<"DocumentChunk"> | string | null
+  userId?: Prisma.StringNullableFilter<"DocumentChunk"> | string | null
   file?: Prisma.XOR<Prisma.FileScalarRelationFilter, Prisma.FileWhereInput>
-  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type DocumentChunkOrderByWithRelationInput = {
@@ -239,9 +258,13 @@ export type DocumentChunkOrderByWithRelationInput = {
   page?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   file?: Prisma.FileOrderByWithRelationInput
+  tenant?: Prisma.TenantOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type DocumentChunkWhereUniqueInput = Prisma.AtLeast<{
@@ -254,9 +277,13 @@ export type DocumentChunkWhereUniqueInput = Prisma.AtLeast<{
   page?: Prisma.IntNullableFilter<"DocumentChunk"> | number | null
   createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
   fileId?: Prisma.StringFilter<"DocumentChunk"> | string
-  projectId?: Prisma.StringFilter<"DocumentChunk"> | string
+  tenantId?: Prisma.StringFilter<"DocumentChunk"> | string
+  projectId?: Prisma.StringNullableFilter<"DocumentChunk"> | string | null
+  userId?: Prisma.StringNullableFilter<"DocumentChunk"> | string | null
   file?: Prisma.XOR<Prisma.FileScalarRelationFilter, Prisma.FileWhereInput>
-  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
+  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type DocumentChunkOrderByWithAggregationInput = {
@@ -266,7 +293,9 @@ export type DocumentChunkOrderByWithAggregationInput = {
   page?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DocumentChunkCountOrderByAggregateInput
   _avg?: Prisma.DocumentChunkAvgOrderByAggregateInput
   _max?: Prisma.DocumentChunkMaxOrderByAggregateInput
@@ -284,7 +313,9 @@ export type DocumentChunkScalarWhereWithAggregatesInput = {
   page?: Prisma.IntNullableWithAggregatesFilter<"DocumentChunk"> | number | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DocumentChunk"> | Date | string
   fileId?: Prisma.StringWithAggregatesFilter<"DocumentChunk"> | string
-  projectId?: Prisma.StringWithAggregatesFilter<"DocumentChunk"> | string
+  tenantId?: Prisma.StringWithAggregatesFilter<"DocumentChunk"> | string
+  projectId?: Prisma.StringNullableWithAggregatesFilter<"DocumentChunk"> | string | null
+  userId?: Prisma.StringNullableWithAggregatesFilter<"DocumentChunk"> | string | null
 }
 
 export type DocumentChunkCreateInput = {
@@ -294,7 +325,9 @@ export type DocumentChunkCreateInput = {
   page?: number | null
   createdAt?: Date | string
   file: Prisma.FileCreateNestedOneWithoutChunksInput
-  project: Prisma.ProjectCreateNestedOneWithoutChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutDocumentChunksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutChunksInput
+  user?: Prisma.UserCreateNestedOneWithoutDocumentChunksInput
 }
 
 export type DocumentChunkUncheckedCreateInput = {
@@ -304,7 +337,9 @@ export type DocumentChunkUncheckedCreateInput = {
   page?: number | null
   createdAt?: Date | string
   fileId: string
-  projectId: string
+  tenantId: string
+  projectId?: string | null
+  userId?: string | null
 }
 
 export type DocumentChunkUpdateInput = {
@@ -314,7 +349,9 @@ export type DocumentChunkUpdateInput = {
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   file?: Prisma.FileUpdateOneRequiredWithoutChunksNestedInput
-  project?: Prisma.ProjectUpdateOneRequiredWithoutChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentChunksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutChunksNestedInput
+  user?: Prisma.UserUpdateOneWithoutDocumentChunksNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateInput = {
@@ -324,7 +361,9 @@ export type DocumentChunkUncheckedUpdateInput = {
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentChunkCreateManyInput = {
@@ -334,7 +373,9 @@ export type DocumentChunkCreateManyInput = {
   page?: number | null
   createdAt?: Date | string
   fileId: string
-  projectId: string
+  tenantId: string
+  projectId?: string | null
+  userId?: string | null
 }
 
 export type DocumentChunkUpdateManyMutationInput = {
@@ -352,7 +393,9 @@ export type DocumentChunkUncheckedUpdateManyInput = {
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentChunkListRelationFilter = {
@@ -372,7 +415,9 @@ export type DocumentChunkCountOrderByAggregateInput = {
   page?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type DocumentChunkAvgOrderByAggregateInput = {
@@ -385,7 +430,9 @@ export type DocumentChunkMaxOrderByAggregateInput = {
   page?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type DocumentChunkMinOrderByAggregateInput = {
@@ -394,11 +441,97 @@ export type DocumentChunkMinOrderByAggregateInput = {
   page?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
 }
 
 export type DocumentChunkSumOrderByAggregateInput = {
   page?: Prisma.SortOrder
+}
+
+export type DocumentChunkCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutTenantInput, Prisma.DocumentChunkUncheckedCreateWithoutTenantInput> | Prisma.DocumentChunkCreateWithoutTenantInput[] | Prisma.DocumentChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutTenantInput | Prisma.DocumentChunkCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.DocumentChunkCreateManyTenantInputEnvelope
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+}
+
+export type DocumentChunkUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutTenantInput, Prisma.DocumentChunkUncheckedCreateWithoutTenantInput> | Prisma.DocumentChunkCreateWithoutTenantInput[] | Prisma.DocumentChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutTenantInput | Prisma.DocumentChunkCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.DocumentChunkCreateManyTenantInputEnvelope
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+}
+
+export type DocumentChunkUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutTenantInput, Prisma.DocumentChunkUncheckedCreateWithoutTenantInput> | Prisma.DocumentChunkCreateWithoutTenantInput[] | Prisma.DocumentChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutTenantInput | Prisma.DocumentChunkCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.DocumentChunkUpsertWithWhereUniqueWithoutTenantInput | Prisma.DocumentChunkUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.DocumentChunkCreateManyTenantInputEnvelope
+  set?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  disconnect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  delete?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  update?: Prisma.DocumentChunkUpdateWithWhereUniqueWithoutTenantInput | Prisma.DocumentChunkUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.DocumentChunkUpdateManyWithWhereWithoutTenantInput | Prisma.DocumentChunkUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
+}
+
+export type DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutTenantInput, Prisma.DocumentChunkUncheckedCreateWithoutTenantInput> | Prisma.DocumentChunkCreateWithoutTenantInput[] | Prisma.DocumentChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutTenantInput | Prisma.DocumentChunkCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.DocumentChunkUpsertWithWhereUniqueWithoutTenantInput | Prisma.DocumentChunkUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.DocumentChunkCreateManyTenantInputEnvelope
+  set?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  disconnect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  delete?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  update?: Prisma.DocumentChunkUpdateWithWhereUniqueWithoutTenantInput | Prisma.DocumentChunkUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.DocumentChunkUpdateManyWithWhereWithoutTenantInput | Prisma.DocumentChunkUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
+}
+
+export type DocumentChunkCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutUserInput, Prisma.DocumentChunkUncheckedCreateWithoutUserInput> | Prisma.DocumentChunkCreateWithoutUserInput[] | Prisma.DocumentChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutUserInput | Prisma.DocumentChunkCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.DocumentChunkCreateManyUserInputEnvelope
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+}
+
+export type DocumentChunkUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutUserInput, Prisma.DocumentChunkUncheckedCreateWithoutUserInput> | Prisma.DocumentChunkCreateWithoutUserInput[] | Prisma.DocumentChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutUserInput | Prisma.DocumentChunkCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.DocumentChunkCreateManyUserInputEnvelope
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+}
+
+export type DocumentChunkUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutUserInput, Prisma.DocumentChunkUncheckedCreateWithoutUserInput> | Prisma.DocumentChunkCreateWithoutUserInput[] | Prisma.DocumentChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutUserInput | Prisma.DocumentChunkCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.DocumentChunkUpsertWithWhereUniqueWithoutUserInput | Prisma.DocumentChunkUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.DocumentChunkCreateManyUserInputEnvelope
+  set?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  disconnect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  delete?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  update?: Prisma.DocumentChunkUpdateWithWhereUniqueWithoutUserInput | Prisma.DocumentChunkUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.DocumentChunkUpdateManyWithWhereWithoutUserInput | Prisma.DocumentChunkUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
+}
+
+export type DocumentChunkUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentChunkCreateWithoutUserInput, Prisma.DocumentChunkUncheckedCreateWithoutUserInput> | Prisma.DocumentChunkCreateWithoutUserInput[] | Prisma.DocumentChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.DocumentChunkCreateOrConnectWithoutUserInput | Prisma.DocumentChunkCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.DocumentChunkUpsertWithWhereUniqueWithoutUserInput | Prisma.DocumentChunkUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.DocumentChunkCreateManyUserInputEnvelope
+  set?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  disconnect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  delete?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  connect?: Prisma.DocumentChunkWhereUniqueInput | Prisma.DocumentChunkWhereUniqueInput[]
+  update?: Prisma.DocumentChunkUpdateWithWhereUniqueWithoutUserInput | Prisma.DocumentChunkUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.DocumentChunkUpdateManyWithWhereWithoutUserInput | Prisma.DocumentChunkUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
 }
 
 export type DocumentChunkCreateNestedManyWithoutProjectInput = {
@@ -485,6 +618,117 @@ export type DocumentChunkUncheckedUpdateManyWithoutFileNestedInput = {
   deleteMany?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
 }
 
+export type DocumentChunkCreateWithoutTenantInput = {
+  id?: string
+  content: string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: number | null
+  createdAt?: Date | string
+  file: Prisma.FileCreateNestedOneWithoutChunksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutChunksInput
+  user?: Prisma.UserCreateNestedOneWithoutDocumentChunksInput
+}
+
+export type DocumentChunkUncheckedCreateWithoutTenantInput = {
+  id?: string
+  content: string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: number | null
+  createdAt?: Date | string
+  fileId: string
+  projectId?: string | null
+  userId?: string | null
+}
+
+export type DocumentChunkCreateOrConnectWithoutTenantInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutTenantInput, Prisma.DocumentChunkUncheckedCreateWithoutTenantInput>
+}
+
+export type DocumentChunkCreateManyTenantInputEnvelope = {
+  data: Prisma.DocumentChunkCreateManyTenantInput | Prisma.DocumentChunkCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentChunkUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutTenantInput, Prisma.DocumentChunkUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutTenantInput, Prisma.DocumentChunkUncheckedCreateWithoutTenantInput>
+}
+
+export type DocumentChunkUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutTenantInput, Prisma.DocumentChunkUncheckedUpdateWithoutTenantInput>
+}
+
+export type DocumentChunkUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.DocumentChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentChunkUpdateManyMutationInput, Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type DocumentChunkScalarWhereInput = {
+  AND?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
+  OR?: Prisma.DocumentChunkScalarWhereInput[]
+  NOT?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
+  id?: Prisma.StringFilter<"DocumentChunk"> | string
+  content?: Prisma.StringFilter<"DocumentChunk"> | string
+  metadata?: Prisma.JsonFilter<"DocumentChunk">
+  page?: Prisma.IntNullableFilter<"DocumentChunk"> | number | null
+  createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
+  fileId?: Prisma.StringFilter<"DocumentChunk"> | string
+  tenantId?: Prisma.StringFilter<"DocumentChunk"> | string
+  projectId?: Prisma.StringNullableFilter<"DocumentChunk"> | string | null
+  userId?: Prisma.StringNullableFilter<"DocumentChunk"> | string | null
+}
+
+export type DocumentChunkCreateWithoutUserInput = {
+  id?: string
+  content: string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: number | null
+  createdAt?: Date | string
+  file: Prisma.FileCreateNestedOneWithoutChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutDocumentChunksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutChunksInput
+}
+
+export type DocumentChunkUncheckedCreateWithoutUserInput = {
+  id?: string
+  content: string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: number | null
+  createdAt?: Date | string
+  fileId: string
+  tenantId: string
+  projectId?: string | null
+}
+
+export type DocumentChunkCreateOrConnectWithoutUserInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutUserInput, Prisma.DocumentChunkUncheckedCreateWithoutUserInput>
+}
+
+export type DocumentChunkCreateManyUserInputEnvelope = {
+  data: Prisma.DocumentChunkCreateManyUserInput | Prisma.DocumentChunkCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentChunkUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutUserInput, Prisma.DocumentChunkUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.DocumentChunkCreateWithoutUserInput, Prisma.DocumentChunkUncheckedCreateWithoutUserInput>
+}
+
+export type DocumentChunkUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.DocumentChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentChunkUpdateWithoutUserInput, Prisma.DocumentChunkUncheckedUpdateWithoutUserInput>
+}
+
+export type DocumentChunkUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.DocumentChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentChunkUpdateManyMutationInput, Prisma.DocumentChunkUncheckedUpdateManyWithoutUserInput>
+}
+
 export type DocumentChunkCreateWithoutProjectInput = {
   id?: string
   content: string
@@ -492,6 +736,8 @@ export type DocumentChunkCreateWithoutProjectInput = {
   page?: number | null
   createdAt?: Date | string
   file: Prisma.FileCreateNestedOneWithoutChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutDocumentChunksInput
+  user?: Prisma.UserCreateNestedOneWithoutDocumentChunksInput
 }
 
 export type DocumentChunkUncheckedCreateWithoutProjectInput = {
@@ -501,6 +747,8 @@ export type DocumentChunkUncheckedCreateWithoutProjectInput = {
   page?: number | null
   createdAt?: Date | string
   fileId: string
+  tenantId: string
+  userId?: string | null
 }
 
 export type DocumentChunkCreateOrConnectWithoutProjectInput = {
@@ -529,26 +777,15 @@ export type DocumentChunkUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.DocumentChunkUpdateManyMutationInput, Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectInput>
 }
 
-export type DocumentChunkScalarWhereInput = {
-  AND?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
-  OR?: Prisma.DocumentChunkScalarWhereInput[]
-  NOT?: Prisma.DocumentChunkScalarWhereInput | Prisma.DocumentChunkScalarWhereInput[]
-  id?: Prisma.StringFilter<"DocumentChunk"> | string
-  content?: Prisma.StringFilter<"DocumentChunk"> | string
-  metadata?: Prisma.JsonFilter<"DocumentChunk">
-  page?: Prisma.IntNullableFilter<"DocumentChunk"> | number | null
-  createdAt?: Prisma.DateTimeFilter<"DocumentChunk"> | Date | string
-  fileId?: Prisma.StringFilter<"DocumentChunk"> | string
-  projectId?: Prisma.StringFilter<"DocumentChunk"> | string
-}
-
 export type DocumentChunkCreateWithoutFileInput = {
   id?: string
   content: string
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   page?: number | null
   createdAt?: Date | string
-  project: Prisma.ProjectCreateNestedOneWithoutChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutDocumentChunksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutChunksInput
+  user?: Prisma.UserCreateNestedOneWithoutDocumentChunksInput
 }
 
 export type DocumentChunkUncheckedCreateWithoutFileInput = {
@@ -557,7 +794,9 @@ export type DocumentChunkUncheckedCreateWithoutFileInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   page?: number | null
   createdAt?: Date | string
-  projectId: string
+  tenantId: string
+  projectId?: string | null
+  userId?: string | null
 }
 
 export type DocumentChunkCreateOrConnectWithoutFileInput = {
@@ -586,6 +825,94 @@ export type DocumentChunkUpdateManyWithWhereWithoutFileInput = {
   data: Prisma.XOR<Prisma.DocumentChunkUpdateManyMutationInput, Prisma.DocumentChunkUncheckedUpdateManyWithoutFileInput>
 }
 
+export type DocumentChunkCreateManyTenantInput = {
+  id?: string
+  content: string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: number | null
+  createdAt?: Date | string
+  fileId: string
+  projectId?: string | null
+  userId?: string | null
+}
+
+export type DocumentChunkUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  file?: Prisma.FileUpdateOneRequiredWithoutChunksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutChunksNestedInput
+  user?: Prisma.UserUpdateOneWithoutDocumentChunksNestedInput
+}
+
+export type DocumentChunkUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type DocumentChunkUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type DocumentChunkCreateManyUserInput = {
+  id?: string
+  content: string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: number | null
+  createdAt?: Date | string
+  fileId: string
+  tenantId: string
+  projectId?: string | null
+}
+
+export type DocumentChunkUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  file?: Prisma.FileUpdateOneRequiredWithoutChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentChunksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutChunksNestedInput
+}
+
+export type DocumentChunkUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type DocumentChunkUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type DocumentChunkCreateManyProjectInput = {
   id?: string
   content: string
@@ -593,6 +920,8 @@ export type DocumentChunkCreateManyProjectInput = {
   page?: number | null
   createdAt?: Date | string
   fileId: string
+  tenantId: string
+  userId?: string | null
 }
 
 export type DocumentChunkUpdateWithoutProjectInput = {
@@ -602,6 +931,8 @@ export type DocumentChunkUpdateWithoutProjectInput = {
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   file?: Prisma.FileUpdateOneRequiredWithoutChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentChunksNestedInput
+  user?: Prisma.UserUpdateOneWithoutDocumentChunksNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateWithoutProjectInput = {
@@ -611,6 +942,8 @@ export type DocumentChunkUncheckedUpdateWithoutProjectInput = {
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentChunkUncheckedUpdateManyWithoutProjectInput = {
@@ -620,6 +953,8 @@ export type DocumentChunkUncheckedUpdateManyWithoutProjectInput = {
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentChunkCreateManyFileInput = {
@@ -628,7 +963,9 @@ export type DocumentChunkCreateManyFileInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   page?: number | null
   createdAt?: Date | string
-  projectId: string
+  tenantId: string
+  projectId?: string | null
+  userId?: string | null
 }
 
 export type DocumentChunkUpdateWithoutFileInput = {
@@ -637,7 +974,9 @@ export type DocumentChunkUpdateWithoutFileInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  project?: Prisma.ProjectUpdateOneRequiredWithoutChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentChunksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutChunksNestedInput
+  user?: Prisma.UserUpdateOneWithoutDocumentChunksNestedInput
 }
 
 export type DocumentChunkUncheckedUpdateWithoutFileInput = {
@@ -646,7 +985,9 @@ export type DocumentChunkUncheckedUpdateWithoutFileInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DocumentChunkUncheckedUpdateManyWithoutFileInput = {
@@ -655,7 +996,9 @@ export type DocumentChunkUncheckedUpdateManyWithoutFileInput = {
   metadata?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   page?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -667,9 +1010,13 @@ export type DocumentChunkSelect<ExtArgs extends runtime.Types.Extensions.Interna
   page?: boolean
   createdAt?: boolean
   fileId?: boolean
+  tenantId?: boolean
   projectId?: boolean
+  userId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.DocumentChunk$projectArgs<ExtArgs>
+  user?: boolean | Prisma.DocumentChunk$userArgs<ExtArgs>
 }, ExtArgs["result"]["documentChunk"]>
 
 export type DocumentChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -679,9 +1026,13 @@ export type DocumentChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   page?: boolean
   createdAt?: boolean
   fileId?: boolean
+  tenantId?: boolean
   projectId?: boolean
+  userId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.DocumentChunk$projectArgs<ExtArgs>
+  user?: boolean | Prisma.DocumentChunk$userArgs<ExtArgs>
 }, ExtArgs["result"]["documentChunk"]>
 
 export type DocumentChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -691,9 +1042,13 @@ export type DocumentChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   page?: boolean
   createdAt?: boolean
   fileId?: boolean
+  tenantId?: boolean
   projectId?: boolean
+  userId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.DocumentChunk$projectArgs<ExtArgs>
+  user?: boolean | Prisma.DocumentChunk$userArgs<ExtArgs>
 }, ExtArgs["result"]["documentChunk"]>
 
 export type DocumentChunkSelectScalar = {
@@ -703,28 +1058,38 @@ export type DocumentChunkSelectScalar = {
   page?: boolean
   createdAt?: boolean
   fileId?: boolean
+  tenantId?: boolean
   projectId?: boolean
+  userId?: boolean
 }
 
-export type DocumentChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "metadata" | "page" | "createdAt" | "fileId" | "projectId", ExtArgs["result"]["documentChunk"]>
+export type DocumentChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "metadata" | "page" | "createdAt" | "fileId" | "tenantId" | "projectId" | "userId", ExtArgs["result"]["documentChunk"]>
 export type DocumentChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.DocumentChunk$projectArgs<ExtArgs>
+  user?: boolean | Prisma.DocumentChunk$userArgs<ExtArgs>
 }
 export type DocumentChunkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.DocumentChunk$projectArgs<ExtArgs>
+  user?: boolean | Prisma.DocumentChunk$userArgs<ExtArgs>
 }
 export type DocumentChunkIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.DocumentChunk$projectArgs<ExtArgs>
+  user?: boolean | Prisma.DocumentChunk$userArgs<ExtArgs>
 }
 
 export type $DocumentChunkPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DocumentChunk"
   objects: {
     file: Prisma.$FilePayload<ExtArgs>
-    project: Prisma.$ProjectPayload<ExtArgs>
+    tenant: Prisma.$TenantPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
+    user: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -733,7 +1098,9 @@ export type $DocumentChunkPayload<ExtArgs extends runtime.Types.Extensions.Inter
     page: number | null
     createdAt: Date
     fileId: string
-    projectId: string
+    tenantId: string
+    projectId: string | null
+    userId: string | null
   }, ExtArgs["result"]["documentChunk"]>
   composites: {}
 }
@@ -1129,7 +1496,9 @@ readonly fields: DocumentChunkFieldRefs;
 export interface Prisma__DocumentChunkClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   file<T extends Prisma.FileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileDefaultArgs<ExtArgs>>): Prisma.Prisma__FileClient<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.DocumentChunk$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentChunk$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.DocumentChunk$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DocumentChunk$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1165,7 +1534,9 @@ export interface DocumentChunkFieldRefs {
   readonly page: Prisma.FieldRef<"DocumentChunk", 'Int'>
   readonly createdAt: Prisma.FieldRef<"DocumentChunk", 'DateTime'>
   readonly fileId: Prisma.FieldRef<"DocumentChunk", 'String'>
+  readonly tenantId: Prisma.FieldRef<"DocumentChunk", 'String'>
   readonly projectId: Prisma.FieldRef<"DocumentChunk", 'String'>
+  readonly userId: Prisma.FieldRef<"DocumentChunk", 'String'>
 }
     
 
@@ -1559,6 +1930,44 @@ export type DocumentChunkDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
    * Limit how many DocumentChunks to delete.
    */
   limit?: number
+}
+
+/**
+ * DocumentChunk.project
+ */
+export type DocumentChunk$projectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+}
+
+/**
+ * DocumentChunk.user
+ */
+export type DocumentChunk$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the User
+   */
+  select?: Prisma.UserSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the User
+   */
+  omit?: Prisma.UserOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserInclude<ExtArgs> | null
+  where?: Prisma.UserWhereInput
 }
 
 /**

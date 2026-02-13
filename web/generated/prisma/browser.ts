@@ -80,6 +80,7 @@ export type File = Prisma.FileModel
 /**
  * Model DocumentChunk
  * Vektorsökning via pgvector. Se AI.md för arkitektur.
+ * Tenant-isolerad: alla rader har tenantId. Projektfiler har projectId; personliga filer har userId.
  */
 export type DocumentChunk = Prisma.DocumentChunkModel
 /**

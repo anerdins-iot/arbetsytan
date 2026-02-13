@@ -27,6 +27,7 @@ model Tenant {
   notificationPreferences NotificationPreference[]
   pushSubscriptions       PushSubscription[]
   emailTemplates          EmailTemplate[]
+  documentChunks DocumentChunk[]
 }
 
 model User {
@@ -54,6 +55,7 @@ model User {
   notificationPreferences NotificationPreference[]
   pushSubscriptions       PushSubscription[]
   notes            Note[]
+  documentChunks   DocumentChunk[]
 }
 
 model Membership {
@@ -267,6 +269,7 @@ model File {
 // ─────────────────────────────────────────
 
 /// Vektorsökning via pgvector. Se AI.md för arkitektur.
+/// Tenant-isolerad: alla rader har tenantId. Projektfiler har projectId; personliga filer har userId.
 model DocumentChunk {
   id        String                    @id @default(cuid())
   content   String
@@ -277,8 +280,12 @@ model DocumentChunk {
 
   fileId    String
   file      File    @relation(fields: [fileId], references: [id], onDelete: Cascade)
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tenantId  String
+  tenant    Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // ─────────────────────────────────────────

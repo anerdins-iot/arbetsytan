@@ -573,10 +573,12 @@ export type ProjectCreateNestedOneWithoutChunksInput = {
   connect?: Prisma.ProjectWhereUniqueInput
 }
 
-export type ProjectUpdateOneRequiredWithoutChunksNestedInput = {
+export type ProjectUpdateOneWithoutChunksNestedInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutChunksInput, Prisma.ProjectUncheckedCreateWithoutChunksInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutChunksInput
   upsert?: Prisma.ProjectUpsertWithoutChunksInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
   connect?: Prisma.ProjectWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutChunksInput, Prisma.ProjectUpdateWithoutChunksInput>, Prisma.ProjectUncheckedUpdateWithoutChunksInput>
 }

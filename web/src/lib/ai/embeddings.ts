@@ -53,29 +53,38 @@ export async function generateEmbeddings(texts: string[]): Promise<number[][]> {
 
 /**
  * Store embedding vector for a DocumentChunk via raw SQL (pgvector).
+ * Kräver tenantId så att endast chunks i rätt tenant uppdateras (säkerhetsisolering).
  */
 export async function storeChunkEmbedding(
   chunkId: string,
-  embedding: number[]
+  embedding: number[],
+  tenantId: string
 ): Promise<void> {
   const vectorStr = `[${embedding.join(",")}]`;
   await prisma.$queryRawUnsafe(
-    `UPDATE "DocumentChunk" SET "embedding" = $1::vector WHERE "id" = $2`,
+    `UPDATE "DocumentChunk" SET "embedding" = $1::vector WHERE "id" = $2 AND "tenantId" = $3`,
     vectorStr,
-    chunkId
+    chunkId,
+    tenantId
   );
 }
 
 /**
  * Process all chunks for a file: generate embeddings and store them.
- * This is the main entry point called after OCR chunking is complete.
+ * Kräver tenantId för tenant-isolerad åtkomst (endast chunks i rätt tenant).
+ * Använder raw SQL för att filtrera på embedding IS NULL (pgvector-fält stöds inte i Prisma WhereInput).
  */
-export async function processFileEmbeddings(fileId: string): Promise<void> {
+export async function processFileEmbeddings(
+  fileId: string,
+  tenantId: string
+): Promise<void> {
   const chunks = await prisma.$queryRawUnsafe<
     Array<{ id: string; content: string }>
   >(
-    `SELECT "id", "content" FROM "DocumentChunk" WHERE "fileId" = $1 AND "embedding" IS NULL`,
-    fileId
+    `SELECT "id", "content" FROM "DocumentChunk"
+     WHERE "fileId" = $1 AND "tenantId" = $2 AND "embedding" IS NULL`,
+    fileId,
+    tenantId
   );
 
   if (chunks.length === 0) {
@@ -92,7 +101,7 @@ export async function processFileEmbeddings(fileId: string): Promise<void> {
   const embeddings = await generateEmbeddings(texts);
 
   for (let i = 0; i < chunks.length; i++) {
-    await storeChunkEmbedding(chunks[i].id, embeddings[i]);
+    await storeChunkEmbedding(chunks[i].id, embeddings[i], tenantId);
   }
 
   logger.info("Embeddings stored for file", {
@@ -103,7 +112,7 @@ export async function processFileEmbeddings(fileId: string): Promise<void> {
 
 /**
  * Cosine similarity search in DocumentChunk via pgvector.
- * Results are filtered by projectId and tenantId for multi-tenant isolation.
+ * Filtrerar alltid på tenantId och projectId (projektfiler) för multi-tenant-isolering.
  */
 export async function searchDocuments(
   tenantId: string,
@@ -144,16 +153,15 @@ export async function searchDocuments(
        f."name" AS "fileName"
      FROM "DocumentChunk" dc
      JOIN "File" f ON f."id" = dc."fileId"
-     JOIN "Project" p ON p."id" = dc."projectId"
-     WHERE dc."projectId" = $2
-       AND p."tenantId" = $3
+     WHERE dc."tenantId" = $2
+       AND dc."projectId" = $3
        AND dc."embedding" IS NOT NULL
        AND 1 - (dc."embedding" <=> $1::vector) > $4
      ORDER BY dc."embedding" <=> $1::vector
      LIMIT $5`,
     vectorStr,
-    projectId,
     tenantId,
+    projectId,
     threshold,
     limit
   );
@@ -163,7 +171,7 @@ export async function searchDocuments(
 
 /**
  * Search across ALL projects the user has access to (for global search).
- * Filters by tenantId and a list of accessible projectIds.
+ * Filtrerar alltid på tenantId och lista av tillgängliga projectIds.
  */
 export async function searchDocumentsGlobal(
   tenantId: string,
@@ -189,7 +197,6 @@ export async function searchDocumentsGlobal(
   const queryEmbedding = await generateEmbedding(queryText);
   const vectorStr = `[${queryEmbedding.join(",")}]`;
 
-  // Build parameterized IN clause for projectIds
   const placeholders = accessibleProjectIds
     .map((_, idx) => `$${idx + 5}`)
     .join(", ");
@@ -217,8 +224,8 @@ export async function searchDocumentsGlobal(
        p."name" AS "projectName"
      FROM "DocumentChunk" dc
      JOIN "File" f ON f."id" = dc."fileId"
-     JOIN "Project" p ON p."id" = dc."projectId"
-     WHERE p."tenantId" = $2
+     LEFT JOIN "Project" p ON p."id" = dc."projectId"
+     WHERE dc."tenantId" = $2
        AND dc."projectId" IN (${placeholders})
        AND dc."embedding" IS NOT NULL
        AND 1 - (dc."embedding" <=> $1::vector) > $3
@@ -236,11 +243,13 @@ export async function searchDocumentsGlobal(
 
 /**
  * Queue embedding processing for a file in the background.
- * Uses a fire-and-forget pattern so uploads are not blocked.
+ * Kräver tenantId för tenant-isolerad bearbetning.
  */
-export function queueEmbeddingProcessing(fileId: string): void {
-  // Fire-and-forget: run in the background without blocking the caller
-  processFileEmbeddings(fileId).catch((error) => {
+export function queueEmbeddingProcessing(
+  fileId: string,
+  tenantId: string
+): void {
+  processFileEmbeddings(fileId, tenantId).catch((error) => {
     logger.error("Background embedding processing failed", {
       fileId,
       error: error instanceof Error ? error.message : String(error),

@@ -2637,7 +2637,9 @@ export const DocumentChunkScalarFieldEnum = {
   page: 'page',
   createdAt: 'createdAt',
   fileId: 'fileId',
-  projectId: 'projectId'
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId'
 } as const
 
 export type DocumentChunkScalarFieldEnum = (typeof DocumentChunkScalarFieldEnum)[keyof typeof DocumentChunkScalarFieldEnum]

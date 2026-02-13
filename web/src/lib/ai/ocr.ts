@@ -284,13 +284,14 @@ export async function processFileOcr(params: {
             page: chunk.page,
             metadata: { position: chunk.position, source: "ocr" },
             fileId,
+            tenantId,
             projectId,
           },
         });
       }
 
       if (process.env.OPENAI_API_KEY) {
-        queueEmbeddingProcessing(fileId);
+        queueEmbeddingProcessing(fileId, tenantId);
       } else {
         logger.warn("OPENAI_API_KEY not set — skipping embedding queue for file", { fileId });
       }
