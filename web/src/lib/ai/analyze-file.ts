@@ -5,7 +5,7 @@
  * Skickar systemmeddelande till konversationen när klart.
  */
 import { tenantDb } from "@/lib/db";
-import { processFileOcr } from "@/lib/ai/ocr";
+import { processFileOcr, processPersonalFileOcr } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
 
 type AnalyzeFileParams = {
@@ -94,19 +94,15 @@ async function runAnalysis(params: AnalyzeFileParams): Promise<void> {
         analysisResult = `OCR-analys misslyckades: ${ocrResult.error}`;
       }
     } else {
-      // Personlig fil utan projekt: kör OCR för ocrText men skippa chunkning/embeddings
+      // Personlig fil utan projekt: kör OCR + chunkning + embeddings med userId
       if (!process.env.MISTRAL_API_KEY) {
         analysisResult = `Filen "${fileName}" har laddats upp. OCR ej konfigurerat.`;
       } else {
         try {
-          // processFileOcr kräver projectId men sparar ocrText oavsett.
-          // Vi använder en "ingen-chunkning"-metod genom att använda dummy-projectId
-          // som gör att DocumentChunks-create misslyckas tyst (project relation saknas).
-          // Bättre: kör OCR direkt via importerad funktion.
-          const ocrResult = await processFileOcr({
+          const ocrResult = await processPersonalFileOcr({
             fileId,
-            projectId: fileId, // Används som dummy — chunkning misslyckas tyst
             tenantId,
+            userId,
             bucket,
             key,
             fileType,
@@ -114,6 +110,7 @@ async function runAnalysis(params: AnalyzeFileParams): Promise<void> {
           });
 
           if (ocrResult.success) {
+            chunkCount = ocrResult.chunkCount;
             const db = tenantDb(tenantId);
             const file = await db.file.findFirst({
               where: { id: fileId },
@@ -121,7 +118,7 @@ async function runAnalysis(params: AnalyzeFileParams): Promise<void> {
             });
             if (file?.ocrText) {
               const preview = file.ocrText.slice(0, 500);
-              analysisResult = `OCR-analys klar.\n\nFörhandsvisning:\n${preview}${file.ocrText.length > 500 ? "…" : ""}`;
+              analysisResult = `OCR-analys klar. ${chunkCount} textblock extraherade.\n\nFörhandsvisning:\n${preview}${file.ocrText.length > 500 ? "…" : ""}`;
             } else {
               analysisResult = "OCR-analys klar, men ingen text kunde extraheras.";
             }

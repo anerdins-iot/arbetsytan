@@ -1111,7 +1111,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const searchFiles = tool({
     description:
-      "Söka i dokument (PDF, ritningar) över alla projekt användaren har tillgång till. Semantisk sökning; ange en fråga eller sökord.",
+      "Söka i dokument (PDF, ritningar) över alla projekt användaren har tillgång till samt personliga filer. Semantisk sökning; ange en fråga eller sökord.",
     inputSchema: toolInputSchema(z.object({
       query: z.string().describe("Sökfråga eller nyckelord"),
       limit: z.number().min(1).max(15).optional().default(8),
@@ -1123,7 +1123,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           select: { projectId: true },
         })
       ).map((p) => p.projectId);
-      return searchDocumentsAcrossProjects({ tenantId, projectIds, query, limit });
+      return searchDocumentsAcrossProjects({ tenantId, projectIds, query, limit, userId });
     },
   });
 

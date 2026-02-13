@@ -129,7 +129,7 @@ export async function searchDocuments(
     fileName: string;
   }>
 > {
-  const { limit = 10, threshold = 0.5 } = options;
+  const { limit = 10, threshold = 0.3 } = options;
 
   const queryEmbedding = await generateEmbedding(queryText);
   const vectorStr = `[${queryEmbedding.join(",")}]`;
@@ -170,14 +170,14 @@ export async function searchDocuments(
 }
 
 /**
- * Search across ALL projects the user has access to (for global search).
- * Filtrerar alltid på tenantId och lista av tillgängliga projectIds.
+ * Search across ALL projects the user has access to AND personal files (for global search).
+ * Filtrerar alltid på tenantId och lista av tillgängliga projectIds + userId för personliga filer.
  */
 export async function searchDocumentsGlobal(
   tenantId: string,
   accessibleProjectIds: string[],
   queryText: string,
-  options: { limit?: number; threshold?: number } = {}
+  options: { limit?: number; threshold?: number; userId?: string } = {}
 ): Promise<
   Array<{
     id: string;
@@ -186,20 +186,95 @@ export async function searchDocumentsGlobal(
     page: number | null;
     fileId: string;
     fileName: string;
-    projectId: string;
-    projectName: string;
+    projectId: string | null;
+    projectName: string | null;
   }>
 > {
-  if (accessibleProjectIds.length === 0) return [];
+  const hasProjects = accessibleProjectIds.length > 0;
+  const hasUserId = !!options.userId;
 
-  const { limit = 5, threshold = 0.5 } = options;
+  if (!hasProjects && !hasUserId) {
+    logger.warn("searchDocumentsGlobal: no project IDs and no userId");
+    return [];
+  }
+
+  const { limit = 5, threshold = 0.3, userId } = options;
+
+  logger.info("searchDocumentsGlobal: starting search", {
+    tenantId,
+    queryText: queryText.slice(0, 100),
+    projectIdCount: accessibleProjectIds.length,
+    accessibleProjectIds,
+    userId: userId ?? null,
+    threshold,
+    limit,
+  });
 
   const queryEmbedding = await generateEmbedding(queryText);
   const vectorStr = `[${queryEmbedding.join(",")}]`;
 
-  const placeholders = accessibleProjectIds
-    .map((_, idx) => `$${idx + 5}`)
-    .join(", ");
+  // Build dynamic WHERE clause to include both project chunks AND personal chunks
+  // Parameters: $1=vector, $2=tenantId, $3=threshold, $4=limit, then dynamic params
+  let nextParam = 5;
+  const scopeConditions: string[] = [];
+
+  if (hasProjects) {
+    const projectPlaceholders = accessibleProjectIds
+      .map(() => `$${nextParam++}`)
+      .join(", ");
+    scopeConditions.push(`dc."projectId" IN (${projectPlaceholders})`);
+  }
+
+  if (hasUserId) {
+    scopeConditions.push(`(dc."projectId" IS NULL AND dc."userId" = $${nextParam++})`);
+  }
+
+  const scopeWhere = scopeConditions.join(" OR ");
+
+  // Build parameter array
+  const dynamicParams: (string | number)[] = [
+    vectorStr,
+    tenantId,
+    threshold,
+    limit,
+    ...accessibleProjectIds,
+  ];
+  if (hasUserId) {
+    dynamicParams.push(userId!);
+  }
+
+  // Debug: count total chunks in scope
+  const debugScopeWhere = scopeWhere; // same conditions
+  const debugParams: (string | number)[] = [tenantId, ...accessibleProjectIds];
+  if (hasUserId) debugParams.push(userId!);
+
+  const debugPlaceholderStart = 2;
+  let debugNextParam = debugPlaceholderStart;
+  const debugScopeConditions: string[] = [];
+  if (hasProjects) {
+    const dp = accessibleProjectIds.map(() => `$${debugNextParam++}`).join(", ");
+    debugScopeConditions.push(`"projectId" IN (${dp})`);
+  }
+  if (hasUserId) {
+    debugScopeConditions.push(`("projectId" IS NULL AND "userId" = $${debugNextParam++})`);
+  }
+
+  const chunkStats = await prisma.$queryRawUnsafe<
+    Array<{ total: bigint; with_embedding: bigint }>
+  >(
+    `SELECT
+       COUNT(*) AS total,
+       COUNT(*) FILTER (WHERE "embedding" IS NOT NULL) AS with_embedding
+     FROM "DocumentChunk"
+     WHERE "tenantId" = $1
+       AND (${debugScopeConditions.join(" OR ")})`,
+    ...debugParams
+  );
+
+  logger.info("searchDocumentsGlobal: chunk stats in scope", {
+    total: Number(chunkStats[0]?.total ?? 0),
+    withEmbedding: Number(chunkStats[0]?.with_embedding ?? 0),
+  });
 
   const results = await prisma.$queryRawUnsafe<
     Array<{
@@ -209,8 +284,8 @@ export async function searchDocumentsGlobal(
       page: number | null;
       fileId: string;
       fileName: string;
-      projectId: string;
-      projectName: string;
+      projectId: string | null;
+      projectName: string | null;
     }>
   >(
     `SELECT
@@ -226,17 +301,22 @@ export async function searchDocumentsGlobal(
      JOIN "File" f ON f."id" = dc."fileId"
      LEFT JOIN "Project" p ON p."id" = dc."projectId"
      WHERE dc."tenantId" = $2
-       AND dc."projectId" IN (${placeholders})
+       AND (${scopeWhere})
        AND dc."embedding" IS NOT NULL
        AND 1 - (dc."embedding" <=> $1::vector) > $3
      ORDER BY dc."embedding" <=> $1::vector
      LIMIT $4`,
-    vectorStr,
-    tenantId,
-    threshold,
-    limit,
-    ...accessibleProjectIds
+    ...dynamicParams
   );
+
+  logger.info("searchDocumentsGlobal: search complete", {
+    resultCount: results.length,
+    topSimilarities: results.slice(0, 3).map((r) => ({
+      fileName: r.fileName,
+      similarity: r.similarity,
+      projectName: r.projectName,
+    })),
+  });
 
   return results;
 }

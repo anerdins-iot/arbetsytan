@@ -100,7 +100,7 @@ type SearchDocumentsProjectParams = {
  */
 export async function searchDocumentsForProject(params: SearchDocumentsProjectParams) {
   const { tenantId, projectId, query, limit } = params;
-  const results = await searchDocuments(tenantId, projectId, query, { limit, threshold: 0.5 });
+  const results = await searchDocuments(tenantId, projectId, query, { limit, threshold: 0.3 });
   return results.map((r) => ({
     fileName: r.fileName,
     page: r.page,
@@ -114,20 +114,22 @@ type SearchDocumentsGlobalParams = {
   projectIds: string[];
   query: string;
   limit: number;
+  userId?: string;
 };
 
 /**
- * Söker i dokument över flera projekt (används av personlig AI).
+ * Söker i dokument över flera projekt OCH personliga filer (används av personlig AI).
  */
 export async function searchDocumentsAcrossProjects(params: SearchDocumentsGlobalParams) {
-  const { tenantId, projectIds, query, limit } = params;
-  if (projectIds.length === 0) return [];
+  const { tenantId, projectIds, query, limit, userId } = params;
+  if (projectIds.length === 0 && !userId) return [];
   const results = await searchDocumentsGlobal(tenantId, projectIds, query, {
     limit,
-    threshold: 0.5,
+    threshold: 0.3,
+    userId,
   });
   return results.map((r) => ({
-    projectName: r.projectName,
+    projectName: r.projectName ?? "Personliga filer",
     projectId: r.projectId,
     fileName: r.fileName,
     page: r.page,

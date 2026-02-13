@@ -314,7 +314,7 @@ export function Topbar({
                             {doc.content}
                           </p>
                           <p className="line-clamp-1 text-xs text-muted-foreground pl-6">
-                            {t("search.inProject", { project: doc.projectName })}
+                            {doc.projectName ? t("search.inProject", { project: doc.projectName }) : t("search.personalFile", { defaultValue: "Personlig fil" })}
                           </p>
                         </Link>
                       ))}

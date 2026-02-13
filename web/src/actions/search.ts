@@ -40,8 +40,8 @@ export type GlobalSearchDocumentResult = {
   page: number | null;
   fileId: string;
   fileName: string;
-  projectId: string;
-  projectName: string;
+  projectId: string | null;
+  projectName: string | null;
 };
 
 export type GlobalSearchResult = {
@@ -153,7 +153,7 @@ export async function globalSearch(input: { query: string }): Promise<GlobalSear
           tenantId,
           accessibleProjectIds,
           query,
-          { limit: 5, threshold: 0.5 }
+          { limit: 5, threshold: 0.3 }
         );
 
         documents = docResults.map((doc) => ({

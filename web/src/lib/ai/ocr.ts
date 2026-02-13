@@ -305,3 +305,79 @@ export async function processFileOcr(params: {
     return { success: false, error: message };
   }
 }
+
+/**
+ * OCR pipeline for personal files (no project context).
+ * Creates DocumentChunks with userId instead of projectId for personal file search.
+ */
+export async function processPersonalFileOcr(params: {
+  fileId: string;
+  tenantId: string;
+  userId: string;
+  bucket: string;
+  key: string;
+  fileType: string;
+  fileName: string;
+}): Promise<{ success: true; chunkCount: number } | { success: false; error: string }> {
+  const { fileId, tenantId, userId, bucket, key, fileType, fileName } = params;
+
+  if (!isOcrEligible(fileType, fileName)) {
+    return { success: true, chunkCount: 0 };
+  }
+
+  if (!process.env.MISTRAL_API_KEY) {
+    logger.warn("MISTRAL_API_KEY not set — skipping OCR for personal file", { fileId });
+    return { success: true, chunkCount: 0 };
+  }
+
+  try {
+    const ocrResult = await runOcr(bucket, key, fileType);
+
+    if (!ocrResult.fullText.trim()) {
+      logger.info("OCR returned empty text for personal file", { fileId });
+      return { success: true, chunkCount: 0 };
+    }
+
+    const db = tenantDb(tenantId);
+
+    await db.file.update({
+      where: { id: fileId },
+      data: { ocrText: ocrResult.fullText },
+    });
+
+    const textChunks = chunkText(ocrResult.pages);
+
+    if (textChunks.length > 0) {
+      await db.documentChunk.deleteMany({
+        where: { fileId },
+      });
+
+      for (const chunk of textChunks) {
+        await db.documentChunk.create({
+          data: {
+            content: chunk.content,
+            page: chunk.page,
+            metadata: { position: chunk.position, source: "ocr" },
+            fileId,
+            tenantId,
+            userId,
+            // projectId is null — personal file
+          },
+        });
+      }
+
+      if (process.env.OPENAI_API_KEY) {
+        queueEmbeddingProcessing(fileId, tenantId);
+      } else {
+        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for personal file", { fileId });
+      }
+    }
+
+    logger.info("OCR completed for personal file", { fileId, chunkCount: textChunks.length });
+    return { success: true, chunkCount: textChunks.length };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "OCR_FAILED";
+    logger.error("OCR failed for personal file", { fileId, error: message });
+    return { success: false, error: message };
+  }
+}
