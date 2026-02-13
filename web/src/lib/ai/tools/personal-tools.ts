@@ -61,8 +61,17 @@ import {
   cancelInvitation as cancelInvitationAction,
 } from "@/actions/invitations";
 import {
+  getNotificationPreferences,
+  updateNotificationPreferences,
+} from "@/actions/notification-preferences";
+import {
   deleteFile as deleteFileAction,
 } from "@/actions/files";
+import {
+  exportTimeReportExcel,
+  exportProjectSummaryPdf,
+  exportTaskListExcel,
+} from "@/actions/export";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -824,6 +833,52 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           .map(([weekStart, mins]) => ({ weekStart, totalMinutes: mins, hours: Math.floor(mins / 60), remainingMinutes: mins % 60 }))
           .sort((a, b) => b.weekStart.localeCompare(a.weekStart))
           .slice(0, 12),
+      };
+    },
+  });
+
+  const exportTimeReport = tool({
+    description: "Exportera en tidsrapport för ett projekt som Excel eller PDF. Returnerar en nedladdningslänk.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      format: z.enum(["excel", "pdf"]).describe("Filformat: 'excel' eller 'pdf'"),
+      fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Startdatum YYYY-MM-DD (valfritt, endast för excel)"),
+      toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Slutdatum YYYY-MM-DD (valfritt, endast för excel)"),
+      targetUserId: z.string().optional().describe("Filtrera på specifik användare (valfritt, endast för excel)"),
+    })),
+    execute: async ({ projectId: pid, format, fromDate, toDate, targetUserId }) => {
+      await requireProject(tenantId, pid, userId);
+
+      if (format === "excel") {
+        const result = await exportTimeReportExcel(pid, { fromDate, toDate, userId: targetUserId });
+        if (!result.success) return { error: result.error };
+        return {
+          downloadUrl: result.downloadUrl,
+          message: `Tidsrapporten (Excel) har genererats. Du kan ladda ner den här: ${result.downloadUrl}`,
+        };
+      } else {
+        const result = await exportProjectSummaryPdf(pid);
+        if (!result.success) return { error: result.error };
+        return {
+          downloadUrl: result.downloadUrl,
+          message: `Projektsammanställningen (PDF) som inkluderar tidsrapportering har genererats. Du kan ladda ner den här: ${result.downloadUrl}`,
+        };
+      }
+    },
+  });
+
+  const exportTaskList = tool({
+    description: "Exportera en lista över alla uppgifter i ett projekt som en Excel-fil.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      await requireProject(tenantId, pid, userId);
+      const result = await exportTaskListExcel(pid);
+      if (!result.success) return { error: result.error };
+      return {
+        downloadUrl: result.downloadUrl,
+        message: `Uppgiftslistan (Excel) har genererats. Du kan ladda ner den här: ${result.downloadUrl}`,
       };
     },
   });
@@ -2150,6 +2205,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     updateTimeEntry,
     deleteTimeEntry,
     getProjectTimeSummary,
+    exportTimeReport,
+    exportTaskList,
     generateProjectReport,
     // Filer
     listFiles,
