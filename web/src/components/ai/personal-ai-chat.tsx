@@ -13,6 +13,7 @@ import {
   FileText,
   Image as ImageIcon,
   Loader2,
+  FolderOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,8 +31,10 @@ import type { ConversationListItem } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle } from "@/components/ai/voice-mode-toggle";
+import { ProjectSelector } from "@/components/ai/project-selector";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
 import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
+import { getProjects } from "@/actions/projects";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 
 // Formatera datum för konversationshistorik
@@ -90,6 +93,12 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Project selector state
+  const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const [projectList, setProjectList] = useState<Array<{ id: string; name: string }>>([]);
+  const activeProjectIdRef = useRef<string | null>(null);
+  activeProjectIdRef.current = activeProjectId;
+
   // Voice mode state
   const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
   const [ttsProvider, setTtsProvider] = useState<TTSProvider>("openai");
@@ -118,6 +127,7 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
       api: "/api/ai/chat",
       body: () => ({
         ...(conversationId ? { conversationId } : {}),
+        ...(activeProjectIdRef.current ? { projectId: activeProjectIdRef.current } : {}),
       }),
       fetch: async (input, init) => {
         const res = await fetch(input, init);
@@ -168,6 +178,18 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
     },
     []
   );
+
+  // Load projects when chat opens
+  useEffect(() => {
+    if (!open) return;
+    const loadProjects = async () => {
+      const result = await getProjects();
+      setProjectList(
+        result.projects.map((p) => ({ id: p.id, name: p.name }))
+      );
+    };
+    void loadProjects();
+  }, [open]);
 
   const loadConversations = useCallback(async () => {
     setLoadingHistory(true);
@@ -398,12 +420,15 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
         >
-          {/* Historik-bar */}
+          {/* Projekt-väljare och historik-bar */}
           <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-muted-foreground">
-                {t("history")}
-              </span>
+              <ProjectSelector
+                projects={projectList}
+                currentProjectId={activeProjectId}
+                onSelect={setActiveProjectId}
+                disabled={isLoading}
+              />
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -619,6 +644,16 @@ export function PersonalAiChat({ open, onOpenChange }: PersonalAiChatProps) {
           {error && (
             <div className="border-t border-border bg-destructive/10 px-4 py-2 text-sm text-destructive">
               {t("error")}
+            </div>
+          )}
+
+          {/* Aktiv projektindikator */}
+          {activeProjectId && (
+            <div className="flex items-center gap-1.5 border-t border-border bg-accent/50 px-4 py-1.5">
+              <FolderOpen className="size-3.5 text-accent-foreground/70" />
+              <span className="text-xs font-medium text-accent-foreground/70">
+                {projectList.find((p) => p.id === activeProjectId)?.name}
+              </span>
             </div>
           )}
 

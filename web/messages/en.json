@@ -167,6 +167,10 @@
     "analyzing": "Analyzing…",
     "fileTooLarge": "File is too large (max 50 MB)",
     "fileTypeNotAllowed": "File type not supported",
+    "projectSelector": {
+      "personal": "Personal",
+      "selectProject": "Select project"
+    },
     "voice": {
       "voiceMode": "Voice mode",
       "voiceSettings": "Voice settings",

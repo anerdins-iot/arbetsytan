@@ -167,6 +167,10 @@
     "analyzing": "Analyserar…",
     "fileTooLarge": "Filen är för stor (max 50 MB)",
     "fileTypeNotAllowed": "Filtypen stöds inte",
+    "projectSelector": {
+      "personal": "Personlig",
+      "selectProject": "Välj projekt"
+    },
     "voice": {
       "voiceMode": "Röstläge",
       "voiceSettings": "Röstinställningar",
