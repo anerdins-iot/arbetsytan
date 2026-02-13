@@ -386,7 +386,18 @@
       "updated": "Anteckningen uppdaterades",
       "deleted": "Anteckningen togs bort",
       "contentRequired": "Innehåll krävs",
-      "characters": "tecken"
+      "characters": "tecken",
+      "categoryManager": {
+        "title": "Hantera kategorier",
+        "create": "Skapa kategori",
+        "edit": "Redigera",
+        "delete": "Ta bort",
+        "name": "Namn",
+        "color": "Färg",
+        "confirmDelete": "Vill du ta bort denna kategori?",
+        "deleteError": "Kategorin kan inte tas bort",
+        "noCategories": "Inga kategorier ännu"
+      }
     },
     "files": {
       "title": "Ladda upp filer",

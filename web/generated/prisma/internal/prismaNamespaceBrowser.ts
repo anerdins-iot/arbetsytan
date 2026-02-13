@@ -77,6 +77,7 @@ export const ModelName = {
   Note: 'Note',
   Automation: 'Automation',
   AutomationLog: 'AutomationLog',
+  NoteCategory: 'NoteCategory',
   Subscription: 'Subscription'
 } as const
 
@@ -469,6 +470,19 @@ export const AutomationLogScalarFieldEnum = {
 } as const
 
 export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
+
+
+export const NoteCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  color: 'color',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NoteCategoryScalarFieldEnum = (typeof NoteCategoryScalarFieldEnum)[keyof typeof NoteCategoryScalarFieldEnum]
 
 
 export const SubscriptionScalarFieldEnum = {

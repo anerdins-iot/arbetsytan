@@ -6,6 +6,8 @@ import {
   SOCKET_EVENTS,
   type RealtimeFileEvent,
   type RealtimeNotification,
+  type RealtimeNoteCategoryEvent,
+  type RealtimeNoteEvent,
   type RealtimeProjectUpdatedEvent,
   type RealtimeTaskEvent,
   type RealtimeTimeEntryEvent,
@@ -25,6 +27,12 @@ type UseSocketOptions = {
   onFileCreated?: (event: RealtimeFileEvent) => void;
   onFileDeleted?: (event: RealtimeFileEvent) => void;
   onProjectUpdated?: (event: RealtimeProjectUpdatedEvent) => void;
+  onNoteCreated?: (event: RealtimeNoteEvent) => void;
+  onNoteUpdated?: (event: RealtimeNoteEvent) => void;
+  onNoteDeleted?: (event: RealtimeNoteEvent) => void;
+  onNoteCategoryCreated?: (event: RealtimeNoteCategoryEvent) => void;
+  onNoteCategoryUpdated?: (event: RealtimeNoteCategoryEvent) => void;
+  onNoteCategoryDeleted?: (event: RealtimeNoteCategoryEvent) => void;
   mobileToken?: string;
 };
 
@@ -58,6 +66,12 @@ export function useSocket({
   onFileCreated,
   onFileDeleted,
   onProjectUpdated,
+  onNoteCreated,
+  onNoteUpdated,
+  onNoteDeleted,
+  onNoteCategoryCreated,
+  onNoteCategoryUpdated,
+  onNoteCategoryDeleted,
   mobileToken,
 }: UseSocketOptions): UseSocketResult {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -117,6 +131,24 @@ export function useSocket({
     const handleProjectUpdated = (payload: RealtimeProjectUpdatedEvent) => {
       onProjectUpdated?.(payload);
     };
+    const handleNoteCreated = (payload: RealtimeNoteEvent) => {
+      onNoteCreated?.(payload);
+    };
+    const handleNoteUpdated = (payload: RealtimeNoteEvent) => {
+      onNoteUpdated?.(payload);
+    };
+    const handleNoteDeleted = (payload: RealtimeNoteEvent) => {
+      onNoteDeleted?.(payload);
+    };
+    const handleNoteCategoryCreated = (payload: RealtimeNoteCategoryEvent) => {
+      onNoteCategoryCreated?.(payload);
+    };
+    const handleNoteCategoryUpdated = (payload: RealtimeNoteCategoryEvent) => {
+      onNoteCategoryUpdated?.(payload);
+    };
+    const handleNoteCategoryDeleted = (payload: RealtimeNoteCategoryEvent) => {
+      onNoteCategoryDeleted?.(payload);
+    };
 
     connection.on("connect", handleConnect);
     connection.on("disconnect", handleDisconnect);
@@ -131,6 +163,12 @@ export function useSocket({
     connection.on(SOCKET_EVENTS.fileCreated, handleFileCreated);
     connection.on(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
     connection.on(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
+    connection.on(SOCKET_EVENTS.noteCreated, handleNoteCreated);
+    connection.on(SOCKET_EVENTS.noteUpdated, handleNoteUpdated);
+    connection.on(SOCKET_EVENTS.noteDeleted, handleNoteDeleted);
+    connection.on(SOCKET_EVENTS.noteCategoryCreated, handleNoteCategoryCreated);
+    connection.on(SOCKET_EVENTS.noteCategoryUpdated, handleNoteCategoryUpdated);
+    connection.on(SOCKET_EVENTS.noteCategoryDeleted, handleNoteCategoryDeleted);
 
     setSocket(connection);
 
@@ -148,6 +186,12 @@ export function useSocket({
       connection.off(SOCKET_EVENTS.fileCreated, handleFileCreated);
       connection.off(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
       connection.off(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
+      connection.off(SOCKET_EVENTS.noteCreated, handleNoteCreated);
+      connection.off(SOCKET_EVENTS.noteUpdated, handleNoteUpdated);
+      connection.off(SOCKET_EVENTS.noteDeleted, handleNoteDeleted);
+      connection.off(SOCKET_EVENTS.noteCategoryCreated, handleNoteCategoryCreated);
+      connection.off(SOCKET_EVENTS.noteCategoryUpdated, handleNoteCategoryUpdated);
+      connection.off(SOCKET_EVENTS.noteCategoryDeleted, handleNoteCategoryDeleted);
       connection.disconnect();
       setSocket(null);
       setStatus("disconnected");
@@ -157,6 +201,12 @@ export function useSocket({
     mobileToken,
     onFileCreated,
     onFileDeleted,
+    onNoteCategoryCreated,
+    onNoteCategoryDeleted,
+    onNoteCategoryUpdated,
+    onNoteCreated,
+    onNoteDeleted,
+    onNoteUpdated,
     onNotification,
     onProjectUpdated,
     onTaskCreated,

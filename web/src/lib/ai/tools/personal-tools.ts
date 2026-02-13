@@ -40,6 +40,12 @@ import {
   emitTimeEntryCreatedToProject,
   emitTimeEntryDeletedToProject,
   emitTimeEntryUpdatedToProject,
+  emitNoteCreatedToProject,
+  emitNoteUpdatedToProject,
+  emitNoteDeletedToProject,
+  emitNoteCategoryCreatedToTenant,
+  emitNoteCategoryUpdatedToTenant,
+  emitNoteCategoryDeletedToTenant,
 } from "@/lib/socket";
 import { randomUUID } from "node:crypto";
 import {
@@ -1384,8 +1390,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       "Hämta anteckningar från ett projekt. Kan filtrera på kategori.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
-      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
-        .describe("Filtrera på kategori"),
+      category: z.string().optional()
+        .describe("Filtrera på kategori (slug)"),
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ projectId: pid, category, limit = 20 }) => {
@@ -1422,8 +1428,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       projectId: z.string().describe("Projektets ID"),
       content: z.string().describe("Anteckningens innehåll"),
       title: z.string().optional().describe("Valfri titel"),
-      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
-        .describe("Kategori"),
+      category: z.string().optional()
+        .describe("Kategori (slug)"),
     })),
     execute: async ({ projectId: pid, content, title, category }) => {
       await requireProject(tenantId, pid, userId);
@@ -1439,6 +1445,14 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         include: {
           createdBy: { select: { id: true, name: true, email: true } },
         },
+      });
+
+      emitNoteCreatedToProject(pid, {
+        noteId: note.id,
+        projectId: pid,
+        title: note.title,
+        category: note.category,
+        createdById: userId,
       });
 
       return {
@@ -1459,8 +1473,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       noteId: z.string().describe("Anteckningens ID"),
       content: z.string().optional().describe("Nytt innehåll"),
       title: z.string().optional().describe("Ny titel"),
-      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
-        .describe("Ny kategori"),
+      category: z.string().optional()
+        .describe("Ny kategori (slug)"),
     })),
     execute: async ({ projectId: pid, noteId, content, title, category }) => {
       await requireProject(tenantId, pid, userId);
@@ -1478,6 +1492,15 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const note = await db.note.update({
         where: { id: noteId },
         data: updateData,
+        include: { createdBy: { select: { id: true, name: true, email: true } } },
+      });
+
+      emitNoteUpdatedToProject(pid, {
+        noteId: note.id,
+        projectId: pid,
+        title: note.title,
+        category: note.category,
+        createdById: note.createdBy.id,
       });
 
       return {
@@ -1505,6 +1528,15 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       if (!existing) return { error: "Anteckningen hittades inte i detta projekt." };
 
       await db.note.delete({ where: { id: noteId } });
+
+      emitNoteDeletedToProject(pid, {
+        noteId,
+        projectId: pid,
+        title: existing.title,
+        category: existing.category,
+        createdById: existing.createdById,
+      });
+
       return { success: true, message: "Anteckning borttagen." };
     },
   });
@@ -1553,8 +1585,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     description:
       "Hämta användarens personliga anteckningar (inte kopplade till något projekt). Kan filtrera på kategori.",
     inputSchema: toolInputSchema(z.object({
-      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
-        .describe("Filtrera på kategori"),
+      category: z.string().optional()
+        .describe("Filtrera på kategori (slug)"),
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ category, limit = 20 }) => {
@@ -1587,8 +1619,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     inputSchema: toolInputSchema(z.object({
       content: z.string().describe("Anteckningens innehåll"),
       title: z.string().optional().describe("Valfri titel"),
-      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
-        .describe("Kategori"),
+      category: z.string().optional()
+        .describe("Kategori (slug)"),
     })),
     execute: async ({ content, title, category }) => {
       const note = await db.note.create({
@@ -1618,8 +1650,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       noteId: z.string().describe("Anteckningens ID"),
       content: z.string().optional().describe("Nytt innehåll"),
       title: z.string().optional().describe("Ny titel"),
-      category: z.enum(["beslut", "teknisk_info", "kundönskemål", "viktig_info", "övrigt"]).optional()
-        .describe("Ny kategori"),
+      category: z.string().optional()
+        .describe("Ny kategori (slug)"),
     })),
     execute: async ({ noteId, content, title, category }) => {
       const existing = await db.note.findFirst({
@@ -2238,6 +2270,139 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  // ─── Anteckningskategorier (NoteCategory) ────────────
+
+  const listNoteCategories = tool({
+    description:
+      "Hämta alla anteckningskategorier för tenanten.",
+    inputSchema: toolInputSchema(z.object({
+      _: z.string().optional().describe("Ignored"),
+    })),
+    execute: async () => {
+      const categories = await db.noteCategory.findMany({
+        orderBy: { name: "asc" },
+      });
+      return categories.map((c: typeof categories[number]) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+        color: c.color,
+      }));
+    },
+  });
+
+  const createNoteCategory = tool({
+    description:
+      "Skapa en ny anteckningskategori. Slug genereras automatiskt från namnet.",
+    inputSchema: toolInputSchema(z.object({
+      name: z.string().min(1).max(50).describe("Kategorins namn"),
+      color: z.string().optional().describe("Hex-färg, t.ex. #3b82f6"),
+    })),
+    execute: async ({ name, color }) => {
+      const slug = name
+        .toLowerCase()
+        .replace(/[åä]/g, "a")
+        .replace(/ö/g, "o")
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_|_$/g, "");
+
+      const existing = await db.noteCategory.findFirst({
+        where: { slug },
+      });
+      if (existing) return { error: `Kategori med slug "${slug}" finns redan.` };
+
+      const category = await db.noteCategory.create({
+        data: { name, slug, color: color ?? null, tenantId },
+      });
+
+      emitNoteCategoryCreatedToTenant(tenantId, {
+        categoryId: category.id,
+        name: category.name,
+        slug: category.slug,
+        color: category.color,
+      });
+
+      return {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        color: category.color,
+        message: "Kategori skapad.",
+      };
+    },
+  });
+
+  const updateNoteCategory = tool({
+    description: "Uppdatera en anteckningskategori.",
+    inputSchema: toolInputSchema(z.object({
+      categoryId: z.string().describe("Kategorins ID"),
+      name: z.string().min(1).max(50).optional().describe("Nytt namn"),
+      color: z.string().optional().nullable().describe("Ny hex-färg eller null för att ta bort"),
+    })),
+    execute: async ({ categoryId, name, color }) => {
+      const existing = await db.noteCategory.findFirst({
+        where: { id: categoryId },
+      });
+      if (!existing) return { error: "Kategorin hittades inte." };
+
+      const updateData: Record<string, unknown> = {};
+      if (name !== undefined) {
+        updateData.name = name;
+        updateData.slug = name
+          .toLowerCase()
+          .replace(/[åä]/g, "a")
+          .replace(/ö/g, "o")
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_|_$/g, "");
+      }
+      if (color !== undefined) updateData.color = color;
+
+      const category = await db.noteCategory.update({
+        where: { id: categoryId },
+        data: updateData,
+      });
+
+      emitNoteCategoryUpdatedToTenant(tenantId, {
+        categoryId: category.id,
+        name: category.name,
+        slug: category.slug,
+        color: category.color,
+      });
+
+      return {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        color: category.color,
+        message: "Kategori uppdaterad.",
+      };
+    },
+  });
+
+  const deleteNoteCategory = tool({
+    description: "Ta bort en anteckningskategori. Anteckningar med denna kategori behåller sin kategori-text men kategorin försvinner från listan.",
+    inputSchema: toolInputSchema(z.object({
+      categoryId: z.string().describe("Kategorins ID"),
+    })),
+    execute: async ({ categoryId }) => {
+      const existing = await db.noteCategory.findFirst({
+        where: { id: categoryId },
+      });
+      if (!existing) return { error: "Kategorin hittades inte." };
+
+      await db.noteCategory.delete({ where: { id: categoryId } });
+
+      emitNoteCategoryDeletedToTenant(tenantId, {
+        categoryId,
+        name: existing.name,
+        slug: existing.slug,
+        color: existing.color,
+      });
+
+      return { success: true, message: "Kategori borttagen." };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -2313,5 +2478,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     // Notifikationsinställningar
     getNotificationSettings,
     updateNotificationSettings,
+    // Anteckningskategorier
+    listNoteCategories,
+    createNoteCategory,
+    updateNoteCategory,
+    deleteNoteCategory,
   };
 }

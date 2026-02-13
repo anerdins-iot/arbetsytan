@@ -28,6 +28,7 @@ model Tenant {
   pushSubscriptions       PushSubscription[]
   emailTemplates          EmailTemplate[]
   documentChunks DocumentChunk[]
+  noteCategories NoteCategory[]
 }
 
 model User {
@@ -603,6 +604,24 @@ enum AutomationLogStatus {
   SUCCESS
   FAILED
   SKIPPED    // e.g., target entity no longer exists
+}
+
+// ─────────────────────────────────────────
+// Note Categories (tenant-level)
+// ─────────────────────────────────────────
+
+model NoteCategory {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String
+  color     String?
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
 }
 
 // ─────────────────────────────────────────

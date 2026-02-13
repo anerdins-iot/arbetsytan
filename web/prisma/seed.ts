@@ -134,6 +134,18 @@ async function main() {
     });
   }
 
+  // Default note categories for tenant
+  await prisma.noteCategory.createMany({
+    data: [
+      { name: "Beslut", slug: "beslut", color: "#22c55e", tenantId: tenant.id },
+      { name: "Teknisk info", slug: "teknisk_info", color: "#3b82f6", tenantId: tenant.id },
+      { name: "Kundönskemål", slug: "kundonskem\u00e5l", color: "#f59e0b", tenantId: tenant.id },
+      { name: "Viktig info", slug: "viktig_info", color: "#ef4444", tenantId: tenant.id },
+      { name: "Övrigt", slug: "ovrigt", color: "#6b7280", tenantId: tenant.id },
+    ],
+    skipDuplicates: true,
+  });
+
   const task1 = await prisma.task.create({
     data: {
       title: "Dra kabel i källaren",
@@ -248,7 +260,7 @@ async function main() {
     },
   });
 
-  console.log("Seed OK: tenant, users, memberships, project, tasks, automations created.");
+  console.log("Seed OK: tenant, users, memberships, project, note categories, tasks, automations created.");
 }
 
 main()

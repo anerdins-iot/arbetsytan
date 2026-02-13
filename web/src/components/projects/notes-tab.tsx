@@ -2,37 +2,44 @@
 
 import { useEffect, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, Search, Pin } from "lucide-react";
+import { Plus, Search, Pin, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getNotes, type NoteItem } from "@/actions/notes";
+import { getNoteCategories, type NoteCategoryItem } from "@/actions/note-categories";
 import { NoteCard } from "./note-card";
 import { CreateNoteDialog } from "./create-note-dialog";
+import { NoteCategoryManager } from "./note-category-manager";
 
 type NotesTabProps = {
   projectId: string;
   initialNotes?: NoteItem[];
+  /** Incremented by parent when a socket note event is received */
+  socketNoteVersion?: number;
+  /** Incremented by parent when a socket noteCategory event is received */
+  socketCategoryVersion?: number;
 };
 
-// Kategorier för anteckningar
-export const NOTE_CATEGORIES = [
-  "beslut",
-  "teknisk_info",
-  "kundönskemål",
-  "viktig_info",
-  "övrigt",
-] as const;
-
-export type NoteCategory = (typeof NOTE_CATEGORIES)[number];
-
-export function NotesTab({ projectId, initialNotes = [] }: NotesTabProps) {
+export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, socketCategoryVersion = 0 }: NotesTabProps) {
   const t = useTranslations("projects.notes");
   const [notes, setNotes] = useState<NoteItem[]>(initialNotes);
+  const [categories, setCategories] = useState<NoteCategoryItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+
+  // Ladda kategorier från DB
+  const loadCategories = () => {
+    startTransition(async () => {
+      const result = await getNoteCategories();
+      if (result.success) {
+        setCategories(result.categories);
+      }
+    });
+  };
 
   // Ladda anteckningar
   const loadNotes = () => {
@@ -52,11 +59,33 @@ export function NotesTab({ projectId, initialNotes = [] }: NotesTabProps) {
     });
   };
 
+  // Ladda kategorier vid mount
+  useEffect(() => {
+    loadCategories();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Ladda om när filter ändras
   useEffect(() => {
     loadNotes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryFilter, searchQuery]);
+
+  // Reload notes when socket event triggers version bump
+  useEffect(() => {
+    if (socketNoteVersion > 0) {
+      loadNotes();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketNoteVersion]);
+
+  // Reload categories when socket event triggers version bump
+  useEffect(() => {
+    if (socketCategoryVersion > 0) {
+      loadCategories();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketCategoryVersion]);
 
   // Filtrera och sortera anteckningar (pinnade först)
   const filteredNotes = notes;
@@ -82,13 +111,21 @@ export function NotesTab({ projectId, initialNotes = [] }: NotesTabProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t("categoryAll")}</SelectItem>
-              {NOTE_CATEGORIES.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {t(`categories.${cat}`)}
+              {categories.map((cat) => (
+                <SelectItem key={cat.slug} value={cat.slug}>
+                  {cat.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setIsCategoryManagerOpen(true)}
+            title={t("categoryManager.title")}
+          >
+            <Settings className="size-4" />
+          </Button>
         </div>
         <Button onClick={() => setIsCreateDialogOpen(true)}>
           <Plus className="mr-2 size-4" />
@@ -122,7 +159,7 @@ export function NotesTab({ projectId, initialNotes = [] }: NotesTabProps) {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredNotes.map((note) => (
-            <NoteCard key={note.id} note={note} projectId={projectId} onUpdate={loadNotes} />
+            <NoteCard key={note.id} note={note} projectId={projectId} onUpdate={loadNotes} categories={categories} />
           ))}
         </div>
       )}
@@ -133,6 +170,15 @@ export function NotesTab({ projectId, initialNotes = [] }: NotesTabProps) {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
         onSuccess={loadNotes}
+        categories={categories}
+      />
+
+      {/* Category manager */}
+      <NoteCategoryManager
+        open={isCategoryManagerOpen}
+        onOpenChange={setIsCategoryManagerOpen}
+        onCategoriesChanged={loadCategories}
+        socketCategoryVersion={socketCategoryVersion}
       />
     </div>
   );

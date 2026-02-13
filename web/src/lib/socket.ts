@@ -12,6 +12,8 @@ import {
   userRoom,
   type RealtimeFileEvent,
   type RealtimeNotification,
+  type RealtimeNoteCategoryEvent,
+  type RealtimeNoteEvent,
   type RealtimeProjectUpdatedEvent,
   type RealtimeTaskEvent,
   type RealtimeTimeEntryEvent,
@@ -265,4 +267,47 @@ export function emitProjectUpdatedToProject(
 ): void {
   const io = getSocketServer();
   io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.projectUpdated, payload);
+}
+
+// ── Notes (project room) ──────────────────────────────
+
+export function emitNoteCreatedToProject(projectId: string, payload: RealtimeNoteEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.noteCreated, payload);
+}
+
+export function emitNoteUpdatedToProject(projectId: string, payload: RealtimeNoteEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.noteUpdated, payload);
+}
+
+export function emitNoteDeletedToProject(projectId: string, payload: RealtimeNoteEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.noteDeleted, payload);
+}
+
+// ── Note Categories (tenant room) ─────────────────────
+
+export function emitNoteCategoryCreatedToTenant(
+  tenantId: string,
+  payload: RealtimeNoteCategoryEvent
+): void {
+  const io = getSocketServer();
+  io.to(tenantRoom(tenantId)).emit(SOCKET_EVENTS.noteCategoryCreated, payload);
+}
+
+export function emitNoteCategoryUpdatedToTenant(
+  tenantId: string,
+  payload: RealtimeNoteCategoryEvent
+): void {
+  const io = getSocketServer();
+  io.to(tenantRoom(tenantId)).emit(SOCKET_EVENTS.noteCategoryUpdated, payload);
+}
+
+export function emitNoteCategoryDeletedToTenant(
+  tenantId: string,
+  payload: RealtimeNoteCategoryEvent
+): void {
+  const io = getSocketServer();
+  io.to(tenantRoom(tenantId)).emit(SOCKET_EVENTS.noteCategoryDeleted, payload);
 }

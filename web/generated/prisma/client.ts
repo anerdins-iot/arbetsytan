@@ -171,6 +171,11 @@ export type Automation = Prisma.AutomationModel
  */
 export type AutomationLog = Prisma.AutomationLogModel
 /**
+ * Model NoteCategory
+ * 
+ */
+export type NoteCategory = Prisma.NoteCategoryModel
+/**
  * Model Subscription
  * 
  */

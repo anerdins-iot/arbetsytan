@@ -16,13 +16,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createNote } from "@/actions/notes";
-import { NOTE_CATEGORIES } from "./notes-tab";
+import type { NoteCategoryItem } from "@/actions/note-categories";
 
 type CreateNoteDialogProps = {
   projectId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  categories?: NoteCategoryItem[];
 };
 
 export function CreateNoteDialog({
@@ -30,6 +31,7 @@ export function CreateNoteDialog({
   open,
   onOpenChange,
   onSuccess,
+  categories = [],
 }: CreateNoteDialogProps) {
   const t = useTranslations("projects.notes");
   const [title, setTitle] = useState("");
@@ -120,9 +122,9 @@ export function CreateNoteDialog({
                   <SelectValue placeholder={t("selectCategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {NOTE_CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {t(`categories.${cat}`)}
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.slug} value={cat.slug}>
+                      {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

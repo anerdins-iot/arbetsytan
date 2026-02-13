@@ -14,24 +14,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteNote, toggleNotePin, type NoteItem } from "@/actions/notes";
+import type { NoteCategoryItem } from "@/actions/note-categories";
 import { EditNoteDialog } from "./edit-note-dialog";
 
 type NoteCardProps = {
   note: NoteItem;
   projectId: string;
   onUpdate: () => void;
+  categories: NoteCategoryItem[];
 };
 
-// Färger för kategori-badges
-const CATEGORY_COLORS: Record<string, string> = {
-  beslut: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
-  teknisk_info: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  kundönskemål: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
-  viktig_info: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
-  övrigt: "bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300",
-};
-
-export function NoteCard({ note, projectId, onUpdate }: NoteCardProps) {
+export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProps) {
   const t = useTranslations("projects.notes");
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -73,6 +66,11 @@ export function NoteCard({ note, projectId, onUpdate }: NoteCardProps) {
     day: "numeric",
   });
 
+  // Hitta dynamisk kategori-färg
+  const categoryMatch = note.category
+    ? categories.find((c) => c.slug === note.category)
+    : null;
+
   return (
     <>
       <Card className="relative flex flex-col">
@@ -84,8 +82,19 @@ export function NoteCard({ note, projectId, onUpdate }: NoteCardProps) {
               )}
               <div className="flex flex-wrap items-center gap-2">
                 {note.category && (
-                  <Badge variant="secondary" className={CATEGORY_COLORS[note.category] || ""}>
-                    {t(`categories.${note.category}`)}
+                  <Badge
+                    variant="secondary"
+                    style={
+                      categoryMatch?.color
+                        ? {
+                            backgroundColor: categoryMatch.color + "20",
+                            color: categoryMatch.color,
+                            borderColor: categoryMatch.color + "40",
+                          }
+                        : undefined
+                    }
+                  >
+                    {categoryMatch?.name ?? note.category}
                   </Badge>
                 )}
                 {note.isPinned && (
@@ -139,6 +148,7 @@ export function NoteCard({ note, projectId, onUpdate }: NoteCardProps) {
         open={isEditDialogOpen}
         onOpenChange={setIsEditDialogOpen}
         onSuccess={onUpdate}
+        categories={categories}
       />
     </>
   );

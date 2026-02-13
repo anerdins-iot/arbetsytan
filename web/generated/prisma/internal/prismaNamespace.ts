@@ -410,6 +410,7 @@ export const ModelName = {
   Note: 'Note',
   Automation: 'Automation',
   AutomationLog: 'AutomationLog',
+  NoteCategory: 'NoteCategory',
   Subscription: 'Subscription'
 } as const
 
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "subscription"
+    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2354,6 +2355,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NoteCategory: {
+      payload: Prisma.$NoteCategoryPayload<ExtArgs>
+      fields: Prisma.NoteCategoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NoteCategoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NoteCategoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>
+        }
+        findFirst: {
+          args: Prisma.NoteCategoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NoteCategoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>
+        }
+        findMany: {
+          args: Prisma.NoteCategoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>[]
+        }
+        create: {
+          args: Prisma.NoteCategoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>
+        }
+        createMany: {
+          args: Prisma.NoteCategoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NoteCategoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>[]
+        }
+        delete: {
+          args: Prisma.NoteCategoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>
+        }
+        update: {
+          args: Prisma.NoteCategoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.NoteCategoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NoteCategoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NoteCategoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.NoteCategoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteCategoryPayload>
+        }
+        aggregate: {
+          args: Prisma.NoteCategoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNoteCategory>
+        }
+        groupBy: {
+          args: Prisma.NoteCategoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NoteCategoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NoteCategoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NoteCategoryCountAggregateOutputType> | number
+        }
+      }
+    }
     Subscription: {
       payload: Prisma.$SubscriptionPayload<ExtArgs>
       fields: Prisma.SubscriptionFieldRefs
@@ -2842,6 +2917,19 @@ export const AutomationLogScalarFieldEnum = {
 export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
 
 
+export const NoteCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  color: 'color',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NoteCategoryScalarFieldEnum = (typeof NoteCategoryScalarFieldEnum)[keyof typeof NoteCategoryScalarFieldEnum]
+
+
 export const SubscriptionScalarFieldEnum = {
   id: 'id',
   stripeSubscriptionId: 'stripeSubscriptionId',
@@ -3320,6 +3408,7 @@ export type GlobalOmitConfig = {
   note?: Prisma.NoteOmit
   automation?: Prisma.AutomationOmit
   automationLog?: Prisma.AutomationLogOmit
+  noteCategory?: Prisma.NoteCategoryOmit
   subscription?: Prisma.SubscriptionOmit
 }
 

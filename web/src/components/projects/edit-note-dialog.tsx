@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { updateNote, type NoteItem } from "@/actions/notes";
-import { NOTE_CATEGORIES } from "./notes-tab";
+import type { NoteCategoryItem } from "@/actions/note-categories";
 
 type EditNoteDialogProps = {
   projectId: string;
@@ -24,6 +24,7 @@ type EditNoteDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
+  categories?: NoteCategoryItem[];
 };
 
 export function EditNoteDialog({
@@ -32,6 +33,7 @@ export function EditNoteDialog({
   open,
   onOpenChange,
   onSuccess,
+  categories = [],
 }: EditNoteDialogProps) {
   const t = useTranslations("projects.notes");
   const [title, setTitle] = useState(note.title);
@@ -126,9 +128,9 @@ export function EditNoteDialog({
                   <SelectValue placeholder={t("selectCategory")} />
                 </SelectTrigger>
                 <SelectContent>
-                  {NOTE_CATEGORIES.map((cat) => (
-                    <SelectItem key={cat} value={cat}>
-                      {t(`categories.${cat}`)}
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.slug} value={cat.slug}>
+                      {cat.name}
                     </SelectItem>
                   ))}
                 </SelectContent>

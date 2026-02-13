@@ -4,6 +4,11 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import {
+  emitNoteCreatedToProject,
+  emitNoteUpdatedToProject,
+  emitNoteDeletedToProject,
+} from "@/lib/socket";
 
 // ─────────────────────────────────────────
 // Types
@@ -114,6 +119,14 @@ export async function createNote(
       include: noteInclude,
     });
 
+    emitNoteCreatedToProject(projectId, {
+      noteId: note.id,
+      projectId,
+      title: note.title,
+      category: note.category,
+      createdById: userId,
+    });
+
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
     return { success: true, note: formatNote(note) };
   } catch {
@@ -210,6 +223,14 @@ export async function updateNote(
       include: noteInclude,
     });
 
+    emitNoteUpdatedToProject(projectId, {
+      noteId: note.id,
+      projectId,
+      title: note.title,
+      category: note.category,
+      createdById: note.createdBy.id,
+    });
+
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
     return { success: true, note: formatNote(note) };
   } catch {
@@ -239,6 +260,14 @@ export async function deleteNote(
     }
 
     await db.note.delete({ where: { id: noteId } });
+
+    emitNoteDeletedToProject(projectId, {
+      noteId,
+      projectId,
+      title: existing.title,
+      category: existing.category,
+      createdById: existing.createdById,
+    });
 
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
     return { success: true };

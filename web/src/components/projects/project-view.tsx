@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -61,6 +61,9 @@ export function ProjectView({
   const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const taskOptions = tasks.map((task) => ({ id: task.id, title: task.title }));
 
+  const [socketNoteVersion, setSocketNoteVersion] = useState(0);
+  const [socketCategoryVersion, setSocketCategoryVersion] = useState(0);
+
   const refreshProjectView = useCallback(() => {
     if (refreshTimeoutRef.current) return;
     refreshTimeoutRef.current = setTimeout(() => {
@@ -68,6 +71,14 @@ export function ProjectView({
       router.refresh();
     }, 150);
   }, [router]);
+
+  const handleNoteEvent = useCallback(() => {
+    setSocketNoteVersion((v) => v + 1);
+  }, []);
+
+  const handleNoteCategoryEvent = useCallback(() => {
+    setSocketCategoryVersion((v) => v + 1);
+  }, []);
 
   const { status, joinProjectRoom } = useSocket({
     enabled: true,
@@ -80,6 +91,12 @@ export function ProjectView({
     onFileCreated: refreshProjectView,
     onFileDeleted: refreshProjectView,
     onProjectUpdated: refreshProjectView,
+    onNoteCreated: handleNoteEvent,
+    onNoteUpdated: handleNoteEvent,
+    onNoteDeleted: handleNoteEvent,
+    onNoteCategoryCreated: handleNoteCategoryEvent,
+    onNoteCategoryUpdated: handleNoteCategoryEvent,
+    onNoteCategoryDeleted: handleNoteCategoryEvent,
   });
 
   useEffect(() => {
@@ -146,7 +163,12 @@ export function ProjectView({
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
-          <NotesTab projectId={project.id} initialNotes={notes} />
+          <NotesTab
+            projectId={project.id}
+            initialNotes={notes}
+            socketNoteVersion={socketNoteVersion}
+            socketCategoryVersion={socketCategoryVersion}
+          />
         </TabsContent>
 
         <TabsContent value="automations" className="mt-6">

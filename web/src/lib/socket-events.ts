@@ -10,6 +10,12 @@ export const SOCKET_EVENTS = {
   fileCreated: "file:created",
   fileDeleted: "file:deleted",
   projectUpdated: "project:updated",
+  noteCreated: "note:created",
+  noteUpdated: "note:updated",
+  noteDeleted: "note:deleted",
+  noteCategoryCreated: "noteCategory:created",
+  noteCategoryUpdated: "noteCategory:updated",
+  noteCategoryDeleted: "noteCategory:deleted",
 } as const;
 
 export type RealtimeNotification = {
@@ -44,6 +50,21 @@ export type RealtimeProjectUpdatedEvent = {
   actorUserId: string;
   previousStatus: string;
   newStatus: string;
+};
+
+export type RealtimeNoteEvent = {
+  noteId: string;
+  projectId: string;
+  title: string;
+  category: string | null;
+  createdById: string;
+};
+
+export type RealtimeNoteCategoryEvent = {
+  categoryId: string;
+  name: string;
+  slug: string;
+  color: string | null;
 };
 
 export function tenantRoom(tenantId: string): string {
