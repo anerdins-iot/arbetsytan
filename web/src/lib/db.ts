@@ -28,6 +28,7 @@ const DIRECT_TENANT_MODELS = [
   "notificationPreference",
   "pushSubscription",
   "automation",
+  "emailTemplate",
 ] as const;
 
 /** Models scoped via direct project relation. */
@@ -407,6 +408,7 @@ export type TenantScopedClient = Omit<
   | "conversation"
   | "message"
   | "note"
+  | "emailTemplate"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -426,6 +428,7 @@ export type TenantScopedClient = Omit<
   conversation: PrismaClient["conversation"];
   message: PrismaClient["message"];
   note: PrismaClient["note"];
+  emailTemplate: PrismaClient["emailTemplate"];
 };
 
 /**

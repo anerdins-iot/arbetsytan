@@ -4,6 +4,7 @@ import { emitNotificationToUser } from "@/lib/socket";
 import { sendEmail } from "@/lib/email";
 import { sendPushToSubscriptions } from "@/lib/push";
 import { sendExpoPush } from "@/lib/expo-push";
+import { renderEmailTemplate } from "@/lib/email-templates";
 
 type EventType = "TASK_ASSIGNED" | "DEADLINE_SOON" | "PROJECT_STATUS_CHANGED";
 
@@ -303,6 +304,17 @@ export async function notifyTaskAssigned(args: {
   };
 
   const content = await localizeTaskAssigned(recipient.locale, params);
+  const renderedEmail = await renderEmailTemplate({
+    tenantId: args.tenantId,
+    name: "task-assigned",
+    locale: recipient.locale === "en" ? "en" : "sv",
+    variables: {
+      ...params,
+      appName: "ArbetsYtan",
+    },
+    fallbackSubject: content.emailSubject,
+    fallbackHtml: content.emailHtml,
+  });
   await createInAppNotification({
     tenantId: args.tenantId,
     userId: recipient.id,
@@ -332,8 +344,8 @@ export async function notifyTaskAssigned(args: {
       eventType: "TASK_ASSIGNED",
       enabled: preferences.emailTaskAssigned,
       to: recipient.email,
-      subject: content.emailSubject,
-      html: content.emailHtml,
+      subject: renderedEmail.subject,
+      html: renderedEmail.html,
       title: content.title,
       body: content.body,
     }),
@@ -362,6 +374,17 @@ export async function notifyProjectStatusChanged(args: {
   };
 
   const content = await localizeProjectStatusChanged(recipient.locale, params);
+  const renderedEmail = await renderEmailTemplate({
+    tenantId: args.tenantId,
+    name: "project-status-changed",
+    locale: recipient.locale === "en" ? "en" : "sv",
+    variables: {
+      ...params,
+      appName: "ArbetsYtan",
+    },
+    fallbackSubject: content.emailSubject,
+    fallbackHtml: content.emailHtml,
+  });
   await createInAppNotification({
     tenantId: args.tenantId,
     userId: recipient.id,
@@ -388,8 +411,8 @@ export async function notifyProjectStatusChanged(args: {
       eventType: "PROJECT_STATUS_CHANGED",
       enabled: preferences.emailProjectStatusChanged,
       to: recipient.email,
-      subject: content.emailSubject,
-      html: content.emailHtml,
+      subject: renderedEmail.subject,
+      html: renderedEmail.html,
       title: content.title,
       body: content.body,
     }),
@@ -458,6 +481,17 @@ export async function notifyDeadlineSoon(args: {
   };
 
   const content = await localizeDeadlineSoon(recipient.locale, params);
+  const renderedEmail = await renderEmailTemplate({
+    tenantId: args.tenantId,
+    name: "deadline-reminder",
+    locale: recipient.locale === "en" ? "en" : "sv",
+    variables: {
+      ...params,
+      appName: "ArbetsYtan",
+    },
+    fallbackSubject: content.emailSubject,
+    fallbackHtml: content.emailHtml,
+  });
   await deliverNotification({
     tenantId: args.tenantId,
     userId: recipient.id,
@@ -474,8 +508,8 @@ export async function notifyDeadlineSoon(args: {
     pushEnabled: preferences.pushEnabled,
     emailEnabled: preferences.emailDeadlineTomorrow,
     emailTo: recipient.email,
-    emailSubject: content.emailSubject,
-    emailHtml: content.emailHtml,
+    emailSubject: renderedEmail.subject,
+    emailHtml: renderedEmail.html,
   });
   return true;
 }
