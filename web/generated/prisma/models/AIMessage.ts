@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model AIMessage
- * 
+ * Can be removed later if no longer needed for notifications.
  */
 export type AIMessageModel = runtime.Types.Result.DefaultSelection<Prisma.$AIMessagePayload>
 

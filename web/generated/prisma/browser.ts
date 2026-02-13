@@ -94,7 +94,7 @@ export type Conversation = Prisma.ConversationModel
 export type Message = Prisma.MessageModel
 /**
  * Model AIMessage
- * 
+ * Can be removed later if no longer needed for notifications.
  */
 export type AIMessage = Prisma.AIMessageModel
 /**
