@@ -389,14 +389,23 @@
       "characters": "tecken",
       "categoryManager": {
         "title": "Hantera kategorier",
+        "description": "Skapa och redigera kategorier för dina anteckningar",
         "create": "Skapa kategori",
         "edit": "Redigera",
         "delete": "Ta bort",
         "name": "Namn",
+        "namePlaceholder": "Kategorinamn",
+        "slug": "Slug",
+        "slugPlaceholder": "kategori-slug (autogenereras om tom)",
         "color": "Färg",
         "confirmDelete": "Vill du ta bort denna kategori?",
         "deleteError": "Kategorin kan inte tas bort",
-        "noCategories": "Inga kategorier ännu"
+        "noCategories": "Inga kategorier ännu",
+        "noCategoriesDescription": "Skapa en kategori för att organisera dina anteckningar",
+        "cancel": "Avbryt",
+        "save": "Spara",
+        "saving": "Sparar...",
+        "creating": "Skapar..."
       }
     },
     "files": {

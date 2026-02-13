@@ -389,14 +389,23 @@
       "characters": "characters",
       "categoryManager": {
         "title": "Manage categories",
+        "description": "Create and edit categories for your notes",
         "create": "Create category",
         "edit": "Edit",
         "delete": "Delete",
         "name": "Name",
+        "namePlaceholder": "Category name",
+        "slug": "Slug",
+        "slugPlaceholder": "category-slug (auto-generated if empty)",
         "color": "Color",
         "confirmDelete": "Do you want to delete this category?",
         "deleteError": "Category cannot be deleted",
-        "noCategories": "No categories yet"
+        "noCategories": "No categories yet",
+        "noCategoriesDescription": "Create a category to organize your notes",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving...",
+        "creating": "Creating..."
       }
     },
     "files": {
