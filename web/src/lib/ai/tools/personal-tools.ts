@@ -60,6 +60,9 @@ import {
   getInvitations as getInvitationsAction,
   cancelInvitation as cancelInvitationAction,
 } from "@/actions/invitations";
+import {
+  deleteFile as deleteFileAction,
+} from "@/actions/files";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -967,8 +970,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   // ─── Filer (Files) ────────────────────────────────────
 
-  const getProjectFiles = tool({
-    description: "Hämta listan över filer i ett projekt (namn, typ, storlek, datum).",
+  const listFiles = tool({
+    description: "Lista filer i ett projekt (id, namn, typ, storlek, datum).",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
@@ -988,6 +991,28 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         size: f.size,
         createdAt: f.createdAt.toISOString(),
       }));
+    },
+  });
+
+  const deleteFile = tool({
+    description: "Radera en fil från ett projekt permanent. Kräver projectId och fileId. VIKTIGT: Kan inte ångras.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileId: z.string().describe("Filens ID"),
+      confirmDeletion: z.boolean().describe("Måste vara true för att bekräfta permanent borttagning"),
+    })),
+    execute: async ({ projectId: pid, fileId, confirmDeletion }) => {
+      if (!confirmDeletion) {
+        return { error: "Radering avbröts: confirmDeletion måste vara true." };
+      }
+
+      const result = await deleteFileAction({ projectId: pid, fileId });
+
+      if (!result.success) {
+        return { error: result.error || "Kunde inte radera filen." };
+      }
+
+      return { success: true, message: "Filen har raderats permanent." };
     },
   });
 
@@ -2127,7 +2152,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     getProjectTimeSummary,
     generateProjectReport,
     // Filer
-    getProjectFiles,
+    listFiles,
+    getProjectFiles: listFiles,
+    deleteFile,
     getPersonalFiles,
     searchFiles,
     analyzeDocument,
