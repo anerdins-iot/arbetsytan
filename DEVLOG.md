@@ -196,3 +196,12 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Utvecklingsmiljön har endast OPENAI_API_KEY konfigurerad. Verktyget skulle inte kunna köras om det krävde Claude/Mistral.
 **Lösning:** Implementerade `generateProjectReport` i project-tools.ts med OpenAI (`gpt-4o`) för textgenerering via `generateText` från AI SDK. Verktyget hämtar projektdata (uppgifter, status, tidsrapporter, medlemmar), genererar en AI-sammanfattning och sparar som PDF till MinIO. Graceful error om API-nyckel saknas.
 **Lärdom:** AI-verktyg som behöver text-generering kan använda vilken provider som helst via AI SDK — OpenAI räcker för grundläggande rapportgenerering. Implementera alltid graceful degradation om API-nycklar saknas.
+
+---
+
+### Agenter ska använda produktionsserver, inte dev-server
+**Problem:** `npm run dev` med Turbopack ger instabila builds och ENOENT-fel i sandbox-miljön. Hot reload behövs inte för agenter.
+**Orsak:** Turbopack har race conditions med filsystemet i containermiljöer.
+**Lösning:** Agenter kör `npm start` istället (produktionsserver). Nya skript skapade: `/workspace/web/scripts/start-server.sh` (dödar befintlig process på porten automatiskt, startar server, väntar tills redo) och `stop-server.sh`. Build körs alltid innan tester så cachen finns.
+**Lärdom:** Agenter behöver inte hot reload — produktionsservern är snabbare och stabilare.
+**TODO:** `/workspace/docs/docker.md` avsnitt "4. Dev-server i agent- och testmiljö" behöver uppdateras till att peka på de nya skripten istället för manuella PID-kommandon. Docs-mappen är read-only så detta måste göras externt.

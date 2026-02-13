@@ -38,8 +38,10 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | Kommando | Beskrivning |
 |----------|-------------|
 | `docker-compose up -d` | Starta databaser och MinIO |
-| `npm run dev` | Dev-server |
 | `npm run build` | Produktionsbygg |
+| `npm start` | Starta produktionsserver |
+| `/workspace/web/scripts/start-server.sh` | Starta server för tester (dödar befintlig process automatiskt) |
+| `/workspace/web/scripts/stop-server.sh` | Stoppa server efter tester |
 | `npx prisma migrate dev` | Kör migrations |
 | `npx prisma studio` | Öppna DB-gui |
 | `npx prisma db seed` | Seed testdata |

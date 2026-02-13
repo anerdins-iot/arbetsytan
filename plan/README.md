@@ -24,15 +24,13 @@ Följande ska kontrolleras innan ett block anses klart:
 - Koden bygger utan fel (`npm run build`)
 - Inga TypeScript-fel (`npx tsc --noEmit`)
 
-### Dev-server och Playwright-tester
-- **Agenten som kör Playwright-tester ansvarar för att starta OCH stoppa dev-servern**
-- **Starta:** Spara PID så att bara servern stoppas (aldrig pkill — det kan döda agentens egen process):
-  - `cd /workspace/web && npm run dev & echo $! > .dev-server.pid`
-  - Vänta tills servern svarar (t.ex. curl till localhost:3000)
-- **Stoppa:** Döda endast den sparade processen (aldrig `pkill -f`):
-  - `kill -TERM $(cat /workspace/web/.dev-server.pid) 2>/dev/null; rm -f /workspace/web/.dev-server.pid`
-- Lämna ALDRIG servern igång efter testet — det blockerar framtida agenter
-- Om servern redan körs (port upptagen): rapportera felet, försök INTE döda andras processer
+### Server och Playwright-tester
+- **Agenten som kör Playwright-tester ansvarar för att starta OCH stoppa servern**
+- **Använd produktionsservern** (`npm start`), inte dev-servern — build körs alltid innan tester
+- **Starta:** `/workspace/web/scripts/start-server.sh` (dödar automatiskt befintlig process på porten, startar server, väntar tills redo)
+- **Stoppa:** `/workspace/web/scripts/stop-server.sh`
+- Använd **aldrig** `pkill` eller `killall` — det kan döda agentens egen process
+- Lämna ALDRIG servern igång efter testet
 
 ### Dataisolering
 - Alla databasanrop för tenant-data använder `tenantDb(tenantId)` — aldrig den globala `prisma`-klienten direkt

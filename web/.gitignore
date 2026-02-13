@@ -27,6 +27,7 @@
 .DS_Store
 *.pem
 .dev-server.pid
+.server.pid
 
 # debug
 npm-debug.log*
