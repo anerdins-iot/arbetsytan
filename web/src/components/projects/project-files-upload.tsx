@@ -565,7 +565,7 @@ export function ProjectFilesUpload({
                   </button>
                   {showOcrText ? (
                     <div className="max-h-[40vh] overflow-auto border-t border-border bg-muted/20 p-4">
-                      <pre className="whitespace-pre-wrap text-sm text-foreground">
+                      <pre className="whitespace-pre-wrap break-all text-sm text-foreground">
                         {previewFile.ocrText}
                       </pre>
                     </div>

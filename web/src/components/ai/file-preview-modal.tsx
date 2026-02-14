@@ -102,7 +102,7 @@ export function FilePreviewModal({
               <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-hidden">
                 {ocrText ? (
                   <div className="max-h-[50vh] overflow-auto rounded-md border border-border bg-muted/30 p-4 text-sm text-foreground">
-                    <pre className="whitespace-pre-wrap font-sans">
+                    <pre className="whitespace-pre-wrap break-all font-sans">
                       {ocrText}
                     </pre>
                   </div>
