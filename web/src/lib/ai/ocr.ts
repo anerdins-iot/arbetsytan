@@ -157,15 +157,9 @@ export async function processFileContent(
     case "csv":
       return { text: await processCSV(buffer), source: "csv-parser" };
     case "image": {
-      // Run OCR first to extract any text
+      // Run OCR only to extract text - vision analysis is done separately in background
       const ocrResult = await runOcr(bucket, key, fileType);
-      // Then run Claude vision to describe the image content (objects, people, scenes etc)
-      const aiDescription = await analyzeImageWithVision(buffer, fileType, ocrResult.fullText);
-      // Combine both: OCR text + AI description
-      const combined = [ocrResult.fullText, aiDescription]
-        .filter(Boolean)
-        .join("\n\n---\n\nBildbeskrivning:\n");
-      return { text: combined, source: "ocr+vision" };
+      return { text: ocrResult.fullText, source: "ocr" };
     }
     case "pdf": {
       const pdfResult = await runOcr(bucket, key, fileType);
