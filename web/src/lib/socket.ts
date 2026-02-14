@@ -298,6 +298,23 @@ export function emitNoteDeletedToProject(projectId: string, payload: RealtimeNot
   io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.noteDeleted, payload);
 }
 
+// ── Personal notes (user room) ───────────────────────
+
+export function emitNoteCreatedToUser(userId: string, payload: RealtimeNoteEvent): void {
+  const io = getSocketServer();
+  io.to(userRoom(userId)).emit(SOCKET_EVENTS.noteCreated, payload);
+}
+
+export function emitNoteUpdatedToUser(userId: string, payload: RealtimeNoteEvent): void {
+  const io = getSocketServer();
+  io.to(userRoom(userId)).emit(SOCKET_EVENTS.noteUpdated, payload);
+}
+
+export function emitNoteDeletedToUser(userId: string, payload: RealtimeNoteEvent): void {
+  const io = getSocketServer();
+  io.to(userRoom(userId)).emit(SOCKET_EVENTS.noteDeleted, payload);
+}
+
 // ── Note Categories (tenant room) ─────────────────────
 
 export function emitNoteCategoryCreatedToTenant(

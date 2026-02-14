@@ -7,7 +7,7 @@ import { z } from "zod";
 import { openai } from "@ai-sdk/openai";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject, requirePermission } from "@/lib/auth";
-import type { TenantScopedClient } from "@/lib/db";
+import { userDb, type TenantScopedClient } from "@/lib/db";
 import {
   createProject as createProjectAction,
   updateProject as updateProjectAction,
@@ -44,6 +44,9 @@ import {
   emitNoteCreatedToProject,
   emitNoteUpdatedToProject,
   emitNoteDeletedToProject,
+  emitNoteCreatedToUser,
+  emitNoteUpdatedToUser,
+  emitNoteDeletedToUser,
   emitNoteCategoryCreatedToTenant,
   emitNoteCategoryUpdatedToTenant,
   emitNoteCategoryDeletedToTenant,
@@ -74,6 +77,7 @@ import {
 import {
   deleteFile as deleteFileAction,
 } from "@/actions/files";
+import { deletePersonalFile as deletePersonalFileAction } from "@/actions/personal";
 import {
   exportTimeReportExcel,
   exportProjectSummaryPdf,
@@ -1105,8 +1109,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
     })),
     execute: async ({ limit = 50 }) => {
-      const files = await db.file.findMany({
-        where: { projectId: null, uploadedById: userId },
+      const udb = userDb(userId);
+      const files = await udb.file.findMany({
         orderBy: { createdAt: "desc" },
         take: limit,
         select: {
@@ -1149,16 +1153,17 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
       // If no results, provide helpful feedback
       if (searchResult.results.length === 0) {
-        // Check if there are any files with OCR text at all
-        const fileCount = await db.file.count({
-          where: {
-            OR: [
-              { projectId: { in: projectIds.length > 0 ? projectIds : ["__none__"] } },
-              { projectId: null, uploadedById: userId },
-            ],
-            ocrText: { not: null },
-          },
-        });
+        const udb = userDb(userId);
+        const [projectFileCount, personalFileCount] = await Promise.all([
+          db.file.count({
+            where: {
+              projectId: { in: projectIds.length > 0 ? projectIds : ["__none__"] },
+              ocrText: { not: null },
+            },
+          }),
+          udb.file.count({ where: { ocrText: { not: null } } }),
+        ]);
+        const fileCount = projectFileCount + personalFileCount;
 
         if (fileCount === 0) {
           return {
@@ -1201,8 +1206,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       fileId: z.string().describe("ID för den personliga filen (från getPersonalFiles)"),
     })),
     execute: async ({ fileId }) => {
-      const file = await db.file.findFirst({
-        where: { id: fileId, projectId: null, uploadedById: userId },
+      const udb = userDb(userId);
+      const file = await udb.file.findFirst({
+        where: { id: fileId },
         select: { id: true, name: true, ocrText: true },
       });
       if (!file) return { error: "Filen hittades inte eller du har inte behörighet." };
@@ -1229,8 +1235,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           select: { id: true, name: true, type: true, bucket: true, key: true, ocrText: true },
         });
       } else {
-        file = await db.file.findFirst({
-          where: { id: fileId, projectId: null, uploadedById: userId },
+        const udb = userDb(userId);
+        file = await udb.file.findFirst({
+          where: { id: fileId },
           select: { id: true, name: true, type: true, bucket: true, key: true, ocrText: true },
         });
       }
@@ -1280,8 +1287,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
       await requireProject(tenantId, pid, userId);
 
-      const file = await db.file.findFirst({
-        where: { id: fileId, projectId: null, uploadedById: userId },
+      const udb = userDb(userId);
+      const file = await udb.file.findFirst({
+        where: { id: fileId },
         select: { id: true, name: true, type: true, size: true, bucket: true, key: true, ocrText: true },
       });
       if (!file) return { error: `Ingen personlig fil med ID "${fileId}" hittades. Kör getPersonalFiles först för att se tillgängliga filer och deras ID:n.` };
@@ -1317,9 +1325,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         },
       });
 
-      // Ta bort originalet om så önskas
+      // Ta bort originalet om så önskas (personlig fil → userDb)
       if (deleteOriginal) {
-        await db.file.delete({ where: { id: fileId } });
+        await udb.file.delete({ where: { id: fileId } });
       }
 
       return {
@@ -1330,6 +1338,31 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           ? `Filen "${file.name}" har flyttats till projektet.`
           : `Filen "${file.name}" har kopierats till projektet.`,
       };
+    },
+  });
+
+  const deletePersonalFile = tool({
+    description:
+      "Radera en personlig fil permanent. Filen kan inte återställas. Använd fileId från getPersonalFiles.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("ID för filen som ska raderas (från getPersonalFiles)"),
+    })),
+    execute: async ({ fileId }) => {
+      const fileIdCheck = validateDatabaseId(fileId, "fileId");
+      if (!fileIdCheck.valid) return { error: fileIdCheck.error };
+
+      const result = await deletePersonalFileAction({ fileId });
+
+      if (!result.success) {
+        const msg =
+          result.error === "FILE_NOT_FOUND"
+            ? "Filen hittades inte eller du har inte behörighet."
+            : result.error === "VALIDATION_ERROR"
+              ? "Ogiltigt fil-ID."
+              : "Kunde inte radera filen.";
+        return { error: msg };
+      }
+      return { success: true, message: "Den personliga filen har raderats permanent." };
     },
   });
 
@@ -1700,11 +1733,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ category, limit = 20 }) => {
-      const where: Record<string, unknown> = { createdById: userId, projectId: null };
-      if (category) where.category = category;
-
-      const notes = await db.note.findMany({
-        where,
+      const udb = userDb(userId);
+      const notes = await udb.note.findMany({
+        where: category ? { category } : {},
         include: {
           createdBy: { select: { id: true, name: true, email: true } },
         },
@@ -1733,14 +1764,23 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Kategori (slug)"),
     })),
     execute: async ({ content, title, category }) => {
-      const note = await db.note.create({
+      const udb = userDb(userId);
+      const note = await udb.note.create({
         data: {
           title: title ?? "",
           content,
           category: category ?? null,
-          projectId: null,
           createdById: userId,
+          projectId: null,
         },
+      });
+
+      emitNoteCreatedToUser(userId, {
+        noteId: note.id,
+        projectId: null,
+        title: note.title,
+        category: note.category,
+        createdById: userId,
       });
 
       return {
@@ -1764,8 +1804,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Ny kategori (slug)"),
     })),
     execute: async ({ noteId, content, title, category }) => {
-      const existing = await db.note.findFirst({
-        where: { id: noteId, createdById: userId, projectId: null },
+      const udb = userDb(userId);
+      const existing = await udb.note.findFirst({
+        where: { id: noteId },
       });
       if (!existing) return { error: "Den personliga anteckningen hittades inte." };
 
@@ -1774,9 +1815,17 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       if (title !== undefined) updateData.title = title;
       if (category !== undefined) updateData.category = category;
 
-      const note = await db.note.update({
+      const note = await udb.note.update({
         where: { id: noteId },
         data: updateData,
+      });
+
+      emitNoteUpdatedToUser(userId, {
+        noteId: note.id,
+        projectId: null,
+        title: note.title,
+        category: note.category,
+        createdById: userId,
       });
 
       return {
@@ -1795,12 +1844,20 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ noteId }) => {
-      const existing = await db.note.findFirst({
-        where: { id: noteId, createdById: userId, projectId: null },
+      const udb = userDb(userId);
+      const existing = await udb.note.findFirst({
+        where: { id: noteId },
       });
       if (!existing) return { error: "Den personliga anteckningen hittades inte." };
 
-      await db.note.delete({ where: { id: noteId } });
+      await udb.note.delete({ where: { id: noteId } });
+      emitNoteDeletedToUser(userId, {
+        noteId,
+        projectId: null,
+        title: existing.title,
+        category: existing.category,
+        createdById: userId,
+      });
       return { success: true, message: "Personlig anteckning borttagen." };
     },
   });
@@ -1813,10 +1870,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ query, limit = 20 }) => {
-      const notes = await db.note.findMany({
+      const udb = userDb(userId);
+      const notes = await udb.note.findMany({
         where: {
-          createdById: userId,
-          projectId: null,
           OR: [
             { title: { contains: query, mode: "insensitive" } },
             { content: { contains: query, mode: "insensitive" } },
@@ -2550,6 +2606,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     analyzePersonalFile,
     analyzeImage,
     movePersonalFileToProject,
+    deletePersonalFile,
     // Projektmedlemmar
     listMembers,
     getAvailableMembers,

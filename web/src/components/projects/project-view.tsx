@@ -72,9 +72,14 @@ export function ProjectView({
     }, 150);
   }, [router]);
 
-  const handleNoteEvent = useCallback(() => {
-    setSocketNoteVersion((v) => v + 1);
-  }, []);
+  const handleNoteEvent = useCallback(
+    (payload: { projectId?: string | null }) => {
+      if (payload.projectId === project.id) {
+        setSocketNoteVersion((v) => v + 1);
+      }
+    },
+    [project.id]
+  );
 
   const handleNoteCategoryEvent = useCallback(() => {
     setSocketCategoryVersion((v) => v + 1);

@@ -15,12 +15,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { deleteNote, toggleNotePin, type NoteItem } from "@/actions/notes";
 import type { NoteCategoryItem } from "@/actions/note-categories";
+import {
+  deletePersonalNote,
+  togglePersonalNotePin,
+  type PersonalNoteItem,
+} from "@/actions/personal";
 import { NoteModal } from "./note-modal";
 import { NoteCardMarkdown } from "./note-card-markdown";
 
 type NoteCardProps = {
-  note: NoteItem;
-  projectId: string;
+  note: NoteItem | PersonalNoteItem;
+  /** null = personal notes (Mitt utrymme) */
+  projectId: string | null;
   onUpdate: () => void;
   categories: NoteCategoryItem[];
 };
@@ -30,12 +36,15 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"view" | "edit">("view");
   const [isPending, startTransition] = useTransition();
+  const isPersonal = projectId === null;
 
   // Toggle pin-status
   const handleTogglePin = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     startTransition(async () => {
-      const result = await toggleNotePin(projectId, note.id);
+      const result = isPersonal
+        ? await togglePersonalNotePin(note.id)
+        : await toggleNotePin(projectId, note.id);
       if (result.success) {
         onUpdate();
       } else {
@@ -50,7 +59,9 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
     if (!confirm(t("confirmDelete"))) return;
 
     startTransition(async () => {
-      const result = await deleteNote(projectId, note.id);
+      const result = isPersonal
+        ? await deletePersonalNote(note.id)
+        : await deleteNote(projectId, note.id);
       if (result.success) {
         onUpdate();
       } else {
@@ -143,7 +154,9 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
         </CardContent>
         <CardFooter className="flex-shrink-0 pt-0 text-xs text-muted-foreground">
           <div className="flex w-full items-center justify-between">
-            <span className="truncate">{note.createdBy.name || note.createdBy.email}</span>
+            <span className="truncate">
+              {isPersonal ? null : "createdBy" in note ? (note.createdBy.name || note.createdBy.email) : null}
+            </span>
             <span className="flex-shrink-0">{formattedDate}</span>
           </div>
         </CardFooter>

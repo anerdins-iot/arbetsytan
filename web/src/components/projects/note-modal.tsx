@@ -37,17 +37,25 @@ import {
   deleteNoteCategory,
   type NoteCategoryItem,
 } from "@/actions/note-categories";
+import {
+  createPersonalNote,
+  deletePersonalNote,
+  togglePersonalNotePin,
+  updatePersonalNote,
+  type PersonalNoteItem,
+} from "@/actions/personal";
 
 type NoteModalMode = "view" | "create" | "edit";
 
 type NoteModalProps = {
-  projectId: string;
+  /** null = personal notes (Mitt utrymme) */
+  projectId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onUpdate: () => void;
   categories: NoteCategoryItem[];
   /** Note to view/edit. If undefined, modal is in create mode */
-  note?: NoteItem;
+  note?: NoteItem | PersonalNoteItem;
   /** Initial mode. Defaults to "view" if note exists, "create" otherwise */
   initialMode?: NoteModalMode;
 };
@@ -116,6 +124,8 @@ export function NoteModal({
     onOpenChange(false);
   };
 
+  const isPersonal = projectId === null;
+
   // Create note
   const handleCreate = () => {
     if (!content.trim()) {
@@ -124,11 +134,17 @@ export function NoteModal({
     }
 
     startTransition(async () => {
-      const result = await createNote(projectId, {
-        title: title.trim() || undefined,
-        content: content.trim(),
-        category: category || undefined,
-      });
+      const result = isPersonal
+        ? await createPersonalNote({
+            title: title.trim() || undefined,
+            content: content.trim(),
+            category: category || undefined,
+          })
+        : await createNote(projectId, {
+            title: title.trim() || undefined,
+            content: content.trim(),
+            category: category || undefined,
+          });
 
       if (result.success) {
         onOpenChange(false);
@@ -147,11 +163,17 @@ export function NoteModal({
     }
 
     startTransition(async () => {
-      const result = await updateNote(projectId, note.id, {
-        title: title.trim() || undefined,
-        content: content.trim(),
-        category: category || null,
-      });
+      const result = isPersonal
+        ? await updatePersonalNote(note.id, {
+            title: title.trim() || undefined,
+            content: content.trim(),
+            category: category || null,
+          })
+        : await updateNote(projectId, note.id, {
+            title: title.trim() || undefined,
+            content: content.trim(),
+            category: category || null,
+          });
 
       if (result.success) {
         setMode("view");
@@ -166,7 +188,9 @@ export function NoteModal({
   const handleTogglePin = () => {
     if (!note) return;
     startTransition(async () => {
-      const result = await toggleNotePin(projectId, note.id);
+      const result = isPersonal
+        ? await togglePersonalNotePin(note.id)
+        : await toggleNotePin(projectId, note.id);
       if (result.success) {
         onUpdate();
       } else {
@@ -180,7 +204,9 @@ export function NoteModal({
     if (!note || !confirm(t("confirmDelete"))) return;
 
     startTransition(async () => {
-      const result = await deleteNote(projectId, note.id);
+      const result = isPersonal
+        ? await deletePersonalNote(note.id)
+        : await deleteNote(projectId, note.id);
       if (result.success) {
         onOpenChange(false);
         onUpdate();
@@ -194,11 +220,17 @@ export function NoteModal({
   const handleCategoryChange = (newCategory: string) => {
     if (!note) return;
     startTransition(async () => {
-      const result = await updateNote(projectId, note.id, {
-        title: note.title || undefined,
-        content: note.content,
-        category: newCategory === "none" ? null : newCategory,
-      });
+      const result = isPersonal
+        ? await updatePersonalNote(note.id, {
+            title: note.title || undefined,
+            content: note.content,
+            category: newCategory === "none" ? null : newCategory,
+          })
+        : await updateNote(projectId, note.id, {
+            title: note.title || undefined,
+            content: note.content,
+            category: newCategory === "none" ? null : newCategory,
+          });
       if (result.success) {
         onUpdate();
       } else {
@@ -465,10 +497,12 @@ export function NoteModal({
 
           {/* Metadata row */}
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-            <div className="flex items-center gap-1.5">
-              <User className="size-4" />
-              <span>{note.createdBy.name || note.createdBy.email}</span>
-            </div>
+            {!isPersonal && "createdBy" in note && (
+              <div className="flex items-center gap-1.5">
+                <User className="size-4" />
+                <span>{note.createdBy.name || note.createdBy.email}</span>
+              </div>
+            )}
             <div className="flex items-center gap-1.5">
               <Calendar className="size-4" />
               <span>{formattedDate} {formattedTime}</span>

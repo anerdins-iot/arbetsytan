@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl"
 import { usePathname } from "@/i18n/routing"
 import { Link } from "@/i18n/routing"
-import { Hammer, LayoutDashboard, FolderOpen, Clock3, Settings, PanelLeftClose, PanelLeft, Zap, Mail } from "lucide-react"
+import { Hammer, LayoutDashboard, User, FolderOpen, Clock3, Settings, PanelLeftClose, PanelLeft, Zap, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -16,6 +16,7 @@ type SidebarProps = {
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, labelKey: "dashboard" as const },
+  { href: "/personal", icon: User, labelKey: "personal" as const },
   { href: "/projects", icon: FolderOpen, labelKey: "projects" as const },
   { href: "/automations", icon: Zap, labelKey: "automations" as const },
   { href: "/email", icon: Mail, labelKey: "email" as const },

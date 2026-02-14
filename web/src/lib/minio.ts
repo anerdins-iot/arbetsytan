@@ -111,6 +111,15 @@ export function projectObjectKey(
   return `${getMinioEnv().S3_BUCKET}/projects/${projectId}/${objectId}-${normalized}`;
 }
 
+export function personalObjectKey(
+  userId: string,
+  fileName: string,
+  objectId: string
+): string {
+  const normalized = normalizeFileName(fileName) || "file";
+  return `${getMinioEnv().S3_BUCKET}/personal/${userId}/${objectId}-${normalized}`;
+}
+
 export function exportObjectKey(
   projectId: string,
   fileName: string,

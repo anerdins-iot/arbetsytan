@@ -59,7 +59,8 @@ export type RealtimeProjectUpdatedEvent = {
 
 export type RealtimeNoteEvent = {
   noteId: string;
-  projectId: string;
+  /** Project ID for project notes; null for personal notes */
+  projectId: string | null;
   title: string;
   category: string | null;
   createdById: string;
