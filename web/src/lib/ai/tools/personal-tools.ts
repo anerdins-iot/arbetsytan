@@ -86,6 +86,24 @@ export type PersonalToolsContext = {
   userId: string;
 };
 
+// Validera att ett ID ser ut som ett giltigt databasid (cuid eller liknande)
+// och INTE som ett filnamn eller projektnamn
+function validateDatabaseId(value: string, fieldName: string): { valid: true } | { valid: false; error: string } {
+  // Filnamn har filändelser
+  if (/\.(jpe?g|png|gif|webp|pdf|docx?|xlsx?|txt|csv)$/i.test(value)) {
+    return { valid: false, error: `${fieldName} "${value}" ser ut som ett filnamn. Använd ID:t (t.ex. från listProjects eller getPersonalFiles).` };
+  }
+  // ID:n är vanligtvis korta alfanumeriska strängar
+  if (value.length > 50) {
+    return { valid: false, error: `${fieldName} "${value.slice(0, 30)}..." är för långt. Använd det korta ID:t.` };
+  }
+  // Projektnamn har ofta mellanslag och svenska tecken
+  if (/\s/.test(value) || /[åäöÅÄÖ]/.test(value)) {
+    return { valid: false, error: `${fieldName} "${value}" ser ut som ett namn, inte ett ID. Använd ID:t från listProjects.` };
+  }
+  return { valid: true };
+}
+
 export function createPersonalTools(ctx: PersonalToolsContext) {
   const { db, tenantId, userId } = ctx;
 
@@ -1035,10 +1053,12 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   const listFiles = tool({
     description: "Lista filer i ett projekt (id, namn, typ, storlek, datum).",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().describe("Projektets unika ID (från listProjects, t.ex. 'cmlmey73b00071fo435f077if'). INTE filnamn!"),
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
     })),
     execute: async ({ projectId: pid, limit = 50 }) => {
+      const idCheck = validateDatabaseId(pid, "projectId");
+      if (!idCheck.valid) return { error: idCheck.error };
       await requireProject(tenantId, pid, userId);
       const files = await db.file.findMany({
         where: { projectId: pid },
@@ -1080,7 +1100,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const getPersonalFiles = tool({
     description:
-      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar namn, typ, storlek, datum och eventuell OCR-text.",
+      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar filens ID (för movePersonalFileToProject), namn, typ, storlek och datum. ANROPA DETTA FÖRST för att få fileId innan du flyttar filer.",
     inputSchema: toolInputSchema(z.object({
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
     })),
@@ -1246,20 +1266,25 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const movePersonalFileToProject = tool({
     description:
-      "Flytta eller kopiera en personlig fil till ett projekt. Filen kopieras till projektets fillagring och kan valfritt tas bort från personliga filer.",
+      "Flytta eller kopiera en personlig fil till ett projekt. Filen kopieras till projektets fillagring och kan valfritt tas bort från personliga filer. VIKTIGT: Anropa FÖRST getPersonalFiles för att få fileId, och listProjects för att få projectId.",
     inputSchema: toolInputSchema(z.object({
-      fileId: z.string().describe("ID för den personliga filen (från getPersonalFiles)"),
-      projectId: z.string().describe("Projektets ID dit filen ska flyttas"),
+      fileId: z.string().describe("Filens unika ID (från getPersonalFiles, t.ex. 'abc123'). INTE filnamn!"),
+      projectId: z.string().describe("Projektets unika ID (från listProjects, t.ex. 'cmlmey73b00071fo435f077if'). INTE projektnamn!"),
       deleteOriginal: z.boolean().optional().default(false).describe("Om true tas originalfilen bort efter kopiering"),
     })),
     execute: async ({ fileId, projectId: pid, deleteOriginal = false }) => {
+      const projectIdCheck = validateDatabaseId(pid, "projectId");
+      if (!projectIdCheck.valid) return { error: projectIdCheck.error };
+      const fileIdCheck = validateDatabaseId(fileId, "fileId");
+      if (!fileIdCheck.valid) return { error: fileIdCheck.error };
+
       await requireProject(tenantId, pid, userId);
 
       const file = await db.file.findFirst({
         where: { id: fileId, projectId: null, uploadedById: userId },
         select: { id: true, name: true, type: true, size: true, bucket: true, key: true, ocrText: true },
       });
-      if (!file) return { error: "Filen hittades inte eller du har inte behörighet." };
+      if (!file) return { error: `Ingen personlig fil med ID "${fileId}" hittades. Kör getPersonalFiles först för att se tillgängliga filer och deras ID:n.` };
 
       // Generera ny nyckel för projektfilen
       const objectId = randomUUID();
