@@ -226,6 +226,8 @@
       "title": "Analyze file",
       "extractedText": "Extracted text (OCR)",
       "extractedTextPlaceholder": "No text could be extracted",
+      "extractingText": "Extracting…",
+      "extractingTextPlaceholder": "Extracting text from file…",
       "userDescription": "Describe the file",
       "userDescriptionPlaceholder": "What does the image show? What kind of document is it?",
       "analyze": "Analyze",
@@ -246,7 +248,8 @@
       "descriptionPlaceholder": "Describe what the file contains…",
       "save": "Save",
       "saving": "Saving…",
-      "skip": "Skip"
+      "skip": "Skip",
+      "uploading": "Uploading…"
     }
   },
   "notifications": {

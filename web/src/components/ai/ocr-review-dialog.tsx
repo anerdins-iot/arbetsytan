@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { FileText, CheckCircle2, Loader2 } from "lucide-react";
 import {
@@ -17,6 +17,12 @@ import { OcrEditor } from "@/components/ai/ocr-editor";
 
 const IMAGE_TYPES = /^image\/(jpeg|png|gif|webp)/i;
 
+type FileReviewResult = {
+  ocrText: string;
+  userDescription: string;
+  skipped: boolean;
+};
+
 type OcrReviewDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -26,14 +32,18 @@ type OcrReviewDialogProps = {
     type: string;
     url: string;
     ocrText?: string | null;
+    ocrLoading?: boolean;
   };
-  onComplete: () => void;
+  onComplete: (result: FileReviewResult) => void;
 };
 
 /**
  * Enkel dialog för att granska och redigera OCR-text efter filuppladdning.
  * När användaren klickar "Spara" skickas OCR-texten till backend
  * som kör AI-analys i bakgrunden och skapar embeddings.
+ *
+ * Dialogen öppnas direkt vid uppladdning - OCR körs i bakgrunden
+ * och fylls i automatiskt när det är klart.
  */
 export function OcrReviewDialog({
   open,
@@ -46,11 +56,20 @@ export function OcrReviewDialog({
   const [userDescription, setUserDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
+  // Update OCR text when it arrives from the upload
+  useEffect(() => {
+    if (file.ocrText && !file.ocrLoading) {
+      setOcrText(file.ocrText);
+    }
+  }, [file.ocrText, file.ocrLoading]);
+
   const isImage = IMAGE_TYPES.test(file.type);
   const hasContent = ocrText.trim().length > 0 || userDescription.trim().length > 0;
+  const isUploading = file.id.startsWith("temp-");
+  const canSave = !isSaving && !isUploading;
 
   const handleSave = useCallback(async () => {
-    if (isSaving) return;
+    if (!canSave) return;
     setIsSaving(true);
 
     try {
@@ -71,20 +90,32 @@ export function OcrReviewDialog({
       }
 
       // Stäng direkt - analys körs i bakgrunden
-      onComplete();
+      onComplete({
+        ocrText: ocrText.trim(),
+        userDescription: userDescription.trim(),
+        skipped: false,
+      });
       onOpenChange(false);
     } catch (err) {
       console.error("Error finalizing file:", err);
       // Stäng ändå - vi vill inte blockera användaren
-      onComplete();
+      onComplete({
+        ocrText: ocrText.trim(),
+        userDescription: userDescription.trim(),
+        skipped: false,
+      });
       onOpenChange(false);
     } finally {
       setIsSaving(false);
     }
-  }, [file.id, ocrText, userDescription, isSaving, onComplete, onOpenChange]);
+  }, [file.id, ocrText, userDescription, canSave, onComplete, onOpenChange]);
 
   const handleSkip = useCallback(() => {
-    onComplete();
+    onComplete({
+      ocrText: "",
+      userDescription: "",
+      skipped: true,
+    });
     onOpenChange(false);
   }, [onComplete, onOpenChange]);
 
@@ -120,11 +151,21 @@ export function OcrReviewDialog({
                 {file.name}
               </p>
               <p className="text-xs text-muted-foreground">{file.type}</p>
+              {isUploading && (
+                <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+                  <Loader2 className="size-3 animate-spin" />
+                  {t("uploading")}
+                </p>
+              )}
             </div>
           </div>
 
-          {/* OCR-editor */}
-          <OcrEditor value={ocrText} onChange={setOcrText} />
+          {/* OCR-editor med loading-state */}
+          <OcrEditor
+            value={ocrText}
+            onChange={setOcrText}
+            loading={file.ocrLoading}
+          />
 
           {/* Egen beskrivning */}
           <div className="flex flex-col gap-2">
@@ -138,10 +179,11 @@ export function OcrReviewDialog({
               placeholder={t("descriptionPlaceholder")}
               rows={3}
               className="resize-none text-sm"
+              autoFocus
             />
           </div>
 
-          {!hasContent && (
+          {!hasContent && !file.ocrLoading && (
             <p className="text-xs text-muted-foreground">
               {t("noTextHint")}
             </p>
@@ -161,13 +203,18 @@ export function OcrReviewDialog({
           <Button
             size="sm"
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={!canSave}
             className="gap-1.5"
           >
             {isSaving ? (
               <>
                 <Loader2 className="size-4 animate-spin" />
                 {t("saving")}
+              </>
+            ) : isUploading ? (
+              <>
+                <Loader2 className="size-4 animate-spin" />
+                {t("uploading")}
               </>
             ) : (
               <>

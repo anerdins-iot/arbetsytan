@@ -226,6 +226,8 @@
       "title": "Analysera fil",
       "extractedText": "Extraherad text (OCR)",
       "extractedTextPlaceholder": "Ingen text kunde extraheras",
+      "extractingText": "Extraherar…",
+      "extractingTextPlaceholder": "Extraherar text från filen…",
       "userDescription": "Beskriv filen",
       "userDescriptionPlaceholder": "Vad visar bilden? Vad är det för dokument?",
       "analyze": "Analysera",
@@ -246,7 +248,8 @@
       "descriptionPlaceholder": "Beskriv vad filen innehåller…",
       "save": "Spara",
       "saving": "Sparar…",
-      "skip": "Hoppa över"
+      "skip": "Hoppa över",
+      "uploading": "Laddar upp…"
     }
   },
   "notifications": {

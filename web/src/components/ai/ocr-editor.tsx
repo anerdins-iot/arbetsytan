@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Copy, Check, Pencil } from "lucide-react";
+import { Copy, Check, Pencil, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -12,9 +12,10 @@ type OcrEditorProps = {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  loading?: boolean;
 };
 
-export function OcrEditor({ value, onChange, className }: OcrEditorProps) {
+export function OcrEditor({ value, onChange, className, loading }: OcrEditorProps) {
   const t = useTranslations("personalAi.fileAnalysis");
   const [copied, setCopied] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
@@ -38,7 +39,13 @@ export function OcrEditor({ value, onChange, className }: OcrEditorProps) {
           {t("extractedText")}
         </Label>
         <div className="flex items-center gap-1.5">
-          {isEdited && (
+          {loading && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+              <Loader2 className="size-3 animate-spin" />
+              {t("extractingText")}
+            </span>
+          )}
+          {isEdited && !loading && (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Pencil className="size-3" />
             </span>
@@ -49,7 +56,7 @@ export function OcrEditor({ value, onChange, className }: OcrEditorProps) {
             size="icon"
             className="size-7"
             onClick={handleCopy}
-            disabled={!value}
+            disabled={!value || loading}
           >
             {copied ? (
               <Check className="size-3.5 text-primary" />
@@ -63,9 +70,10 @@ export function OcrEditor({ value, onChange, className }: OcrEditorProps) {
         id="ocr-text"
         value={value}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder={t("extractedTextPlaceholder")}
+        placeholder={loading ? t("extractingTextPlaceholder") : t("extractedTextPlaceholder")}
         rows={5}
         className="resize-none text-sm"
+        disabled={loading}
       />
     </div>
   );

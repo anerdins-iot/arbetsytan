@@ -94,6 +94,7 @@ type AnalysisFileData = {
   type: string;
   url: string;
   ocrText?: string | null;
+  ocrLoading?: boolean;
 };
 
 type PersonalAiChatProps = {
@@ -340,6 +341,18 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
       setUploadedFiles((prev) => [...prev, uploadEntry]);
 
+      // Open the dialog immediately with loading state for OCR
+      // User can start writing description while OCR runs
+      const tempUrl = URL.createObjectURL(file);
+      setAnalysisFile({
+        id: tempId,
+        name: file.name,
+        type: file.type,
+        url: tempUrl,
+        ocrText: null,
+        ocrLoading: true,
+      });
+
       try {
         const formData = new FormData();
         formData.append("file", file);
@@ -377,13 +390,19 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           )
         );
 
-        // Open the file analysis UI instead of auto-analyzing
-        setAnalysisFile({
-          id: data.file.id,
-          name: file.name,
-          type: file.type,
-          url: data.file.url ?? "",
-          ocrText: data.file.ocrText ?? null,
+        // Update the dialog with real file data and OCR result
+        setAnalysisFile((prev) => {
+          if (!prev || prev.id !== tempId) return prev;
+          // Revoke the temporary blob URL
+          URL.revokeObjectURL(tempUrl);
+          return {
+            id: data.file.id,
+            name: file.name,
+            type: file.type,
+            url: data.file.url ?? "",
+            ocrText: data.file.ocrText ?? null,
+            ocrLoading: false,
+          };
         });
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : "Upload failed";
@@ -394,6 +413,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               : f
           )
         );
+        // Close dialog on error
+        setAnalysisFile(null);
+        URL.revokeObjectURL(tempUrl);
       }
     },
     [conversationId, sendMessage]
@@ -487,15 +509,37 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   );
 
   // Called when OCR review is complete - analysis runs in background
-  const handleOcrReviewComplete = useCallback(() => {
-    const file = analysisFile;
-    if (!file) return;
-    // Send simple confirmation - detailed analysis will update via websocket
-    sendMessage({
-      text: `Jag har laddat upp filen "${file.name}". Analysen körs i bakgrunden.`,
-    });
-    setAnalysisFile(null);
-  }, [analysisFile, sendMessage]);
+  const handleOcrReviewComplete = useCallback(
+    (result: { ocrText: string; userDescription: string; skipped: boolean }) => {
+      const file = analysisFile;
+      if (!file) return;
+
+      if (result.skipped) {
+        // User skipped the review - just confirm upload
+        sendMessage({
+          text: `Jag har laddat upp filen "${file.name}".`,
+        });
+      } else {
+        // Send context about the file to the AI
+        const contextParts = [`Jag har laddat upp filen "${file.name}".`];
+        if (result.userDescription) {
+          contextParts.push(`\nMin beskrivning: ${result.userDescription}`);
+        }
+        if (result.ocrText) {
+          // Truncate long OCR text
+          const ocrPreview =
+            result.ocrText.length > 500
+              ? `${result.ocrText.slice(0, 500)}...`
+              : result.ocrText;
+          contextParts.push(`\nExtraherad text:\n${ocrPreview}`);
+        }
+        contextParts.push("\nAnalysen körs i bakgrunden.");
+        sendMessage({ text: contextParts.join("") });
+      }
+      setAnalysisFile(null);
+    },
+    [analysisFile, sendMessage]
+  );
 
   useEffect(() => {
     scrollToBottom();
