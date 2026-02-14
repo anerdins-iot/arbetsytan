@@ -11,7 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession, requireProject } from "@/lib/auth";
-import { tenantDb, prisma } from "@/lib/db";
+import { userDb, prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { queueFileAnalysis } from "@/lib/ai/queue-file-analysis";
 
@@ -48,41 +48,54 @@ export async function POST(req: NextRequest) {
 
     const { fileId, ocrText, userDescription } = parsed.data;
 
-    // Hämta fil och verifiera åtkomst
-    const file = await prisma.file.findUnique({
+    // Försök hitta som personlig fil (userDb scopar till userId + projectId: null)
+    const udb = userDb(userId);
+    let file = await udb.file.findFirst({
       where: { id: fileId },
-      include: { project: true },
     });
+    let isPersonalFile = !!file;
+
+    // Om inte personlig fil, försök som projektfil
+    if (!file) {
+      const projectFile = await prisma.file.findFirst({
+        where: { id: fileId, project: { tenantId } },
+        include: { project: true },
+      });
+      if (projectFile?.projectId) {
+        // Verifiera projektåtkomst
+        try {
+          await requireProject(tenantId, projectFile.projectId, userId);
+          file = projectFile;
+        } catch {
+          return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+        }
+      }
+    }
 
     if (!file) {
       return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    // Verifiera åtkomst
-    if (file.projectId) {
-      if (file.project?.tenantId !== tenantId) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
-      try {
-        await requireProject(tenantId, file.projectId, userId);
-      } catch {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
+    // Uppdatera OCR-text och user description
+    if (isPersonalFile) {
+      // userDb.file.update scopar automatiskt till userId + projectId: null
+      await udb.file.update({
+        where: { id: fileId },
+        data: {
+          ocrText: ocrText || null,
+          userDescription: userDescription || null,
+        },
+      });
     } else {
-      if (file.uploadedById !== userId) {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-      }
+      // Projektfil: åtkomst verifierad via requireProject, använd prisma direkt
+      await prisma.file.update({
+        where: { id: fileId },
+        data: {
+          ocrText: ocrText || null,
+          userDescription: userDescription || null,
+        },
+      });
     }
-
-    // Uppdatera OCR-text och user description i DB
-    const db = tenantDb(tenantId);
-    await db.file.update({
-      where: { id: fileId },
-      data: {
-        ocrText: ocrText || null,
-        userDescription: userDescription || null,
-      },
-    });
 
     logger.info("File OCR text and description updated", {
       fileId,

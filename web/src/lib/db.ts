@@ -565,3 +565,189 @@ export function tenantDb(tenantId: string): TenantScopedClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return basePrisma.$extends(createTenantExtension(tenantId) as any) as unknown as TenantScopedClient;
 }
+
+// ─────────────────────────────────────────
+// User-scoped database client
+// ─────────────────────────────────────────
+
+/** Merge userId filter into where clause. */
+function mergeWhereUserId<T extends { where?: unknown }>(
+  args: T,
+  userId: string,
+  userIdField: string = "userId"
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { ...existing, [userIdField]: userId },
+  } as T;
+}
+
+/** Merge userId + projectId: null for personal items. */
+function mergeWherePersonal<T extends { where?: unknown }>(
+  args: T,
+  userId: string,
+  userIdField: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { ...existing, [userIdField]: userId, projectId: null },
+  } as T;
+}
+
+/** Inject userId + projectId: null into data for personal items. */
+function mergeDataPersonal<T extends { data?: unknown }>(
+  args: T,
+  userId: string,
+  userIdField: string
+): T {
+  const existing = typeof args.data === "object" && args.data !== null ? args.data : {};
+  return {
+    ...args,
+    data: { ...existing, [userIdField]: userId, projectId: null },
+  } as T;
+}
+
+function createUserExtension(userId: string) {
+  const query = {} as Record<
+    string,
+    Record<
+      string,
+      (params: { args: unknown; query: (args: unknown) => unknown }) => unknown
+    >
+  >;
+
+  // 1. Personal files (projectId = null, uploadedById = userId)
+  query.file = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    update: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    delete: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    count: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "uploadedById")),
+    create: ({ args, query: run }) =>
+      run(mergeDataPersonal(args as { data?: unknown }, userId, "uploadedById")),
+  };
+
+  // 2. Personal notes (projectId = null, createdById = userId)
+  query.note = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    update: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    delete: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    count: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "createdById")),
+    create: ({ args, query: run }) =>
+      run(mergeDataPersonal(args as { data?: unknown }, userId, "createdById")),
+  };
+
+  // 3. Personal conversations (projectId = null, userId = userId)
+  query.conversation = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    update: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    delete: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    count: ({ args, query: run }) =>
+      run(mergeWherePersonal(args as { where?: unknown }, userId, "userId")),
+    create: ({ args, query: run }) =>
+      run(mergeDataPersonal(args as { data?: unknown }, userId, "userId")),
+  };
+
+  // 4. Notifications (userId = userId)
+  query.notification = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    update: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+  };
+
+  // 5. AIMessage (userId = userId, for personal AI messages)
+  query.aIMessage = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    update: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWhereUserId(args as { where?: unknown }, userId)),
+  };
+
+  return { query };
+}
+
+export type UserScopedClient = Pick<
+  PrismaClient,
+  "file" | "note" | "conversation" | "notification" | "aIMessage"
+>;
+
+/**
+ * Returns a Prisma client scoped to a user's personal data:
+ * - file: uploadedById = userId, projectId = null
+ * - note: createdById = userId, projectId = null
+ * - conversation: userId = userId, projectId = null
+ * - notification: userId = userId
+ * - aIMessage: userId = userId
+ *
+ * Use this for operations on personal/private data.
+ * For project-related data, use tenantDb(tenantId) instead.
+ */
+export function userDb(userId: string): UserScopedClient {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return basePrisma.$extends(createUserExtension(userId) as any) as unknown as UserScopedClient;
+}

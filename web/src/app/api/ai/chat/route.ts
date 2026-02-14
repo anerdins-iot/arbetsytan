@@ -7,7 +7,7 @@
 import { streamText, stepCountIs, type UIMessage, convertToModelMessages } from "ai";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireProject } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 import { getModel, streamConfig, type ProviderKey } from "@/lib/ai/providers";
 import { searchDocuments } from "@/lib/ai/embeddings";
 import { createPersonalTools } from "@/lib/ai/tools/personal-tools";
@@ -93,13 +93,14 @@ export async function POST(req: NextRequest) {
   let activeConversationId = conversationId;
   let conversationSummary: string | null = null;
 
+  const udb = userDb(userId);
   if (!activeConversationId) {
     const lastUserMsg = messages.filter((m) => m.role === "user").pop();
     const title = lastUserMsg
       ? extractTextFromParts(lastUserMsg).slice(0, 100)
       : "Ny konversation";
 
-    const conversation = await db.conversation.create({
+    const conversation = await udb.conversation.create({
       data: {
         type: "PERSONAL",
         title,
@@ -111,11 +112,8 @@ export async function POST(req: NextRequest) {
     activeConversationId = conversation.id;
   } else {
     // Verify conversation belongs to this user and get summary for context
-    const existing = await db.conversation.findFirst({
-      where: {
-        id: activeConversationId,
-        userId,
-      },
+    const existing = await udb.conversation.findFirst({
+      where: { id: activeConversationId },
       select: { id: true, summary: true },
     });
     if (!existing) {

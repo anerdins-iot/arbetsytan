@@ -1,7 +1,7 @@
 "use server";
 
 import { requireAuth, requireProject } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 import { RECENT_MESSAGES_AFTER_SUMMARY } from "@/lib/ai/conversation-config";
 
 export type ConversationListItem = {
@@ -67,15 +67,11 @@ export async function getProjectConversations(
 export async function getPersonalConversations(): Promise<
   { success: true; conversations: ConversationListItem[] } | { success: false; error: string }
 > {
-  const { tenantId, userId } = await requireAuth();
+  const { userId } = await requireAuth();
 
-  const db = tenantDb(tenantId);
-  const conversations = await db.conversation.findMany({
-    where: {
-      userId,
-      type: "PERSONAL",
-      projectId: null,
-    },
+  const udb = userDb(userId);
+  const conversations = await udb.conversation.findMany({
+    where: { type: "PERSONAL" },
     orderBy: { updatedAt: "desc" },
     select: {
       id: true,
@@ -100,10 +96,10 @@ export async function getPersonalConversations(): Promise<
  * Hämta antal olästa AI-meddelanden (PROJECT_TO_PERSONAL) för inloggad användare.
  */
 export async function getUnreadAiMessageCount(): Promise<number> {
-  const { tenantId, userId } = await requireAuth();
-  const db = tenantDb(tenantId);
-  return db.aIMessage.count({
-    where: { userId, direction: "PROJECT_TO_PERSONAL", read: false },
+  const { userId } = await requireAuth();
+  const udb = userDb(userId);
+  return udb.aIMessage.count({
+    where: { direction: "PROJECT_TO_PERSONAL", read: false },
   });
 }
 
@@ -127,19 +123,26 @@ export async function getConversationWithMessages(
   }
 
   const db = tenantDb(tenantId);
-  const conversation = await db.conversation.findFirst({
-    where: {
-      id: conversationId,
-      userId,
-      ...(projectId != null ? { projectId } : { projectId: null }),
-    },
-    include: {
-      messages: {
-        orderBy: { createdAt: "asc" },
-        select: { id: true, role: true, content: true, createdAt: true },
-      },
-    },
-  });
+  const udb = userDb(userId);
+  const conversation = await (projectId != null
+    ? db.conversation.findFirst({
+        where: { id: conversationId, userId, projectId },
+        include: {
+          messages: {
+            orderBy: { createdAt: "asc" },
+            select: { id: true, role: true, content: true, createdAt: true },
+          },
+        },
+      })
+    : udb.conversation.findFirst({
+        where: { id: conversationId },
+        include: {
+          messages: {
+            orderBy: { createdAt: "asc" },
+            select: { id: true, role: true, content: true, createdAt: true },
+          },
+        },
+      }));
 
   if (!conversation) {
     return { success: false, error: "Conversation not found" };

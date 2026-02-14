@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { userDb } from "@/lib/db";
 
 /**
  * GET /api/files/personal
@@ -14,14 +14,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const db = tenantDb(session.tenantId);
+    const udb = userDb(session.user.id);
 
     // Get files uploaded by this user that have no project (personal files)
-    const files = await db.file.findMany({
-      where: {
-        uploadedById: session.user.id,
-        projectId: null,
-      },
+    const files = await udb.file.findMany({
       select: {
         id: true,
         name: true,

@@ -10,7 +10,7 @@ import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { getSession, requireProject } from "@/lib/auth";
-import { prisma } from "@/lib/db";
+import { prisma, userDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
 import { fetchFileFromMinIO } from "@/lib/ai/ocr";
@@ -245,14 +245,25 @@ export async function POST(req: NextRequest) {
       file.key
     );
 
-    await prisma.file.update({
-      where: { id: fileId },
-      data: {
-        label,
-        userDescription: userDescription || null,
-        aiAnalysis: description,
-      },
-    });
+    if (file.projectId) {
+      await prisma.file.update({
+        where: { id: fileId },
+        data: {
+          label,
+          userDescription: userDescription || null,
+          aiAnalysis: description,
+        },
+      });
+    } else {
+      await userDb(userId).file.update({
+        where: { id: fileId },
+        data: {
+          label,
+          userDescription: userDescription || null,
+          aiAnalysis: description,
+        },
+      });
+    }
 
     // Emit websocket event for real-time UI update
     if (file.projectId) {

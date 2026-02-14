@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 import { requirePermission } from "@/lib/auth";
-import { tenantDb, prisma } from "@/lib/db";
+import { tenantDb, userDb, prisma } from "@/lib/db";
 import { sendEmail, type EmailAttachment as ResendAttachment } from "@/lib/email";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
@@ -51,19 +51,22 @@ async function fetchFileAttachments(
 
   for (const attachment of attachments) {
     try {
-      // Verify user has access to file
-      const file = await db.file.findFirst({
-        where: {
-          id: attachment.fileId,
-          OR: [
-            // Personal file uploaded by user
-            { projectId: null, uploadedById: userId },
-            // Project file (tenantDb already filters by tenant)
-            { projectId: attachment.projectId ?? undefined },
-          ],
-        },
-        select: { id: true, name: true, type: true, bucket: true, key: true },
-      });
+      // Verify user has access to file (personal via userDb, project via tenantDb)
+      let file = null;
+      if (attachment.source === "personal") {
+        file = await userDb(userId).file.findFirst({
+          where: { id: attachment.fileId },
+          select: { id: true, name: true, type: true, bucket: true, key: true },
+        });
+      } else {
+        file = await db.file.findFirst({
+          where: {
+            id: attachment.fileId,
+            ...(attachment.projectId ? { projectId: attachment.projectId } : {}),
+          },
+          select: { id: true, name: true, type: true, bucket: true, key: true },
+        });
+      }
 
       if (!file) {
         console.warn(`File ${attachment.fileId} not found or access denied`);
