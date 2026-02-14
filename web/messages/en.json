@@ -212,6 +212,15 @@
       "tasksDone": "{count, plural, =0 {0 done} =1 {1 done} other {# done}}",
       "deadlinesTitle": "Upcoming deadlines",
       "members": "{count, plural, =1 {1 member} other {# members}}"
+    },
+    "searchResults": {
+      "title": "{count, plural, =0 {No results} =1 {1 search result} other {# search results}}",
+      "page": "Page {page}"
+    },
+    "filePreview": {
+      "download": "Download",
+      "noPreview": "Preview not available for this file type.",
+      "error": "Could not load file."
     }
   },
   "notifications": {

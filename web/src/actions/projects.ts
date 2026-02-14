@@ -57,16 +57,36 @@ export type GetProjectsResult = {
 };
 
 /**
- * Get all projects for the current tenant, with optional search and status filter.
+ * Get all projects for the current tenant that the user has access to.
+ * Admins see all projects; others see only projects where they are members.
  */
 export async function getProjects(options?: {
   search?: string;
   status?: ProjectStatus;
 }): Promise<GetProjectsResult> {
-  const { tenantId } = await requireAuth();
+  const { tenantId, userId } = await requireAuth();
   const db = tenantDb(tenantId);
 
-  const where: Record<string, unknown> = {};
+  // Get user's membership to check role
+  const membership = await db.membership.findFirst({
+    where: { userId },
+    select: { id: true, role: true },
+  });
+
+  if (!membership) {
+    return { projects: [] };
+  }
+
+  // Build where clause
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const where: Record<string, any> = {};
+
+  // Non-admins only see projects they're members of
+  if (membership.role !== "ADMIN") {
+    where.projectMembers = {
+      some: { membershipId: membership.id },
+    };
+  }
 
   if (options?.status) {
     where.status = options.status;

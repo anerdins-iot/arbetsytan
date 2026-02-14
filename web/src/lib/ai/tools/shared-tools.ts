@@ -101,12 +101,18 @@ type SearchDocumentsProjectParams = {
 export async function searchDocumentsForProject(params: SearchDocumentsProjectParams) {
   const { tenantId, projectId, query, limit } = params;
   const results = await searchDocuments(tenantId, projectId, query, { limit, threshold: 0.3 });
-  return results.map((r) => ({
-    fileName: r.fileName,
-    page: r.page,
-    similarity: r.similarity,
-    excerpt: r.content.slice(0, 300) + (r.content.length > 300 ? "…" : ""),
-  }));
+  return {
+    __searchResults: true as const,
+    results: results.map((r) => ({
+      fileId: r.fileId,
+      fileName: r.fileName,
+      projectId,
+      projectName: null as string | null,
+      page: r.page,
+      similarity: r.similarity,
+      excerpt: r.content.slice(0, 300) + (r.content.length > 300 ? "…" : ""),
+    })),
+  };
 }
 
 type SearchDocumentsGlobalParams = {
@@ -122,20 +128,24 @@ type SearchDocumentsGlobalParams = {
  */
 export async function searchDocumentsAcrossProjects(params: SearchDocumentsGlobalParams) {
   const { tenantId, projectIds, query, limit, userId } = params;
-  if (projectIds.length === 0 && !userId) return [];
+  if (projectIds.length === 0 && !userId) return { __searchResults: true as const, results: [] };
   const results = await searchDocumentsGlobal(tenantId, projectIds, query, {
     limit,
     threshold: 0.3,
     userId,
   });
-  return results.map((r) => ({
-    projectName: r.projectName ?? "Personliga filer",
-    projectId: r.projectId,
-    fileName: r.fileName,
-    page: r.page,
-    similarity: r.similarity,
-    excerpt: r.content.slice(0, 250) + (r.content.length > 250 ? "…" : ""),
-  }));
+  return {
+    __searchResults: true as const,
+    results: results.map((r) => ({
+      fileId: r.fileId,
+      fileName: r.fileName,
+      projectId: r.projectId,
+      projectName: r.projectName ?? "Personliga filer",
+      page: r.page,
+      similarity: r.similarity,
+      excerpt: r.content.slice(0, 250) + (r.content.length > 250 ? "…" : ""),
+    })),
+  };
 }
 
 // ============================================================================

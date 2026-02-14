@@ -141,8 +141,11 @@ export type ProjectWithTenant = {
 };
 
 /**
- * Verifies that the project belongs to the tenant and that the user has access
- * (tenant membership or Admin). Returns the project or throws.
+ * Verifies that the project belongs to the tenant and that the user has access.
+ * Access requires either:
+ * 1. Being an explicit ProjectMember of the project, OR
+ * 2. Having Admin role in the tenant
+ * Returns the project or throws.
  */
 export async function requireProject(
   tenantId: string,
@@ -156,12 +159,41 @@ export async function requireProject(
   if (!project) {
     throw new Error("PROJECT_NOT_FOUND");
   }
+
+  // Get user's tenant membership to check role
   const membership = await db.membership.findFirst({
     where: { userId },
+    select: { id: true, role: true },
   });
   if (!membership) {
     throw new Error("FORBIDDEN");
   }
+
+  // Admins can access all projects in tenant
+  if (membership.role === "ADMIN") {
+    return {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      status: project.status,
+      address: project.address,
+      tenantId: project.tenantId,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+    };
+  }
+
+  // Non-admins must be explicit ProjectMember
+  const projectMember = await db.projectMember.findFirst({
+    where: {
+      projectId,
+      membershipId: membership.id,
+    },
+  });
+  if (!projectMember) {
+    throw new Error("FORBIDDEN");
+  }
+
   return {
     id: project.id,
     name: project.name,

@@ -533,6 +533,90 @@ export async function deleteFile(input: {
   }
 }
 
+const fileByIdSchema = z.object({
+  projectId: z.string().min(1).optional(),
+  fileId: z.string().min(1),
+});
+
+export type FilePreviewData = {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  ocrText: string | null;
+  downloadUrl: string;
+};
+
+export async function getFilePreviewData(input: {
+  fileId: string;
+  projectId?: string;
+}): Promise<
+  | { success: true; file: FilePreviewData }
+  | { success: false; error: string }
+> {
+  const { tenantId, userId } = await requireAuth();
+  const parsed = fileByIdSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+
+  const { fileId, projectId } = parsed.data;
+
+  try {
+    if (projectId) {
+      await requireProject(tenantId, projectId, userId);
+    }
+
+    const db = tenantDb(tenantId);
+
+    const whereClause: Record<string, unknown> = { id: fileId };
+    if (projectId) {
+      whereClause.projectId = projectId;
+    } else {
+      // Personal file — owned by user
+      whereClause.projectId = null;
+      whereClause.uploadedById = userId;
+    }
+
+    const file = await db.file.findFirst({
+      where: whereClause,
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        size: true,
+        bucket: true,
+        key: true,
+        ocrText: true,
+      },
+    });
+
+    if (!file) {
+      return { success: false, error: "FILE_NOT_FOUND" };
+    }
+
+    const downloadUrl = await createPresignedDownloadUrl({
+      bucket: file.bucket,
+      key: file.key,
+    });
+
+    return {
+      success: true,
+      file: {
+        id: file.id,
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        ocrText: file.ocrText,
+        downloadUrl,
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "FETCH_FILE_FAILED";
+    return { success: false, error: message };
+  }
+}
+
 const getFileOcrSchema = z.object({
   projectId: z.string().min(1),
   fileId: z.string().min(1),

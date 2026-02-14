@@ -22,7 +22,8 @@ import {
   parseScheduleFromText,
   generatePdfDocument,
 } from "@/lib/ai/tools/shared-tools";
-import { getOcrTextForFile } from "@/lib/ai/ocr";
+import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
+import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 import {
   createAutomation as createAutomationAction,
   listAutomations as listAutomationsAction,
@@ -1156,6 +1157,59 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       if (!file) return { error: "Filen hittades inte eller du har inte behörighet." };
       if (!file.ocrText) return { error: "Ingen OCR-text finns för denna fil. Filen kanske inte är analyserad ännu." };
       return { fileName: file.name, fullText: file.ocrText };
+    },
+  });
+
+  const analyzeImage = tool({
+    description:
+      "Analysera en bild med AI-vision (Claude). Använd detta för att beskriva vad som syns på bilden - objekt, personer, scener, färger etc. Fungerar både för projektfiler och personliga filer. OCR-text (om den finns) skickas med som kontext för bättre analys.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("ID för bildfilen"),
+      projectId: z.string().optional().describe("Projektets ID om det är en projektfil (utelämna för personliga filer)"),
+      question: z.string().optional().describe("Specifik fråga om bilden, t.ex. 'Vad är det för djur på bilden?'"),
+    })),
+    execute: async ({ fileId, projectId: pid, question }) => {
+      // Hämta fil - antingen från projekt eller personliga filer
+      let file;
+      if (pid) {
+        await requireProject(tenantId, pid, userId);
+        file = await db.file.findFirst({
+          where: { id: fileId, projectId: pid },
+          select: { id: true, name: true, type: true, bucket: true, key: true, ocrText: true },
+        });
+      } else {
+        file = await db.file.findFirst({
+          where: { id: fileId, projectId: null, uploadedById: userId },
+          select: { id: true, name: true, type: true, bucket: true, key: true, ocrText: true },
+        });
+      }
+
+      if (!file) {
+        return { error: "Filen hittades inte eller du har inte behörighet." };
+      }
+
+      // Kontrollera att det är en bild
+      if (!file.type.startsWith("image/")) {
+        return { error: "Filen är inte en bild. Använd analyzeDocument för PDF:er och andra dokument." };
+      }
+
+      // Hämta bilden från MinIO
+      let buffer: Buffer;
+      try {
+        buffer = await fetchFileFromMinIO(file.bucket, file.key);
+      } catch (err) {
+        return { error: `Kunde inte hämta filen: ${err instanceof Error ? err.message : String(err)}` };
+      }
+
+      // Analysera med Claude vision
+      const analysis = await analyzeImageWithVision(buffer, file.type, file.ocrText, question);
+
+      return {
+        fileName: file.name,
+        analysis,
+        ocrText: file.ocrText || null,
+        message: "Bildanalys klar.",
+      };
     },
   });
 
@@ -2438,6 +2492,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     searchFiles,
     analyzeDocument,
     analyzePersonalFile,
+    analyzeImage,
     movePersonalFileToProject,
     // Projektmedlemmar
     listMembers,

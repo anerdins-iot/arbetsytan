@@ -42,6 +42,7 @@ import { DailyBriefing } from "@/components/ai/daily-briefing";
 import { getProjectContext } from "@/actions/project-context";
 import type { ProjectContextResult } from "@/actions/project-context";
 import { ProjectContextCard } from "@/components/ai/project-context-card";
+import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 
 // Formatera datum för konversationshistorik
@@ -662,6 +663,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                           attachments: emailData.attachments,
                         }}
                         onSend={handleSend}
+                      />
+                    );
+                  }
+
+                  if (result?.__searchResults && Array.isArray(result.results)) {
+                    return (
+                      <SearchResultsCard
+                        key={i}
+                        results={result.results as SearchResult[]}
                       />
                     );
                   }

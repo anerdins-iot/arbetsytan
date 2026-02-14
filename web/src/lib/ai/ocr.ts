@@ -4,6 +4,14 @@ import { minioClient, createPresignedDownloadUrl } from "@/lib/minio";
 import { tenantDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { queueEmbeddingProcessing } from "@/lib/ai/embeddings";
+import {
+  processExcel,
+  processWord,
+  processCSV,
+  analyzeImageWithVision,
+  detectFileType,
+  isProcessableFile,
+} from "./file-processors";
 
 import type { Document } from "@mistralai/mistralai/models/components/ocrrequest";
 
@@ -16,17 +24,23 @@ const OCR_MODEL = "mistral-ocr-latest";
 const CHUNK_MIN_CHARS = 2000;
 const CHUNK_MAX_CHARS = 4000;
 
-/** File types eligible for OCR processing. */
-const OCR_ELIGIBLE_TYPES = new Set([
+/** File types eligible for OCR/processing (PDF, images, Office, CSV). */
+const PROCESSABLE_TYPES = new Set([
   "application/pdf",
   "image/jpeg",
   "image/png",
   "image/webp",
+  "image/gif",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/msword",
+  "text/csv",
 ]);
 
 function isOcrEligible(fileType: string, fileName: string): boolean {
-  if (OCR_ELIGIBLE_TYPES.has(fileType)) return true;
-  return /\.(pdf|jpe?g|png|webp)$/i.test(fileName);
+  if (PROCESSABLE_TYPES.has(fileType)) return true;
+  return /\.(pdf|jpe?g|png|webp|gif|xlsx?|docx?|csv)$/i.test(fileName);
 }
 
 function getMistralClient(): Mistral {
@@ -37,7 +51,7 @@ function getMistralClient(): Mistral {
   return new Mistral({ apiKey });
 }
 
-async function fetchFileFromMinIO(bucket: string, key: string): Promise<Buffer> {
+export async function fetchFileFromMinIO(bucket: string, key: string): Promise<Buffer> {
   const response = await minioClient.send(
     new GetObjectCommand({ Bucket: bucket, Key: key })
   );
@@ -123,8 +137,48 @@ async function runOcr(bucket: string, key: string, fileType: string): Promise<Oc
 }
 
 /**
- * Returns OCR text for a file. Uses cached ocrText if present, otherwise runs OCR
- * and updates the file record. For use by AI document-analysis tool.
+ * Routes to the appropriate processor and returns extracted text + source label.
+ * Used by processFileOcr / processPersonalFileOcr for all processable file types.
+ */
+export async function processFileContent(
+  bucket: string,
+  key: string,
+  fileType: string,
+  fileName: string
+): Promise<{ text: string; source: string }> {
+  const detectedType = detectFileType(fileType, fileName);
+  const buffer = await fetchFileFromMinIO(bucket, key);
+
+  switch (detectedType) {
+    case "excel":
+      return { text: await processExcel(buffer), source: "excel-parser" };
+    case "word":
+      return { text: await processWord(buffer), source: "word-parser" };
+    case "csv":
+      return { text: await processCSV(buffer), source: "csv-parser" };
+    case "image": {
+      // Run OCR first to extract any text
+      const ocrResult = await runOcr(bucket, key, fileType);
+      // Then run Claude vision to describe the image content (objects, people, scenes etc)
+      const aiDescription = await analyzeImageWithVision(buffer, fileType, ocrResult.fullText);
+      // Combine both: OCR text + AI description
+      const combined = [ocrResult.fullText, aiDescription]
+        .filter(Boolean)
+        .join("\n\n---\n\nBildbeskrivning:\n");
+      return { text: combined, source: "ocr+vision" };
+    }
+    case "pdf": {
+      const pdfResult = await runOcr(bucket, key, fileType);
+      return { text: pdfResult.fullText, source: "ocr" };
+    }
+    default:
+      return { text: "", source: "unsupported" };
+  }
+}
+
+/**
+ * Returns OCR text for a file. Uses cached ocrText if present, otherwise runs
+ * processFileContent (OCR or parser). For use by AI document-analysis tool.
  * Caller must have validated project access (requireProject).
  */
 export async function getOcrTextForFile(params: {
@@ -148,24 +202,33 @@ export async function getOcrTextForFile(params: {
     return { fullText: file.ocrText };
   }
 
-  if (!isOcrEligible(file.type, file.name)) {
+  if (!isProcessableFile(file.type, file.name)) {
     return { error: "FILE_TYPE_NOT_OCR_ELIGIBLE" };
   }
 
-  if (!process.env.MISTRAL_API_KEY) {
+  const detected = detectFileType(file.type, file.name);
+  if (
+    (detected === "pdf" || detected === "image") &&
+    !process.env.MISTRAL_API_KEY
+  ) {
     return { error: "OCR_NOT_CONFIGURED" };
   }
 
   try {
-    const result = await runOcr(file.bucket, file.key, file.type);
-    if (!result.fullText.trim()) {
-      return { fullText: "(OCR returnerade ingen text.)" };
+    const { text } = await processFileContent(
+      file.bucket,
+      file.key,
+      file.type,
+      file.name
+    );
+    if (!text.trim()) {
+      return { fullText: "(Ingen text kunde extraheras.)" };
     }
     await db.file.update({
       where: { id: file.id },
-      data: { ocrText: result.fullText },
+      data: { ocrText: text },
     });
-    return { fullText: result.fullText };
+    return { fullText: text };
   } catch (error) {
     const message = error instanceof Error ? error.message : "OCR_FAILED";
     logger.error("OCR failed for analysis", { fileId, error: message });
@@ -232,8 +295,9 @@ function chunkText(pages: OcrPage[]): TextChunk[] {
 }
 
 /**
- * Full OCR pipeline: OCR the file, save ocrText, chunk and save DocumentChunks.
- * This is designed to be called after file upload completes.
+ * Full file processing pipeline: extract text (OCR or parser), save ocrText,
+ * chunk and save DocumentChunks. Supports PDF, images, Excel, Word, CSV.
+ * Called after file upload completes.
  */
 export async function processFileOcr(params: {
   fileId: string;
@@ -246,20 +310,29 @@ export async function processFileOcr(params: {
 }): Promise<{ success: true; chunkCount: number } | { success: false; error: string }> {
   const { fileId, projectId, tenantId, bucket, key, fileType, fileName } = params;
 
-  if (!isOcrEligible(fileType, fileName)) {
+  if (!isProcessableFile(fileType, fileName)) {
     return { success: true, chunkCount: 0 };
   }
 
-  if (!process.env.MISTRAL_API_KEY) {
+  const detected = detectFileType(fileType, fileName);
+  if (
+    (detected === "pdf" || detected === "image") &&
+    !process.env.MISTRAL_API_KEY
+  ) {
     logger.warn("MISTRAL_API_KEY not set — skipping OCR for file", { fileId });
     return { success: true, chunkCount: 0 };
   }
 
   try {
-    const ocrResult = await runOcr(bucket, key, fileType);
+    const { text, source } = await processFileContent(
+      bucket,
+      key,
+      fileType,
+      fileName
+    );
 
-    if (!ocrResult.fullText.trim()) {
-      logger.info("OCR returned empty text for file", { fileId });
+    if (!text.trim()) {
+      logger.info("No text extracted for file", { fileId });
       return { success: true, chunkCount: 0 };
     }
 
@@ -267,10 +340,11 @@ export async function processFileOcr(params: {
 
     await db.file.update({
       where: { id: fileId },
-      data: { ocrText: ocrResult.fullText },
+      data: { ocrText: text },
     });
 
-    const textChunks = chunkText(ocrResult.pages);
+    const pages: OcrPage[] = [{ index: 0, markdown: text }];
+    const textChunks = chunkText(pages);
 
     if (textChunks.length > 0) {
       await db.documentChunk.deleteMany({
@@ -282,7 +356,7 @@ export async function processFileOcr(params: {
           data: {
             content: chunk.content,
             page: chunk.page,
-            metadata: { position: chunk.position, source: "ocr" },
+            metadata: { position: chunk.position, source },
             fileId,
             tenantId,
             projectId,
@@ -293,22 +367,28 @@ export async function processFileOcr(params: {
       if (process.env.OPENAI_API_KEY) {
         queueEmbeddingProcessing(fileId, tenantId);
       } else {
-        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for file", { fileId });
+        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for file", {
+          fileId,
+        });
       }
     }
 
-    logger.info("OCR completed for file", { fileId, chunkCount: textChunks.length });
+    logger.info("File processing completed for file", {
+      fileId,
+      chunkCount: textChunks.length,
+      source,
+    });
     return { success: true, chunkCount: textChunks.length };
   } catch (error) {
     const message = error instanceof Error ? error.message : "OCR_FAILED";
-    logger.error("OCR failed for file", { fileId, error: message });
+    logger.error("File processing failed for file", { fileId, error: message });
     return { success: false, error: message };
   }
 }
 
 /**
- * OCR pipeline for personal files (no project context).
- * Creates DocumentChunks with userId instead of projectId for personal file search.
+ * File processing pipeline for personal files (no project context).
+ * Creates DocumentChunks with userId instead of projectId. Supports PDF, images, Excel, Word, CSV.
  */
 export async function processPersonalFileOcr(params: {
   fileId: string;
@@ -321,20 +401,31 @@ export async function processPersonalFileOcr(params: {
 }): Promise<{ success: true; chunkCount: number } | { success: false; error: string }> {
   const { fileId, tenantId, userId, bucket, key, fileType, fileName } = params;
 
-  if (!isOcrEligible(fileType, fileName)) {
+  if (!isProcessableFile(fileType, fileName)) {
     return { success: true, chunkCount: 0 };
   }
 
-  if (!process.env.MISTRAL_API_KEY) {
-    logger.warn("MISTRAL_API_KEY not set — skipping OCR for personal file", { fileId });
+  const detected = detectFileType(fileType, fileName);
+  if (
+    (detected === "pdf" || detected === "image") &&
+    !process.env.MISTRAL_API_KEY
+  ) {
+    logger.warn("MISTRAL_API_KEY not set — skipping OCR for personal file", {
+      fileId,
+    });
     return { success: true, chunkCount: 0 };
   }
 
   try {
-    const ocrResult = await runOcr(bucket, key, fileType);
+    const { text, source } = await processFileContent(
+      bucket,
+      key,
+      fileType,
+      fileName
+    );
 
-    if (!ocrResult.fullText.trim()) {
-      logger.info("OCR returned empty text for personal file", { fileId });
+    if (!text.trim()) {
+      logger.info("No text extracted for personal file", { fileId });
       return { success: true, chunkCount: 0 };
     }
 
@@ -342,10 +433,11 @@ export async function processPersonalFileOcr(params: {
 
     await db.file.update({
       where: { id: fileId },
-      data: { ocrText: ocrResult.fullText },
+      data: { ocrText: text },
     });
 
-    const textChunks = chunkText(ocrResult.pages);
+    const pages: OcrPage[] = [{ index: 0, markdown: text }];
+    const textChunks = chunkText(pages);
 
     if (textChunks.length > 0) {
       await db.documentChunk.deleteMany({
@@ -357,11 +449,10 @@ export async function processPersonalFileOcr(params: {
           data: {
             content: chunk.content,
             page: chunk.page,
-            metadata: { position: chunk.position, source: "ocr" },
+            metadata: { position: chunk.position, source },
             fileId,
             tenantId,
             userId,
-            // projectId is null — personal file
           },
         });
       }
@@ -369,15 +460,24 @@ export async function processPersonalFileOcr(params: {
       if (process.env.OPENAI_API_KEY) {
         queueEmbeddingProcessing(fileId, tenantId);
       } else {
-        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for personal file", { fileId });
+        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for personal file", {
+          fileId,
+        });
       }
     }
 
-    logger.info("OCR completed for personal file", { fileId, chunkCount: textChunks.length });
+    logger.info("File processing completed for personal file", {
+      fileId,
+      chunkCount: textChunks.length,
+      source,
+    });
     return { success: true, chunkCount: textChunks.length };
   } catch (error) {
     const message = error instanceof Error ? error.message : "OCR_FAILED";
-    logger.error("OCR failed for personal file", { fileId, error: message });
+    logger.error("File processing failed for personal file", {
+      fileId,
+      error: message,
+    });
     return { success: false, error: message };
   }
 }
