@@ -238,6 +238,13 @@
       "step": "Step {current} of {total}",
       "next": "Next",
       "back": "Back"
+    },
+    "ocrReview": {
+      "title": "Review extracted text",
+      "noTextHint": "No text was extracted. You can add text manually if needed.",
+      "save": "Save",
+      "saving": "Saving…",
+      "skip": "Skip"
     }
   },
   "notifications": {

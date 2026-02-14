@@ -44,9 +44,7 @@ import type { ProjectContextResult } from "@/actions/project-context";
 import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { FileAnalysisSheet } from "@/components/ai/file-analysis-sheet";
-import { FileAnalysisWizard } from "@/components/ai/file-analysis-wizard";
+import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocket } from "@/hooks/use-socket";
 import type { RealtimeFileEvent } from "@/lib/socket-events";
 
@@ -122,7 +120,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [projectContext, setProjectContext] = useState<ProjectContextResult | null>(null);
   const [isLoadingContext, setIsLoadingContext] = useState(false);
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
-  const isDesktop = useMediaQuery("(min-width: 640px)");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -349,6 +346,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         if (conversationId) {
           formData.append("conversationId", conversationId);
         }
+        // Always upload to project when project is selected
+        if (activeProjectIdRef.current) {
+          formData.append("projectId", activeProjectIdRef.current);
+        }
 
         const res = await fetch("/api/ai/upload", {
           method: "POST",
@@ -485,17 +486,16 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     [inputValue, isLoading, sendMessage]
   );
 
-  const handleAnalysisComplete = useCallback(
-    (result: { label: string; description: string }) => {
-      const file = analysisFile;
-      if (!file) return;
-      sendMessage({
-        text: `Jag har laddat upp filen "${file.name}" (${file.type}). AI-analys: Etikett: "${result.label}". Beskrivning: "${result.description}". Bekräfta att du noterat uppladdningen.`,
-      });
-      setAnalysisFile(null);
-    },
-    [analysisFile, sendMessage]
-  );
+  // Called when OCR review is complete - analysis runs in background
+  const handleOcrReviewComplete = useCallback(() => {
+    const file = analysisFile;
+    if (!file) return;
+    // Send simple confirmation - detailed analysis will update via websocket
+    sendMessage({
+      text: `Jag har laddat upp filen "${file.name}". Analysen körs i bakgrunden.`,
+    });
+    setAnalysisFile(null);
+  }, [analysisFile, sendMessage]);
 
   useEffect(() => {
     scrollToBottom();
@@ -892,23 +892,14 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     </div>
   );
 
-  // File analysis overlay
+  // OCR review dialog - simple review + save, analysis runs in background
   const fileAnalysisUI = analysisFile ? (
-    isDesktop ? (
-      <FileAnalysisSheet
-        open={!!analysisFile}
-        onOpenChange={(open) => { if (!open) setAnalysisFile(null); }}
-        file={analysisFile}
-        onAnalysisComplete={handleAnalysisComplete}
-      />
-    ) : (
-      <FileAnalysisWizard
-        open={!!analysisFile}
-        onOpenChange={(open) => { if (!open) setAnalysisFile(null); }}
-        file={analysisFile}
-        onAnalysisComplete={handleAnalysisComplete}
-      />
-    )
+    <OcrReviewDialog
+      open={!!analysisFile}
+      onOpenChange={(open) => { if (!open) setAnalysisFile(null); }}
+      file={analysisFile}
+      onComplete={handleOcrReviewComplete}
+    />
   ) : null;
 
   // Docked mode: render as a static sidebar panel

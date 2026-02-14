@@ -238,6 +238,13 @@
       "step": "Steg {current} av {total}",
       "next": "Nästa",
       "back": "Tillbaka"
+    },
+    "ocrReview": {
+      "title": "Granska extraherad text",
+      "noTextHint": "Ingen text extraherades. Du kan lägga till text manuellt om du vill.",
+      "save": "Spara",
+      "saving": "Sparar…",
+      "skip": "Hoppa över"
     }
   },
   "notifications": {

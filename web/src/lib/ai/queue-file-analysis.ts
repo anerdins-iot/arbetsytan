@@ -1,0 +1,208 @@
+/**
+ * Kör filanalys i bakgrunden (fire-and-forget).
+ *
+ * 1. Generera label + description med AI
+ * 2. Spara till File-modellen
+ * 3. Skapa DocumentChunk för description med embedding
+ * 4. Emit websocket-event
+ */
+import { generateText } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { tenantDb, prisma } from "@/lib/db";
+import { logger } from "@/lib/logger";
+import { generateEmbedding } from "@/lib/ai/embeddings";
+import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
+import { fetchFileFromMinIO } from "@/lib/ai/ocr";
+import { analyzeImageWithVision } from "@/lib/ai/file-processors";
+
+type QueueFileAnalysisParams = {
+  fileId: string;
+  fileName: string;
+  fileType: string;
+  bucket: string;
+  key: string;
+  tenantId: string;
+  projectId?: string;
+  userId: string;
+  ocrText: string;
+};
+
+const IMAGE_TYPES = /^image\/(jpeg|png|gif|webp)/i;
+
+const SYSTEM_PROMPT = `Du är en assistent som skapar korta, beskrivande etiketter för filer.
+Baserat på all tillgänglig information (OCR-text, bildanalys), skapa:
+1. En kort etikett (max 50 tecken) som sammanfattar filens innehåll.
+2. En längre beskrivning (1-3 meningar) som förklarar vad filen innehåller.
+Svara ALLTID i JSON-format: {"label": "...", "description": "..."}`;
+
+/**
+ * Kör filanalys i bakgrunden.
+ * Blockerar INTE anroparen - allt körs asynkront.
+ */
+export function queueFileAnalysis(params: QueueFileAnalysisParams): void {
+  runAnalysis(params).catch((err) => {
+    logger.error("Background file analysis failed", {
+      fileId: params.fileId,
+      error: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined,
+    });
+  });
+}
+
+async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
+  const {
+    fileId,
+    fileName,
+    fileType,
+    bucket,
+    key,
+    tenantId,
+    projectId,
+    userId,
+    ocrText,
+  } = params;
+
+  logger.info("Starting background file analysis", { fileId, fileName, fileType });
+
+  let label = fileName.slice(0, 50);
+  let description = ocrText.slice(0, 300) || "Ingen beskrivning tillgänglig.";
+  let visionAnalysis = "";
+
+  // Kör vision-analys för bilder
+  const isImage = IMAGE_TYPES.test(fileType);
+  if (isImage && process.env.ANTHROPIC_API_KEY) {
+    try {
+      const buffer = await fetchFileFromMinIO(bucket, key);
+      visionAnalysis = await analyzeImageWithVision(
+        buffer,
+        fileType,
+        ocrText || undefined,
+        undefined
+      );
+      logger.info("Vision analysis completed", { fileId, analysisLength: visionAnalysis.length });
+    } catch (err) {
+      logger.warn("Vision analysis failed", {
+        fileId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  // Generera label + description med AI
+  if (process.env.ANTHROPIC_API_KEY && (ocrText.trim() || visionAnalysis)) {
+    try {
+      const contextParts: string[] = [];
+      if (visionAnalysis) {
+        contextParts.push(`Bildanalys:\n${visionAnalysis}`);
+      }
+      if (ocrText.trim()) {
+        contextParts.push(`OCR-text:\n${ocrText.trim()}`);
+      }
+      const context = contextParts.join("\n\n") || `Filnamn: ${fileName}`;
+
+      const result = await generateText({
+        model: anthropic("claude-haiku-4-5-20251001"),
+        system: SYSTEM_PROMPT,
+        prompt: context,
+        maxOutputTokens: 500,
+      });
+
+      const text = result.text.trim();
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      const jsonStr = jsonMatch ? jsonMatch[0] : text;
+      const parsed = JSON.parse(jsonStr) as { label?: string; description?: string };
+
+      if (typeof parsed.label === "string") {
+        label = parsed.label.slice(0, 50);
+      }
+      if (typeof parsed.description === "string") {
+        description = parsed.description;
+      }
+
+      logger.info("AI analysis completed", { fileId, label });
+    } catch (err) {
+      logger.warn("AI text analysis failed, using fallback", {
+        fileId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  // Spara till DB
+  const db = tenantDb(tenantId);
+  await db.file.update({
+    where: { id: fileId },
+    data: {
+      label,
+      aiAnalysis: description,
+    },
+  });
+
+  logger.info("File label and description saved", { fileId, label });
+
+  // Skapa embedding för description (så det blir sökbart)
+  if (description && process.env.OPENAI_API_KEY) {
+    try {
+      // Kombinera label + description för bättre sökbarhet
+      const embeddingText = `${label}\n\n${description}`;
+      const embedding = await generateEmbedding(embeddingText);
+
+      // Skapa eller uppdatera DocumentChunk för filen
+      // Vi använder en speciell chunk som representerar filens AI-analys
+      const existingChunk = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+        `SELECT "id" FROM "DocumentChunk" WHERE "fileId" = $1 AND "tenantId" = $2 AND "chunkIndex" = -1 LIMIT 1`,
+        fileId,
+        tenantId
+      );
+
+      if (existingChunk.length > 0) {
+        // Uppdatera befintlig chunk
+        const vectorStr = `[${embedding.join(",")}]`;
+        await prisma.$queryRawUnsafe(
+          `UPDATE "DocumentChunk" SET "content" = $1, "embedding" = $2::vector WHERE "id" = $3`,
+          embeddingText,
+          vectorStr,
+          existingChunk[0].id
+        );
+      } else {
+        // Skapa ny chunk med chunkIndex = -1 (markerar AI-analys)
+        const vectorStr = `[${embedding.join(",")}]`;
+        const chunkId = `${fileId}-analysis`;
+        await prisma.$queryRawUnsafe(
+          `INSERT INTO "DocumentChunk" ("id", "fileId", "tenantId", "projectId", "userId", "chunkIndex", "page", "content", "embedding", "createdAt", "updatedAt")
+           VALUES ($1, $2, $3, $4, $5, -1, NULL, $6, $7::vector, NOW(), NOW())`,
+          chunkId,
+          fileId,
+          tenantId,
+          projectId ?? null,
+          projectId ? null : userId,
+          embeddingText,
+          vectorStr
+        );
+      }
+
+      logger.info("File analysis embedding created", { fileId });
+    } catch (err) {
+      logger.error("Failed to create embedding for file analysis", {
+        fileId,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  // Emit websocket event
+  const eventPayload = {
+    projectId: projectId ?? null,
+    fileId,
+    actorUserId: userId,
+    label,
+  };
+
+  if (projectId) {
+    emitFileUpdatedToProject(projectId, eventPayload);
+  } else {
+    emitFileUpdatedToUser(userId, eventPayload);
+  }
+
+  logger.info("Background file analysis completed", { fileId, label });
+}
