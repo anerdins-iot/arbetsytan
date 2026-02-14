@@ -221,6 +221,23 @@
       "download": "Download",
       "noPreview": "Preview not available for this file type.",
       "error": "Could not load file."
+    },
+    "fileAnalysis": {
+      "title": "Analyze file",
+      "extractedText": "Extracted text (OCR)",
+      "extractedTextPlaceholder": "No text could be extracted",
+      "userDescription": "Describe the file",
+      "userDescriptionPlaceholder": "What does the image show? What kind of document is it?",
+      "analyze": "Analyze",
+      "analyzing": "Analyzing…",
+      "error": "Analysis failed. Try again.",
+      "result": "Result",
+      "label": "Label",
+      "description": "Description",
+      "done": "Done",
+      "step": "Step {current} of {total}",
+      "next": "Next",
+      "back": "Back"
     }
   },
   "notifications": {

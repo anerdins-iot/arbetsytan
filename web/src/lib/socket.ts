@@ -269,6 +269,18 @@ export function emitProjectUpdatedToProject(
   io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.projectUpdated, payload);
 }
 
+// ── File updated (user or project room) ───────────────
+
+export function emitFileUpdatedToUser(userId: string, payload: RealtimeFileEvent): void {
+  const io = getSocketServer();
+  io.to(userRoom(userId)).emit(SOCKET_EVENTS.fileUpdated, payload);
+}
+
+export function emitFileUpdatedToProject(projectId: string, payload: RealtimeFileEvent): void {
+  const io = getSocketServer();
+  io.to(projectRoom(projectId)).emit(SOCKET_EVENTS.fileUpdated, payload);
+}
+
 // ── Notes (project room) ──────────────────────────────
 
 export function emitNoteCreatedToProject(projectId: string, payload: RealtimeNoteEvent): void {

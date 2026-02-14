@@ -221,6 +221,23 @@
       "download": "Ladda ner",
       "noPreview": "Förhandsgranskning finns inte för denna filtyp.",
       "error": "Kunde inte ladda filen."
+    },
+    "fileAnalysis": {
+      "title": "Analysera fil",
+      "extractedText": "Extraherad text (OCR)",
+      "extractedTextPlaceholder": "Ingen text kunde extraheras",
+      "userDescription": "Beskriv filen",
+      "userDescriptionPlaceholder": "Vad visar bilden? Vad är det för dokument?",
+      "analyze": "Analysera",
+      "analyzing": "Analyserar…",
+      "error": "Analysen misslyckades. Försök igen.",
+      "result": "Resultat",
+      "label": "Etikett",
+      "description": "Beskrivning",
+      "done": "Klar",
+      "step": "Steg {current} av {total}",
+      "next": "Nästa",
+      "back": "Tillbaka"
     }
   },
   "notifications": {

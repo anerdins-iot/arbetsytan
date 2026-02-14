@@ -262,6 +262,10 @@ model File {
 
   uploadedById String
 
+  userDescription String? // Användarens egen beskrivning
+  aiAnalysis      String? // AI-genererad analys
+  label           String? // Formaterad etikett
+
   chunks DocumentChunk[]
 }
 

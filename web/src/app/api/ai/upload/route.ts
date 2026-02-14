@@ -13,8 +13,10 @@ import {
   ensureTenantBucket,
   projectObjectKey,
   putObjectToMinio,
+  createPresignedDownloadUrl,
 } from "@/lib/minio";
-import { analyzeFileAsync } from "@/lib/ai/analyze-file";
+import { processFileOcr, processPersonalFileOcr } from "@/lib/ai/ocr";
+import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
 import { logger } from "@/lib/logger";
 
 // Tillåtna filtyper för chatt-uppladdning
@@ -133,18 +135,75 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Trigga async analys i bakgrunden
-    analyzeFileAsync({
-      fileId: created.id,
-      fileName,
-      fileType,
+    // Kör OCR synkront
+    let ocrText: string | null = null;
+    try {
+      if (projectId) {
+        const ocrResult = await processFileOcr({
+          fileId: created.id,
+          projectId,
+          tenantId,
+          bucket,
+          key,
+          fileType,
+          fileName,
+        });
+        if (ocrResult.success && ocrResult.chunkCount > 0) {
+          const db2 = tenantDb(tenantId);
+          const updatedFile = await db2.file.findFirst({
+            where: { id: created.id },
+            select: { ocrText: true },
+          });
+          ocrText = updatedFile?.ocrText ?? null;
+        }
+      } else {
+        const ocrResult = await processPersonalFileOcr({
+          fileId: created.id,
+          tenantId,
+          userId,
+          bucket,
+          key,
+          fileType,
+          fileName,
+        });
+        if (ocrResult.success && ocrResult.chunkCount > 0) {
+          const db2 = tenantDb(tenantId);
+          const updatedFile = await db2.file.findFirst({
+            where: { id: created.id },
+            select: { ocrText: true },
+          });
+          ocrText = updatedFile?.ocrText ?? null;
+        }
+      }
+    } catch (err) {
+      logger.warn("OCR failed during upload", {
+        fileId: created.id,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+
+    // Generate presigned download URL for the file
+    const downloadUrl = await createPresignedDownloadUrl({
       bucket,
       key,
-      tenantId,
-      projectId: projectId ?? undefined,
-      conversationId: conversationId ?? undefined,
-      userId,
+      expiresInSeconds: 60 * 60, // 1 hour
     });
+
+    // Emit websocket event
+    const fileEventPayload = {
+      projectId: projectId ?? null,
+      fileId: created.id,
+      actorUserId: userId,
+      fileName,
+      ocrText,
+      url: downloadUrl,
+    };
+
+    if (projectId) {
+      emitFileUpdatedToProject(projectId, fileEventPayload);
+    } else {
+      emitFileUpdatedToUser(userId, fileEventPayload);
+    }
 
     return NextResponse.json({
       success: true,
@@ -153,6 +212,8 @@ export async function POST(req: NextRequest) {
         name: created.name,
         type: created.type,
         size: created.size,
+        url: downloadUrl,
+        ocrText,
       },
     });
   } catch (err) {

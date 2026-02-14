@@ -44,6 +44,11 @@ import type { ProjectContextResult } from "@/actions/project-context";
 import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { FileAnalysisSheet } from "@/components/ai/file-analysis-sheet";
+import { FileAnalysisWizard } from "@/components/ai/file-analysis-wizard";
+import { useSocket } from "@/hooks/use-socket";
+import type { RealtimeFileEvent } from "@/lib/socket-events";
 
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
@@ -81,6 +86,16 @@ type UploadedFile = {
   size: number;
   status: "uploading" | "analyzing" | "done" | "error";
   error?: string;
+  url?: string;
+  ocrText?: string | null;
+};
+
+type AnalysisFileData = {
+  id: string;
+  name: string;
+  type: string;
+  url: string;
+  ocrText?: string | null;
 };
 
 type PersonalAiChatProps = {
@@ -106,8 +121,31 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [isLoadingBriefing, setIsLoadingBriefing] = useState(false);
   const [projectContext, setProjectContext] = useState<ProjectContextResult | null>(null);
   const [isLoadingContext, setIsLoadingContext] = useState(false);
+  const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
+  const isDesktop = useMediaQuery("(min-width: 640px)");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Real-time file update via websocket
+  const handleFileUpdated = useCallback((event: RealtimeFileEvent) => {
+    setUploadedFiles((prev) =>
+      prev.map((f) =>
+        f.id === event.fileId
+          ? {
+              ...f,
+              ocrText: event.ocrText ?? f.ocrText,
+              url: event.url ?? f.url,
+              status: "done" as const,
+            }
+          : f
+      )
+    );
+  }, []);
+
+  useSocket({
+    enabled: open,
+    onFileUpdated: handleFileUpdated,
+  });
 
   // Project selector state
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
@@ -327,23 +365,24 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         setUploadedFiles((prev) =>
           prev.map((f) =>
             f.id === tempId
-              ? { ...f, id: data.file.id, status: "analyzing" as const }
+              ? {
+                  ...f,
+                  id: data.file.id,
+                  status: "done" as const,
+                  url: data.file.url,
+                  ocrText: data.file.ocrText ?? null,
+                }
               : f
           )
         );
 
-        // Markera som klar efter en kort stund (analysen körs i bakgrunden)
-        setTimeout(() => {
-          setUploadedFiles((prev) =>
-            prev.map((f) =>
-              f.id === data.file.id ? { ...f, status: "done" as const } : f
-            )
-          );
-        }, 2000);
-
-        // Skicka ett meddelande om filen till AI:n
-        sendMessage({
-          text: `Jag har laddat upp filen "${file.name}" (${formatFileSize(file.size)}, ${file.type}). Filen analyseras. Bekräfta att du noterat uppladdningen.`,
+        // Open the file analysis UI instead of auto-analyzing
+        setAnalysisFile({
+          id: data.file.id,
+          name: file.name,
+          type: file.type,
+          url: data.file.url ?? "",
+          ocrText: data.file.ocrText ?? null,
         });
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : "Upload failed";
@@ -444,6 +483,18 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       setInputValue("");
     },
     [inputValue, isLoading, sendMessage]
+  );
+
+  const handleAnalysisComplete = useCallback(
+    (result: { label: string; description: string }) => {
+      const file = analysisFile;
+      if (!file) return;
+      sendMessage({
+        text: `Jag har laddat upp filen "${file.name}" (${file.type}). AI-analys: Etikett: "${result.label}". Beskrivning: "${result.description}". Bekräfta att du noterat uppladdningen.`,
+      });
+      setAnalysisFile(null);
+    },
+    [analysisFile, sendMessage]
   );
 
   useEffect(() => {
@@ -841,31 +892,56 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     </div>
   );
 
+  // File analysis overlay
+  const fileAnalysisUI = analysisFile ? (
+    isDesktop ? (
+      <FileAnalysisSheet
+        open={!!analysisFile}
+        onOpenChange={(open) => { if (!open) setAnalysisFile(null); }}
+        file={analysisFile}
+        onAnalysisComplete={handleAnalysisComplete}
+      />
+    ) : (
+      <FileAnalysisWizard
+        open={!!analysisFile}
+        onOpenChange={(open) => { if (!open) setAnalysisFile(null); }}
+        file={analysisFile}
+        onAnalysisComplete={handleAnalysisComplete}
+      />
+    )
+  ) : null;
+
   // Docked mode: render as a static sidebar panel
   if (mode === "docked") {
     return (
-      <div className="flex h-full w-96 shrink-0 flex-col border-l border-border bg-card">
-        {headerContent}
-        {chatBody}
-      </div>
+      <>
+        <div className="flex h-full w-96 shrink-0 flex-col border-l border-border bg-card">
+          {headerContent}
+          {chatBody}
+        </div>
+        {fileAnalysisUI}
+      </>
     );
   }
 
   // Sheet mode: render as overlay (default)
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="flex w-full flex-col border-l border-border bg-card p-0 sm:max-w-md"
-      >
-        <SheetHeader className="border-b border-border px-4 py-3">
-          <SheetTitle className="flex items-center gap-2 text-left">
-            <MessageCircle className="size-5 text-muted-foreground" />
-            {t("title")}
-          </SheetTitle>
-        </SheetHeader>
-        {chatBody}
-      </SheetContent>
-    </Sheet>
+    <>
+      <Sheet open={open} onOpenChange={onOpenChange}>
+        <SheetContent
+          side="right"
+          className="flex w-full flex-col border-l border-border bg-card p-0 sm:max-w-md"
+        >
+          <SheetHeader className="border-b border-border px-4 py-3">
+            <SheetTitle className="flex items-center gap-2 text-left">
+              <MessageCircle className="size-5 text-muted-foreground" />
+              {t("title")}
+            </SheetTitle>
+          </SheetHeader>
+          {chatBody}
+        </SheetContent>
+      </Sheet>
+      {fileAnalysisUI}
+    </>
   );
 }

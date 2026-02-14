@@ -2699,7 +2699,10 @@ export const FileScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   projectId: 'projectId',
-  uploadedById: 'uploadedById'
+  uploadedById: 'uploadedById',
+  userDescription: 'userDescription',
+  aiAnalysis: 'aiAnalysis',
+  label: 'label'
 } as const
 
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]

@@ -25,6 +25,7 @@ type UseSocketOptions = {
   onTimeEntryUpdated?: (event: RealtimeTimeEntryEvent) => void;
   onTimeEntryDeleted?: (event: RealtimeTimeEntryEvent) => void;
   onFileCreated?: (event: RealtimeFileEvent) => void;
+  onFileUpdated?: (event: RealtimeFileEvent) => void;
   onFileDeleted?: (event: RealtimeFileEvent) => void;
   onProjectUpdated?: (event: RealtimeProjectUpdatedEvent) => void;
   onNoteCreated?: (event: RealtimeNoteEvent) => void;
@@ -64,6 +65,7 @@ export function useSocket({
   onTimeEntryUpdated,
   onTimeEntryDeleted,
   onFileCreated,
+  onFileUpdated,
   onFileDeleted,
   onProjectUpdated,
   onNoteCreated,
@@ -125,6 +127,9 @@ export function useSocket({
     const handleFileCreated = (payload: RealtimeFileEvent) => {
       onFileCreated?.(payload);
     };
+    const handleFileUpdated = (payload: RealtimeFileEvent) => {
+      onFileUpdated?.(payload);
+    };
     const handleFileDeleted = (payload: RealtimeFileEvent) => {
       onFileDeleted?.(payload);
     };
@@ -161,6 +166,7 @@ export function useSocket({
     connection.on(SOCKET_EVENTS.timeEntryUpdated, handleTimeEntryUpdated);
     connection.on(SOCKET_EVENTS.timeEntryDeleted, handleTimeEntryDeleted);
     connection.on(SOCKET_EVENTS.fileCreated, handleFileCreated);
+    connection.on(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
     connection.on(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
     connection.on(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
     connection.on(SOCKET_EVENTS.noteCreated, handleNoteCreated);
@@ -184,6 +190,7 @@ export function useSocket({
       connection.off(SOCKET_EVENTS.timeEntryUpdated, handleTimeEntryUpdated);
       connection.off(SOCKET_EVENTS.timeEntryDeleted, handleTimeEntryDeleted);
       connection.off(SOCKET_EVENTS.fileCreated, handleFileCreated);
+      connection.off(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
       connection.off(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
       connection.off(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
       connection.off(SOCKET_EVENTS.noteCreated, handleNoteCreated);
@@ -200,6 +207,7 @@ export function useSocket({
     enabled,
     mobileToken,
     onFileCreated,
+    onFileUpdated,
     onFileDeleted,
     onNoteCategoryCreated,
     onNoteCategoryDeleted,

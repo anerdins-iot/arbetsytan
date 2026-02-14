@@ -16,6 +16,7 @@ export const SOCKET_EVENTS = {
   noteCategoryCreated: "noteCategory:created",
   noteCategoryUpdated: "noteCategory:updated",
   noteCategoryDeleted: "noteCategory:deleted",
+  fileUpdated: "file:updated",
 } as const;
 
 export type RealtimeNotification = {
@@ -40,9 +41,13 @@ export type RealtimeTimeEntryEvent = {
 };
 
 export type RealtimeFileEvent = {
-  projectId: string;
+  projectId: string | null;
   fileId: string;
   actorUserId: string;
+  fileName?: string;
+  ocrText?: string | null;
+  label?: string | null;
+  url?: string;
 };
 
 export type RealtimeProjectUpdatedEvent = {
