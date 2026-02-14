@@ -382,14 +382,19 @@ function buildSystemPrompt(opts: {
   const searchStrategy = `
 SÖKSTRATEGI - Använd denna ordning när användaren söker efter något:
 1. searchFiles - Semantisk sökning i alla dokument (PDF, ritningar med OCR-text)
-2. getProjectFiles/listFiles - Lista filer i specifikt projekt (om projektId känt)
+2. getProjectFiles/listFiles - Lista filer i specifikt projekt (om projectId känt)
 3. searchNotes/searchPersonalNotes - Sök i anteckningar
 4. getProjectTasks/getUserTasks - Kolla uppgifter
 5. getProjectNotes/getPersonalNotes - Lista alla anteckningar
 
 GE INTE UPP efter ett misslyckat verktygsanrop! Prova nästa verktyg i listan.
 Om searchFiles ger 0 resultat, prova getProjectFiles för att lista alla filer och sök manuellt.
-Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.`;
+Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.
+
+EXEMPEL på sökfrågor:
+- "elschema för badrum" → searchFiles först, sedan getProjectFiles om inga träffar
+- "offert från Bygg AB" → searchFiles, sedan searchNotes
+- "ventilationsritning plan 2" → searchFiles med projektkontext`;
 
   // Document search guidance - always instruct, but especially when no project context
   const searchGuidance = projectId

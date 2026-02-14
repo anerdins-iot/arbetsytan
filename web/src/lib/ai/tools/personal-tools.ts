@@ -1112,7 +1112,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const searchFiles = tool({
     description:
-      "ANVÄND DETTA VERKTYG när användaren frågar om dokument, filer, ritningar, eller specifikt innehåll (t.ex. 'U20', 'gruppförteckning', 'faktura'). Söker i alla projekt användaren har tillgång till PLUS personliga filer. Semantisk sökning i OCR-text från PDF:er och ritningar. Returnerar matchande dokument med projektnamn och relevanta utdrag.",
+      "ANVÄND DETTA VERKTYG när användaren frågar om dokument, filer, ritningar, eller specifikt innehåll (t.ex. 'elschema', 'ventilationsritning', 'offert'). Söker i alla projekt användaren har tillgång till PLUS personliga filer. Semantisk sökning i OCR-text från PDF:er och ritningar. Returnerar matchande dokument med projektnamn och relevanta utdrag.",
     inputSchema: toolInputSchema(z.object({
       query: z.string().describe("Sökfråga eller nyckelord att söka efter i dokumentens innehåll"),
       limit: z.number().min(1).max(15).optional().default(8),
