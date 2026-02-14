@@ -33,12 +33,16 @@ const DIRECT_TENANT_MODELS = [
   "noteCategory",
 ] as const;
 
-/** Models scoped via direct project relation. */
+/** Models scoped via direct project relation (ALWAYS have projectId). */
 const PROJECT_SCOPED_MODELS = [
   "task",
   "activityLog",
-  "file",
   "timeEntry",
+] as const;
+
+/** Models that can be personal (projectId null) or project-scoped. */
+const PROJECT_OR_PERSONAL_MODELS = [
+  "file",
   "note",
 ] as const;
 
@@ -64,6 +68,21 @@ const NOTIFICATION_TENANT_OR = (tenantId: string) => ({
 /** Message is scoped via conversation (same OR as Conversation). */
 const MESSAGE_CONVERSATION_FILTER = (tenantId: string) => ({
   conversation: { OR: [{ projectId: null }, { project: { tenantId } }] } as const,
+});
+
+/** File/Note: project.tenantId or personal (projectId null + uploadedBy user in tenant). */
+const FILE_TENANT_OR = (tenantId: string) => ({
+  OR: [
+    { project: { tenantId } },
+    { projectId: null, uploadedBy: { memberships: { some: { tenantId } } } },
+  ] as const,
+});
+
+const NOTE_TENANT_OR = (tenantId: string) => ({
+  OR: [
+    { project: { tenantId } },
+    { projectId: null, createdBy: { memberships: { some: { tenantId } } } },
+  ] as const,
 });
 
 /** Build nested where key from dot path, e.g. "task.project" -> { task: { project: { tenantId } } }. */
@@ -141,6 +160,28 @@ function mergeWhereNotificationTenant<T extends { where?: unknown }>(
   } as T;
 }
 
+function mergeWhereFileTenant<T extends { where?: unknown }>(
+  args: T,
+  tenantId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { AND: [existing, FILE_TENANT_OR(tenantId)] },
+  } as T;
+}
+
+function mergeWhereNoteTenant<T extends { where?: unknown }>(
+  args: T,
+  tenantId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { AND: [existing, NOTE_TENANT_OR(tenantId)] },
+  } as T;
+}
+
 function createTenantExtension(tenantId: string) {
   const query = {} as Record<
     string,
@@ -208,7 +249,7 @@ function createTenantExtension(tenantId: string) {
     };
   }
 
-  // 2. Handle models with direct project relation
+  // 2. Handle models with direct project relation (always have projectId)
   for (const model of PROJECT_SCOPED_MODELS) {
     query[model] = {
       findMany: ({ args, query: run }) =>
@@ -229,6 +270,56 @@ function createTenantExtension(tenantId: string) {
       // but they are usually created connected to a project that is already tenant-checked.
     };
   }
+
+  // 2a. File: can be personal (projectId null) or project-scoped
+  query.file = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    update: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
+    // create doesn't need tenant filter - caller provides projectId or not
+  };
+
+  // 2a2. Note: can be personal (projectId null) or project-scoped
+  query.note = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    update: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    updateMany: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
+    // create doesn't need tenant filter - caller provides projectId or not
+  };
 
   // 2b. Comment is scoped via task.project (no direct project relation)
   query[COMMENT_MODEL] = {
