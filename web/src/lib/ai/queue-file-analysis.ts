@@ -25,12 +25,13 @@ type QueueFileAnalysisParams = {
   projectId?: string;
   userId: string;
   ocrText: string;
+  userDescription: string;
 };
 
 const IMAGE_TYPES = /^image\/(jpeg|png|gif|webp)/i;
 
 const SYSTEM_PROMPT = `Du är en assistent som skapar korta, beskrivande etiketter för filer.
-Baserat på all tillgänglig information (OCR-text, bildanalys), skapa:
+Baserat på all tillgänglig information (OCR-text, bildanalys, användarens beskrivning), skapa:
 1. En kort etikett (max 50 tecken) som sammanfattar filens innehåll.
 2. En längre beskrivning (1-3 meningar) som förklarar vad filen innehåller.
 Svara ALLTID i JSON-format: {"label": "...", "description": "..."}`;
@@ -60,12 +61,13 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
     projectId,
     userId,
     ocrText,
+    userDescription,
   } = params;
 
   logger.info("Starting background file analysis", { fileId, fileName, fileType });
 
   let label = fileName.slice(0, 50);
-  let description = ocrText.slice(0, 300) || "Ingen beskrivning tillgänglig.";
+  let description = userDescription || ocrText.slice(0, 300) || "Ingen beskrivning tillgänglig.";
   let visionAnalysis = "";
 
   // Kör vision-analys för bilder
@@ -77,7 +79,7 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
         buffer,
         fileType,
         ocrText || undefined,
-        undefined
+        userDescription || undefined
       );
       logger.info("Vision analysis completed", { fileId, analysisLength: visionAnalysis.length });
     } catch (err) {
@@ -89,7 +91,8 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
   }
 
   // Generera label + description med AI
-  if (process.env.ANTHROPIC_API_KEY && (ocrText.trim() || visionAnalysis)) {
+  const hasContent = ocrText.trim() || userDescription.trim() || visionAnalysis;
+  if (process.env.ANTHROPIC_API_KEY && hasContent) {
     try {
       const contextParts: string[] = [];
       if (visionAnalysis) {
@@ -97,6 +100,9 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
       }
       if (ocrText.trim()) {
         contextParts.push(`OCR-text:\n${ocrText.trim()}`);
+      }
+      if (userDescription.trim()) {
+        contextParts.push(`Användarens beskrivning:\n${userDescription.trim()}`);
       }
       const context = contextParts.join("\n\n") || `Filnamn: ${fileName}`;
 

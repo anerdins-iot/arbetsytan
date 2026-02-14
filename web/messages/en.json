@@ -240,8 +240,10 @@
       "back": "Back"
     },
     "ocrReview": {
-      "title": "Review extracted text",
-      "noTextHint": "No text was extracted. You can add text manually if needed.",
+      "title": "Review file",
+      "noTextHint": "Add text or description to make the file searchable.",
+      "descriptionLabel": "Your description",
+      "descriptionPlaceholder": "Describe what the file contains…",
       "save": "Save",
       "saving": "Saving…",
       "skip": "Skip"

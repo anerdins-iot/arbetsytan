@@ -11,6 +11,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { OcrEditor } from "@/components/ai/ocr-editor";
 
 const IMAGE_TYPES = /^image\/(jpeg|png|gif|webp)/i;
@@ -41,10 +43,11 @@ export function OcrReviewDialog({
 }: OcrReviewDialogProps) {
   const t = useTranslations("personalAi.ocrReview");
   const [ocrText, setOcrText] = useState(file.ocrText ?? "");
+  const [userDescription, setUserDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   const isImage = IMAGE_TYPES.test(file.type);
-  const hasContent = ocrText.trim().length > 0;
+  const hasContent = ocrText.trim().length > 0 || userDescription.trim().length > 0;
 
   const handleSave = useCallback(async () => {
     if (isSaving) return;
@@ -58,6 +61,7 @@ export function OcrReviewDialog({
         body: JSON.stringify({
           fileId: file.id,
           ocrText: ocrText.trim(),
+          userDescription: userDescription.trim(),
         }),
       });
 
@@ -77,7 +81,7 @@ export function OcrReviewDialog({
     } finally {
       setIsSaving(false);
     }
-  }, [file.id, ocrText, isSaving, onComplete, onOpenChange]);
+  }, [file.id, ocrText, userDescription, isSaving, onComplete, onOpenChange]);
 
   const handleSkip = useCallback(() => {
     onComplete();
@@ -121,6 +125,21 @@ export function OcrReviewDialog({
 
           {/* OCR-editor */}
           <OcrEditor value={ocrText} onChange={setOcrText} />
+
+          {/* Egen beskrivning */}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="user-description" className="text-sm font-medium">
+              {t("descriptionLabel")}
+            </Label>
+            <Textarea
+              id="user-description"
+              value={userDescription}
+              onChange={(e) => setUserDescription(e.target.value)}
+              placeholder={t("descriptionPlaceholder")}
+              rows={3}
+              className="resize-none text-sm"
+            />
+          </div>
 
           {!hasContent && (
             <p className="text-xs text-muted-foreground">

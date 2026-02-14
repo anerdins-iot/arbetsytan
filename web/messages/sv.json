@@ -240,8 +240,10 @@
       "back": "Tillbaka"
     },
     "ocrReview": {
-      "title": "Granska extraherad text",
-      "noTextHint": "Ingen text extraherades. Du kan lägga till text manuellt om du vill.",
+      "title": "Granska fil",
+      "noTextHint": "Lägg till text eller beskrivning för att göra filen sökbar.",
+      "descriptionLabel": "Egen beskrivning",
+      "descriptionPlaceholder": "Beskriv vad filen innehåller…",
       "save": "Spara",
       "saving": "Sparar…",
       "skip": "Hoppa över"

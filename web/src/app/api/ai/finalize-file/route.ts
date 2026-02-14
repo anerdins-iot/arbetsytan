@@ -18,6 +18,7 @@ import { queueFileAnalysis } from "@/lib/ai/queue-file-analysis";
 const bodySchema = z.object({
   fileId: z.string().min(1, "fileId is required"),
   ocrText: z.string(),
+  userDescription: z.string().optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { fileId, ocrText } = parsed.data;
+    const { fileId, ocrText, userDescription } = parsed.data;
 
     // Hämta fil och verifiera åtkomst
     const file = await prisma.file.findUnique({
@@ -73,16 +74,20 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Uppdatera OCR-text i DB
+    // Uppdatera OCR-text och user description i DB
     const db = tenantDb(tenantId);
     await db.file.update({
       where: { id: fileId },
-      data: { ocrText: ocrText || null },
+      data: {
+        ocrText: ocrText || null,
+        userDescription: userDescription || null,
+      },
     });
 
-    logger.info("File OCR text updated", {
+    logger.info("File OCR text and description updated", {
       fileId,
       ocrTextLength: ocrText.length,
+      userDescriptionLength: userDescription?.length ?? 0,
       projectId: file.projectId,
     });
 
@@ -97,6 +102,7 @@ export async function POST(req: NextRequest) {
       projectId: file.projectId ?? undefined,
       userId,
       ocrText,
+      userDescription: userDescription ?? "",
     });
 
     return NextResponse.json({ success: true });
