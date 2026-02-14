@@ -346,6 +346,14 @@ export async function processFileOcr(params: {
     const pages: OcrPage[] = [{ index: 0, markdown: text }];
     const textChunks = chunkText(pages);
 
+    logger.info("processFileOcr: chunking result", {
+      fileId,
+      projectId,
+      tenantId,
+      textLength: text.length,
+      chunkCount: textChunks.length,
+    });
+
     if (textChunks.length > 0) {
       await db.documentChunk.deleteMany({
         where: { fileId },
@@ -364,6 +372,11 @@ export async function processFileOcr(params: {
         });
       }
 
+      logger.info("processFileOcr: chunks created in database", {
+        fileId,
+        chunkCount: textChunks.length,
+      });
+
       if (process.env.OPENAI_API_KEY) {
         queueEmbeddingProcessing(fileId, tenantId);
       } else {
@@ -371,9 +384,14 @@ export async function processFileOcr(params: {
           fileId,
         });
       }
+    } else {
+      logger.warn("processFileOcr: NO CHUNKS CREATED - text too short or chunking failed", {
+        fileId,
+        textLength: text.length,
+      });
     }
 
-    logger.info("File processing completed for file", {
+    logger.info("processFileOcr: completed", {
       fileId,
       chunkCount: textChunks.length,
       source,

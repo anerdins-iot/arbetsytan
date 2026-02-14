@@ -1112,9 +1112,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const searchFiles = tool({
     description:
-      "Söka i dokument (PDF, ritningar) över alla projekt användaren har tillgång till samt personliga filer. Semantisk sökning; ange en fråga eller sökord.",
+      "ANVÄND DETTA VERKTYG när användaren frågar om dokument, filer, ritningar, eller specifikt innehåll (t.ex. 'U20', 'gruppförteckning', 'faktura'). Söker i alla projekt användaren har tillgång till PLUS personliga filer. Semantisk sökning i OCR-text från PDF:er och ritningar. Returnerar matchande dokument med projektnamn och relevanta utdrag.",
     inputSchema: toolInputSchema(z.object({
-      query: z.string().describe("Sökfråga eller nyckelord"),
+      query: z.string().describe("Sökfråga eller nyckelord att söka efter i dokumentens innehåll"),
       limit: z.number().min(1).max(15).optional().default(8),
     })),
     execute: async ({ query, limit }) => {
@@ -1124,7 +1124,38 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           select: { projectId: true },
         })
       ).map((p) => p.projectId);
-      return searchDocumentsAcrossProjects({ tenantId, projectIds, query, limit, userId });
+
+      const searchResult = await searchDocumentsAcrossProjects({ tenantId, projectIds, query, limit, userId });
+
+      // If no results, provide helpful feedback
+      if (searchResult.results.length === 0) {
+        // Check if there are any files with OCR text at all
+        const fileCount = await db.file.count({
+          where: {
+            OR: [
+              { projectId: { in: projectIds.length > 0 ? projectIds : ["__none__"] } },
+              { projectId: null, uploadedById: userId },
+            ],
+            ocrText: { not: null },
+          },
+        });
+
+        if (fileCount === 0) {
+          return {
+            __searchResults: true as const,
+            results: [],
+            message: "Inga dokument med sökbar text hittades. Filer måste ha OCR-text för att kunna sökas.",
+          };
+        }
+
+        return {
+          __searchResults: true as const,
+          results: [],
+          message: `Inga dokument matchade sökningen "${query}". Prova andra sökord eller använd getProjectFiles för att lista filer i ett specifikt projekt.`,
+        };
+      }
+
+      return searchResult;
     },
   });
 

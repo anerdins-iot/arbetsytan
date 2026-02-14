@@ -378,10 +378,30 @@ function buildSystemPrompt(opts: {
     unreadHint,
   );
 
+  // Search strategy guidance - helps AI find information systematically
+  const searchStrategy = `
+SÖKSTRATEGI - Använd denna ordning när användaren söker efter något:
+1. searchFiles - Semantisk sökning i alla dokument (PDF, ritningar med OCR-text)
+2. getProjectFiles/listFiles - Lista filer i specifikt projekt (om projektId känt)
+3. searchNotes/searchPersonalNotes - Sök i anteckningar
+4. getProjectTasks/getUserTasks - Kolla uppgifter
+5. getProjectNotes/getPersonalNotes - Lista alla anteckningar
+
+GE INTE UPP efter ett misslyckat verktygsanrop! Prova nästa verktyg i listan.
+Om searchFiles ger 0 resultat, prova getProjectFiles för att lista alla filer och sök manuellt.
+Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.`;
+
+  // Document search guidance - always instruct, but especially when no project context
+  const searchGuidance = projectId
+    ? ""
+    : " VIKTIGT: När användaren frågar om dokument, filer, ritningar, eller specifikt innehåll — använd sökstrategin ovan. Svara ALDRIG 'jag hittade inget' utan att ha provat minst 2-3 verktyg!";
+
   parts.push(
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
-    "Om du inte vet svaret, säg det istället för att gissa.",
+    "Om du inte vet svaret efter att ha sökt ordentligt, säg det.",
+    searchStrategy,
+    searchGuidance,
     summaryBlock
   );
 

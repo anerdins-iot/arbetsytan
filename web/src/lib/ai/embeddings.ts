@@ -9,7 +9,8 @@ const BATCH_SIZE = 20;
 function getOpenAIClient(): OpenAI {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    throw new Error("OPENAI_API_KEY is not set");
+    logger.warn("OPENAI_API_KEY is not set - semantic search will not work. Embeddings cannot be generated.");
+    throw new Error("OPENAI_API_KEY is not set - embeddings cannot be generated");
   }
   return new OpenAI({ apiKey });
 }
@@ -73,11 +74,30 @@ export async function storeChunkEmbedding(
  * Process all chunks for a file: generate embeddings and store them.
  * Kräver tenantId för tenant-isolerad åtkomst (endast chunks i rätt tenant).
  * Använder raw SQL för att filtrera på embedding IS NULL (pgvector-fält stöds inte i Prisma WhereInput).
+ *
+ * Kastar fel om något går fel - INGA tysta fel!
  */
 export async function processFileEmbeddings(
   fileId: string,
   tenantId: string
 ): Promise<void> {
+  logger.info("processFileEmbeddings: starting", { fileId, tenantId });
+
+  // First check if chunks exist at all for this file
+  const allChunks = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+    `SELECT "id" FROM "DocumentChunk" WHERE "fileId" = $1 AND "tenantId" = $2`,
+    fileId,
+    tenantId
+  );
+
+  if (allChunks.length === 0) {
+    logger.warn("processFileEmbeddings: NO CHUNKS EXIST for file - OCR may have failed or chunks were never created", {
+      fileId,
+      tenantId,
+    });
+    return;
+  }
+
   const chunks = await prisma.$queryRawUnsafe<
     Array<{ id: string; content: string }>
   >(
@@ -88,25 +108,33 @@ export async function processFileEmbeddings(
   );
 
   if (chunks.length === 0) {
-    logger.info("No chunks to embed for file", { fileId });
+    logger.info("processFileEmbeddings: all chunks already have embeddings", {
+      fileId,
+      totalChunks: allChunks.length,
+    });
     return;
   }
 
-  logger.info("Processing embeddings for file", {
+  logger.info("processFileEmbeddings: generating embeddings", {
     fileId,
-    chunkCount: chunks.length,
+    chunksToEmbed: chunks.length,
+    totalChunks: allChunks.length,
   });
 
   const texts = chunks.map((chunk) => chunk.content);
   const embeddings = await generateEmbeddings(texts);
 
+  if (embeddings.length !== chunks.length) {
+    throw new Error(`Embedding count mismatch: got ${embeddings.length}, expected ${chunks.length}`);
+  }
+
   for (let i = 0; i < chunks.length; i++) {
     await storeChunkEmbedding(chunks[i].id, embeddings[i], tenantId);
   }
 
-  logger.info("Embeddings stored for file", {
+  logger.info("processFileEmbeddings: completed successfully", {
     fileId,
-    chunkCount: chunks.length,
+    embeddedChunks: chunks.length,
   });
 }
 
@@ -324,17 +352,37 @@ export async function searchDocumentsGlobal(
 /**
  * Queue embedding processing for a file in the background.
  * Kräver tenantId för tenant-isolerad bearbetning.
+ *
+ * OBS: Fel loggas men kastas inte vidare (bakgrundsprocess).
+ * Kontrollera server-loggar för "embedding processing failed".
  */
 export function queueEmbeddingProcessing(
   fileId: string,
   tenantId: string
 ): void {
-  processFileEmbeddings(fileId, tenantId).catch((error) => {
-    logger.error("Background embedding processing failed", {
-      fileId,
-      error: error instanceof Error ? error.message : String(error),
+  logger.info("Queueing embedding processing", { fileId, tenantId });
+
+  processFileEmbeddings(fileId, tenantId)
+    .then(() => {
+      logger.info("Embedding processing completed successfully", { fileId, tenantId });
+    })
+    .catch((error) => {
+      // KRITISKT: Detta fel innebär att semantisk sökning INTE kommer fungera för denna fil!
+      logger.error("EMBEDDING PROCESSING FAILED - semantic search will not work for this file", {
+        fileId,
+        tenantId,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+      });
     });
-  });
+}
+
+/**
+ * Check if embedding generation is configured (OPENAI_API_KEY is set).
+ * Useful for showing warnings in UI when semantic search won't work.
+ */
+export function isEmbeddingConfigured(): boolean {
+  return !!process.env.OPENAI_API_KEY?.trim();
 }
 
 export { EMBEDDING_MODEL, EMBEDDING_DIMENSIONS };
