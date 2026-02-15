@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { getProjectNotesCore } from "@/services/note-service";
 
 // ─────────────────────────────────────────
 // Types
@@ -128,32 +129,26 @@ export async function getNotes(
   try {
     const { userId, tenantId } = await requireAuth();
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
-    const where: Record<string, unknown> = { projectId };
-    if (options?.category) {
-      where.category = options.category;
-    }
-    if (options?.search) {
-      // Use AND to combine search with other filters
-      where.AND = [
-        {
-          OR: [
-            { title: { contains: options.search, mode: "insensitive" } },
-            { content: { contains: options.search, mode: "insensitive" } },
-          ],
-        },
-      ];
-    }
+    const notes = await getProjectNotesCore(
+      { tenantId, userId },
+      projectId,
+      { category: options?.category, search: options?.search, limit: options?.limit ?? 50 }
+    );
 
-    const notes = await db.note.findMany({
-      where,
-      include: noteInclude,
-      orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-      take: options?.limit ?? 50,
-    });
-
-    return { success: true, notes: notes.map(formatNote) };
+    return {
+      success: true,
+      notes: notes.map((n) => formatNote({
+        id: n.id,
+        title: n.title,
+        content: n.content,
+        category: n.category,
+        isPinned: n.isPinned,
+        createdAt: n.createdAt,
+        updatedAt: n.updatedAt,
+        createdBy: n.createdBy,
+      })),
+    };
   } catch {
     return { success: false, error: "Kunde inte hämta anteckningar." };
   }

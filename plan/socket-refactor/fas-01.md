@@ -153,4 +153,4 @@ GODKÄNT eller UNDERKÄNT med lista över avvikelser.
 - [x] Block 1.1: SocketProvider + useSocketEvent skapad
 - [x] Block 1.2: Monterad i DashboardShell
 - [x] Block 1.3: Verifiering godkänd (Gemini)
-- [ ] Commit (slås ihop med Fas 2)
+- [x] Commit (slog ihop med Fas 2): `df909ee refactor: Replace useSocket hook with SocketProvider context`

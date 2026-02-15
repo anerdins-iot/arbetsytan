@@ -8,6 +8,14 @@ import { openai } from "@ai-sdk/openai";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject, requirePermission } from "@/lib/auth";
 import { userDb, tenantDb, prisma, type TenantScopedClient } from "@/lib/db";
+import { validateDatabaseId } from "@/services/types";
+import { getProjectsCore, getProjectDetailCore } from "@/services/project-service";
+import { getProjectTasksCore, getUserTasksCore } from "@/services/task-service";
+import { getProjectFilesCore, getPersonalFilesCore } from "@/services/file-service";
+import { getCommentsCore } from "@/services/comment-service";
+import { getTimeEntriesCore, getTimeSummaryCore, getMyTimeEntriesCore } from "@/services/time-entry-service";
+import { getProjectNotesCore, getPersonalNotesCore } from "@/services/note-service";
+import { getProjectMembersCore, getAvailableMembersCore } from "@/services/member-service";
 import {
   createProject as createProjectAction,
   updateProject as updateProjectAction,
@@ -62,6 +70,47 @@ import {
 import {
   deleteFile as deleteFileAction,
 } from "@/actions/files";
+import {
+  createComment as createCommentAction,
+  updateComment as updateCommentAction,
+  deleteComment as deleteCommentAction,
+} from "@/actions/comments";
+import {
+  createTimeEntry as createTimeEntryAction,
+  updateTimeEntry as updateTimeEntryAction,
+  deleteTimeEntry as deleteTimeEntryAction,
+} from "@/actions/time-entries";
+import {
+  createNote as createNoteAction,
+  updateNote as updateNoteAction,
+  deleteNote as deleteNoteAction,
+} from "@/actions/notes";
+import {
+  createPersonalNote as createPersonalNoteAction,
+  updatePersonalNote as updatePersonalNoteAction,
+  deletePersonalNote as deletePersonalNoteAction,
+} from "@/actions/personal";
+import {
+  assignTask as assignTaskAction,
+  unassignTask as unassignTaskAction,
+} from "@/actions/tasks";
+import {
+  toggleNotePin as toggleNotePinAction,
+} from "@/actions/notes";
+import {
+  togglePersonalNotePin as togglePersonalNotePinAction,
+} from "@/actions/personal";
+import {
+  getAutomation as getAutomationAction,
+  updateAutomation as updateAutomationAction,
+  pauseAutomation as pauseAutomationAction,
+  resumeAutomation as resumeAutomationAction,
+} from "@/actions/automations";
+import {
+  getNotifications as getNotificationsAction,
+  markNotificationRead as markNotificationReadAction,
+  markAllNotificationsRead as markAllNotificationsReadAction,
+} from "@/actions/notifications";
 import { deletePersonalFile as deletePersonalFileAction } from "@/actions/personal";
 import {
   exportTimeReportExcel,
@@ -75,24 +124,6 @@ export type PersonalToolsContext = {
   userId: string;
 };
 
-// Validera att ett ID ser ut som ett giltigt databasid (cuid eller liknande)
-// och INTE som ett filnamn eller projektnamn
-function validateDatabaseId(value: string, fieldName: string): { valid: true } | { valid: false; error: string } {
-  // Filnamn har filändelser
-  if (/\.(jpe?g|png|gif|webp|pdf|docx?|xlsx?|txt|csv)$/i.test(value)) {
-    return { valid: false, error: `${fieldName} "${value}" ser ut som ett filnamn. Använd ID:t (t.ex. från listProjects eller getPersonalFiles).` };
-  }
-  // ID:n är vanligtvis korta alfanumeriska strängar
-  if (value.length > 50) {
-    return { valid: false, error: `${fieldName} "${value.slice(0, 30)}..." är för långt. Använd det korta ID:t.` };
-  }
-  // Projektnamn har ofta mellanslag och svenska tecken
-  if (/\s/.test(value) || /[åäöÅÄÖ]/.test(value)) {
-    return { valid: false, error: `${fieldName} "${value}" ser ut som ett namn, inte ett ID. Använd ID:t från listProjects.` };
-  }
-  return { valid: true };
-}
-
 export function createPersonalTools(ctx: PersonalToolsContext) {
   const { db, tenantId, userId } = ctx;
 
@@ -104,13 +135,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       _: z.string().optional().describe("Ignored"),
     })),
     execute: async () => {
-      const projects = await db.project.findMany({
-        where: {
-          projectMembers: { some: { membership: { userId } } },
-        },
-        select: { id: true, name: true, status: true },
-        orderBy: { name: "asc" },
-      });
+      const projects = await getProjectsCore(
+        { tenantId, userId },
+        { includeTaskCount: false }
+      );
       return projects.map((p) => ({ id: p.id, name: p.name, status: p.status }));
     },
   });
@@ -241,37 +269,16 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       limit: z.number().min(1).max(50).optional().default(30),
     })),
     execute: async ({ limit }) => {
-      const projectIds = (
-        await db.projectMember.findMany({
-          where: { membership: { userId } },
-          select: { projectId: true },
-        })
-      ).map((p) => p.projectId);
-      if (projectIds.length === 0) return { tasks: [], projects: [] };
-      const tasks = await db.task.findMany({
-        where: { projectId: { in: projectIds } },
-        include: {
-          project: { select: { id: true, name: true } },
-          assignments: {
-            include: {
-              membership: {
-                include: { user: { select: { name: true, email: true } } },
-              },
-            },
-          },
-        },
-        orderBy: [{ deadline: "asc" }, { createdAt: "desc" }],
-        take: limit,
-      });
+      const tasks = await getUserTasksCore({ tenantId, userId }, { limit });
       return tasks.map((t) => ({
         id: t.id,
         title: t.title,
         status: t.status,
         priority: t.priority,
         deadline: t.deadline?.toISOString() ?? null,
-        projectName: t.project.name,
-        projectId: t.project.id,
-        assignees: t.assignments.map((a) => a.membership.user.name ?? a.membership.user.email),
+        projectName: t.projectName,
+        projectId: t.projectId,
+        assignees: t.assignments.map((a) => a.user.name ?? a.user.email),
       }));
     },
   });
@@ -285,21 +292,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, limit = 50 }) => {
       await requireProject(tenantId, pid, userId);
-      const tasks = await db.task.findMany({
-        where: { projectId: pid },
-        include: {
-          project: { select: { id: true, name: true } },
-          assignments: {
-            include: {
-              membership: {
-                include: { user: { select: { id: true, name: true, email: true } } },
-              },
-            },
-          },
-        },
-        orderBy: { createdAt: "desc" },
-        take: limit,
-      });
+      const tasks = await getProjectTasksCore(
+        { tenantId, userId },
+        pid,
+        { includeProject: true, limit }
+      );
       return tasks.map((t) => ({
         id: t.id,
         title: t.title,
@@ -307,12 +304,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         status: t.status,
         priority: t.priority,
         deadline: t.deadline?.toISOString() ?? null,
-        projectName: t.project.name,
-        projectId: t.project.id,
+        projectName: t.projectName,
         assignees: t.assignments.map((a) => ({
           membershipId: a.membershipId,
-          name: a.membership.user.name ?? a.membership.user.email,
-          email: a.membership.user.email,
+          name: a.user.name ?? a.user.email,
+          email: a.user.email,
         })),
       }));
     },
@@ -379,37 +375,23 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       membershipId: z.string().describe("MembershipId för den som ska tilldelas (från listMembers)"),
     })),
     execute: async ({ projectId: pid, taskId, membershipId }) => {
-      await requireProject(tenantId, pid, userId);
+      const result = await assignTaskAction(pid, { taskId, membershipId });
+      if (!result.success) return { error: result.error || "Kunde inte tilldela uppgiften." };
+      return { message: "Uppgiften har tilldelats." };
+    },
+  });
 
-      const task = await db.task.findFirst({
-        where: { id: taskId, projectId: pid },
-        select: { id: true, title: true },
-      });
-      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
-
-      const membership = await db.membership.findFirst({
-        where: { id: membershipId, tenantId },
-        include: { user: { select: { id: true } } },
-      });
-      if (!membership) return { error: "Medlemmen hittades inte." };
-
-      const existing = await db.taskAssignment.findFirst({
-        where: { taskId, membershipId },
-      });
-      if (existing) return { error: "Uppgiften är redan tilldelad denna person." };
-
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      await projectDb.taskAssignment.create({
-        data: { taskId, membershipId },
-      });
-
-      // Efter taskAssignment.create, gör en dummy-uppdatering på task för att trigga realtid
-      await projectDb.task.update({
-        where: { id: taskId },
-        data: { updatedAt: new Date() },
-      });
-
-      return { id: task.id, message: `Uppgiften "${task.title}" har tilldelats.` };
+  const unassignTask = tool({
+    description: "Ta bort en tilldelning från en uppgift. Kräver projectId, taskId och membershipId.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      taskId: z.string().describe("Uppgiftens ID"),
+      membershipId: z.string().describe("MembershipId för den som ska tas bort (från listMembers)"),
+    })),
+    execute: async ({ projectId: pid, taskId, membershipId }) => {
+      const result = await unassignTaskAction(pid, { taskId, membershipId });
+      if (!result.success) return { error: result.error || "Kunde inte ta bort tilldelningen." };
+      return { message: "Tilldelningen har tagits bort." };
     },
   });
 
@@ -457,38 +439,18 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     execute: async ({ projectId: pid, taskId }) => {
       await requireProject(tenantId, pid, userId);
 
-      const task = await db.task.findFirst({
-        where: { id: taskId, projectId: pid },
-        select: { id: true },
-      });
-      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
+      const result = await getCommentsCore({ tenantId, userId }, pid, taskId);
+      if ("error" in result) return { error: "Uppgiften hittades inte i detta projekt." };
 
-      const comments = await db.comment.findMany({
-        where: { taskId },
-        orderBy: { createdAt: "asc" },
-      });
-
-      // Hämta författarinformation
-      const authorIds = [...new Set(comments.map((c) => c.authorId))];
-      const { prisma } = await import("@/lib/db");
-      const users = await prisma.user.findMany({
-        where: { id: { in: authorIds } },
-        select: { id: true, name: true, email: true },
-      });
-      const userMap = new Map(users.map((u) => [u.id, u]));
-
-      return comments.map((c) => {
-        const author = userMap.get(c.authorId);
-        return {
-          id: c.id,
-          content: c.content,
-          createdAt: c.createdAt.toISOString(),
-          updatedAt: c.updatedAt.toISOString(),
-          author: author
-            ? { name: author.name ?? author.email, email: author.email }
-            : { name: "Okänd användare", email: "unknown" },
-        };
-      });
+      return result.comments.map((c) => ({
+        id: c.id,
+        content: c.content,
+        createdAt: c.createdAt.toISOString(),
+        updatedAt: c.updatedAt.toISOString(),
+        author: c.author.name
+          ? { name: c.author.name, email: c.author.email }
+          : { name: "Okänd användare", email: "unknown" },
+      }));
     },
   });
 
@@ -501,26 +463,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       content: z.string().min(1).max(5000).describe("Kommentarens innehåll"),
     })),
     execute: async ({ projectId: pid, taskId, content }) => {
-      await requireProject(tenantId, pid, userId);
-
-      const task = await db.task.findFirst({
-        where: { id: taskId, projectId: pid },
-        select: { id: true, title: true },
-      });
-      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
-
-      const comment = await db.comment.create({
-        data: {
-          content,
-          authorId: userId,
-          task: { connect: { id: taskId } },
-        },
-      });
-
-      return {
-        id: comment.id,
-        message: `Kommentar skapad på uppgiften "${task.title}".`,
-      };
+      const result = await createCommentAction(pid, { taskId, content });
+      if (!result.success) return { error: result.error || "Kunde inte skapa kommentar." };
+      return { message: "Kommentar skapad på uppgiften." };
     },
   });
 
@@ -533,21 +478,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       content: z.string().min(1).max(5000).describe("Nytt innehåll"),
     })),
     execute: async ({ projectId: pid, commentId, content }) => {
-      await requireProject(tenantId, pid, userId);
-
-      const comment = await db.comment.findFirst({
-        where: { id: commentId },
-        include: { task: { select: { projectId: true } } },
-      });
-      if (!comment) return { error: "Kommentaren hittades inte." };
-      if (comment.task.projectId !== pid) return { error: "Kommentaren tillhör inte detta projekt." };
-      if (comment.authorId !== userId) return { error: "Endast författaren kan uppdatera sin egen kommentar." };
-
-      await db.comment.update({
-        where: { id: commentId },
-        data: { content },
-      });
-
+      const result = await updateCommentAction(pid, { commentId, content });
+      if (!result.success) {
+        if (result.error === "FORBIDDEN") return { error: "Endast författaren kan uppdatera sin egen kommentar." };
+        return { error: result.error || "Kunde inte uppdatera kommentar." };
+      }
       return { id: commentId, message: "Kommentar uppdaterad." };
     },
   });
@@ -560,17 +495,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       commentId: z.string().describe("Kommentarens ID"),
     })),
     execute: async ({ projectId: pid, commentId }) => {
-      await requireProject(tenantId, pid, userId);
-
-      const comment = await db.comment.findFirst({
-        where: { id: commentId },
-        include: { task: { select: { projectId: true } } },
-      });
-      if (!comment) return { error: "Kommentaren hittades inte." };
-      if (comment.task.projectId !== pid) return { error: "Kommentaren tillhör inte detta projekt." };
-      if (comment.authorId !== userId) return { error: "Endast författaren kan ta bort sin egen kommentar." };
-
-      await db.comment.delete({ where: { id: commentId } });
+      const result = await deleteCommentAction(pid, { commentId });
+      if (!result.success) {
+        if (result.error === "FORBIDDEN") return { error: "Endast författaren kan ta bort sin egen kommentar." };
+        return { error: result.error || "Kunde inte ta bort kommentar." };
+      }
       return { message: "Kommentar borttagen." };
     },
   });
@@ -587,40 +516,25 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     execute: async ({ projectId: pid, limit = 100 }) => {
       await requireProject(tenantId, pid, userId);
 
-      const entries = await db.timeEntry.findMany({
-        where: { projectId: pid },
-        include: {
-          task: { select: { id: true, title: true } },
-        },
-        orderBy: [{ date: "desc" }, { createdAt: "desc" }],
-        take: limit,
-      });
+      const entries = await getTimeEntriesCore(
+        { tenantId, userId },
+        pid,
+        { limit }
+      );
 
-      // Hämta användardata separat
-      const userIds = [...new Set(entries.map((e) => e.userId))];
-      const { prisma } = await import("@/lib/db");
-      const users = await prisma.user.findMany({
-        where: { id: { in: userIds } },
-        select: { id: true, name: true, email: true },
-      });
-      const userMap = new Map(users.map((u) => [u.id, u]));
-
-      return entries.map((entry) => {
-        const user = userMap.get(entry.userId);
-        return {
-          id: entry.id,
-          taskId: entry.task?.id ?? null,
-          taskTitle: entry.task?.title ?? null,
-          minutes: entry.minutes,
-          hours: Math.floor(entry.minutes / 60),
-          remainingMinutes: entry.minutes % 60,
-          date: entry.date.toISOString().split("T")[0],
-          description: entry.description,
-          userName: user ? (user.name ?? user.email) : "Okänd användare",
-          userId: entry.userId,
-          createdAt: entry.createdAt.toISOString(),
-        };
-      });
+      return entries.map((entry) => ({
+        id: entry.id,
+        taskId: entry.taskId,
+        taskTitle: entry.taskTitle,
+        minutes: entry.minutes,
+        hours: Math.floor(entry.minutes / 60),
+        remainingMinutes: entry.minutes % 60,
+        date: entry.date.toISOString().split("T")[0],
+        description: entry.description,
+        userName: entry.userName,
+        userId: entry.userId,
+        createdAt: entry.createdAt.toISOString(),
+      }));
     },
   });
 
@@ -636,53 +550,35 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       description: z.string().max(500).optional().describe("Beskrivning av arbetet"),
     })),
     execute: async ({ projectId: pid, taskId, minutes, hours, date, description }) => {
-      const projectIdCheck = validateDatabaseId(pid, "projectId");
-      if (!projectIdCheck.valid) return { error: projectIdCheck.error };
-      if (taskId) {
-        const taskIdCheck = validateDatabaseId(taskId, "taskId");
-        if (!taskIdCheck.valid) return { error: taskIdCheck.error };
-      }
+      const idCheck = validateDatabaseId(pid, "projectId");
+      if (!idCheck.valid) return { error: idCheck.error };
+      const taskIdCheck = validateDatabaseId(taskId, "taskId");
+      if (!taskIdCheck.valid) return { error: taskIdCheck.error };
 
-      await requireProject(tenantId, pid, userId);
-
-      if (!minutes && !hours) return { error: "Du måste ange antingen minutes eller hours." };
       const totalMinutes = minutes ?? Math.round((hours ?? 0) * 60);
       if (totalMinutes <= 0) return { error: "Tid måste vara större än 0." };
 
-      const task = await db.task.findFirst({
-        where: { id: taskId, projectId: pid },
-        select: { id: true, title: true },
-      });
-      if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
-
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      const created = await projectDb.timeEntry.create({
-        data: {
-          taskId: task.id,
-          projectId: pid,
-          userId,
-          minutes: totalMinutes,
-          date: new Date(date),
-          description: description?.trim() || null,
-        },
-        include: {
-          task: { select: { title: true } },
-          project: { select: { name: true } },
-        },
+      const result = await createTimeEntryAction({
+        taskId,
+        minutes: totalMinutes,
+        date,
+        description: description?.trim() || undefined,
       });
 
-      const projectName = created.project?.name ?? "Okänt projekt";
+      if (!result.success) return { error: result.error || "Kunde inte skapa tidsrapport." };
+
+      const data = result.data!;
       return {
-        id: created.id,
-        taskId: created.taskId,
-        taskTitle: created.task?.title ?? null,
-        projectName,
-        minutes: created.minutes,
-        hours: Math.floor(created.minutes / 60),
-        remainingMinutes: created.minutes % 60,
-        date: created.date.toISOString().split("T")[0],
-        description: created.description,
-        message: `Tidsrapport på ${totalMinutes} min loggad i projekt "${projectName}". ${Math.floor(created.minutes / 60)}h ${created.minutes % 60}min på ${created.task?.title}`,
+        id: data.id,
+        taskId: data.taskId,
+        taskTitle: data.taskTitle,
+        projectName: data.projectName,
+        minutes: data.minutes,
+        hours: Math.floor(data.minutes / 60),
+        remainingMinutes: data.minutes % 60,
+        date: data.date,
+        description: data.description,
+        message: `Tidsrapport på ${totalMinutes} min loggad i projekt "${data.projectName}".`,
       };
     },
   });
@@ -699,53 +595,31 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Nytt datum YYYY-MM-DD"),
       description: z.string().max(500).optional().describe("Ny beskrivning"),
     })),
-    execute: async ({ projectId: pid, timeEntryId, taskId, minutes, hours, date, description }) => {
-      await requireProject(tenantId, pid, userId);
+    execute: async ({ projectId: _pid, timeEntryId, taskId, minutes, hours, date, description }) => {
+      const updateData: { taskId?: string; minutes?: number; date?: string; description?: string } = {};
+      if (taskId !== undefined) updateData.taskId = taskId;
+      if (minutes !== undefined) updateData.minutes = minutes;
+      else if (hours !== undefined) updateData.minutes = Math.round(hours * 60);
+      if (date !== undefined) updateData.date = date;
+      if (description !== undefined) updateData.description = description.trim() || undefined;
 
-      const existing = await db.timeEntry.findFirst({
-        where: { id: timeEntryId, userId, projectId: pid },
-      });
-      if (!existing) return { error: "Tidsrapporten hittades inte eller saknar behörighet." };
-
-      let targetTaskId = existing.taskId;
-      if (taskId) {
-        const task = await db.task.findFirst({
-          where: { id: taskId, projectId: pid },
-          select: { id: true },
-        });
-        if (!task) return { error: "Den angivna uppgiften hittades inte i projektet." };
-        targetTaskId = task.id;
+      if (updateData.minutes !== undefined && updateData.minutes <= 0) {
+        return { error: "Tid måste vara större än 0." };
       }
 
-      let totalMinutes = existing.minutes;
-      if (hours !== undefined) {
-        totalMinutes = Math.round(hours * 60);
-      } else if (minutes !== undefined) {
-        totalMinutes = minutes;
-      }
-      if (totalMinutes <= 0) return { error: "Tid måste vara större än 0." };
+      const result = await updateTimeEntryAction(timeEntryId, updateData);
+      if (!result.success) return { error: result.error || "Kunde inte uppdatera tidsrapport." };
 
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      const updated = await projectDb.timeEntry.update({
-        where: { id: existing.id },
-        data: {
-          taskId: targetTaskId,
-          minutes: totalMinutes,
-          date: date ? new Date(date) : existing.date,
-          description: description !== undefined ? (description.trim() || null) : existing.description,
-        },
-        include: { task: { select: { title: true } } },
-      });
-
+      const data = result.data!;
       return {
-        id: updated.id,
-        taskId: updated.taskId,
-        taskTitle: updated.task?.title ?? null,
-        minutes: updated.minutes,
-        hours: Math.floor(updated.minutes / 60),
-        remainingMinutes: updated.minutes % 60,
-        date: updated.date.toISOString().split("T")[0],
-        description: updated.description,
+        id: data.id,
+        taskId: data.taskId,
+        taskTitle: data.taskTitle,
+        minutes: data.minutes,
+        hours: Math.floor(data.minutes / 60),
+        remainingMinutes: data.minutes % 60,
+        date: data.date,
+        description: data.description,
         message: "Tidsrapport uppdaterad.",
       };
     },
@@ -758,21 +632,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       projectId: z.string().describe("Projektets ID"),
       timeEntryId: z.string().describe("Tidsrapportens ID"),
     })),
-    execute: async ({ projectId: pid, timeEntryId }) => {
-      await requireProject(tenantId, pid, userId);
-
-      const existing = await db.timeEntry.findFirst({
-        where: { id: timeEntryId, userId, projectId: pid },
-        include: { task: { select: { title: true } } },
-      });
-      if (!existing) return { error: "Tidsrapporten hittades inte eller saknar behörighet." };
-
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      await projectDb.timeEntry.delete({ where: { id: existing.id } });
-
-      return {
-        message: `Tidsrapport borttagen: ${Math.floor(existing.minutes / 60)}h ${existing.minutes % 60}min på ${existing.task?.title ?? "uppgift"}`,
-      };
+    execute: async ({ timeEntryId }) => {
+      const result = await deleteTimeEntryAction(timeEntryId);
+      if (!result.success) return { error: result.error || "Kunde inte ta bort tidsrapport." };
+      return { message: "Tidsrapport borttagen." };
     },
   });
 
@@ -785,75 +648,20 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     execute: async ({ projectId: pid }) => {
       await requireProject(tenantId, pid, userId);
 
-      const entries = await db.timeEntry.findMany({
-        where: { projectId: pid },
-        include: { task: { select: { id: true, title: true } } },
-        orderBy: { date: "desc" },
-      });
-
-      const totalMinutes = entries.reduce((sum, entry) => sum + entry.minutes, 0);
-
-      // Hämta användardata separat
-      const userIds = [...new Set(entries.map((e) => e.userId))];
-      const { prisma } = await import("@/lib/db");
-      const users = await prisma.user.findMany({
-        where: { id: { in: userIds } },
-        select: { id: true, name: true, email: true },
-      });
-      const userMap = new Map(users.map((u) => [u.id, u]));
-
-      // Gruppera per uppgift
-      const taskTotals = new Map<string, { taskId: string; taskTitle: string; totalMinutes: number }>();
-      for (const entry of entries) {
-        if (entry.task) {
-          const current = taskTotals.get(entry.task.id);
-          if (!current) {
-            taskTotals.set(entry.task.id, { taskId: entry.task.id, taskTitle: entry.task.title, totalMinutes: entry.minutes });
-          } else {
-            current.totalMinutes += entry.minutes;
-          }
-        }
-      }
-
-      // Gruppera per person
-      const personTotals = new Map<string, { userId: string; userName: string; totalMinutes: number }>();
-      for (const entry of entries) {
-        const user = userMap.get(entry.userId);
-        const userName = user ? (user.name ?? user.email) : "Okänd användare";
-        const current = personTotals.get(entry.userId);
-        if (!current) {
-          personTotals.set(entry.userId, { userId: entry.userId, userName, totalMinutes: entry.minutes });
-        } else {
-          current.totalMinutes += entry.minutes;
-        }
-      }
-
-      // Gruppera per vecka (måndagar)
-      const weekTotals = new Map<string, number>();
-      for (const entry of entries) {
-        const date = new Date(entry.date);
-        const day = date.getUTCDay();
-        const mondayOffset = day === 0 ? -6 : 1 - day;
-        const monday = new Date(date);
-        monday.setUTCDate(date.getUTCDate() + mondayOffset);
-        const weekKey = monday.toISOString().split("T")[0];
-        weekTotals.set(weekKey, (weekTotals.get(weekKey) ?? 0) + entry.minutes);
-      }
+      const summary = await getTimeSummaryCore({ tenantId, userId }, pid);
 
       return {
-        totalMinutes,
-        totalHours: Math.floor(totalMinutes / 60),
-        totalRemainingMinutes: totalMinutes % 60,
-        byTask: Array.from(taskTotals.values())
-          .sort((a, b) => b.totalMinutes - a.totalMinutes)
-          .map((t) => ({ ...t, hours: Math.floor(t.totalMinutes / 60), remainingMinutes: t.totalMinutes % 60 })),
-        byPerson: Array.from(personTotals.values())
-          .sort((a, b) => b.totalMinutes - a.totalMinutes)
-          .map((p) => ({ ...p, hours: Math.floor(p.totalMinutes / 60), remainingMinutes: p.totalMinutes % 60 })),
-        byWeek: Array.from(weekTotals.entries())
-          .map(([weekStart, mins]) => ({ weekStart, totalMinutes: mins, hours: Math.floor(mins / 60), remainingMinutes: mins % 60 }))
-          .sort((a, b) => b.weekStart.localeCompare(a.weekStart))
-          .slice(0, 12),
+        totalMinutes: summary.totalMinutes,
+        totalHours: `${Math.floor(summary.totalMinutes / 60)}h ${summary.totalMinutes % 60}min`,
+        byTask: summary.byTask.map((t) => ({
+          ...t,
+          hours: `${Math.floor(t.totalMinutes / 60)}h ${t.totalMinutes % 60}min`,
+        })),
+        byPerson: summary.byPerson.map((p) => ({
+          ...p,
+          hours: `${Math.floor(p.totalMinutes / 60)}h ${p.totalMinutes % 60}min`,
+        })),
+        byWeek: summary.byWeek.slice(0, 12),
       };
     },
   });
@@ -1056,26 +864,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const idCheck = validateDatabaseId(pid, "projectId");
       if (!idCheck.valid) return { error: idCheck.error };
       await requireProject(tenantId, pid, userId);
-      const files = await db.file.findMany({
-        where: { projectId: pid },
-        orderBy: { createdAt: "desc" },
-        take: limit,
-        select: {
-          id: true,
-          name: true,
-          type: true,
-          size: true,
-          createdAt: true,
-          ocrText: true,
-          userDescription: true,
-          label: true,
-          analyses: {
-            select: { prompt: true, content: true, createdAt: true },
-            orderBy: { createdAt: "desc" },
-            take: 5,
-          },
-        },
-      });
+
+      const files = await getProjectFilesCore(
+        { tenantId, userId },
+        pid,
+        { includeAnalyses: true, analysesLimit: 5, limit }
+      );
+
       return files.map((f) => ({
         id: f.id,
         name: f.name,
@@ -1123,26 +918,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
     })),
     execute: async ({ limit = 50 }) => {
-      const udb = userDb(userId);
-      const files = await udb.file.findMany({
-        orderBy: { createdAt: "desc" },
-        take: limit,
-        select: {
-          id: true,
-          name: true,
-          type: true,
-          size: true,
-          createdAt: true,
-          ocrText: true,
-          userDescription: true,
-          label: true,
-          analyses: {
-            select: { prompt: true, content: true, createdAt: true },
-            orderBy: { createdAt: "desc" },
-            take: 5,
-          },
-        },
-      });
+      const files = await getPersonalFilesCore(
+        { tenantId, userId },
+        { includeAnalyses: true, analysesLimit: 5, limit }
+      );
+
       return files.map((f) => ({
         id: f.id,
         name: f.name,
@@ -1435,20 +1215,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid }) => {
       await requireProject(tenantId, pid, userId);
-      const members = await db.projectMember.findMany({
-        where: { projectId: pid },
-        include: {
-          membership: {
-            include: {
-              user: { select: { id: true, name: true, email: true } },
-            },
-          },
-        },
-      });
+      const members = await getProjectMembersCore({ tenantId, userId }, pid);
       return members.map((m) => ({
         membershipId: m.membershipId,
-        userName: m.membership.user.name ?? m.membership.user.email,
-        email: m.membership.user.email,
+        userName: m.user.name ?? m.user.email,
+        email: m.user.email,
       }));
     },
   });
@@ -1460,29 +1231,12 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid }) => {
       await requireProject(tenantId, pid, userId);
-      
-      // Hämta alla medlemmar i tenanten
-      const allMemberships = await db.membership.findMany({
-        include: {
-          user: { select: { id: true, name: true, email: true } },
-        },
-      });
-
-      // Hämta befintliga projektmedlemmar
-      const existingMembers = await db.projectMember.findMany({
-        where: { projectId: pid },
-        select: { membershipId: true },
-      });
-      const existingIds = new Set(existingMembers.map(m => m.membershipId));
-
-      // Filtrera ut de som redan är med i projektet
-      return allMemberships
-        .filter(m => !existingIds.has(m.id))
-        .map((m) => ({
-          membershipId: m.id,
-          userName: m.user.name ?? m.user.email,
-          email: m.user.email,
-        }));
+      const available = await getAvailableMembersCore({ tenantId, userId }, pid);
+      return available.map((m) => ({
+        membershipId: m.membershipId,
+        userName: m.user.name ?? m.user.email,
+        email: m.user.email,
+      }));
     },
   });
 
@@ -1493,30 +1247,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       membershipId: z.string().describe("Medlemmens membershipId"),
     })),
     execute: async ({ projectId: pid, membershipId }) => {
-      await requirePermission("canManageTeam");
-      await requireProject(tenantId, pid, userId);
-      
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      
-      const membership = await projectDb.membership.findUnique({
-        where: { id: membershipId },
-      });
-      if (!membership) return { error: "Medlemmen hittades inte." };
-
-      const existing = await projectDb.projectMember.findUnique({
-        where: { projectId_membershipId: { projectId: pid, membershipId } },
-      });
-      if (existing) return { error: "Användaren är redan medlem i projektet." };
-
-      await projectDb.projectMember.create({
-        data: { projectId: pid, membershipId },
-      });
-
-      await logActivity(tenantId, pid, userId, "added", "member", membershipId, {
-        membershipId,
-        memberUserId: membership.userId,
-      });
-
+      const result = await addProjectMemberAction(pid, membershipId);
+      if (!result.success) return { error: result.error || "Kunde inte lägga till medlem." };
       return { success: true, message: "Medlemmen har lagts till i projektet." };
     },
   });
@@ -1528,24 +1260,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       membershipId: z.string().describe("Medlemmens membershipId"),
     })),
     execute: async ({ projectId: pid, membershipId }) => {
-      await requirePermission("canManageTeam");
-      await requireProject(tenantId, pid, userId);
-      
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-
-      const membership = await projectDb.membership.findUnique({
-        where: { id: membershipId },
-      });
-
-      await projectDb.projectMember.deleteMany({
-        where: { projectId: pid, membershipId },
-      });
-
-      await logActivity(tenantId, pid, userId, "removed", "member", membershipId, {
-        membershipId,
-        memberUserId: membership?.userId ?? null,
-      });
-
+      const result = await removeProjectMemberAction(pid, membershipId);
+      if (!result.success) return { error: result.error || "Kunde inte ta bort medlem." };
       return { success: true, message: "Medlemmen har tagits bort från projektet." };
     },
   });
@@ -1636,19 +1352,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     execute: async ({ projectId: pid, category, limit = 20 }) => {
       await requireProject(tenantId, pid, userId);
 
-      const where: Record<string, unknown> = { projectId: pid };
-      if (category) where.category = category;
+      const notes = await getProjectNotesCore(
+        { tenantId, userId },
+        pid,
+        { category, limit }
+      );
 
-      const notes = await db.note.findMany({
-        where,
-        include: {
-          createdBy: { select: { id: true, name: true, email: true } },
-        },
-        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-        take: limit,
-      });
-
-      return notes.map((n: typeof notes[number]) => ({
+      return notes.map((n) => ({
         id: n.id,
         title: n.title,
         content: n.content,
@@ -1671,28 +1381,14 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Kategori (slug)"),
     })),
     execute: async ({ projectId: pid, content, title, category }) => {
-      await requireProject(tenantId, pid, userId);
-
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      const note = await projectDb.note.create({
-        data: {
-          title: title ?? "",
-          content,
-          category: category ?? null,
-          projectId: pid,
-          createdById: userId,
-        },
-        include: {
-          createdBy: { select: { id: true, name: true, email: true } },
-        },
-      });
-
+      const result = await createNoteAction(pid, { title, content, category });
+      if (!result.success) return { error: result.error || "Kunde inte skapa anteckning." };
       return {
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        category: note.category,
-        createdAt: note.createdAt.toISOString(),
+        id: result.note.id,
+        title: result.note.title,
+        content: result.note.content,
+        category: result.note.category,
+        createdAt: result.note.createdAt,
         message: "Anteckning skapad.",
       };
     },
@@ -1709,34 +1405,19 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Ny kategori (slug)"),
     })),
     execute: async ({ projectId: pid, noteId, content, title, category }) => {
-      await requireProject(tenantId, pid, userId);
+      const data: { content?: string; title?: string; category?: string | null } = {};
+      if (content !== undefined) data.content = content;
+      if (title !== undefined) data.title = title;
+      if (category !== undefined) data.category = category;
+      if (Object.keys(data).length === 0) return { error: "Inga fält att uppdatera. Ange content, title eller category." };
 
-      const existing = await db.note.findFirst({
-        where: { id: noteId, projectId: pid },
-      });
-      if (!existing) return { error: "Anteckningen hittades inte i detta projekt." };
-
-      const updateData: Record<string, unknown> = {};
-      if (content !== undefined) updateData.content = content;
-      if (title !== undefined) updateData.title = title;
-      if (category !== undefined) updateData.category = category;
-
-      if (Object.keys(updateData).length === 0) {
-        return { error: "Inga fält att uppdatera. Ange content, title eller category." };
-      }
-
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      const note = await projectDb.note.update({
-        where: { id: noteId },
-        data: updateData,
-        include: { createdBy: { select: { id: true, name: true, email: true } } },
-      });
-
+      const result = await updateNoteAction(pid, noteId, data);
+      if (!result.success) return { error: result.error || "Kunde inte uppdatera anteckning." };
       return {
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        category: note.category,
+        id: result.note.id,
+        title: result.note.title,
+        content: result.note.content,
+        category: result.note.category,
         message: "Anteckning uppdaterad.",
       };
     },
@@ -1749,17 +1430,25 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ projectId: pid, noteId }) => {
-      await requireProject(tenantId, pid, userId);
-
-      const existing = await db.note.findFirst({
-        where: { id: noteId, projectId: pid },
-      });
-      if (!existing) return { error: "Anteckningen hittades inte i detta projekt." };
-
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      await projectDb.note.delete({ where: { id: noteId } });
-
+      const result = await deleteNoteAction(pid, noteId);
+      if (!result.success) return { error: result.error || "Kunde inte ta bort anteckning." };
       return { success: true, message: "Anteckning borttagen." };
+    },
+  });
+
+  const toggleNotePin = tool({
+    description: "Fästa eller lossa en projektanteckning. Fästa anteckningar visas överst.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      noteId: z.string().describe("Anteckningens ID"),
+    })),
+    execute: async ({ projectId: pid, noteId }) => {
+      const result = await toggleNotePinAction(pid, noteId);
+      if (!result.success) return { error: result.error || "Kunde inte ändra fästningsstatus." };
+      return {
+        isPinned: result.isPinned,
+        message: result.isPinned ? "Anteckningen är nu fastad." : "Anteckningen är inte längre fastad.",
+      };
     },
   });
 
@@ -1812,17 +1501,12 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ category, limit = 20 }) => {
-      const udb = userDb(userId);
-      const notes = await udb.note.findMany({
-        where: category ? { category } : {},
-        include: {
-          createdBy: { select: { id: true, name: true, email: true } },
-        },
-        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-        take: limit,
-      });
+      const notes = await getPersonalNotesCore(
+        { tenantId, userId },
+        { category, limit }
+      );
 
-      return notes.map((n: typeof notes[number]) => ({
+      return notes.map((n) => ({
         id: n.id,
         title: n.title,
         content: n.content,
@@ -1843,23 +1527,14 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Kategori (slug)"),
     })),
     execute: async ({ content, title, category }) => {
-      const udb = userDb(userId, {});
-      const note = await udb.note.create({
-        data: {
-          title: title ?? "",
-          content,
-          category: category ?? null,
-          createdById: userId,
-          projectId: null,
-        },
-      });
-
+      const result = await createPersonalNoteAction({ title, content, category });
+      if (!result.success) return { error: result.error || "Kunde inte skapa anteckning." };
       return {
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        category: note.category,
-        createdAt: note.createdAt.toISOString(),
+        id: result.note.id,
+        title: result.note.title,
+        content: result.note.content,
+        category: result.note.category,
+        createdAt: result.note.createdAt,
         message: "Personlig anteckning skapad.",
       };
     },
@@ -1875,27 +1550,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Ny kategori (slug)"),
     })),
     execute: async ({ noteId, content, title, category }) => {
-      const udb = userDb(userId, {});
-      const existing = await udb.note.findFirst({
-        where: { id: noteId },
-      });
-      if (!existing) return { error: "Den personliga anteckningen hittades inte." };
-
-      const updateData: Record<string, unknown> = {};
-      if (content !== undefined) updateData.content = content;
-      if (title !== undefined) updateData.title = title;
-      if (category !== undefined) updateData.category = category;
-
-      const note = await udb.note.update({
-        where: { id: noteId },
-        data: updateData,
-      });
-
+      const result = await updatePersonalNoteAction(noteId, { content, title, category });
+      if (!result.success) return { error: result.error || "Kunde inte uppdatera anteckning." };
       return {
-        id: note.id,
-        title: note.title,
-        content: note.content,
-        category: note.category,
+        id: result.note.id,
+        title: result.note.title,
+        content: result.note.content,
+        category: result.note.category,
         message: "Personlig anteckning uppdaterad.",
       };
     },
@@ -1907,14 +1568,24 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ noteId }) => {
-      const udb = userDb(userId, {});
-      const existing = await udb.note.findFirst({
-        where: { id: noteId },
-      });
-      if (!existing) return { error: "Den personliga anteckningen hittades inte." };
-
-      await udb.note.delete({ where: { id: noteId } });
+      const result = await deletePersonalNoteAction(noteId);
+      if (!result.success) return { error: result.error || "Kunde inte ta bort anteckning." };
       return { success: true, message: "Personlig anteckning borttagen." };
+    },
+  });
+
+  const togglePersonalNotePin = tool({
+    description: "Fästa eller lossa en personlig anteckning. Fästa anteckningar visas överst.",
+    inputSchema: toolInputSchema(z.object({
+      noteId: z.string().describe("Anteckningens ID"),
+    })),
+    execute: async ({ noteId }) => {
+      const result = await togglePersonalNotePinAction(noteId);
+      if (!result.success) return { error: result.error || "Kunde inte ändra fästningsstatus." };
+      return {
+        isPinned: result.isPinned,
+        message: result.isPinned ? "Anteckningen är nu fastad." : "Anteckningen är inte längre fastad.",
+      };
     },
   });
 
@@ -2027,6 +1698,151 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const result = await deleteAutomationAction(automationId);
       if (!result.success) return { error: result.error };
       return { success: true, message: "Automation borttagen." };
+    },
+  });
+
+  const getAutomation = tool({
+    description: "Hämta detaljer för en specifik automation.",
+    inputSchema: toolInputSchema(z.object({
+      automationId: z.string().describe("Automationens ID"),
+    })),
+    execute: async ({ automationId }) => {
+      const result = await getAutomationAction(automationId);
+      if (!result.success) return { error: result.error || "Kunde inte hämta automation." };
+      return result.automation;
+    },
+  });
+
+  const updateAutomation = tool({
+    description: "Uppdatera en automation. Ange de fält som ska ändras.",
+    inputSchema: toolInputSchema(z.object({
+      automationId: z.string().describe("Automationens ID"),
+      name: z.string().optional().describe("Nytt namn"),
+      description: z.string().optional().nullable().describe("Ny beskrivning"),
+      triggerAt: z.string().optional().describe("Ny trigger-tid (ISO-datum)"),
+      recurrence: z.string().optional().nullable().describe("Återkommande schema"),
+      actionTool: z.string().optional().describe("Nytt action-verktyg"),
+    })),
+    execute: async ({ automationId, ...data }) => {
+      const result = await updateAutomationAction(automationId, data);
+      if (!result.success) return { error: result.error || "Kunde inte uppdatera automation." };
+      return { message: "Automation uppdaterad." };
+    },
+  });
+
+  const pauseAutomation = tool({
+    description: "Pausa en aktiv automation.",
+    inputSchema: toolInputSchema(z.object({
+      automationId: z.string().describe("Automationens ID"),
+    })),
+    execute: async ({ automationId }) => {
+      const result = await pauseAutomationAction(automationId);
+      if (!result.success) return { error: result.error || "Kunde inte pausa automation." };
+      return { message: "Automation pausad." };
+    },
+  });
+
+  const resumeAutomation = tool({
+    description: "Återuppta en pausad automation.",
+    inputSchema: toolInputSchema(z.object({
+      automationId: z.string().describe("Automationens ID"),
+    })),
+    execute: async ({ automationId }) => {
+      const result = await resumeAutomationAction(automationId);
+      if (!result.success) return { error: result.error || "Kunde inte återuppta automation." };
+      return { message: "Automation återupptagen." };
+    },
+  });
+
+  const getNotifications = tool({
+    description: "Hämta användarens notifieringar. Visar olästa och lästa notifieringar.",
+    inputSchema: toolInputSchema(z.object({
+      unreadOnly: z.boolean().optional().default(false).describe("Visa bara olästa"),
+      limit: z.number().min(1).max(50).optional().default(20).describe("Max antal"),
+    })),
+    execute: async ({ limit }) => {
+      const result = await getNotificationsAction({ limit });
+      return {
+        notifications: result.notifications,
+        unreadCount: result.unreadCount,
+      };
+    },
+  });
+
+  const markNotificationRead = tool({
+    description: "Markera en notifiering som läst.",
+    inputSchema: toolInputSchema(z.object({
+      notificationId: z.string().describe("Notifieringens ID"),
+    })),
+    execute: async ({ notificationId }) => {
+      const result = await markNotificationReadAction({ notificationId });
+      if (!result.success) return { error: result.error || "Kunde inte markera notifiering." };
+      return { message: "Notifiering markerad som läst." };
+    },
+  });
+
+  const markAllNotificationsRead = tool({
+    description: "Markera alla notifieringar som lästa.",
+    inputSchema: toolInputSchema(z.object({
+      _: z.string().optional().describe("Ignorerad"),
+    })),
+    execute: async () => {
+      const result = await markAllNotificationsReadAction();
+      if (!result.success) return { error: result.error || "Kunde inte markera notifieringar." };
+      return { message: "Alla notifieringar markerade som lästa." };
+    },
+  });
+
+  const getMyTimeEntries = tool({
+    description: "Hämta användarens egna tidsrapporter från alla projekt.",
+    inputSchema: toolInputSchema(z.object({
+      limit: z.number().min(1).max(200).optional().default(50).describe("Max antal tidsposter"),
+    })),
+    execute: async ({ limit }) => {
+      const entries = await getMyTimeEntriesCore(
+        { tenantId, userId },
+        { limit }
+      );
+      return entries.map((entry) => ({
+        id: entry.id,
+        taskId: entry.taskId,
+        taskTitle: entry.taskTitle,
+        projectId: entry.projectId,
+        projectName: entry.projectName,
+        minutes: entry.minutes,
+        hours: Math.floor(entry.minutes / 60),
+        remainingMinutes: entry.minutes % 60,
+        date: entry.date.toISOString().split("T")[0],
+        description: entry.description,
+      }));
+    },
+  });
+
+  const getProjectDetail = tool({
+    description: "Hämta detaljerad information om ett projekt inklusive task-status, medlemmar och tillgängliga medlemmar.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+    })),
+    execute: async ({ projectId: pid }) => {
+      await requireProject(tenantId, pid, userId);
+      const detail = await getProjectDetailCore({ tenantId, userId }, pid);
+      if (!detail) return { error: "Projektet hittades inte." };
+      return {
+        id: detail.id,
+        name: detail.name,
+        description: detail.description,
+        status: detail.status,
+        address: detail.address,
+        createdAt: detail.createdAt.toISOString(),
+        taskStatusCounts: detail.taskStatusCounts,
+        memberCount: detail.members.length,
+        members: detail.members.map((m) => ({
+          membershipId: m.membershipId,
+          name: m.user.name ?? m.user.email,
+          email: m.user.email,
+          role: m.role,
+        })),
+      };
     },
   });
 
@@ -2613,6 +2429,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   return {
     // Projektlista och hantering
     getProjectList,
+    getProjectDetail,
     createProject,
     updateProject,
     archiveProject,
@@ -2622,6 +2439,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     createTask,
     updateTask,
     assignTask,
+    unassignTask,
     deleteTask,
     // Kommentarer
     getTaskComments,
@@ -2634,6 +2452,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     updateTimeEntry,
     deleteTimeEntry,
     getProjectTimeSummary,
+    getMyTimeEntries,
     exportTimeReport,
     exportTaskList,
     generateProjectReport,
@@ -2662,15 +2481,21 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     createNote: createProjectNote,
     updateNote: updateProjectNote,
     deleteNote: deleteProjectNote,
+    toggleNotePin,
     searchNotes: searchProjectNotes,
     // Personliga anteckningar
     getPersonalNotes,
     createPersonalNote,
     updatePersonalNote,
     deletePersonalNote,
+    togglePersonalNotePin,
     searchPersonalNotes,
     createAutomation,
     listAutomations,
+    getAutomation,
+    updateAutomation,
+    pauseAutomation,
+    resumeAutomation,
     deleteAutomation,
     // E-postmallar (admin)
     listEmailTemplates,
@@ -2684,6 +2509,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     getTeamMembersForEmailTool,
     getProjectsForEmailTool,
     getProjectMembersForEmailTool,
+    // Notifieringar
+    getNotifications,
+    markNotificationRead,
+    markAllNotificationsRead,
     // Notifikationsinställningar
     getNotificationSettings,
     updateNotificationSettings,

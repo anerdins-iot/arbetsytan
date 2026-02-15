@@ -10,7 +10,8 @@ export type FileListItem = {
   ocrText: string | null;
   userDescription: string | null;
   label: string | null;
-  objectKey: string; // Behovs for presigned URLs i Actions
+  bucket: string;
+  objectKey: string; // key - for presigned URLs i Actions
   analyses: Array<{
     prompt: string | null;
     content: string;
@@ -58,6 +59,7 @@ export async function getProjectFilesCore(
     ocrText: f.ocrText,
     userDescription: f.userDescription,
     label: f.label,
+    bucket: f.bucket,
     objectKey: f.key,
     analyses: f.analyses?.map((a: any) => ({
       prompt: a.prompt,
@@ -101,6 +103,7 @@ export async function getPersonalFilesCore(
     ocrText: f.ocrText,
     userDescription: f.userDescription,
     label: f.label,
+    bucket: f.bucket,
     objectKey: f.key,
     analyses: f.analyses?.map((a: any) => ({
       prompt: a.prompt,

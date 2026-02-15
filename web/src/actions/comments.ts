@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { getCommentsCore } from "@/services/comment-service";
 import { createNotification } from "@/actions/notifications";
 
 // ─────────────────────────────────────────
@@ -69,48 +70,20 @@ export async function getComments(
 ): Promise<GetCommentsResult> {
   const { tenantId, userId } = await requireAuth();
   await requireProject(tenantId, projectId, userId);
-  const db = tenantDb(tenantId);
 
-  // Verify task belongs to project
-  const task = await db.task.findFirst({
-    where: { id: taskId, projectId },
-  });
-  if (!task) {
-    return { success: false, error: "TASK_NOT_FOUND" };
+  const result = await getCommentsCore({ tenantId, userId }, projectId, taskId);
+  if ("error" in result) {
+    return { success: false, error: result.error };
   }
 
-  const comments = await db.comment.findMany({
-    where: { taskId },
-    orderBy: { createdAt: "asc" },
-  });
-
-  // Fetch author info for all comments
-  // Comments have authorId but no relation to User (since User is platform-level)
-  // We need to query users separately
-  const authorIds = [...new Set(comments.map((c) => c.authorId))];
-  const { prisma } = await import("@/lib/db");
-  const users = await prisma.user.findMany({
-    where: { id: { in: authorIds } },
-    select: { id: true, name: true, email: true, image: true },
-  });
-  const userMap = new Map(users.map((u) => [u.id, u]));
-
-  const mapped: CommentItem[] = comments.map((c) => {
-    const author = userMap.get(c.authorId);
-    return {
-      id: c.id,
-      content: c.content,
-      createdAt: c.createdAt.toISOString(),
-      updatedAt: c.updatedAt.toISOString(),
-      authorId: c.authorId,
-      author: author ?? {
-        id: c.authorId,
-        name: null,
-        email: "unknown",
-        image: null,
-      },
-    };
-  });
+  const mapped: CommentItem[] = result.comments.map((c) => ({
+    id: c.id,
+    content: c.content,
+    createdAt: c.createdAt.toISOString(),
+    updatedAt: c.updatedAt.toISOString(),
+    authorId: c.authorId,
+    author: c.author,
+  }));
 
   return { success: true, comments: mapped };
 }

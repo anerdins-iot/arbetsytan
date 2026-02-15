@@ -1,0 +1,180 @@
+- generic [active] [ref=e1]:
+  - alert [ref=e319]
+  - generic [ref=e347]:
+    - complementary [ref=e349]:
+      - link "ArbetsYtan" [ref=e351] [cursor=pointer]:
+        - /url: /en/dashboard
+        - img [ref=e352]
+        - generic [ref=e356]: ArbetsYtan
+      - navigation [ref=e357]:
+        - link "Dashboard" [ref=e359] [cursor=pointer]:
+          - /url: /en/dashboard
+          - img [ref=e360]
+          - generic [ref=e365]: Dashboard
+        - link "My Space" [ref=e367] [cursor=pointer]:
+          - /url: /en/personal
+          - img [ref=e368]
+          - generic [ref=e371]: My Space
+        - link "Projects" [ref=e373] [cursor=pointer]:
+          - /url: /en/projects
+          - img [ref=e374]
+          - generic [ref=e376]: Projects
+        - link "Automations" [ref=e378] [cursor=pointer]:
+          - /url: /en/automations
+          - img [ref=e379]
+          - generic [ref=e381]: Automations
+        - link "Email" [ref=e383] [cursor=pointer]:
+          - /url: /en/email
+          - img [ref=e384]
+          - generic [ref=e387]: Email
+        - link "My time" [ref=e389] [cursor=pointer]:
+          - /url: /en/time
+          - img [ref=e390]
+          - generic [ref=e393]: My time
+      - link "Settings" [ref=e396] [cursor=pointer]:
+        - /url: /en/settings
+        - img [ref=e397]
+        - generic [ref=e400]: Settings
+      - button "Collapse menu" [ref=e402]:
+        - img
+        - generic [ref=e403]: Collapse menu
+    - generic [ref=e404]:
+      - banner [ref=e405]:
+        - generic [ref=e406]:
+          - img
+          - searchbox "Search projects, tasks and files..." [ref=e407]
+        - generic [ref=e408]:
+          - button "Toggle theme" [ref=e409]:
+            - img
+            - generic [ref=e410]: Toggle theme
+          - button "Personal AI assistant" [ref=e411]:
+            - img
+          - button "Notifications" [ref=e412]:
+            - img
+            - generic [ref=e413]: Notifications
+          - link "Profile" [ref=e414] [cursor=pointer]:
+            - /url: /en/settings/profile
+            - generic [ref=e415]:
+              - img
+            - generic [ref=e416]: Profile
+      - main [ref=e417]:
+        - generic [ref=e557]:
+          - generic [ref=e558]:
+            - link "Back to projects" [ref=e559] [cursor=pointer]:
+              - /url: /en/projects
+              - img
+              - generic [ref=e560]: Back to projects
+            - heading "Kvarnbergsskolan" [level=1] [ref=e562]
+          - generic [ref=e563]:
+            - tablist [ref=e565]:
+              - tab "Overview" [ref=e566]
+              - tab "Tasks" [ref=e567]
+              - tab "Files" [selected] [ref=e568]
+              - tab "Time" [ref=e569]
+              - tab "Notes" [ref=e570]
+              - tab "Automations" [ref=e571]
+            - tabpanel "Files" [ref=e696]:
+              - generic [ref=e697]:
+                - generic [ref=e698]:
+                  - generic [ref=e700]: Upload files
+                  - generic [ref=e702]:
+                    - img [ref=e703]
+                    - paragraph [ref=e706]: Drag and drop files here, or choose files
+                    - paragraph [ref=e707]: "Allowed types: PDF, JPG, PNG, WEBP, DOCX, XLSX"
+                    - paragraph [ref=e708]: "Max size per file: 50 MB"
+                    - button "Choose files" [ref=e709]
+                - generic [ref=e710]:
+                  - generic [ref=e712]: Uploaded files
+                  - generic [ref=e714]:
+                    - generic [ref=e715]:
+                      - button [ref=e716]:
+                        - img [ref=e718]
+                      - generic [ref=e721]:
+                        - img [ref=e722]
+                        - generic [ref=e725]:
+                          - paragraph [ref=e726]: projektrapport-monthly-2026-01-16-2026-02-15.pdf
+                          - paragraph [ref=e728]: 3.0 KB
+                      - generic [ref=e729]:
+                        - link "Download file" [ref=e730] [cursor=pointer]:
+                          - /url: http://localhost:9000/tenant-seed-tenant-1/arbetsytan/projects/cmlnplkqm001cvlnqdbx78dmj/d1ed4eea-c8e5-4487-b110-65e7751e93cd-projektrapport-monthly-2026-01-16-2026-02-15.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=minioadmin%2F20260215%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20260215T150813Z&X-Amz-Expires=900&X-Amz-Signature=ccc4aea084e81eac27beff238c08d329a1d539c0e121b6b957c747b945d3d796&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject
+                          - button "Download file" [ref=e731]:
+                            - img
+                            - generic [ref=e732]: Download file
+                        - button "Delete file" [ref=e733]:
+                          - img
+                          - generic [ref=e734]: Delete file
+                    - generic [ref=e735]:
+                      - button [ref=e736]:
+                        - img [ref=e738]
+                      - generic [ref=e741]:
+                        - img [ref=e742]
+                        - generic [ref=e745]:
+                          - paragraph [ref=e746]: projektrapport-weekly-2026-02-08-2026-02-15.pdf
+                          - paragraph [ref=e748]: 3.0 KB
+                      - generic [ref=e749]:
+                        - link "Download file" [ref=e750] [cursor=pointer]:
+                          - /url: http://localhost:9000/tenant-seed-tenant-1/arbetsytan/projects/cmlnplkqm001cvlnqdbx78dmj/f297d0e9-3da4-4030-a127-9b7066363aa0-projektrapport-weekly-2026-02-08-2026-02-15.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=minioadmin%2F20260215%2Feu-north-1%2Fs3%2Faws4_request&X-Amz-Date=20260215T150813Z&X-Amz-Expires=900&X-Amz-Signature=cb8d6424e730a169234b6cee10604eaaf2694b0f3371089dcc3a608204eb3f23&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject
+                          - button "Download file" [ref=e751]:
+                            - img
+                            - generic [ref=e752]: Download file
+                        - button "Delete file" [ref=e753]:
+                          - img
+                          - generic [ref=e754]: Delete file
+    - generic [ref=e755]:
+      - generic [ref=e756]:
+        - generic [ref=e757]:
+          - img [ref=e758]
+          - text: Personal AI
+        - button [ref=e760]:
+          - img
+      - generic [ref=e761]:
+        - generic [ref=e762]:
+          - combobox [ref=e764]:
+            - generic:
+              - img
+              - text: Kvarnbergsskolan
+            - img
+          - generic [ref=e765]:
+            - button "New conversation" [ref=e766]
+            - button "Conversation history" [ref=e767]:
+              - img
+        - generic [ref=e803]:
+          - paragraph [ref=e819]: Lista alla filer i detta projekt
+          - generic [ref=e820]:
+            - paragraph [ref=e823]: Jag hämtar alla filer i Kvarnbergsskolan-projektet.
+            - generic [ref=e825]:
+              - paragraph [ref=e826]:
+                - text: Här är alla filer i projektet
+                - strong [ref=e827]: Kvarnbergsskolan
+                - text: ":"
+              - list [ref=e828]:
+                - listitem [ref=e829]:
+                  - paragraph [ref=e830]:
+                    - strong [ref=e831]: projektrapport-monthly-2026-01-16-2026-02-15.pdf
+                    - text: (3 KB)
+                  - list [ref=e832]:
+                    - listitem [ref=e833]: "Skapad: 15 feb 2026"
+                - listitem [ref=e834]:
+                  - paragraph [ref=e835]:
+                    - strong [ref=e836]: projektrapport-weekly-2026-02-08-2026-02-15.pdf
+                    - text: (3 KB)
+                  - list [ref=e837]:
+                    - listitem [ref=e838]: "Skapad: 15 feb 2026"
+              - paragraph [ref=e839]: Det finns två projektrapporter sparade – en månadsrapport och en veckorapport.
+        - generic [ref=e804]:
+          - img [ref=e805]
+          - generic [ref=e807]: Kvarnbergsskolan
+        - generic [ref=e808]:
+          - textbox "Ask about tasks, projects or messages…" [ref=e809]
+          - generic [ref=e810]:
+            - generic [ref=e811]:
+              - button "Attach file" [ref=e812]:
+                - img
+              - generic [ref=e813]:
+                - button "Start recording" [disabled]:
+                  - img
+                - button "Voice settings" [ref=e814]:
+                  - img
+            - button "Send" [disabled]:
+              - img
+              - text: Send

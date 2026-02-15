@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { getProjectTasksCore } from "@/services/task-service";
 import { logActivity } from "@/lib/activity-log";
 import { notifyTaskAssigned } from "@/lib/notification-delivery";
 import type { TaskStatus, Priority } from "../../generated/prisma/client";
@@ -95,48 +96,27 @@ const assignTaskSchema = z.object({
 export async function getTasks(projectId: string): Promise<GetTasksResult> {
   const { tenantId, userId } = await requireAuth();
   await requireProject(tenantId, projectId, userId);
-  const db = tenantDb(tenantId);
 
-  const tasks = await db.task.findMany({
-    where: { projectId },
-    include: {
-      assignments: {
-        include: {
-          membership: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  email: true,
-                  image: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  const tasks = await getProjectTasksCore({ tenantId, userId }, projectId);
 
-  const mapped: TaskItem[] = tasks.map((t) => ({
-    id: t.id,
-    title: t.title,
-    description: t.description,
-    status: t.status,
-    priority: t.priority,
-    deadline: t.deadline ? t.deadline.toISOString() : null,
-    createdAt: t.createdAt.toISOString(),
-    updatedAt: t.updatedAt.toISOString(),
-    projectId: t.projectId,
-    assignments: t.assignments.map((a) => ({
-      membershipId: a.membershipId,
-      user: a.membership.user,
+  return {
+    success: true,
+    tasks: tasks.map((t) => ({
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      status: t.status as TaskStatus,
+      priority: t.priority as Priority,
+      deadline: t.deadline?.toISOString() ?? null,
+      createdAt: t.createdAt.toISOString(),
+      updatedAt: t.updatedAt.toISOString(),
+      projectId: t.projectId,
+      assignments: t.assignments.map((a) => ({
+        membershipId: a.membershipId,
+        user: a.user,
+      })),
     })),
-  }));
-
-  return { success: true, tasks: mapped };
+  };
 }
 
 /**

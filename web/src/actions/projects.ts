@@ -4,9 +4,10 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { hasPermission, requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import { getProjectsCore, getProjectDetailCore } from "@/services/project-service";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
-import type { Project, ProjectStatus, TaskStatus } from "../../generated/prisma/client";
+import type { Project, ProjectStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
   projectId: z.string().min(1),
@@ -64,53 +65,24 @@ export async function getProjects(options?: {
   status?: ProjectStatus;
 }): Promise<GetProjectsResult> {
   const { tenantId, userId } = await requireAuth();
-  const db = tenantDb(tenantId);
 
-  // Get user's membership to check role
-  const membership = await db.membership.findFirst({
-    where: { userId },
-    select: { id: true, role: true },
-  });
+  const projects = await getProjectsCore(
+    { tenantId, userId },
+    { search: options?.search, status: options?.status, includeTaskCount: true }
+  );
 
-  if (!membership) {
-    return { projects: [] };
-  }
-
-  // Build where clause
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const where: Record<string, any> = {};
-
-  // Non-admins only see projects they're members of
-  if (membership.role !== "ADMIN") {
-    where.projectMembers = {
-      some: { membershipId: membership.id },
-    };
-  }
-
-  if (options?.status) {
-    where.status = options.status;
-  }
-
-  if (options?.search && options.search.trim().length > 0) {
-    const term = options.search.trim();
-    where.OR = [
-      { name: { contains: term, mode: "insensitive" } },
-      { description: { contains: term, mode: "insensitive" } },
-      { address: { contains: term, mode: "insensitive" } },
-    ];
-  }
-
-  const projects = await db.project.findMany({
-    where,
-    include: {
-      _count: {
-        select: { tasks: true },
-      },
-    },
-    orderBy: { updatedAt: "desc" },
-  });
-
-  return { projects: projects as ProjectWithCounts[] };
+  return {
+    projects: projects.map((p) => ({
+      id: p.id,
+      name: p.name,
+      description: p.description,
+      status: p.status as ProjectStatus,
+      address: p.address,
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt,
+      _count: { tasks: p.taskCount },
+    })),
+  };
 }
 
 /**
@@ -208,91 +180,33 @@ export async function getProject(
 ): Promise<GetProjectResult> {
   const { tenantId, userId } = await requireAuth();
   await requireProject(tenantId, projectId, userId);
-  const db = tenantDb(tenantId);
 
-  const project = await db.project.findUnique({
-    where: { id: projectId },
-  });
-
-  if (!project) {
-    return { success: false, error: "PROJECT_NOT_FOUND" };
-  }
-
-  // Count tasks by status
-  const taskCounts = await Promise.all([
-    db.task.count({ where: { projectId, status: "TODO" as TaskStatus } }),
-    db.task.count({ where: { projectId, status: "IN_PROGRESS" as TaskStatus } }),
-    db.task.count({ where: { projectId, status: "DONE" as TaskStatus } }),
-  ]);
-
-  const taskStatusCounts: TaskStatusCounts = {
-    TODO: taskCounts[0],
-    IN_PROGRESS: taskCounts[1],
-    DONE: taskCounts[2],
-  };
-
-  // Project members (memberships explicitly added to this project)
-  const projectMemberRows = await db.projectMember.findMany({
-    where: { projectId },
-    include: {
-      membership: {
-        include: {
-          user: {
-            select: {
-              id: true,
-              name: true,
-              email: true,
-              image: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  const members: ProjectMember[] = projectMemberRows.map((pm) => ({
-    id: pm.membership.id,
-    role: pm.membership.role,
-    user: pm.membership.user,
-  }));
-
-  // Tenant members not yet on the project (for "add member" dropdown)
-  const allMemberships = await db.membership.findMany({
-    include: {
-      user: {
-        select: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
-      },
-    },
-  });
-  const memberIdsOnProject = new Set(members.map((m) => m.id));
-  const availableMembers: ProjectMember[] = allMemberships
-    .filter((m) => !memberIdsOnProject.has(m.id))
-    .map((m) => ({
-      id: m.id,
-      role: m.role,
-      user: m.user,
-    }));
+  const detail = await getProjectDetailCore({ tenantId, userId }, projectId);
+  if (!detail) return { success: false, error: "PROJECT_NOT_FOUND" };
 
   const canManageTeam = await hasPermission(userId, tenantId, "canManageTeam");
 
   return {
     success: true,
     project: {
-      id: project.id,
-      name: project.name,
-      description: project.description,
-      status: project.status,
-      address: project.address,
-      createdAt: project.createdAt,
-      updatedAt: project.updatedAt,
-      taskStatusCounts,
-      members,
-      availableMembers,
+      id: detail.id,
+      name: detail.name,
+      description: detail.description,
+      status: detail.status as ProjectStatus,
+      address: detail.address,
+      createdAt: detail.createdAt,
+      updatedAt: detail.updatedAt,
+      taskStatusCounts: detail.taskStatusCounts,
+      members: detail.members.map((m) => ({
+        id: m.membershipId,
+        role: m.role,
+        user: m.user,
+      })),
+      availableMembers: detail.availableMembers.map((m) => ({
+        id: m.membershipId,
+        role: m.role,
+        user: m.user,
+      })),
       canManageTeam,
     },
   };

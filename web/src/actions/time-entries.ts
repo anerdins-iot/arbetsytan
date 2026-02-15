@@ -4,6 +4,11 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
+import {
+  getTimeEntriesCore,
+  getMyTimeEntriesCore,
+  getTimeSummaryCore,
+} from "@/services/time-entry-service";
 
 const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -185,37 +190,47 @@ export async function getTimeEntriesByProject(
 ): Promise<ActionResult<GroupedTimeEntries[]>> {
   const { tenantId, userId } = await requireAuth();
   await requireProject(tenantId, projectId, userId);
-  const db = tenantDb(tenantId);
 
-  const entries = await db.timeEntry.findMany({
-    where: { projectId },
-    include: {
-      task: { select: { title: true } },
-      project: { select: { name: true } },
-    },
-    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
-  });
+  const entries = await getTimeEntriesCore({ tenantId, userId }, projectId);
 
-  const mapped = entries.map((entry) => mapEntry(entry, userId));
+  const mapped: TimeEntryItem[] = entries.map((entry) => ({
+    id: entry.id,
+    description: entry.description,
+    minutes: entry.minutes,
+    date: toDateKey(entry.date),
+    createdAt: entry.createdAt.toISOString(),
+    updatedAt: entry.updatedAt.toISOString(),
+    taskId: entry.taskId,
+    taskTitle: entry.taskTitle,
+    projectId: entry.projectId,
+    projectName: entry.projectName,
+    userId: entry.userId,
+    isMine: entry.userId === userId,
+  }));
   return { success: true, data: groupEntriesByDay(mapped) };
 }
 
 export async function getMyTimeEntries(): Promise<ActionResult<TimeEntryItem[]>> {
   const { tenantId, userId } = await requireAuth();
-  const db = tenantDb(tenantId);
 
-  const entries = await db.timeEntry.findMany({
-    where: { userId },
-    include: {
-      task: { select: { title: true } },
-      project: { select: { name: true } },
-    },
-    orderBy: [{ date: "desc" }, { createdAt: "desc" }],
-  });
+  const entries = await getMyTimeEntriesCore({ tenantId, userId });
 
   return {
     success: true,
-    data: entries.map((entry) => mapEntry(entry, userId)),
+    data: entries.map((entry) => ({
+      id: entry.id,
+      description: entry.description,
+      minutes: entry.minutes,
+      date: toDateKey(entry.date),
+      createdAt: entry.createdAt.toISOString(),
+      updatedAt: entry.updatedAt.toISOString(),
+      taskId: entry.taskId,
+      taskTitle: entry.taskTitle,
+      projectId: entry.projectId,
+      projectName: entry.projectName,
+      userId: entry.userId,
+      isMine: true,
+    })),
   };
 }
 
@@ -321,80 +336,7 @@ export async function getProjectTimeSummary(
 ): Promise<ActionResult<ProjectTimeSummary>> {
   const { tenantId, userId } = await requireAuth();
   await requireProject(tenantId, projectId, userId);
-  const db = tenantDb(tenantId);
 
-  const entries = await db.timeEntry.findMany({
-    where: { projectId },
-    include: {
-      task: { select: { id: true, title: true } },
-    },
-    orderBy: { date: "desc" },
-  });
-
-  const totalMinutes = entries.reduce((sum, entry) => sum + entry.minutes, 0);
-
-  const taskTotals = new Map<string, { taskId: string; taskTitle: string; totalMinutes: number }>();
-  const personTotals = new Map<string, number>();
-  const dayTotals = new Map<string, number>();
-  const weekTotals = new Map<string, number>();
-
-  for (const entry of entries) {
-    if (entry.task) {
-      const current = taskTotals.get(entry.task.id);
-      if (!current) {
-        taskTotals.set(entry.task.id, {
-          taskId: entry.task.id,
-          taskTitle: entry.task.title,
-          totalMinutes: entry.minutes,
-        });
-      } else {
-        current.totalMinutes += entry.minutes;
-      }
-    }
-
-    personTotals.set(entry.userId, (personTotals.get(entry.userId) ?? 0) + entry.minutes);
-
-    const dayKey = toDateKey(entry.date);
-    dayTotals.set(dayKey, (dayTotals.get(dayKey) ?? 0) + entry.minutes);
-
-    const weekKey = toDateKey(getWeekStart(entry.date));
-    weekTotals.set(weekKey, (weekTotals.get(weekKey) ?? 0) + entry.minutes);
-  }
-
-  const userIds = Array.from(personTotals.keys());
-  const memberships = await db.membership.findMany({
-    where: { userId: { in: userIds } },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
-        },
-      },
-    },
-  });
-  const userDisplayById = new Map<string, string>();
-  for (const membership of memberships) {
-    userDisplayById.set(membership.userId, membership.user.name ?? membership.user.email);
-  }
-
-  const summary: ProjectTimeSummary = {
-    totalMinutes,
-    byTask: Array.from(taskTotals.values()).sort((a, b) => b.totalMinutes - a.totalMinutes),
-    byPerson: Array.from(personTotals.entries())
-      .map(([personId, minutes]) => ({
-        userId: personId,
-        userName: userDisplayById.get(personId) ?? personId,
-        totalMinutes: minutes,
-      }))
-      .sort((a, b) => b.totalMinutes - a.totalMinutes),
-    byDay: Array.from(dayTotals.entries())
-      .map(([date, minutes]) => ({ date, totalMinutes: minutes }))
-      .sort((a, b) => b.date.localeCompare(a.date)),
-    byWeek: Array.from(weekTotals.entries())
-      .map(([weekStart, minutes]) => ({ weekStart, totalMinutes: minutes }))
-      .sort((a, b) => b.weekStart.localeCompare(a.weekStart)),
-  };
-
+  const summary = await getTimeSummaryCore({ tenantId, userId }, projectId);
   return { success: true, data: summary };
 }

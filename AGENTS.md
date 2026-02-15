@@ -66,8 +66,9 @@ web/
 │   ├── components/          # UI components
 │   │   ├── ui/              # shadcn/ui base components
 │   │   └── [feature]/       # Feature-specific components
+│   ├── services/            # Service Layer — gemensam affärslogik
 │   ├── lib/                 # Helpers, database, auth config, AI clients
-│   ├── actions/             # Server Actions (all CRUD logic)
+│   ├── actions/             # Server Actions (thin layer över services)
 │   ├── types/               # TypeScript types
 │   ├── hooks/               # Custom React hooks (client-side)
 │   └── i18n/                # next-intl config, request.ts, routing.ts
@@ -79,6 +80,64 @@ web/
 mobile/                      # Expo-app (Fas 11)
 docker-compose.yml           # Workspace root
 ```
+
+## Service Layer (DRY-arkitektur)
+
+**KRITISK REGEL:** All affärslogik (DB-queries, validering) ska ligga i Service Layer. Actions och AI-verktyg är "thin layers" som anropar services och transformerar data.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                      Consumers                          │
+├──────────────────────┬──────────────────────────────────┤
+│   Server Actions     │         AI Tools                 │
+│   (src/actions/)     │   (src/lib/ai/tools/)            │
+│                      │                                  │
+│   + presigned URLs   │   + ocrPreview                   │
+│   + revalidatePath   │   + analyses array               │
+│   + UI-format        │   + AI-optimerat format          │
+└──────────┬───────────┴───────────────┬──────────────────┘
+           │                           │
+           ▼                           ▼
+┌─────────────────────────────────────────────────────────┐
+│                   Service Layer                         │
+│                (src/services/*.ts)                      │
+│                                                         │
+│   - Gemensamma DB-queries                               │
+│   - Gemensam validering (validateDatabaseId)            │
+│   - Gemensam felhantering                               │
+│   - Returnerar "rå" data (Date, inte ISO-strängar)      │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Service-filer
+
+| Service | Funktioner |
+|---------|-----------|
+| `services/types.ts` | `ServiceContext`, `PaginationOptions`, `validateDatabaseId` |
+| `services/project-service.ts` | `getProjectsCore`, `getProjectDetailCore` |
+| `services/task-service.ts` | `getProjectTasksCore`, `getUserTasksCore` |
+| `services/file-service.ts` | `getProjectFilesCore`, `getPersonalFilesCore` |
+| `services/note-service.ts` | `getProjectNotesCore`, `getPersonalNotesCore` |
+| `services/comment-service.ts` | `getCommentsCore` |
+| `services/time-entry-service.ts` | `getTimeEntriesCore`, `getMyTimeEntriesCore`, `getTimeSummaryCore` |
+| `services/member-service.ts` | `getProjectMembersCore`, `getAvailableMembersCore` |
+| `services/index.ts` | Re-exports |
+
+### Regler för Service Layer
+
+1. **Läsoperationer** — Actions och AI-verktyg anropar `*Core`-funktioner från services
+2. **Skrivoperationer** — AI-verktyg anropar Actions direkt (inte egen DB-logik)
+3. **Validering** — `validateDatabaseId` finns ENBART i `services/types.ts`
+4. **Returvärden** — Services returnerar råa Date-objekt, consumers transformerar till ISO-strängar vid behov
+5. **Ingen duplicering** — Samma `findMany`-logik får INTE finnas i både Actions och AI-verktyg
+
+### Checklista vid ny entitet
+
+1. Skapa service FÖRST (`src/services/{entity}-service.ts`)
+2. Implementera `get{Entity}Core` funktioner
+3. Exportera från `src/services/index.ts`
+4. Implementera Actions som anropar service
+5. Implementera AI-verktyg som anropar service (läs) eller Actions (skriv)
 
 ## Multi-tenant
 
@@ -137,14 +196,17 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 ### Checklista vid ny funktionalitet
 
 1. **Prisma-modell** — Skapa/uppdatera schema, kör migration
-2. **Server Actions** — CRUD-funktioner i `web/src/actions/`
-3. **UI-komponenter** — Dialoger, formulär, listor i `web/src/components/`
-4. **AI-verktyg** — Motsvarande tools i `web/src/lib/ai/tools/`
+2. **Service Layer** — Skapa `src/services/{entity}-service.ts` med `get{Entity}Core` funktioner
+3. **Server Actions** — CRUD-funktioner i `web/src/actions/` som anropar services för läsning
+4. **UI-komponenter** — Dialoger, formulär, listor i `web/src/components/`
+5. **AI-verktyg** — Motsvarande tools i `web/src/lib/ai/tools/`
+   - Läsoperationer: Anropa services
+   - Skrivoperationer: Anropa Actions
    - Projekt-AI: `project-tools.ts`
    - Personlig AI: `personal-tools.ts`
    - Delad logik: `shared-tools.ts`
-5. **Översättningar** — Texter i `messages/sv.json` och `messages/en.json`
-6. **Seed-data** — Testdata i `prisma/seed.ts`
+6. **Översättningar** — Texter i `messages/sv.json` och `messages/en.json`
+7. **Seed-data** — Testdata i `prisma/seed.ts`
 
 ### AI-verktyg som MÅSTE finnas
 
@@ -183,9 +245,13 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Committa `.env.local` eller hemligheter
 - API-nycklar i klientkod
 - `any` som TypeScript-typ
+- **Duplicerad DB-logik** — `findMany` för samma data får INTE finnas i både Actions och AI-verktyg. Använd Service Layer.
+- **`validateDatabaseId` utanför services** — funktionen finns ENBART i `src/services/types.ts`
+- **AI-verktyg med egen DB-skrivlogik** — skrivoperationer ska anropa Actions, inte köra egen `create/update/delete`
 
 ## Viktiga filer
 
+- `web/src/services/` — Service Layer med gemensam affärslogik (DRY)
 - `web/src/lib/auth.ts` — Auth.js-konfiguration
 - `web/src/lib/db.ts` — Prisma-klient
 - `web/src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
@@ -198,6 +264,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `PROJEKT.md` — Fullständig projektbeskrivning och faser
 - `UI.md` — Designspråk, färger, typsnitt
 - `DEVLOG.md` — Löpande erfarenhetslogg
+- `plan/service-layer-refactor/` — Plan för DRY-refaktorering
 
 ## DEVLOG.md
 

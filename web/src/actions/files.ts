@@ -20,6 +20,7 @@ import {
 } from "@/lib/minio";
 import { processFileOcr } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
+import { getProjectFilesCore } from "@/services/file-service";
 
 const uploadPreparationSchema = z.object({
   projectId: z.string().min(1),
@@ -368,13 +369,12 @@ export async function getProjectFiles(
 
   try {
     await requireProject(tenantId, validatedProjectId, userId);
-    const db = tenantDb(tenantId, { actorUserId: userId, projectId: validatedProjectId });
 
-    // Alla filer för projektet (både uppladdade och AI-genererade) – ingen filtrering på source
-    const files = await db.file.findMany({
-      where: { projectId: validatedProjectId },
-      orderBy: { createdAt: "desc" },
-    });
+    const files = await getProjectFilesCore(
+      { tenantId, userId },
+      validatedProjectId,
+      { includeAnalyses: false }
+    );
     logger.info("getProjectFiles db query result", { projectId: validatedProjectId, fileCount: files.length });
 
     // Promise.allSettled så att en felande presigned URL inte fäller hela listan (t.ex. för AI-genererade filer)
@@ -382,7 +382,7 @@ export async function getProjectFiles(
       files.map(async (file) => {
         const downloadUrl = await createPresignedDownloadUrl({
           bucket: file.bucket,
-          key: file.key,
+          key: file.objectKey,
         });
         return {
           id: file.id,
@@ -390,7 +390,7 @@ export async function getProjectFiles(
           type: file.type,
           size: file.size,
           bucket: file.bucket,
-          key: file.key,
+          key: file.objectKey,
           ocrText: file.ocrText,
           createdAt: file.createdAt,
           previewUrl: downloadUrl,
@@ -406,7 +406,7 @@ export async function getProjectFiles(
       const file = files[index];
       logger.warn(
         "getProjectFiles: presigned URL misslyckades för fil, visar fil med fallback-URL",
-        { fileId: file?.id, bucket: file?.bucket, key: file?.key, err: result.reason }
+        { fileId: file?.id, bucket: file?.bucket, key: file?.objectKey, err: result.reason }
       );
       return {
         id: file.id,
@@ -414,7 +414,7 @@ export async function getProjectFiles(
         type: file.type,
         size: file.size,
         bucket: file.bucket,
-        key: file.key,
+        key: file.objectKey,
         ocrText: file.ocrText,
         createdAt: file.createdAt,
         previewUrl: "#",

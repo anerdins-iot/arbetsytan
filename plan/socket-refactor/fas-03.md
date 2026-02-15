@@ -183,11 +183,18 @@ Varje test nedan kan köras av en **separat Haiku-agent** parallellt. De testar 
 
 ## Checkpoint Fas 3
 
-- [x] Test 3.1: Dashboard — UI OK, WebSocket ERR_CONNECTION_REFUSED (timing-problem i Playwright, servern loggar Socket.IO OK)
-- [x] Test 3.2: Projektvy — UI OK, task skapades, samma WS-timing-problem
+- [x] Test 3.1: Dashboard — UI OK, WebSocket ERR_CONNECTION_REFUSED (stale build, löst med rebuild)
+- [x] Test 3.2: Projektvy — UI OK, task skapades, samma WS-timing-problem (stale build)
 - [x] Test 3.3: Personligt — GODKÄNT, inga konsolfel
 - [x] Test 3.4: Projektlista + Inställningar — GODKÄNT, inga konsolfel
-- [ ] Test 3.5: (slog ihop med 3.4)
-- [ ] Test 3.6: AI Chat (ej testat)
-- [ ] Test 3.7: Console-log (inkluderat i övriga tester)
+- [x] Test 3.5: (slog ihop med 3.4)
+- [x] Test 3.6: AI Chat — GODKÄNT, skapade uppgift via AI som dök upp i kanban utan siduppdatering (4→5 tasks)
+- [x] Test 3.7: Console-log — 0 fel, 0 varningar i alla tester efter rebuild
 - [x] Screenshots sparade i `/workspace/screenshots/socket-refactor/`
+
+### Utredning: WebSocket ERR_CONNECTION_REFUSED
+
+**Problem:** Test 3.1 och 3.2 rapporterade ERR_CONNECTION_REFUSED för WebSocket.
+**Orsak:** Testerna kördes mot en **stale build** som inte innehöll den nya SocketProvider-koden.
+**Lösning:** Rebuild (`npm run build`) → alla efterföljande tester GODKÄNDA med fungerande WebSocket-anslutning.
+**Verifiering:** Debug-loggar bekräftade: `[SocketProvider] Connected! Socket ID: yp-nf...`

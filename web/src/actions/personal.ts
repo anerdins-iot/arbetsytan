@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import { tenantDb, userDb } from "@/lib/db";
+import { getPersonalNotesCore, getPersonalFilesCore } from "@/services";
 import {
   createPresignedDownloadUrl,
   createPresignedUploadUrl,
@@ -80,29 +81,12 @@ export async function getPersonalNotes(options?: {
   | { success: false; error: string }
 > {
   try {
-    const { userId } = await requireAuth();
-    const udb = userDb(userId, {});
+    const { userId, tenantId } = await requireAuth();
 
-    const where: Record<string, unknown> = {};
-    if (options?.category) {
-      where.category = options.category;
-    }
-    if (options?.search?.trim()) {
-      where.AND = [
-        {
-          OR: [
-            { title: { contains: options.search!.trim(), mode: "insensitive" as const } },
-            { content: { contains: options.search!.trim(), mode: "insensitive" as const } },
-          ],
-        },
-      ];
-    }
-
-    const notes = await udb.note.findMany({
-      where: Object.keys(where).length ? where : undefined,
-      orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
-      take: options?.limit ?? 50,
-    });
+    const notes = await getPersonalNotesCore(
+      { tenantId, userId },
+      { category: options?.category, search: options?.search, limit: options?.limit ?? 50 }
+    );
 
     return {
       success: true,
@@ -259,20 +243,12 @@ export async function getPersonalFiles(options?: {
   | { success: false; error: string }
 > {
   try {
-    const { userId } = await requireAuth();
-    const udb = userDb(userId, {});
+    const { userId, tenantId } = await requireAuth();
 
-    const files = await udb.file.findMany({
-      select: {
-        id: true,
-        name: true,
-        type: true,
-        size: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: "desc" },
-      take: options?.limit ?? 100,
-    });
+    const files = await getPersonalFilesCore(
+      { tenantId, userId },
+      { limit: options?.limit ?? 100 }
+    );
 
     return {
       success: true,
