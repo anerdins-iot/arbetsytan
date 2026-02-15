@@ -35,7 +35,6 @@ import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 import {
   createAutomation as createAutomationAction,
   listAutomations as listAutomationsAction,
-  deleteAutomation as deleteAutomationAction,
 } from "@/actions/automations";
 import {
   copyObjectInMinio,
@@ -68,32 +67,24 @@ import {
   updateNotificationPreferences,
 } from "@/actions/notification-preferences";
 import {
-  deleteFile as deleteFileAction,
-} from "@/actions/files";
-import {
   createComment as createCommentAction,
   updateComment as updateCommentAction,
-  deleteComment as deleteCommentAction,
 } from "@/actions/comments";
 import {
   createTimeEntry as createTimeEntryAction,
   updateTimeEntry as updateTimeEntryAction,
-  deleteTimeEntry as deleteTimeEntryAction,
 } from "@/actions/time-entries";
 import {
   createNote as createNoteAction,
   updateNote as updateNoteAction,
-  deleteNote as deleteNoteAction,
 } from "@/actions/notes";
 import {
   createPersonalNote as createPersonalNoteAction,
   updatePersonalNote as updatePersonalNoteAction,
-  deletePersonalNote as deletePersonalNoteAction,
 } from "@/actions/personal";
 import {
   assignTask as assignTaskAction,
   unassignTask as unassignTaskAction,
-  deleteTask as deleteTaskAction,
 } from "@/actions/tasks";
 import {
   toggleNotePin as toggleNotePinAction,
