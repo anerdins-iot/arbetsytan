@@ -76,6 +76,11 @@ function isPdfFile(file: PersonalFileItemWithUrls): boolean {
   return /\.pdf$/i.test(file.name);
 }
 
+function isExcelFile(file: PersonalFileItemWithUrls): boolean {
+  if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") return true;
+  return /\.xlsx$/i.test(file.name);
+}
+
 type PersonalFilesTabProps = {
   initialFiles?: PersonalFileItemWithUrls[];
   /** Bump to refresh file list when personal file events arrive via WebSocket (e.g. file:created, file:updated, file:deleted with projectId null). */
@@ -251,7 +256,7 @@ export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: P
   }
 
   function handlePreview(file: PersonalFileItemWithUrls): void {
-    if (isImageFile(file) || isPdfFile(file)) {
+    if (isImageFile(file) || isPdfFile(file) || isExcelFile(file)) {
       setPreviewFile(file);
       return;
     }

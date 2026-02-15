@@ -82,6 +82,13 @@ function isPdfFile(file: FileItem): boolean {
   return /\.pdf$/i.test(file.name);
 }
 
+function isExcelFile(file: FileItem): boolean {
+  if (file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+    return true;
+  }
+  return /\.xlsx$/i.test(file.name);
+}
+
 export function ProjectFilesUpload({
   projectId,
   initialFiles,
@@ -271,7 +278,7 @@ export function ProjectFilesUpload({
   useSocketEvent(SOCKET_EVENTS.fileDeleted, handleFileSocketEvent);
 
   function handlePreview(file: FileItem): void {
-    if (isImageFile(file) || isPdfFile(file)) {
+    if (isImageFile(file) || isPdfFile(file) || isExcelFile(file)) {
       setPreviewFile(file);
       return;
     }

@@ -10,8 +10,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 const IMAGE_TYPES = /^image\/(jpeg|png|gif|webp)/i;
+const EXCEL_TYPES = [
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.ms-excel",
+];
 
 type FileDetailItem = {
   id: string;
@@ -24,6 +37,12 @@ type FileDetailItem = {
   label?: string | null;
   previewUrl: string;
   downloadUrl: string;
+};
+
+type ExcelData = {
+  sheetName: string;
+  headers: string[];
+  rows: (string | number | null)[][];
 };
 
 type FileDetailDialogProps = {
@@ -52,6 +71,10 @@ function isPdfFile(file: FileDetailItem): boolean {
   return file.type === "application/pdf" || /\.pdf$/i.test(file.name);
 }
 
+function isExcelFile(file: FileDetailItem): boolean {
+  return EXCEL_TYPES.includes(file.type) || /\.xlsx?$/i.test(file.name);
+}
+
 export function FileDetailDialog({
   open,
   onOpenChange,
@@ -63,11 +86,36 @@ export function FileDetailDialog({
   const [ocrText, setOcrText] = useState("");
   const [userDescription, setUserDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [excelData, setExcelData] = useState<ExcelData[]>([]);
+  const [loadingPreview, setLoadingPreview] = useState(false);
 
   useEffect(() => {
     if (file) {
       setOcrText(file.ocrText ?? "");
       setUserDescription(file.userDescription ?? "");
+      setExcelData([]);
+
+      // Load Excel preview if it's an Excel file
+      if (isExcelFile(file)) {
+        setLoadingPreview(true);
+        fetch("/api/files/preview", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ fileId: file.id }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.type === "excel" && data.sheets) {
+              setExcelData(data.sheets);
+            }
+          })
+          .catch((err) => {
+            console.error("Excel preview failed:", err);
+          })
+          .finally(() => {
+            setLoadingPreview(false);
+          });
+      }
     }
   }, [file]);
 
@@ -104,6 +152,7 @@ export function FileDetailDialog({
 
   const isImage = isImageFile(file);
   const isPdf = isPdfFile(file);
+  const isExcel = isExcelFile(file);
   const hasAiAnalysis = !!(file.label || file.aiAnalysis);
 
   return (
@@ -159,6 +208,59 @@ export function FileDetailDialog({
                   src={file.previewUrl}
                   className="h-[60vh] w-full rounded-md border border-border bg-background"
                 />
+              ) : isExcel ? (
+                <div className="h-[60vh] overflow-hidden rounded-md border border-border bg-background">
+                  {loadingPreview ? (
+                    <div className="flex h-full items-center justify-center">
+                      <Loader2 className="size-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : excelData.length > 0 ? (
+                    <ScrollArea className="h-full">
+                      <div className="p-4">
+                        {excelData.map((sheet, sheetIdx) => (
+                          <div key={sheetIdx} className="mb-6 last:mb-0">
+                            <h3 className="mb-3 text-sm font-semibold text-foreground">
+                              {sheet.sheetName}
+                            </h3>
+                            <div className="overflow-x-auto">
+                              <Table>
+                                <TableHeader>
+                                  <TableRow>
+                                    {sheet.headers.map((header, idx) => (
+                                      <TableHead key={idx} className="whitespace-nowrap">
+                                        {header || `Column ${idx + 1}`}
+                                      </TableHead>
+                                    ))}
+                                  </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                  {sheet.rows.slice(0, 100).map((row, rowIdx) => (
+                                    <TableRow key={rowIdx}>
+                                      {row.map((cell, cellIdx) => (
+                                        <TableCell key={cellIdx} className="text-sm">
+                                          {cell !== null && cell !== undefined ? String(cell) : ""}
+                                        </TableCell>
+                                      ))}
+                                    </TableRow>
+                                  ))}
+                                </TableBody>
+                              </Table>
+                            </div>
+                            {sheet.rows.length > 100 && (
+                              <p className="mt-2 text-xs text-muted-foreground">
+                                Visar första 100 av {sheet.rows.length} rader
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </ScrollArea>
+                  ) : (
+                    <div className="flex h-full items-center justify-center">
+                      <FileText className="size-12 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
               ) : (
                 <div className="flex h-40 items-center justify-center rounded-md border border-border bg-muted">
                   <FileText className="size-12 text-muted-foreground" />
