@@ -3,7 +3,8 @@
 import { useCallback, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useSocket } from "@/hooks/use-socket";
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events";
 import {
   removeMembership,
   updateMembershipRole,
@@ -56,10 +57,7 @@ export function MemberManagement({
     router.refresh();
   }, [router]);
 
-  useSocket({
-    enabled: true,
-    onMembershipCreated: refresh,
-  });
+  useSocketEvent(SOCKET_EVENTS.membershipCreated, refresh);
 
   function handleRoleChange(membershipId: string, role: string) {
     setError(null);

@@ -150,7 +150,7 @@ GODKÄNT eller UNDERKÄNT med lista över avvikelser.
 
 ## Checkpoint Fas 1
 
-- [ ] Block 1.1: SocketProvider + useSocketEvent skapad
-- [ ] Block 1.2: Monterad i DashboardShell
-- [ ] Block 1.3: Verifiering godkänd
-- [ ] Commit
+- [x] Block 1.1: SocketProvider + useSocketEvent skapad
+- [x] Block 1.2: Monterad i DashboardShell
+- [x] Block 1.3: Verifiering godkänd (Gemini)
+- [ ] Commit (slås ihop med Fas 2)

@@ -9,6 +9,7 @@ import { PersonalAiChat } from "@/components/ai/personal-ai-chat"
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import type { NotificationItem } from "@/actions/notifications"
+import { SocketProvider } from "@/contexts/socket-context"
 
 const AI_CHAT_STORAGE_KEY = "ay-ai-chat-open"
 
@@ -70,50 +71,52 @@ export function DashboardShell({
   }, [])
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      {/* Desktop-sidofält */}
-      <div className="hidden lg:flex">
-        <Sidebar collapsed={sidebarCollapsed} onToggle={handleSidebarToggle} />
+    <SocketProvider enabled={true}>
+      <div className="flex h-screen overflow-hidden bg-background">
+        {/* Desktop-sidofält */}
+        <div className="hidden lg:flex">
+          <Sidebar collapsed={sidebarCollapsed} onToggle={handleSidebarToggle} />
+        </div>
+
+        {/* Mobilt sidofält (sheet) */}
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetContent side="left" className="w-64 p-0">
+            <SheetTitle className="sr-only">{t("brand")}</SheetTitle>
+            <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
+          </SheetContent>
+        </Sheet>
+
+        {/* Huvudinnehåll */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <Topbar
+            onMobileMenuToggle={handleMobileMenuToggle}
+            initialNotifications={initialNotifications}
+            initialUnreadCount={initialUnreadCount}
+            initialUnreadAiCount={initialUnreadAiCount}
+            onAiChatToggle={() => setAiChatOpen((prev) => !prev)}
+          />
+          <main className="flex-1 overflow-y-auto p-6">
+            {children}
+          </main>
+        </div>
+
+        {/* Personlig AI-chatt: dockad på xl+, sheet på mindre skärmar */}
+        {isDesktop && aiChatOpen ? (
+          <PersonalAiChat
+            open={aiChatOpen}
+            onOpenChange={handleAiChatOpenChange}
+            initialProjectId={urlProjectId}
+            mode="docked"
+          />
+        ) : (
+          <PersonalAiChat
+            open={!isDesktop && aiChatOpen}
+            onOpenChange={handleAiChatOpenChange}
+            initialProjectId={urlProjectId}
+            mode="sheet"
+          />
+        )}
       </div>
-
-      {/* Mobilt sidofält (sheet) */}
-      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-64 p-0">
-          <SheetTitle className="sr-only">{t("brand")}</SheetTitle>
-          <Sidebar collapsed={false} onToggle={() => setMobileOpen(false)} />
-        </SheetContent>
-      </Sheet>
-
-      {/* Huvudinnehåll */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Topbar
-          onMobileMenuToggle={handleMobileMenuToggle}
-          initialNotifications={initialNotifications}
-          initialUnreadCount={initialUnreadCount}
-          initialUnreadAiCount={initialUnreadAiCount}
-          onAiChatToggle={() => setAiChatOpen((prev) => !prev)}
-        />
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
-      </div>
-
-      {/* Personlig AI-chatt: dockad på xl+, sheet på mindre skärmar */}
-      {isDesktop && aiChatOpen ? (
-        <PersonalAiChat
-          open={aiChatOpen}
-          onOpenChange={handleAiChatOpenChange}
-          initialProjectId={urlProjectId}
-          mode="docked"
-        />
-      ) : (
-        <PersonalAiChat
-          open={!isDesktop && aiChatOpen}
-          onOpenChange={handleAiChatOpenChange}
-          initialProjectId={urlProjectId}
-          mode="sheet"
-        />
-      )}
-    </div>
+    </SocketProvider>
   )
 }

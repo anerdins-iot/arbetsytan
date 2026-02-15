@@ -2,7 +2,8 @@
 
 import { useCallback, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { useSocket } from "@/hooks/use-socket";
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events";
 
 type DashboardRealtimeWrapperProps = {
   children: ReactNode;
@@ -17,13 +18,10 @@ export function DashboardRealtimeWrapper({
     router.refresh();
   }, [router]);
 
-  useSocket({
-    enabled: true,
-    onTaskCreated: refresh,
-    onTaskUpdated: refresh,
-    onTaskDeleted: refresh,
-    onNotification: refresh,
-  });
+  useSocketEvent(SOCKET_EVENTS.taskCreated, refresh);
+  useSocketEvent(SOCKET_EVENTS.taskUpdated, refresh);
+  useSocketEvent(SOCKET_EVENTS.taskDeleted, refresh);
+  useSocketEvent(SOCKET_EVENTS.notificationNew, refresh);
 
   return <>{children}</>;
 }

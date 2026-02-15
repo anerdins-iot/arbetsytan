@@ -3,7 +3,8 @@
 import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSocket } from "@/hooks/use-socket";
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events";
 import { PersonalOverview } from "./personal-overview";
 import { PersonalNotesTab } from "./personal-notes-tab";
 import { PersonalFilesTab } from "./personal-files-tab";
@@ -36,15 +37,12 @@ export function PersonalView({
     }
   }, []);
 
-  useSocket({
-    enabled: true,
-    onNoteCreated: handlePersonalNoteEvent,
-    onNoteUpdated: handlePersonalNoteEvent,
-    onNoteDeleted: handlePersonalNoteEvent,
-    onFileCreated: handlePersonalFileEvent,
-    onFileUpdated: handlePersonalFileEvent,
-    onFileDeleted: handlePersonalFileEvent,
-  });
+  useSocketEvent(SOCKET_EVENTS.noteCreated, handlePersonalNoteEvent);
+  useSocketEvent(SOCKET_EVENTS.noteUpdated, handlePersonalNoteEvent);
+  useSocketEvent(SOCKET_EVENTS.noteDeleted, handlePersonalNoteEvent);
+  useSocketEvent(SOCKET_EVENTS.fileCreated, handlePersonalFileEvent);
+  useSocketEvent(SOCKET_EVENTS.fileUpdated, handlePersonalFileEvent);
+  useSocketEvent(SOCKET_EVENTS.fileDeleted, handlePersonalFileEvent);
 
   return (
     <div className="space-y-6">

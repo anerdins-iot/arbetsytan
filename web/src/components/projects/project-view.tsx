@@ -7,7 +7,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSocket } from "@/hooks/use-socket";
+import { useSocketEvent, useJoinProjectRoom, useSocketStatus } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events";
 import { ProjectOverview } from "./project-overview";
 import { KanbanBoard } from "./kanban-board";
 import { ProjectFilesUpload } from "./project-files-upload";
@@ -97,30 +98,30 @@ export function ProjectView({
     [project.id, locale, router, refreshProjectView]
   );
 
-  const { status, joinProjectRoom } = useSocket({
-    enabled: true,
-    onTaskCreated: refreshProjectView,
-    onTaskUpdated: refreshProjectView,
-    onTaskDeleted: refreshProjectView,
-    onCommentCreated: refreshProjectView,
-    onCommentUpdated: refreshProjectView,
-    onCommentDeleted: refreshProjectView,
-    onTimeEntryCreated: refreshProjectView,
-    onTimeEntryUpdated: refreshProjectView,
-    onTimeEntryDeleted: refreshProjectView,
-    onFileCreated: refreshProjectView,
-    onFileUpdated: refreshProjectView,
-    onFileDeleted: refreshProjectView,
-    onProjectUpdated: handleProjectUpdated,
-    onNoteCreated: handleNoteEvent,
-    onNoteUpdated: handleNoteEvent,
-    onNoteDeleted: handleNoteEvent,
-    onNoteCategoryCreated: handleNoteCategoryEvent,
-    onNoteCategoryUpdated: handleNoteCategoryEvent,
-    onNoteCategoryDeleted: handleNoteCategoryEvent,
-    onProjectMemberAdded: refreshProjectView,
-    onProjectMemberRemoved: refreshProjectView,
-  });
+  useSocketEvent(SOCKET_EVENTS.taskCreated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.taskUpdated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.taskDeleted, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.commentCreated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.commentUpdated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.commentDeleted, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.timeEntryCreated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.timeEntryUpdated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.timeEntryDeleted, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.fileCreated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.fileUpdated, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.fileDeleted, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
+  useSocketEvent(SOCKET_EVENTS.noteCreated, handleNoteEvent);
+  useSocketEvent(SOCKET_EVENTS.noteUpdated, handleNoteEvent);
+  useSocketEvent(SOCKET_EVENTS.noteDeleted, handleNoteEvent);
+  useSocketEvent(SOCKET_EVENTS.noteCategoryCreated, handleNoteCategoryEvent);
+  useSocketEvent(SOCKET_EVENTS.noteCategoryUpdated, handleNoteCategoryEvent);
+  useSocketEvent(SOCKET_EVENTS.noteCategoryDeleted, handleNoteCategoryEvent);
+  useSocketEvent(SOCKET_EVENTS.projectMemberAdded, refreshProjectView);
+  useSocketEvent(SOCKET_EVENTS.projectMemberRemoved, refreshProjectView);
+
+  const joinProjectRoom = useJoinProjectRoom();
+  const status = useSocketStatus();
 
   useEffect(() => {
     if (status !== "connected") return;

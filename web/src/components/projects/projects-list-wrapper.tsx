@@ -1,7 +1,9 @@
 'use client'
 
+import { useCallback } from 'react';
 import { useRouter } from 'next/navigation'
-import { useSocket } from '@/hooks/use-socket'
+import { useSocketEvent } from '@/contexts/socket-context';
+import { SOCKET_EVENTS } from '@/lib/socket-events'
 
 interface ProjectsListWrapperProps {
   children: React.ReactNode
@@ -10,13 +12,12 @@ interface ProjectsListWrapperProps {
 
 export function ProjectsListWrapper({ children, tenantId }: ProjectsListWrapperProps) {
   const router = useRouter()
-  
-  useSocket({
-    enabled: true,
-    onProjectCreated: () => router.refresh(),
-    onProjectUpdated: () => router.refresh(),
-    onProjectArchived: () => router.refresh(),
-  })
-  
+
+  const refresh = useCallback(() => router.refresh(), [router]);
+
+  useSocketEvent(SOCKET_EVENTS.projectCreated, refresh);
+  useSocketEvent(SOCKET_EVENTS.projectUpdated, refresh);
+  useSocketEvent(SOCKET_EVENTS.projectArchived, refresh);
+
   return <>{children}</>
 }

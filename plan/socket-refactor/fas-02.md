@@ -221,6 +221,6 @@ GODKÄNT eller UNDERKÄNT med lista över avvikelser.
 
 ## Checkpoint Fas 2
 
-- [ ] Block 2.1: Alla 8 konsumenter migrerade + use-socket.ts borttagen
-- [ ] Block 2.2: Verifiering godkänd
+- [x] Block 2.1: Alla 8 konsumenter migrerade + use-socket.ts borttagen
+- [x] Block 2.2: Verifiering godkänd (Gemini)
 - [ ] Commit

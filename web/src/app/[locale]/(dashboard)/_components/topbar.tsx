@@ -21,7 +21,8 @@ import {
   markNotificationRead,
   type NotificationItem,
 } from "@/actions/notifications"
-import { useSocket } from "@/hooks/use-socket"
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events"
 
 type TopbarProps = {
   onMobileMenuToggle: () => void
@@ -70,10 +71,7 @@ export function Topbar({
     }
   }, [])
 
-  useSocket({
-    enabled: true,
-    onNotification: handleRealtimeNotification,
-  })
+  useSocketEvent(SOCKET_EVENTS.notificationNew, handleRealtimeNotification);
 
   function clearDebounce() {
     if (debounceRef.current) {

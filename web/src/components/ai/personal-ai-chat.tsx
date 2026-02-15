@@ -45,8 +45,8 @@ import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
-import { useSocket } from "@/hooks/use-socket";
-import type { RealtimeFileEvent } from "@/lib/socket-events";
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
@@ -140,10 +140,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     );
   }, []);
 
-  useSocket({
-    enabled: open,
-    onFileUpdated: handleFileUpdated,
-  });
+  useSocketEvent(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
 
   // Project selector state
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);

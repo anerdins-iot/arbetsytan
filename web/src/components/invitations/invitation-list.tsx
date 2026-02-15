@@ -7,7 +7,8 @@ import { cancelInvitation } from "@/actions/invitations";
 import type { InvitationItem } from "@/actions/invitations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useSocket } from "@/hooks/use-socket";
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events";
 
 type Props = {
   invitations: InvitationItem[];
@@ -59,12 +60,9 @@ export function InvitationList({ invitations }: Props) {
     router.refresh();
   }, [router]);
 
-  useSocket({
-    enabled: true,
-    onInvitationCreated: refresh,
-    onInvitationUpdated: refresh,
-    onInvitationDeleted: refresh,
-  });
+  useSocketEvent(SOCKET_EVENTS.invitationCreated, refresh);
+  useSocketEvent(SOCKET_EVENTS.invitationUpdated, refresh);
+  useSocketEvent(SOCKET_EVENTS.invitationDeleted, refresh);
 
   function handleCancel(invitationId: string) {
     setCancellingId(invitationId);
