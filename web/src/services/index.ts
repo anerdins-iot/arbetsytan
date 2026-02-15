@@ -2,4 +2,8 @@
 export * from "./types";
 export * from "./project-service";
 export * from "./task-service";
-// Fler services laggs till i senare faser
+export * from "./file-service";
+export * from "./comment-service";
+export * from "./time-entry-service";
+export * from "./member-service";
+export * from "./note-service";
