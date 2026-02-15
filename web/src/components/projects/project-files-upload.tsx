@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
   Download,
@@ -22,6 +22,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileDetailDialog } from "@/components/files/file-detail-dialog";
+import { useSocketEvent } from "@/contexts/socket-context";
+import { SOCKET_EVENTS } from "@/lib/socket-events";
 
 type UploadStatus = "queued" | "uploading" | "saving" | "done" | "error";
 
@@ -236,14 +238,35 @@ export function ProjectFilesUpload({
     }
   }
 
-  async function refreshFiles(): Promise<void> {
+  const refreshFiles = useCallback(async (): Promise<void> => {
     const refreshed = await getFiles(projectId);
     if (refreshed.success) {
       setFiles(refreshed.files);
+      // Also update previewFile if it's open and was updated
+      if (previewFile) {
+        const updatedPreviewFile = refreshed.files.find(f => f.id === previewFile.id);
+        if (updatedPreviewFile) {
+          setPreviewFile(updatedPreviewFile);
+        }
+      }
       return;
     }
     setGeneralError(mapErrorCode(refreshed.error));
-  }
+  }, [projectId, previewFile]);
+
+  // Listen for file updates via WebSocket (e.g., OCR completed)
+  const handleFileSocketEvent = useCallback(
+    (payload: { projectId?: string; fileId?: string }) => {
+      if (payload.projectId === projectId) {
+        void refreshFiles();
+      }
+    },
+    [projectId, refreshFiles]
+  );
+
+  useSocketEvent(SOCKET_EVENTS.fileUpdated, handleFileSocketEvent);
+  useSocketEvent(SOCKET_EVENTS.fileCreated, handleFileSocketEvent);
+  useSocketEvent(SOCKET_EVENTS.fileDeleted, handleFileSocketEvent);
 
   function handlePreview(file: FileItem): void {
     if (isImageFile(file) || isPdfFile(file)) {
