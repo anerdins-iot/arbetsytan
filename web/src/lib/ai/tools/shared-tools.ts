@@ -8,7 +8,8 @@ import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import ExcelJS from "exceljs";
 import mammoth from "mammoth";
 import Docxtemplater from "docxtemplater";
-import InspectModule from "docxtemplater/inspect-module";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const InspectModule = require("docxtemplater/js/inspect-module.js");
 import PizZip from "pizzip";
 import { searchDocuments, searchDocumentsGlobal } from "@/lib/ai/embeddings";
 import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
@@ -1021,7 +1022,7 @@ export async function editExcelFileContent(params: EditExcelParams) {
     }
     const textContent = textParts.join('\n');
 
-    // Save as new file
+    // Save as new file (new version linked to source)
     const saved = await saveGeneratedDocumentToProject({
       db,
       tenantId,
@@ -1031,6 +1032,7 @@ export async function editExcelFileContent(params: EditExcelParams) {
       contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       buffer: new Uint8Array(outputBuffer),
       content: textContent,
+      parentFileId: sourceFileId,
     });
 
     if ("error" in saved) {
@@ -1313,6 +1315,7 @@ export async function fillDocxTemplate(params: FillTemplateParams) {
       contentType,
       buffer: new Uint8Array(outputBuffer),
       content: textContent,
+      parentFileId: sourceFileId,
     });
 
     if ("error" in saved) {
