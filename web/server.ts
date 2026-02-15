@@ -6,6 +6,12 @@ import { getToken } from "next-auth/jwt";
 import { createAdapter } from "@socket.io/redis-adapter";
 import { createClient } from "redis";
 import { z } from "zod";
+import {
+  SOCKET_EVENTS,
+  tenantRoom,
+  userRoom,
+  projectRoom,
+} from "./src/lib/socket-events";
 
 const dev = process.env.NODE_ENV !== "production";
 const port = parseInt(process.env.PORT || "3000", 10);
@@ -23,30 +29,6 @@ type SocketAuthData = {
 const projectJoinSchema = z.object({
   projectId: z.string().min(1),
 });
-
-// Socket events (duplicated here to avoid import issues with Next.js internals)
-const SOCKET_EVENTS = {
-  projectJoin: "project:join",
-  notificationNew: "notification:new",
-  taskCreated: "task:created",
-  taskUpdated: "task:updated",
-  taskDeleted: "task:deleted",
-  fileCreated: "file:created",
-  fileDeleted: "file:deleted",
-  projectUpdated: "project:updated",
-} as const;
-
-function tenantRoom(tenantId: string): string {
-  return `tenant:${tenantId}`;
-}
-
-function userRoom(userId: string): string {
-  return `user:${userId}`;
-}
-
-function projectRoom(projectId: string): string {
-  return `project:${projectId}`;
-}
 
 // Verify mobile JWT token
 function verifyAccessToken(token: string): { userId: string; tenantId: string; role: string } | null {

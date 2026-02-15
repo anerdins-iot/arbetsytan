@@ -1,22 +1,42 @@
 export const SOCKET_EVENTS = {
-  notificationNew: "notification:new",
-  projectJoin: "project:join",
+  // Tasks
   taskCreated: "task:created",
   taskUpdated: "task:updated",
   taskDeleted: "task:deleted",
-  timeEntryCreated: "timeEntry:created",
-  timeEntryUpdated: "timeEntry:updated",
-  timeEntryDeleted: "timeEntry:deleted",
+
+  // Files
   fileCreated: "file:created",
+  fileUpdated: "file:updated",
   fileDeleted: "file:deleted",
-  projectUpdated: "project:updated",
+
+  // Notes
   noteCreated: "note:created",
   noteUpdated: "note:updated",
   noteDeleted: "note:deleted",
+
+  // Comments
+  commentCreated: "comment:created",
+  commentUpdated: "comment:updated",
+  commentDeleted: "comment:deleted",
+
+  // Time entries
+  timeEntryCreated: "timeEntry:created",
+  timeEntryUpdated: "timeEntry:updated",
+  timeEntryDeleted: "timeEntry:deleted",
+
+  // Note categories
   noteCategoryCreated: "noteCategory:created",
   noteCategoryUpdated: "noteCategory:updated",
   noteCategoryDeleted: "noteCategory:deleted",
-  fileUpdated: "file:updated",
+
+  // Notifications
+  notificationNew: "notification:new",
+
+  // Projects
+  projectUpdated: "project:updated",
+
+  // Rooms
+  projectJoin: "project:join",
 } as const;
 
 export type RealtimeNotification = {
@@ -30,6 +50,13 @@ export type RealtimeNotification = {
 
 export type RealtimeTaskEvent = {
   projectId: string;
+  taskId: string;
+  actorUserId: string;
+};
+
+export type RealtimeCommentEvent = {
+  projectId: string;
+  commentId: string;
   taskId: string;
   actorUserId: string;
 };
