@@ -12,6 +12,27 @@
     "myTimes": "Mina tider",
     "settings": "Inställningar"
   },
+  "deleteConfirmation": {
+    "title": "Bekräfta radering",
+    "description": "Följande {type} kommer att raderas permanent. Denna åtgärd kan inte ångras.",
+    "confirm": "Bekräfta radering",
+    "cancel": "Avbryt",
+    "deleting": "Raderar…",
+    "deleted": "Raderat.",
+    "retry": "Försök igen",
+    "errorGeneric": "Kunde inte radera.",
+    "type": {
+      "file": "projektfil",
+      "task": "uppgift",
+      "comment": "kommentar",
+      "projectNote": "projektanteckning",
+      "personalNote": "personlig anteckning",
+      "personalFile": "personlig fil",
+      "timeEntry": "tidsrapport",
+      "automation": "automatisering",
+      "noteCategory": "anteckningskategori"
+    }
+  },
   "common": {
     "submit": "Skicka",
     "cancel": "Avbryt",

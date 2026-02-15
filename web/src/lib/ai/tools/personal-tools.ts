@@ -93,6 +93,7 @@ import {
 import {
   assignTask as assignTaskAction,
   unassignTask as unassignTaskAction,
+  deleteTask as deleteTaskAction,
 } from "@/actions/tasks";
 import {
   toggleNotePin as toggleNotePinAction,
@@ -111,12 +112,16 @@ import {
   markNotificationRead as markNotificationReadAction,
   markAllNotificationsRead as markAllNotificationsReadAction,
 } from "@/actions/notifications";
-import { deletePersonalFile as deletePersonalFileAction } from "@/actions/personal";
+import {
+  deletePersonalFile as deletePersonalFileAction,
+  moveProjectFileToPersonal as moveProjectFileToPersonalAction,
+} from "@/actions/personal";
 import {
   exportTimeReportExcel,
   exportProjectSummaryPdf,
   exportTaskListExcel,
 } from "@/actions/export";
+import { deleteNoteCategory as deleteNoteCategoryAction } from "@/actions/note-categories";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -397,32 +402,26 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const deleteTask = tool({
     description:
-      "Ta bort en uppgift från ett projekt. VIKTIGT: Kan inte ångras. Uppgiften och alla dess tilldelningar raderas.",
+      "Ta bort en uppgift från ett projekt. VIKTIGT: Kan inte ångras. Uppgiften och alla dess tilldelningar raderas. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       taskId: z.string().describe("ID för uppgiften som ska tas bort"),
-      confirmDeletion: z.boolean().describe("Måste vara true för att bekräfta permanent borttagning"),
     })),
-    execute: async ({ projectId: pid, taskId, confirmDeletion }) => {
-      if (!confirmDeletion) {
-        return { error: "Radering avbröts: confirmDeletion måste vara true." };
-      }
+    execute: async ({ projectId: pid, taskId }) => {
       await requireProject(tenantId, pid, userId);
 
       const task = await db.task.findFirst({
         where: { id: taskId, projectId: pid },
-        select: { id: true, title: true, status: true },
+        select: { id: true, title: true },
       });
       if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
 
-      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
-      await projectDb.taskAssignment.deleteMany({ where: { taskId } });
-      await projectDb.task.delete({ where: { id: taskId } });
-
       return {
-        success: true,
-        deletedTaskId: taskId,
-        message: `Uppgiften "${task.title}" har tagits bort permanent.`,
+        __deleteConfirmation: true as const,
+        type: "task" as const,
+        items: [{ id: task.id, label: task.title }],
+        actionParams: { projectId: pid, taskId },
+        message: `Bekräfta radering av uppgiften "${task.title}".`,
       };
     },
   });
@@ -489,18 +488,31 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const deleteComment = tool({
     description:
-      "Ta bort en kommentar. Endast kommentarer som användaren själv skapat kan tas bort.",
+      "Ta bort en kommentar. Endast kommentarer som användaren själv skapat kan tas bort. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       commentId: z.string().describe("Kommentarens ID"),
     })),
     execute: async ({ projectId: pid, commentId }) => {
-      const result = await deleteCommentAction(pid, { commentId });
-      if (!result.success) {
-        if (result.error === "FORBIDDEN") return { error: "Endast författaren kan ta bort sin egen kommentar." };
-        return { error: result.error || "Kunde inte ta bort kommentar." };
+      await requireProject(tenantId, pid, userId);
+
+      const comment = await db.comment.findFirst({
+        where: { id: commentId, task: { projectId: pid } },
+        select: { id: true, content: true, authorId: true },
+      });
+      if (!comment) return { error: "Kommentaren hittades inte." };
+      if (comment.authorId !== userId) {
+        return { error: "Endast författaren kan ta bort sin egen kommentar." };
       }
-      return { message: "Kommentar borttagen." };
+
+      const label = comment.content.length > 50 ? comment.content.slice(0, 50) + "…" : comment.content;
+      return {
+        __deleteConfirmation: true as const,
+        type: "comment" as const,
+        items: [{ id: comment.id, label }],
+        actionParams: { projectId: pid, commentId },
+        message: `Bekräfta radering av kommentaren.`,
+      };
     },
   });
 
@@ -627,15 +639,26 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const deleteTimeEntry = tool({
     description:
-      "Ta bort en tidsrapport. Endast egna tidsrapporter kan tas bort.",
+      "Ta bort en tidsrapport. Endast egna tidsrapporter kan tas bort. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       timeEntryId: z.string().describe("Tidsrapportens ID"),
     })),
     execute: async ({ timeEntryId }) => {
-      const result = await deleteTimeEntryAction(timeEntryId);
-      if (!result.success) return { error: result.error || "Kunde inte ta bort tidsrapport." };
-      return { message: "Tidsrapport borttagen." };
+      const entry = await db.timeEntry.findFirst({
+        where: { id: timeEntryId, userId },
+        select: { id: true, minutes: true, date: true, task: { select: { title: true } } },
+      });
+      if (!entry) return { error: "Tidsrapporten hittades inte eller du har inte behörighet." };
+
+      const label = `${entry.task?.title ?? "Tidsrapport"} - ${entry.minutes} min (${entry.date.toISOString().split("T")[0]})`;
+      return {
+        __deleteConfirmation: true as const,
+        type: "timeEntry" as const,
+        items: [{ id: entry.id, label }],
+        actionParams: { timeEntryId: entry.id },
+        message: `Bekräfta radering av tidsrapporten.`,
+      };
     },
   });
 
@@ -890,24 +913,27 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   const deleteFile = tool({
-    description: "Radera en fil från ett projekt permanent. Kräver projectId och fileId. VIKTIGT: Kan inte ångras.",
+    description: "Radera en fil från ett projekt permanent. Kräver projectId och fileId. VIKTIGT: Kan inte ångras. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       fileId: z.string().describe("Filens ID"),
-      confirmDeletion: z.boolean().describe("Måste vara true för att bekräfta permanent borttagning"),
     })),
-    execute: async ({ projectId: pid, fileId, confirmDeletion }) => {
-      if (!confirmDeletion) {
-        return { error: "Radering avbröts: confirmDeletion måste vara true." };
-      }
+    execute: async ({ projectId: pid, fileId }) => {
+      await requireProject(tenantId, pid, userId);
 
-      const result = await deleteFileAction({ projectId: pid, fileId });
+      const file = await db.file.findFirst({
+        where: { id: fileId, projectId: pid },
+        select: { id: true, name: true },
+      });
+      if (!file) return { error: "Filen hittades inte i detta projekt." };
 
-      if (!result.success) {
-        return { error: result.error || "Kunde inte radera filen." };
-      }
-
-      return { success: true, message: "Filen har raderats permanent." };
+      return {
+        __deleteConfirmation: true as const,
+        type: "file" as const,
+        items: [{ id: file.id, label: file.name }],
+        actionParams: { projectId: pid, fileId: file.id },
+        message: `Bekräfta radering av filen "${file.name}".`,
+      };
     },
   });
 
@@ -1181,9 +1207,42 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  const moveProjectFileToPersonal = tool({
+    description:
+      "Flytta en fil FRÅN ett projekt TILL användarens personliga filer. Använd när användaren vill flytta orelevanta eller felplacerade filer till sitt personliga utrymme istället för att radera dem. VIKTIGT: Anropa FÖRST listFiles (eller getProjectFiles) för att få fileId, och listProjects för att få projectId.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets unika ID"),
+      fileId: z.string().describe("Filens unika ID (från listFiles)"),
+    })),
+    execute: async ({ projectId: pid, fileId }) => {
+      const projectIdCheck = validateDatabaseId(pid, "projectId");
+      if (!projectIdCheck.valid) return { error: projectIdCheck.error };
+      const fileIdCheck = validateDatabaseId(fileId, "fileId");
+      if (!fileIdCheck.valid) return { error: fileIdCheck.error };
+
+      const result = await moveProjectFileToPersonalAction({ projectId: pid, fileId });
+
+      if (!result.success) {
+        const msg =
+          result.error === "FILE_NOT_FOUND"
+            ? "Filen hittades inte i projektet eller du har inte behörighet."
+            : result.error === "VALIDATION_ERROR"
+              ? "Ogiltiga parametrar."
+              : "Kunde inte flytta filen.";
+        return { error: msg };
+      }
+
+      return {
+        success: true,
+        newFileId: result.file.id,
+        message: `Filen "${result.file.name}" har flyttats till dina personliga filer.`,
+      };
+    },
+  });
+
   const deletePersonalFile = tool({
     description:
-      "Radera en personlig fil permanent. Filen kan inte återställas. Använd fileId från getPersonalFiles.",
+      "Radera en personlig fil permanent. Filen kan inte återställas. Använd fileId från getPersonalFiles. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       fileId: z.string().describe("ID för filen som ska raderas (från getPersonalFiles)"),
     })),
@@ -1191,18 +1250,20 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const fileIdCheck = validateDatabaseId(fileId, "fileId");
       if (!fileIdCheck.valid) return { error: fileIdCheck.error };
 
-      const result = await deletePersonalFileAction({ fileId });
+      const udb = userDb(userId);
+      const file = await udb.file.findFirst({
+        where: { id: fileId },
+        select: { id: true, name: true },
+      });
+      if (!file) return { error: "Filen hittades inte eller du har inte behörighet." };
 
-      if (!result.success) {
-        const msg =
-          result.error === "FILE_NOT_FOUND"
-            ? "Filen hittades inte eller du har inte behörighet."
-            : result.error === "VALIDATION_ERROR"
-              ? "Ogiltigt fil-ID."
-              : "Kunde inte radera filen.";
-        return { error: msg };
-      }
-      return { success: true, message: "Den personliga filen har raderats permanent." };
+      return {
+        __deleteConfirmation: true as const,
+        type: "personalFile" as const,
+        items: [{ id: file.id, label: file.name }],
+        actionParams: { fileId: file.id },
+        message: `Bekräfta radering av den personliga filen "${file.name}".`,
+      };
     },
   });
 
@@ -1424,15 +1485,28 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   const deleteProjectNote = tool({
-    description: "Ta bort en anteckning från ett projekt.",
+    description: "Ta bort en anteckning från ett projekt. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ projectId: pid, noteId }) => {
-      const result = await deleteNoteAction(pid, noteId);
-      if (!result.success) return { error: result.error || "Kunde inte ta bort anteckning." };
-      return { success: true, message: "Anteckning borttagen." };
+      await requireProject(tenantId, pid, userId);
+
+      const note = await db.note.findFirst({
+        where: { id: noteId, projectId: pid },
+        select: { id: true, title: true, content: true },
+      });
+      if (!note) return { error: "Anteckningen hittades inte i detta projekt." };
+
+      const label = note.title || (note.content.length > 50 ? note.content.slice(0, 50) + "…" : note.content);
+      return {
+        __deleteConfirmation: true as const,
+        type: "projectNote" as const,
+        items: [{ id: note.id, label }],
+        actionParams: { projectId: pid, noteId: note.id },
+        message: `Bekräfta radering av anteckningen.`,
+      };
     },
   });
 
@@ -1563,14 +1637,26 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   const deletePersonalNote = tool({
-    description: "Ta bort en personlig anteckning.",
+    description: "Ta bort en personlig anteckning. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ noteId }) => {
-      const result = await deletePersonalNoteAction(noteId);
-      if (!result.success) return { error: result.error || "Kunde inte ta bort anteckning." };
-      return { success: true, message: "Personlig anteckning borttagen." };
+      const udb = userDb(userId);
+      const note = await udb.note.findFirst({
+        where: { id: noteId },
+        select: { id: true, title: true, content: true },
+      });
+      if (!note) return { error: "Anteckningen hittades inte." };
+
+      const label = note.title || (note.content.length > 50 ? note.content.slice(0, 50) + "…" : note.content);
+      return {
+        __deleteConfirmation: true as const,
+        type: "personalNote" as const,
+        items: [{ id: note.id, label }],
+        actionParams: { noteId: note.id },
+        message: `Bekräfta radering av den personliga anteckningen.`,
+      };
     },
   });
 
@@ -1690,14 +1776,23 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   const deleteAutomation = tool({
-    description: "Ta bort en schemalagd automation. Ange automationens ID (från listAutomations).",
+    description: "Ta bort en schemalagd automation. Ange automationens ID (från listAutomations). Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       automationId: z.string().describe("Automationens ID som ska tas bort"),
     })),
     execute: async ({ automationId }) => {
-      const result = await deleteAutomationAction(automationId);
+      const result = await listAutomationsAction({});
       if (!result.success) return { error: result.error };
-      return { success: true, message: "Automation borttagen." };
+      const automation = result.automations.find((a) => a.id === automationId);
+      if (!automation) return { error: "Automationen hittades inte." };
+
+      return {
+        __deleteConfirmation: true as const,
+        type: "automation" as const,
+        items: [{ id: automation.id, label: automation.name }],
+        actionParams: { automationId: automation.id },
+        message: `Bekräfta radering av automationen "${automation.name}".`,
+      };
     },
   });
 
@@ -2408,7 +2503,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   });
 
   const deleteNoteCategory = tool({
-    description: "Ta bort en anteckningskategori. Anteckningar med denna kategori behåller sin kategori-text men kategorin försvinner från listan.",
+    description: "Ta bort en anteckningskategori. Anteckningar med denna kategori behåller sin kategori-text men kategorin försvinner från listan. Användaren måste bekräfta raderingen i chatten.",
     inputSchema: toolInputSchema(z.object({
       categoryId: z.string().describe("Kategorins ID"),
     })),
@@ -2418,11 +2513,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (!existing) return { error: "Kategorin hittades inte." };
 
-      // Use tenantDb with emitContext for auto-emit
-      const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
-      await dbWithEmit.noteCategory.delete({ where: { id: categoryId } });
-
-      return { success: true, message: "Kategori borttagen." };
+      return {
+        __deleteConfirmation: true as const,
+        type: "noteCategory" as const,
+        items: [{ id: existing.id, label: existing.name }],
+        actionParams: { categoryId: existing.id },
+        message: `Bekräfta radering av kategorin "${existing.name}".`,
+      };
     },
   });
 
@@ -2466,6 +2563,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     analyzePersonalFile,
     analyzeImage,
     movePersonalFileToProject,
+    moveProjectFileToPersonal,
     deletePersonalFile,
     // Projektmedlemmar
     listMembers,

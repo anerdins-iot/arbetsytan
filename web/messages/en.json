@@ -12,6 +12,27 @@
     "myTimes": "My time",
     "settings": "Settings"
   },
+  "deleteConfirmation": {
+    "title": "Confirm deletion",
+    "description": "The following {type} will be permanently deleted. This action cannot be undone.",
+    "confirm": "Confirm deletion",
+    "cancel": "Cancel",
+    "deleting": "Deleting…",
+    "deleted": "Deleted.",
+    "retry": "Try again",
+    "errorGeneric": "Could not delete.",
+    "type": {
+      "file": "project file",
+      "task": "task",
+      "comment": "comment",
+      "projectNote": "project note",
+      "personalNote": "personal note",
+      "personalFile": "personal file",
+      "timeEntry": "time entry",
+      "automation": "automation",
+      "noteCategory": "note category"
+    }
+  },
   "common": {
     "submit": "Submit",
     "cancel": "Cancel",

@@ -2,7 +2,7 @@
 
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
-import { requireAuth } from "@/lib/auth";
+import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb, userDb } from "@/lib/db";
 import { getPersonalNotesCore, getPersonalFilesCore } from "@/services";
 import {
@@ -12,6 +12,9 @@ import {
   assertObjectExists,
   MAX_FILE_SIZE_BYTES,
   ALLOWED_FILE_TYPES,
+  copyObjectInMinio,
+  ensureTenantBucket,
+  deleteObject,
 } from "@/lib/minio";
 import { processPersonalFileOcr } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
@@ -373,6 +376,84 @@ export async function deletePersonalFile(input: {
     return { success: true };
   } catch {
     return { success: false, error: "DELETE_FILE_FAILED" };
+  }
+}
+
+// ─────────────────────────────────────────
+// Move project file to personal
+// ─────────────────────────────────────────
+
+const moveProjectFileToPersonalSchema = z.object({
+  projectId: z.string().min(1),
+  fileId: z.string().min(1),
+});
+
+export async function moveProjectFileToPersonal(input: {
+  projectId: string;
+  fileId: string;
+}): Promise<
+  | { success: true; file: PersonalFileItem }
+  | { success: false; error: string }
+> {
+  try {
+    const { userId, tenantId } = await requireAuth();
+    const parsed = moveProjectFileToPersonalSchema.safeParse(input);
+    if (!parsed.success) return { success: false, error: "VALIDATION_ERROR" };
+
+    const { projectId, fileId } = parsed.data;
+    await requireProject(tenantId, projectId, userId);
+
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
+    const file = await db.file.findFirst({
+      where: { id: fileId, projectId },
+      select: { id: true, name: true, type: true, size: true, bucket: true, key: true, ocrText: true },
+    });
+    if (!file) return { success: false, error: "FILE_NOT_FOUND" };
+
+    await assertTenantStorageLimit(tenantId, file.size);
+
+    const objectId = randomUUID();
+    const newKey = personalObjectKey(userId, file.name, objectId);
+    const bucket = await ensureTenantBucket(tenantId);
+
+    await copyObjectInMinio({
+      sourceBucket: file.bucket,
+      sourceKey: file.key,
+      destBucket: bucket,
+      destKey: newKey,
+    });
+
+    const udb = userDb(userId, {});
+    const created = await udb.file.create({
+      data: {
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        bucket,
+        key: newKey,
+        uploadedById: userId,
+        ocrText: file.ocrText,
+        projectId: null,
+      },
+    });
+
+    await deleteObject({ bucket: file.bucket, key: file.key });
+    await db.file.delete({ where: { id: fileId } });
+
+    return {
+      success: true,
+      file: {
+        id: created.id,
+        name: created.name,
+        type: created.type,
+        size: created.size,
+        createdAt: created.createdAt.toISOString(),
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "MOVE_FILE_FAILED";
+    logger.error("moveProjectFileToPersonal failed", { input, error: message });
+    return { success: false, error: message };
   }
 }
 

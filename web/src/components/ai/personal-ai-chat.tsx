@@ -43,6 +43,15 @@ import { getProjectContext } from "@/actions/project-context";
 import type { ProjectContextResult } from "@/actions/project-context";
 import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
+import { DeleteConfirmationCard, type DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
+import { deleteFile } from "@/actions/files";
+import { deleteTask } from "@/actions/tasks";
+import { deleteComment } from "@/actions/comments";
+import { deleteNote } from "@/actions/notes";
+import { deletePersonalNote, deletePersonalFile } from "@/actions/personal";
+import { deleteTimeEntry } from "@/actions/time-entries";
+import { deleteAutomation } from "@/actions/automations";
+import { deleteNoteCategory } from "@/actions/note-categories";
 import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
@@ -764,6 +773,76 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       <SearchResultsCard
                         key={i}
                         results={result.results as SearchResult[]}
+                      />
+                    );
+                  }
+
+                  if (result?.__deleteConfirmation) {
+                    const deleteData = result as DeleteConfirmationData & {
+                      __deleteConfirmation: true;
+                      actionParams: Record<string, string>;
+                    };
+
+                    const handleDeleteConfirm = async () => {
+                      const { type, actionParams } = deleteData;
+                      switch (type) {
+                        case "file": {
+                          const r = await deleteFile({
+                            projectId: actionParams.projectId,
+                            fileId: actionParams.fileId,
+                          });
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "task": {
+                          const r = await deleteTask(actionParams.projectId, {
+                            taskId: actionParams.taskId,
+                          });
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "comment": {
+                          const r = await deleteComment(actionParams.projectId, {
+                            commentId: actionParams.commentId,
+                          });
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "projectNote": {
+                          const r = await deleteNote(actionParams.projectId, actionParams.noteId);
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "personalNote": {
+                          const r = await deletePersonalNote(actionParams.noteId);
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "personalFile": {
+                          const r = await deletePersonalFile({ fileId: actionParams.fileId });
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "timeEntry": {
+                          const r = await deleteTimeEntry(actionParams.timeEntryId);
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "automation": {
+                          const r = await deleteAutomation(actionParams.automationId);
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        case "noteCategory": {
+                          const r = await deleteNoteCategory(actionParams.categoryId);
+                          return { success: r.success, error: r.success ? undefined : r.error };
+                        }
+                        default:
+                          return { success: false, error: "Okänd raderingstyp" };
+                      }
+                    };
+
+                    return (
+                      <DeleteConfirmationCard
+                        key={i}
+                        data={{
+                          type: deleteData.type,
+                          items: deleteData.items,
+                          actionParams: deleteData.actionParams,
+                        }}
+                        onConfirm={handleDeleteConfirm}
                       />
                     );
                   }

@@ -309,6 +309,18 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       { name: "deleteOriginal", type: "boolean", required: false, description: "Delete original after copy" },
     ],
   },
+  {
+    name: "moveProjectFileToPersonal",
+    category: "file",
+    description: "Move a project file to personal files. Use when user wants to move irrelevant files to personal space instead of deleting.",
+    availableIn: ["personal"],
+    requiresProjectId: false,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: true, description: "Project ID" },
+      { name: "fileId", type: "string", required: true, description: "File ID" },
+    ],
+  },
   // ─── Report ───────────────────────────────────────────
   {
     name: "generateProjectReport",
