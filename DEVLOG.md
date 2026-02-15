@@ -5,6 +5,22 @@ Läs denna fil innan du börjar arbeta. Skriv till den vid problem som inte är 
 
 Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
+## 2026-02-15: WebSocket Auto-Emit Refactoring
+
+**Problem:** ~40 manuella emit-anrop spridda över 15+ filer. Svårt att underhålla och lätt att missa events.
+
+**Lösning:** Prisma extension (`createEmitExtension`) som automatiskt emittar WebSocket-events efter CRUD-operationer.
+
+**Resultat:**
+- Alla manuella emit-anrop borttagna
+- Konsekvent event-emission
+- Enklare att lägga till nya modeller
+
+**Filer:**
+- `lib/db-emit-extension.ts` — Prisma extension
+- `lib/socket-events.ts` — Event-definitioner
+- `hooks/use-socket.ts` — Frontend-hook
+
 ---
 
 ### Projekt-AI skickade inget AIMessage vid task create/assign (Fas 5)

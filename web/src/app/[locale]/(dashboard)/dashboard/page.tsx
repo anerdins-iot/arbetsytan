@@ -11,6 +11,7 @@ import { TaskList } from "@/components/dashboard/task-list";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { NotificationList } from "@/components/dashboard/notification-list";
 import { WorkerDashboard } from "@/components/dashboard/worker-dashboard";
+import { DashboardRealtimeWrapper } from "@/components/dashboard/dashboard-realtime-wrapper";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -25,7 +26,11 @@ export default async function DashboardPage({ params }: Props) {
   // Worker role: simplified dashboard with only today's tasks
   if (role === "WORKER") {
     const { tasks } = await getMyTasksToday();
-    return <WorkerDashboard tasks={tasks} userName={user.name ?? null} />;
+    return (
+      <DashboardRealtimeWrapper>
+        <WorkerDashboard tasks={tasks} userName={user.name ?? null} />
+      </DashboardRealtimeWrapper>
+    );
   }
 
   // Admin / Project Manager: full dashboard with three sections
@@ -36,24 +41,26 @@ export default async function DashboardPage({ params }: Props) {
   ]);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-foreground">{t("title")}</h1>
-        <p className="mt-1 text-muted-foreground">{t("welcome")}</p>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Tasks section - full width on top */}
-        <div className="lg:col-span-2">
-          <TaskList tasks={tasksResult.tasks} />
+    <DashboardRealtimeWrapper>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">{t("title")}</h1>
+          <p className="mt-1 text-muted-foreground">{t("welcome")}</p>
         </div>
 
-        {/* Activity feed */}
-        <ActivityFeed activities={activityResult.activities} />
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Tasks section - full width on top */}
+          <div className="lg:col-span-2">
+            <TaskList tasks={tasksResult.tasks} />
+          </div>
 
-        {/* Notifications */}
-        <NotificationList notifications={notificationsResult.notifications} />
+          {/* Activity feed */}
+          <ActivityFeed activities={activityResult.activities} />
+
+          {/* Notifications */}
+          <NotificationList notifications={notificationsResult.notifications} />
+        </div>
       </div>
-    </div>
+    </DashboardRealtimeWrapper>
   );
 }

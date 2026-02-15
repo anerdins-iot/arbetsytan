@@ -25,13 +25,20 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | Mobilapp | Expo SDK 54 | `/workspace/docs/expo.md` |
 | React | React 19.2 | `/workspace/docs/react.md` |
 | E-post | Resend | — |
-| Realtid | Socket.IO (webb + mobil) | — |
+| Realtid | Socket.IO (webb + mobil) | `/workspace/web/docs/websocket.md` |
 | Notifikationer | Expo Push, Web Push, Resend | se `AI.md` |
 | AI SDK | Vercel AI SDK (ai) | `vercel-ai-sdk.md` |
 | AI | Claude, OpenAI, Mistral | se `AI.md` |
 | OCR | Mistral OCR | `mistral-api.md` |
 | Embeddings | OpenAI + pgvector | se `AI.md` |
 | i18n | next-intl | — |
+
+## WebSocket Auto-Emit
+
+Systemet använder en Prisma extension (`createEmitExtension`) för att automatiskt emitta WebSocket-events vid CRUD-operationer.
+- **Kontext:** `tenantDb(tenantId, { actorUserId, projectId, tenantId })` krävs för auto-emit.
+- **Skippa:** Använd `{ skipEmit: true }` i `EmitContext` för att tysta events för en specifik operation.
+- **Routing:** Events skickas automatiskt till relevanta rum (`project:ID`, `user:ID`, `tenant:ID`) baserat på modellens data.
 
 ## Kommandon
 

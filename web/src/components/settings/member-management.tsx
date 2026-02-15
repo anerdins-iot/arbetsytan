@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/hooks/use-socket";
 import {
   removeMembership,
   updateMembershipRole,
@@ -50,6 +51,15 @@ export function MemberManagement({
   const [pendingMembershipId, setPendingMembershipId] = useState<string | null>(
     null
   );
+
+  const refresh = useCallback(() => {
+    router.refresh();
+  }, [router]);
+
+  useSocket({
+    enabled: true,
+    onMembershipCreated: refresh,
+  });
 
   function handleRoleChange(membershipId: string, role: string) {
     setError(null);

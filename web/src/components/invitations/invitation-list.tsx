@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cancelInvitation } from "@/actions/invitations";
 import type { InvitationItem } from "@/actions/invitations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useSocket } from "@/hooks/use-socket";
 
 type Props = {
   invitations: InvitationItem[];
@@ -53,6 +54,17 @@ export function InvitationList({ invitations }: Props) {
   const router = useRouter();
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+
+  const refresh = useCallback(() => {
+    router.refresh();
+  }, [router]);
+
+  useSocket({
+    enabled: true,
+    onInvitationCreated: refresh,
+    onInvitationUpdated: refresh,
+    onInvitationDeleted: refresh,
+  });
 
   function handleCancel(invitationId: string) {
     setCancellingId(invitationId);

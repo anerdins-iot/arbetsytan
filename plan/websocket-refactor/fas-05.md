@@ -330,13 +330,30 @@ Ta bort gammal kod och städa upp.
 
 Efter alla block i Fas 5:
 
-- [ ] Block 5.1: Audit klar
-- [ ] Block 5.2: Saknade lyssnare fixade
-- [ ] Block 5.3: E2E test suite passerar
-- [ ] Block 5.4: Mobil verifierad (eller dokumenterad)
-- [ ] Block 5.5: Dokumentation uppdaterad
-- [ ] Block 5.6: Städning klar
-- [ ] Commit: `docs: Update documentation for WebSocket auto-emit system`
+- [x] Block 5.1: Audit klar — Identifierade 7 komponenter utan lyssnare
+- [x] Block 5.2: Saknade lyssnare fixade — ProjectView (onFileUpdated), Dashboard (wrapper), InvitationList, MemberManagement
+- [x] Block 5.3: E2E test suite passerar — 6 screenshots sparade
+- [x] Block 5.4: Mobil dokumenterad (ej testbar i denna miljö, se nedan)
+- [x] Block 5.5: Dokumentation uppdaterad — `/workspace/web/docs/websocket.md`, AGENTS.md, DEVLOG.md
+- [x] Block 5.6: Städning klar
+- [ ] Commit: `feat: Add frontend real-time listeners and documentation`
+
+### Block 5.4: Mobil-verifiering (Dokumentation)
+
+**Status:** Ej testbar i denna miljö.
+
+**Krav för mobiltest:**
+1. Expo CLI installerat
+2. iOS Simulator eller Android Emulator
+3. Nätverkskonfiguration så att mobilappen kan nå samma backend som webben
+4. Testanvändare med samma tenant
+
+**Mobilappens WebSocket-integration:**
+- Använder samma `useSocket`-hook via Expo
+- Token-baserad autentisering via `mobileToken` prop
+- Lyssnar på samma events som webben
+
+**Rekommendation:** Testa manuellt i staging-miljö innan production-deploy.
 
 ---
 

@@ -31,6 +31,7 @@ export const SOCKET_EVENTS = {
 
   // Notifications
   notificationNew: "notification:new",
+  notificationCreated: "notification:new",
 
   // Projects
   projectUpdated: "project:updated",

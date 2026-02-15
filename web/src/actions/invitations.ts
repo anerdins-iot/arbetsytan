@@ -342,7 +342,8 @@ export async function acceptInvitation(
 
   if (existingMembership) {
     // Already a member, just mark invitation as accepted
-    await prisma.invitation.update({
+    const db = tenantDb(invitation.tenantId, { actorUserId: userId });
+    await db.invitation.update({
       where: { id: invitation.id },
       data: { status: "ACCEPTED" },
     });
@@ -350,52 +351,23 @@ export async function acceptInvitation(
   }
 
   // Create membership and mark invitation as accepted
-  const [membership, updatedInvitation] = await prisma.$transaction([
-    prisma.membership.create({
+  const db = tenantDb(invitation.tenantId, { actorUserId: userId });
+  await db.$transaction([
+    db.membership.create({
       data: {
         userId,
         tenantId: invitation.tenantId,
         role: invitation.role,
       },
     }),
-    prisma.invitation.update({
+    db.invitation.update({
       where: { id: invitation.id },
       data: { status: "ACCEPTED" },
     }),
   ]);
 
-  // Emit events
   try {
-    const io = getSocketServer();
-    const room = tenantRoom(invitation.tenantId);
-
-    // Membership created
-    io.to(room).emit(SOCKET_EVENTS.membershipCreated, {
-      tenantId: invitation.tenantId,
-      membershipId: membership.id,
-      userId: membership.userId,
-      role: membership.role,
-      actorUserId: userId,
-    });
-
-    // Invitation updated
-    io.to(room).emit(SOCKET_EVENTS.invitationUpdated, {
-      tenantId: invitation.tenantId,
-      invitationId: updatedInvitation.id,
-      email: updatedInvitation.email,
-      role: updatedInvitation.role,
-      status: updatedInvitation.status,
-      actorUserId: userId,
-    });
-  } catch (err) {
-    console.warn(
-      "[invitations] Failed to emit events after acceptInvitation:",
-      err
-    );
-  }
-
-  try {
-    const count = await prisma.membership.count({
+    const count = await db.membership.count({
       where: { tenantId: invitation.tenantId },
     });
     await updateSubscriptionQuantity(count);

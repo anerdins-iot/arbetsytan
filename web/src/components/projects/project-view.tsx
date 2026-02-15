@@ -109,6 +109,7 @@ export function ProjectView({
     onTimeEntryUpdated: refreshProjectView,
     onTimeEntryDeleted: refreshProjectView,
     onFileCreated: refreshProjectView,
+    onFileUpdated: refreshProjectView,
     onFileDeleted: refreshProjectView,
     onProjectUpdated: handleProjectUpdated,
     onNoteCreated: handleNoteEvent,
