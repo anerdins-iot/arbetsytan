@@ -1,6 +1,10 @@
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/db";
+import { processPersonalFileOcr } from "../src/lib/ai/ocr";
+import { runFileAnalysisSync } from "../src/lib/ai/queue-file-analysis";
+import { processFileEmbeddings } from "../src/lib/ai/embeddings";
+import { ensureTenantBucket, putObjectToMinio } from "../src/lib/minio";
 
 async function main() {
   /** Shared test password for seed users: fredrik@anerdins.se, pm@example.com, montor@example.com → "password123" */
@@ -146,8 +150,12 @@ async function main() {
     skipDuplicates: true,
   });
 
-  const task1 = await prisma.task.create({
-    data: {
+  // --- Idempotent tasks (QA: ritning, offertstatus, deadlines, status) ---
+  const task1 = await prisma.task.upsert({
+    where: { id: "seed-task-1" },
+    update: {},
+    create: {
+      id: "seed-task-1",
       title: "Dra kabel i källaren",
       description: "Enligt ritning A-101",
       status: "TODO",
@@ -156,31 +164,64 @@ async function main() {
     },
   });
 
-  const task2 = await prisma.task.create({
-    data: {
+  const taskDeadline = new Date();
+  taskDeadline.setDate(taskDeadline.getDate() + 14);
+  const task2 = await prisma.task.upsert({
+    where: { id: "seed-task-2" },
+    update: {},
+    create: {
+      id: "seed-task-2",
       title: "Montera tavlor",
       description: "Fas 2, vån 1",
       status: "IN_PROGRESS",
       priority: "HIGH",
+      deadline: taskDeadline,
       projectId: project.id,
     },
   });
 
-  await prisma.taskAssignment.create({
-    data: {
-      taskId: task1.id,
-      membershipId: workerMembership.id,
+  const task3 = await prisma.task.upsert({
+    where: { id: "seed-task-3" },
+    update: {},
+    create: {
+      id: "seed-task-3",
+      title: "Offert skickad",
+      description: "Offert till kund godkänd",
+      status: "DONE",
+      priority: "MEDIUM",
+      projectId: project.id,
     },
   });
 
-  await prisma.taskAssignment.create({
-    data: {
+  // Idempotent task assignments
+  await prisma.taskAssignment.upsert({
+    where: {
+      taskId_membershipId: { taskId: task1.id, membershipId: workerMembership.id },
+    },
+    update: {},
+    create: { taskId: task1.id, membershipId: workerMembership.id },
+  });
+  await prisma.taskAssignment.upsert({
+    where: {
+      taskId_membershipId: { taskId: task2.id, membershipId: workerMembership.id },
+    },
+    update: {},
+    create: { taskId: task2.id, membershipId: workerMembership.id },
+  });
+
+  // Idempotent målare-kommentar (Comment, inte note)
+  await prisma.comment.upsert({
+    where: { id: "seed-comment-1" },
+    update: {},
+    create: {
+      id: "seed-comment-1",
       taskId: task2.id,
-      membershipId: workerMembership.id,
+      authorId: workerUser.id,
+      content: "Jag har kollat ritningen och kan börja montera nästa vecka. Behöver elräkning från elnätsbolaget först.",
     },
   });
 
-  // --- Automations (example scheduled actions) ---
+  // --- Idempotent automations ---
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(10, 0, 0, 0);
@@ -192,8 +233,11 @@ async function main() {
     return d;
   }
 
-  await prisma.automation.create({
-    data: {
+  await prisma.automation.upsert({
+    where: { id: "seed-automation-1" },
+    update: {},
+    create: {
+      id: "seed-automation-1",
       name: "Påminnelse om kundmöte",
       description: "Påminn om möte med kunden på fredag",
       triggerAt: tomorrow,
@@ -209,8 +253,11 @@ async function main() {
     },
   });
 
-  await prisma.automation.create({
-    data: {
+  await prisma.automation.upsert({
+    where: { id: "seed-automation-2" },
+    update: {},
+    create: {
+      id: "seed-automation-2",
       name: "Daglig projektrapport",
       description: "Generera projektrapport varje morgon",
       triggerAt: nextMorning9AM(),
@@ -226,8 +273,11 @@ async function main() {
     },
   });
 
-  await prisma.automation.create({
-    data: {
+  await prisma.automation.upsert({
+    where: { id: "seed-automation-3" },
+    update: {},
+    create: {
+      id: "seed-automation-3",
       name: "Veckovis uppgiftspåminnelse",
       description: "Påminn om oavslutade uppgifter varje måndag",
       triggerAt: nextMorning9AM(),
@@ -243,8 +293,11 @@ async function main() {
     },
   });
 
-  await prisma.automation.create({
-    data: {
+  await prisma.automation.upsert({
+    where: { id: "seed-automation-4" },
+    update: {},
+    create: {
+      id: "seed-automation-4",
       name: "Månadsgenomgång (pausad)",
       description: "Månatlig sammanställning – pausad tills vidare",
       triggerAt: nextMorning9AM(),
@@ -260,7 +313,100 @@ async function main() {
     },
   });
 
-  console.log("Seed OK: tenant, users, memberships, project, note categories, tasks, automations created.");
+  // --- QA personlig AI: seedade filer med full pipeline (OCR + chunks + embeddings + bildanalys), idempotent ---
+  const seedFileIds = ["seed-file-ritning", "seed-file-senaste-bild"];
+  const hasMinioEnv =
+    process.env.S3_ENDPOINT &&
+    process.env.S3_ACCESS_KEY &&
+    process.env.S3_SECRET_KEY &&
+    process.env.S3_BUCKET &&
+    process.env.S3_REGION;
+
+  if (!hasMinioEnv) {
+    console.warn("Seed: S3/MinIO env saknas — hoppar över filpipeline och personliga filer.");
+  } else {
+    try {
+      const bucket = await ensureTenantBucket(tenant.id);
+      // 1x1 PNG (minimal bild för pipeline)
+      const minimalPng = Buffer.from(
+        "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "base64"
+      );
+
+      const personalKey = (fileName: string): string =>
+        `${process.env.S3_BUCKET}/personal/${adminUser.id}/seed-${fileName}`;
+
+      for (const entry of [
+        { id: "seed-file-ritning", name: "ritning-a101.png", type: "image/png" },
+        { id: "seed-file-senaste-bild", name: "senaste-bild-plats.png", type: "image/png" },
+      ]) {
+        const key = personalKey(entry.name);
+        await prisma.file.upsert({
+          where: { id: entry.id },
+          update: {},
+          create: {
+            id: entry.id,
+            name: entry.name,
+            type: entry.type,
+            size: minimalPng.length,
+            bucket,
+            key,
+            projectId: null,
+            uploadedById: adminUser.id,
+          },
+        });
+        await putObjectToMinio({
+          bucket,
+          key,
+          body: new Uint8Array(minimalPng),
+          contentType: entry.type,
+        });
+      }
+
+      // Idempotens: ta bort gamla analyser för seed-filer så omseed inte dubblerar
+      await prisma.fileAnalysis.deleteMany({ where: { fileId: { in: seedFileIds } } });
+
+      for (const entry of [
+        { id: "seed-file-ritning", name: "ritning-a101.png", type: "image/png" },
+        { id: "seed-file-senaste-bild", name: "senaste-bild-plats.png", type: "image/png" },
+      ]) {
+        const key = personalKey(entry.name);
+        const ocrResult = await processPersonalFileOcr({
+          fileId: entry.id,
+          tenantId: tenant.id,
+          userId: adminUser.id,
+          bucket,
+          key,
+          fileType: entry.type,
+          fileName: entry.name,
+        });
+        const ocrText = ocrResult.success
+          ? (await prisma.file.findUnique({ where: { id: entry.id }, select: { ocrText: true } }))?.ocrText ?? ""
+          : "";
+        await runFileAnalysisSync({
+          fileId: entry.id,
+          fileName: entry.name,
+          fileType: entry.type,
+          bucket,
+          key,
+          tenantId: tenant.id,
+          userId: adminUser.id,
+          ocrText,
+          userDescription: "",
+        });
+        if (process.env.OPENAI_API_KEY) {
+          await processFileEmbeddings(entry.id, tenant.id);
+        } else {
+          console.warn("Seed: OPENAI_API_KEY saknas — embeddings hoppas över för", entry.id);
+        }
+      }
+      console.log("Seed: personliga filer (OCR + chunks + embeddings + analys) klara.");
+    } catch (e) {
+      console.warn("Seed: filpipeline misslyckades (t.ex. Mistral/MinIO). Fortsätter utan filer.", e);
+    }
+  }
+
+  console.log("Seed OK: tenant, users, memberships, project, note categories, tasks, comment, automations, QA-filer.");
 }
 
 main()
