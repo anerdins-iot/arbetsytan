@@ -79,9 +79,11 @@ function isPdfFile(file: PersonalFileItemWithUrls): boolean {
 
 type PersonalFilesTabProps = {
   initialFiles?: PersonalFileItemWithUrls[];
+  /** Bump to refresh file list when personal file events arrive via WebSocket (e.g. file:created, file:updated, file:deleted with projectId null). */
+  socketFileVersion?: number;
 };
 
-export function PersonalFilesTab({ initialFiles = [] }: PersonalFilesTabProps) {
+export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: PersonalFilesTabProps) {
   const t = useTranslations("personal.files");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const progressTimers = useRef<Map<string, ReturnType<typeof setInterval>>>(
@@ -169,6 +171,13 @@ export function PersonalFilesTab({ initialFiles = [] }: PersonalFilesTabProps) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (socketFileVersion > 0) {
+      void refreshFiles();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socketFileVersion]);
 
   async function uploadSingleFile(file: File): Promise<void> {
     const uploadId = crypto.randomUUID();

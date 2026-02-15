@@ -94,22 +94,8 @@ async function authenticateSocket(socket: Socket): Promise<SocketAuthData> {
   }
 
   // Fall back to Auth.js session token (web clients via cookie or authorization header)
-  const authorizationHeader =
-    typeof socket.handshake.headers.authorization === "string"
-      ? socket.handshake.headers.authorization
-      : authToken
-        ? `Bearer ${authToken}`
-        : "";
-  const cookieHeader =
-    typeof socket.handshake.headers.cookie === "string" ? socket.handshake.headers.cookie : "";
-
   const token = await getToken({
-    req: {
-      headers: {
-        authorization: authorizationHeader,
-        cookie: cookieHeader,
-      },
-    } as never,
+    req: socket.request as Parameters<typeof getToken>[0]["req"],
     secret,
   });
 

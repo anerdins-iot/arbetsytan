@@ -8,7 +8,7 @@
  */
 import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
-import { tenantDb, prisma } from "@/lib/db";
+import { tenantDb, userDb, prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { generateEmbedding } from "@/lib/ai/embeddings";
 import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
@@ -134,15 +134,20 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
     }
   }
 
-  // Spara till DB
-  const db = tenantDb(tenantId);
-  await db.file.update({
-    where: { id: fileId },
-    data: {
-      label,
-      aiAnalysis: description,
-    },
-  });
+  // Spara till DB - använd rätt klient beroende på om det är projektfil eller personlig fil
+  if (projectId) {
+    const db = tenantDb(tenantId);
+    await db.file.update({
+      where: { id: fileId, projectId },
+      data: { label, aiAnalysis: description },
+    });
+  } else {
+    const udb = userDb(userId);
+    await udb.file.update({
+      where: { id: fileId },
+      data: { label, aiAnalysis: description },
+    });
+  }
 
   logger.info("File label and description saved", { fileId, label });
 

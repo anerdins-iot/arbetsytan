@@ -22,10 +22,17 @@ export function PersonalView({
 }: PersonalViewProps) {
   const t = useTranslations("personal");
   const [socketNoteVersion, setSocketNoteVersion] = useState(0);
+  const [socketFileVersion, setSocketFileVersion] = useState(0);
 
   const handlePersonalNoteEvent = useCallback((payload: { projectId?: string | null }) => {
     if (payload.projectId == null) {
       setSocketNoteVersion((v) => v + 1);
+    }
+  }, []);
+
+  const handlePersonalFileEvent = useCallback((payload: { projectId?: string | null }) => {
+    if (payload.projectId == null) {
+      setSocketFileVersion((v) => v + 1);
     }
   }, []);
 
@@ -34,6 +41,9 @@ export function PersonalView({
     onNoteCreated: handlePersonalNoteEvent,
     onNoteUpdated: handlePersonalNoteEvent,
     onNoteDeleted: handlePersonalNoteEvent,
+    onFileCreated: handlePersonalFileEvent,
+    onFileUpdated: handlePersonalFileEvent,
+    onFileDeleted: handlePersonalFileEvent,
   });
 
   return (
@@ -69,7 +79,7 @@ export function PersonalView({
         </TabsContent>
 
         <TabsContent value="files" className="mt-6">
-          <PersonalFilesTab />
+          <PersonalFilesTab socketFileVersion={socketFileVersion} />
         </TabsContent>
       </Tabs>
     </div>

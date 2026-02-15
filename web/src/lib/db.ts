@@ -70,19 +70,14 @@ const MESSAGE_CONVERSATION_FILTER = (tenantId: string) => ({
   conversation: { OR: [{ projectId: null }, { project: { tenantId } }] } as const,
 });
 
-/** File/Note: project.tenantId or personal (projectId null + uploadedBy user in tenant). */
-const FILE_TENANT_OR = (tenantId: string) => ({
-  OR: [
-    { project: { tenantId } },
-    { projectId: null, uploadedBy: { memberships: { some: { tenantId } } } },
-  ] as const,
+/** File: project.tenantId. Personal files use userDb() instead. */
+const FILE_TENANT_FILTER = (tenantId: string) => ({
+  project: { tenantId },
 });
 
-const NOTE_TENANT_OR = (tenantId: string) => ({
-  OR: [
-    { project: { tenantId } },
-    { projectId: null, createdBy: { memberships: { some: { tenantId } } } },
-  ] as const,
+/** Note: project.tenantId. Personal notes use userDb() instead. */
+const NOTE_TENANT_FILTER = (tenantId: string) => ({
+  project: { tenantId },
 });
 
 /** Build nested where key from dot path, e.g. "task.project" -> { task: { project: { tenantId } } }. */
@@ -167,7 +162,7 @@ function mergeWhereFileTenant<T extends { where?: unknown }>(
   const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
   return {
     ...args,
-    where: { AND: [existing, FILE_TENANT_OR(tenantId)] },
+    where: { AND: [existing, FILE_TENANT_FILTER(tenantId)] },
   } as T;
 }
 
@@ -178,7 +173,7 @@ function mergeWhereNoteTenant<T extends { where?: unknown }>(
   const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
   return {
     ...args,
-    where: { AND: [existing, NOTE_TENANT_OR(tenantId)] },
+    where: { AND: [existing, NOTE_TENANT_FILTER(tenantId)] },
   } as T;
 }
 
@@ -583,16 +578,26 @@ function mergeWhereUserId<T extends { where?: unknown }>(
   } as T;
 }
 
-/** Merge userId + projectId: null for personal items. */
+/** Merge userId + projectId: null for personal items. Explicitly preserves unique key `id` so Prisma's FileWhereUniqueInput (update/delete) gets at least one of 'id' even when args.where is a proxy. */
 function mergeWherePersonal<T extends { where?: unknown }>(
   args: T,
   userId: string,
   userIdField: string
 ): T {
   const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  const existingRecord = existing as Record<string, unknown>;
+  const id = existingRecord.id;
+  const mergedWhere: Record<string, unknown> = {
+    ...existingRecord,
+    [userIdField]: userId,
+    projectId: null,
+  };
+  if (id !== undefined && id !== null) {
+    mergedWhere.id = id;
+  }
   return {
     ...args,
-    where: { ...existing, [userIdField]: userId, projectId: null },
+    where: mergedWhere,
   } as T;
 }
 
