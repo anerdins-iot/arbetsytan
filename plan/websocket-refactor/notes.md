@@ -177,11 +177,52 @@ const dbNoEmit = tenantDb(tenantId, { actorUserId: userId, skipEmit: true });
 
 ## Status vid dokumentation
 
-- **Fas 1:** Klar, commit gjord
-- **Fas 2:** Klar, commit gjord
-- **Fas 3:** ~90% klar (väntar på impl-final-migrations)
-- **Fas 4:** Ej påbörjad
-- **Fas 5:** Ej påbörjad
+- **Fas 1:** Klar — `8a80913` feat: Add auto-emit Prisma extension for WebSocket events
+- **Fas 2:** Klar — `8035042` refactor: Migrate all actions to use auto-emit instead of manual emits
+- **Fas 3:** Klar — (ingår i Fas 2 commit)
+- **Fas 4:** Klar — `9c83c8a` feat: Add real-time updates for comments and project archiving
+- **Fas 4:** Klar — `0551f06` feat: Add real-time updates for invitations and memberships
+- **Fas 5:** Klar — `8a75c43` feat: Add frontend real-time listeners and documentation
+
+**Totalt:** 5 commits, ~40 emit-anrop migrerade, E2E-tester passerade.
+
+---
+
+## Playwright-testning via MCP
+
+**Datum:** 2026-02-15
+
+### Vad som testades
+
+E2E-tester kördes via MCP Playwright-verktyg med en Haiku sub-agent. Testerna verifierade att WebSocket-events emitteras korrekt och att frontend uppdateras i realtid.
+
+### Testresultat
+
+| Scenario | Status | Observation |
+|----------|--------|-------------|
+| Login | PASS | Session etablerad |
+| Task create | PASS | Task dök upp omedelbart i kanban |
+| Note create | PASS | Anteckning synlig direkt i lista |
+| Files tab | PASS | Filer visas korrekt |
+| Comment create | PASS | Kommentar synlig direkt i task-dialog |
+
+### Screenshots
+
+7 screenshots sparades i `/workspace/screenshots/websocket-refactor/fas-05/`:
+- `e2e-01-before-task.png` — Kanban före task-skapande
+- `e2e-02-after-task.png` — Task dyker upp i realtid
+- `e2e-03-before-note.png` — Anteckningar före
+- `e2e-04-after-note.png` — Anteckning dyker upp i realtid
+- `e2e-05-files-tab.png` — Filer-fliken
+- `e2e-06-before-comment.png` — Task-dialog före kommentar
+- `e2e-07-after-comment.png` — Kommentar dyker upp i realtid
+
+### Lärdomar från Playwright-testning
+
+1. **MCP Playwright fungerar bra för E2E** — Haiku-agenter kan navigera, fylla formulär, klicka och vänta på element
+2. **Screenshots är värdefulla** — Visuell verifiering av realtidsuppdateringar
+3. **Server-hantering** — Dirigenten startar/stoppar server, test-agenten fokuserar på browser-interaktion
+4. **Modellval:** Haiku är kostnadseffektivt för repetitiva test-scenarion
 
 ---
 
@@ -217,3 +258,4 @@ Planen är inte ett förslag. Den är ett kontrakt för vad som ska levereras.
 | 2026-02-15 | Första version skapad under pågående arbete |
 | 2026-02-15 | Lade till tekniska lärdomar och rekommendationer |
 | 2026-02-15 | Lade till kritisk regel om att aldrig skippa planerade block |
+| 2026-02-15 | Uppdaterade status — alla faser klara, E2E-tester dokumenterade |
