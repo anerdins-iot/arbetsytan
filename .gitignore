@@ -55,3 +55,8 @@ logs/
 
 # Misc
 *.pem
+
+# Worktrees
+.worktrees/
+screenshots/
+docs/

@@ -10,6 +10,27 @@ AI-assistenterna är stateless — de startar från noll vid varje samtal. Ingen
 
 Vid ett nytt samtal skickas systemprompt, de senaste meddelandena från konversationen, och en komprimerad sammanfattning av äldre meddelanden. Allt annat hämtas via verktyg.
 
+## Proaktivitet och Sökstrategi
+
+AI-assistenterna följer en strikt proaktiv policy för att minimera onödiga motfrågor och maximera nyttan för användaren.
+
+### Proaktiv policy
+
+1. **Undersök först, fråga sen** — Vid otydliga frågor ska AI:n alltid använda tillgängliga verktyg (sökning, listning) för att försöka förstå kontexten innan den ställer en förtydligande fråga.
+2. **Inga generella motfrågor** — Istället för "Vilket projekt menar du?" ska AI:n söka efter aktiva projekt eller nyligen ändrade uppgifter och föreslå: "Jag hittade en uppgift i projekt X, menar du den?".
+3. **Bred sökning** — Om en semantisk sökning misslyckas ska AI:n prova att lista filer eller söka i anteckningar innan den ger upp.
+4. **Alltid ett förslag** — AI-assistenten ska aldrig avsluta ett svar med bara en fråga utan att ha utfört en handling eller presenterat mest sannolika information.
+
+### Sökstrategi (Hierarki)
+
+När en användare söker efter information (t.ex. ritningar, dokument, offerter) används följande ordning:
+1. `searchFiles` — Semantisk sökning i dokumentinnehåll (OCR-text).
+2. `getProjectFiles` / `listFiles` — Listning av filer för manuell matchning av filnamn.
+3. `searchNotes` / `searchPersonalNotes` — Sökning i anteckningar.
+4. `getProjectTasks` / `getUserTasks` — Sökning i uppgiftsbeskrivningar.
+
+AI:n ska prova minst 2-3 olika verktyg vid otydliga sökningar innan den rapporterar att informationen saknas.
+
 ## Personlig AI
 
 Varje användare har en egen AI-assistent som lever oberoende av projekt. Den har tillgång till en personlig databas med notiser från projekt-AI:er, sammanfattningar och personlig historik. Den vet vad som hänt sedan sist genom att läsa sin databas, inte genom att minnas.
@@ -18,9 +39,9 @@ Den personliga AI:n nås via knappen i nedre högra hörnet, oavsett var i appen
 
 ### Systemprompt
 
-Den personliga AI:n får en systemprompt som beskriver vem användaren är, vilken roll den har, vilka projekt den är med i, och att den ska agera som en personlig arbetsassistent. Prompten instruerar AI:n att alltid börja med att kolla olästa meddelanden från projekt-AI:er.
+Den personliga AI:n får en systemprompt som beskriver vem användaren är, vilken roll den har, vilka projekt den är med i, och att den ska agera som en personlig arbetsassistent. Prompten instruerar AI:n att alltid börja med att kolla olästa meddelanden från projekt-AI:er och att följa den proaktiva policyn.
 
-Exempel: "Du är en personlig arbetsassistent åt Fredrik Anerdin. Fredrik är företagsadmin på Anerdins El och har tre aktiva projekt. Du hjälper honom med daglig planering, uppgifter och att hålla koll på vad som händer i hans projekt. Börja alltid med att kolla om det finns olästa meddelanden från projekt-AI:er. Svara på svenska, var konkret och kort."
+Exempel: "Du är en personlig arbetsassistent åt Fredrik Anerdin. Fredrik är företagsadmin på Anerdins El och har tre aktiva projekt. Du hjälper honom med daglig planering, uppgifter och att hålla koll på vad som händer i hans projekt. Börja alltid med att kolla om det finns olästa meddelanden från projekt-AI:er. Var proaktiv: undersök med verktyg innan du ställer motfrågor. Svara på svenska, var konkret och kort."
 
 ### Verktyg
 
