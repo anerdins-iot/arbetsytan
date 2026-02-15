@@ -237,3 +237,14 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** S3_PUBLIC_ENDPOINT eller S3_ENDPOINT används för presigned URL. Om det är HTTPS med självsignerat cert eller fel cert accepterar webbläsaren inte anropet.
 **Lösning:** I dev: använd HTTP (t.ex. S3_ENDPOINT=http://localhost:9000) och sätt inte S3_PUBLIC_ENDPOINT. I produktion: MinIO bakom proxy med giltigt TLS-certifikat, eller S3_PUBLIC_ENDPOINT med publik HTTPS-URL som webbläsaren litar på. Kommentar i .env.local.example tillagd.
 **Lärdom:** Presigned URLs anropas från webbläsaren; certifikatet måste vara betrott. Lokal dev = HTTP, produktion = giltig HTTPS.
+
+---
+
+### Server Action "not found" vid e-postutskick (2026-02-15)
+**Problem:** `Server Action "601ed28a..." was not found on the server` vid e-postutskick från AI-chat.
+**Orsak:** Build/cache-mismatch. Klientens JavaScript refererar till gammalt Server Action ID som inte finns i den körande servern efter kodändringar.
+**Lösning:**
+1. Hard refresh i webbläsaren (Ctrl+Shift+R)
+2. Eller: rensa browser-cache
+3. Eller: `npm run build && npm start`
+**Prevention:** start-server.sh kör nu alltid `npm run build` före `npm start` så att servern alltid har senaste build-versionen.

@@ -31,8 +31,12 @@ if [ -n "$LISTENING_PID" ]; then
   sleep 2
 fi
 
-# Start the server
+# Build application
 cd /workspace/web
+echo "Building application..."
+npm run build
+
+# Start the server
 echo "Starting server on port $PORT..."
 npm start > /tmp/server.log 2>&1 &
 

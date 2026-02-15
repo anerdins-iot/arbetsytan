@@ -35,7 +35,19 @@ export type SendEmailOptions = {
 export async function sendEmail(
   options: SendEmailOptions
 ): Promise<{ success: boolean; error?: string; messageId?: string }> {
+  const fromAddress = options.from ?? DEFAULT_FROM;
+
+  console.log("[EMAIL] Attempting to send email:", {
+    to: options.to,
+    subject: options.subject,
+    from: fromAddress,
+    replyTo: options.replyTo,
+    hasAttachments: !!options.attachments?.length,
+    resendConfigured: !!resend,
+  });
+
   if (!resend) {
+    console.error("[EMAIL] RESEND_API_KEY is not configured");
     return {
       success: false,
       error: "RESEND_API_KEY is not configured",
@@ -44,7 +56,7 @@ export async function sendEmail(
 
   try {
     const { data, error } = await resend.emails.send({
-      from: options.from ?? DEFAULT_FROM,
+      from: fromAddress,
       to: options.to,
       subject: options.subject,
       html: options.html,
@@ -57,15 +69,21 @@ export async function sendEmail(
     });
 
     if (error) {
+      console.error("[EMAIL] Resend API error:", error);
       return {
         success: false,
         error: error.message ?? "Failed to send email",
       };
     }
 
+    console.log("[EMAIL] Email sent successfully:", {
+      messageId: data?.id,
+      to: options.to,
+    });
     return { success: true, messageId: data?.id };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[EMAIL] Exception while sending:", err);
     return {
       success: false,
       error: message,

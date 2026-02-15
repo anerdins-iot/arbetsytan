@@ -18,7 +18,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Mail, Send, Eye, Users, ExternalLink, Check, X, Loader2, Paperclip, FileText, FolderOpen, Building2 } from "lucide-react";
+import { Mail, Send, Eye, Users, ExternalLink, Check, X, Loader2, Paperclip, FileText, FolderOpen, Building2, Pencil } from "lucide-react";
+import { EmailEditModal } from "./email-edit-modal";
 
 export type EmailAttachment = {
   fileId: string;
@@ -52,6 +53,8 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
   const [status, setStatus] = useState<"pending" | "sending" | "sent" | "error">("pending");
   const [error, setError] = useState<string | null>(null);
   const [showFullPreview, setShowFullPreview] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editedData, setEditedData] = useState<EmailPreviewData>(data);
 
   const handleSend = async () => {
     setStatus("sending");
@@ -71,31 +74,31 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
     }
   };
 
-  const recipientLabel = data.type === "project"
+  const recipientLabel = editedData.type === "project"
     ? "Projektmedlemmar"
-    : data.type === "team"
+    : editedData.type === "team"
       ? "Teammedlemmar (hela företaget)"
       : "Externa mottagare";
-  const Icon = data.type === "project"
+  const Icon = editedData.type === "project"
     ? FolderOpen
-    : data.type === "team"
+    : editedData.type === "team"
       ? Building2
       : ExternalLink;
-  const badgeLabel = data.type === "project"
+  const badgeLabel = editedData.type === "project"
     ? "Projekt"
-    : data.type === "team"
+    : editedData.type === "team"
       ? "Företag"
       : "Extern";
-  const badgeColor = data.type === "project"
+  const badgeColor = editedData.type === "project"
     ? "default"
-    : data.type === "team"
+    : editedData.type === "team"
       ? "secondary"
       : "outline";
 
   // Use names if available, otherwise emails
-  const displayRecipients = data.recipientNames && data.recipientNames.length > 0
-    ? data.recipientNames
-    : data.recipients;
+  const displayRecipients = editedData.recipientNames && editedData.recipientNames.length > 0
+    ? editedData.recipientNames
+    : editedData.recipients;
 
   return (
     <>
@@ -122,12 +125,12 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
 
         <CardContent className="space-y-3 pb-3">
           {/* Project name if project type */}
-          {data.type === "project" && data.projectName && (
+          {editedData.type === "project" && editedData.projectName && (
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground">Projekt</p>
               <p className="text-sm font-medium flex items-center gap-1">
                 <FolderOpen className="h-3 w-3 text-primary" />
-                {data.projectName}
+                {editedData.projectName}
               </p>
             </div>
           )}
@@ -152,7 +155,7 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
           {/* Subject */}
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">Ämne</p>
-            <p className="text-sm font-medium">{data.subject}</p>
+            <p className="text-sm font-medium">{editedData.subject}</p>
           </div>
 
           {/* Body preview */}
@@ -160,20 +163,20 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
             <p className="text-xs font-medium text-muted-foreground">Meddelande</p>
             <div className="rounded-md bg-muted/50 p-3">
               <p className="text-sm text-muted-foreground line-clamp-3 whitespace-pre-wrap">
-                {data.body}
+                {editedData.body}
               </p>
             </div>
           </div>
 
           {/* Attachments */}
-          {data.attachments && data.attachments.length > 0 && (
+          {editedData.attachments && editedData.attachments.length > 0 && (
             <div className="space-y-1">
               <p className="text-xs font-medium text-muted-foreground flex items-center gap-1">
                 <Paperclip className="h-3 w-3" />
-                Bifogade filer ({data.attachments.length})
+                Bifogade filer ({editedData.attachments.length})
               </p>
               <div className="flex flex-wrap gap-1">
-                {data.attachments.map((file, i) => (
+                {editedData.attachments.map((file, i) => (
                   <Badge key={i} variant="secondary" className="gap-1 text-xs font-normal">
                     <FileText className="h-3 w-3" />
                     {file.fileName}
@@ -205,7 +208,7 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
         <CardFooter className="flex gap-2 pt-0">
           {status === "pending" && (
             <>
-              {data.previewHtml && (
+              {editedData.previewHtml && (
                 <Button
                   variant="outline"
                   size="sm"
@@ -222,8 +225,17 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
                 </Button>
               )}
               <Button
+                variant="outline"
                 size="sm"
                 className="ml-auto gap-2"
+                onClick={() => setShowEditModal(true)}
+              >
+                <Pencil className="h-4 w-4" />
+                Redigera
+              </Button>
+              <Button
+                size="sm"
+                className="gap-2"
                 onClick={handleSend}
               >
                 <Send className="h-4 w-4" />
@@ -241,7 +253,7 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
 
           {status === "sent" && (
             <p className="ml-auto text-xs text-muted-foreground">
-              Skickat till {data.recipients.length} mottagare
+              Skickat till {editedData.recipients.length} mottagare
             </p>
           )}
 
@@ -268,9 +280,9 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
             </DialogDescription>
           </DialogHeader>
           <div className="rounded-md border border-border bg-white overflow-hidden">
-            {data.previewHtml && (
+            {editedData.previewHtml && (
               <iframe
-                srcDoc={data.previewHtml}
+                srcDoc={editedData.previewHtml}
                 className="w-full h-[500px]"
                 title="E-postförhandsgranskning"
                 sandbox="allow-same-origin"
@@ -279,6 +291,14 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Edit email modal */}
+      <EmailEditModal
+        open={showEditModal}
+        onOpenChange={setShowEditModal}
+        data={editedData}
+        onSave={setEditedData}
+      />
     </>
   );
 }
