@@ -4,11 +4,6 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
-import {
-  emitNoteCreatedToProject,
-  emitNoteUpdatedToProject,
-  emitNoteDeletedToProject,
-} from "@/lib/socket";
 
 // ─────────────────────────────────────────
 // Types
@@ -106,7 +101,7 @@ export async function createNote(
     }
 
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const note = await db.note.create({
       data: {
@@ -117,14 +112,6 @@ export async function createNote(
         createdById: userId,
       },
       include: noteInclude,
-    });
-
-    emitNoteCreatedToProject(projectId, {
-      noteId: note.id,
-      projectId,
-      title: note.title,
-      category: note.category,
-      createdById: userId,
     });
 
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
@@ -141,7 +128,7 @@ export async function getNotes(
   try {
     const { userId, tenantId } = await requireAuth();
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const where: Record<string, unknown> = { projectId };
     if (options?.category) {
@@ -179,7 +166,7 @@ export async function getNote(
   try {
     const { userId, tenantId } = await requireAuth();
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const note = await db.note.findFirst({
       where: { id: noteId, projectId },
@@ -208,7 +195,7 @@ export async function updateNote(
     }
 
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const existing = await db.note.findFirst({
       where: { id: noteId, projectId },
@@ -226,14 +213,6 @@ export async function updateNote(
       where: { id: noteId },
       data: updateData,
       include: noteInclude,
-    });
-
-    emitNoteUpdatedToProject(projectId, {
-      noteId: note.id,
-      projectId,
-      title: note.title,
-      category: note.category,
-      createdById: note.createdBy.id,
     });
 
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
@@ -255,7 +234,7 @@ export async function deleteNote(
     }
 
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const existing = await db.note.findFirst({
       where: { id: noteId, projectId },
@@ -265,14 +244,6 @@ export async function deleteNote(
     }
 
     await db.note.delete({ where: { id: noteId } });
-
-    emitNoteDeletedToProject(projectId, {
-      noteId,
-      projectId,
-      title: existing.title,
-      category: existing.category,
-      createdById: existing.createdById,
-    });
 
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
     return { success: true };
@@ -293,7 +264,7 @@ export async function toggleNotePin(
     }
 
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const existing = await db.note.findFirst({
       where: { id: noteId, projectId },

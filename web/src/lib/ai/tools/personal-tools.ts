@@ -7,7 +7,7 @@ import { z } from "zod";
 import { openai } from "@ai-sdk/openai";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject, requirePermission } from "@/lib/auth";
-import { userDb, type TenantScopedClient } from "@/lib/db";
+import { userDb, tenantDb, type TenantScopedClient } from "@/lib/db";
 import {
   createProject as createProjectAction,
   updateProject as updateProjectAction,
@@ -36,21 +36,6 @@ import {
 } from "@/lib/minio";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
-import {
-  emitProjectUpdatedToProject,
-  emitTimeEntryCreatedToProject,
-  emitTimeEntryDeletedToProject,
-  emitTimeEntryUpdatedToProject,
-  emitNoteCreatedToProject,
-  emitNoteUpdatedToProject,
-  emitNoteDeletedToProject,
-  emitNoteCreatedToUser,
-  emitNoteUpdatedToUser,
-  emitNoteDeletedToUser,
-  emitNoteCategoryCreatedToTenant,
-  emitNoteCategoryUpdatedToTenant,
-  emitNoteCategoryDeletedToTenant,
-} from "@/lib/socket";
 import { randomUUID } from "node:crypto";
 import {
   EMAIL_TEMPLATE_LOCALES,
@@ -653,7 +638,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
 
-      const created = await db.timeEntry.create({
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      const created = await projectDb.timeEntry.create({
         data: {
           taskId: task.id,
           projectId: pid,
@@ -663,12 +649,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           description: description?.trim() || null,
         },
         include: { task: { select: { title: true } } },
-      });
-
-      emitTimeEntryCreatedToProject(pid, {
-        projectId: pid,
-        timeEntryId: created.id,
-        actorUserId: userId,
       });
 
       return {
@@ -723,7 +703,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       }
       if (totalMinutes <= 0) return { error: "Tid måste vara större än 0." };
 
-      const updated = await db.timeEntry.update({
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      const updated = await projectDb.timeEntry.update({
         where: { id: existing.id },
         data: {
           taskId: targetTaskId,
@@ -732,12 +713,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           description: description !== undefined ? (description.trim() || null) : existing.description,
         },
         include: { task: { select: { title: true } } },
-      });
-
-      emitTimeEntryUpdatedToProject(pid, {
-        projectId: pid,
-        timeEntryId: updated.id,
-        actorUserId: userId,
       });
 
       return {
@@ -770,13 +745,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (!existing) return { error: "Tidsrapporten hittades inte eller saknar behörighet." };
 
-      emitTimeEntryDeletedToProject(pid, {
-        projectId: pid,
-        timeEntryId: existing.id,
-        actorUserId: userId,
-      });
-
-      await db.timeEntry.delete({ where: { id: existing.id } });
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      await projectDb.timeEntry.delete({ where: { id: existing.id } });
 
       return {
         message: `Tidsrapport borttagen: ${Math.floor(existing.minutes / 60)}h ${existing.minutes % 60}min på ${existing.task?.title ?? "uppgift"}`,
@@ -1577,7 +1547,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     execute: async ({ projectId: pid, content, title, category }) => {
       await requireProject(tenantId, pid, userId);
 
-      const note = await db.note.create({
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      const note = await projectDb.note.create({
         data: {
           title: title ?? "",
           content,
@@ -1588,14 +1559,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         include: {
           createdBy: { select: { id: true, name: true, email: true } },
         },
-      });
-
-      emitNoteCreatedToProject(pid, {
-        noteId: note.id,
-        projectId: pid,
-        title: note.title,
-        category: note.category,
-        createdById: userId,
       });
 
       return {
@@ -1632,18 +1595,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       if (title !== undefined) updateData.title = title;
       if (category !== undefined) updateData.category = category;
 
-      const note = await db.note.update({
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      const note = await projectDb.note.update({
         where: { id: noteId },
         data: updateData,
         include: { createdBy: { select: { id: true, name: true, email: true } } },
-      });
-
-      emitNoteUpdatedToProject(pid, {
-        noteId: note.id,
-        projectId: pid,
-        title: note.title,
-        category: note.category,
-        createdById: note.createdBy.id,
       });
 
       return {
@@ -1670,15 +1626,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (!existing) return { error: "Anteckningen hittades inte i detta projekt." };
 
-      await db.note.delete({ where: { id: noteId } });
-
-      emitNoteDeletedToProject(pid, {
-        noteId,
-        projectId: pid,
-        title: existing.title,
-        category: existing.category,
-        createdById: existing.createdById,
-      });
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      await projectDb.note.delete({ where: { id: noteId } });
 
       return { success: true, message: "Anteckning borttagen." };
     },
@@ -1764,7 +1713,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Kategori (slug)"),
     })),
     execute: async ({ content, title, category }) => {
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const note = await udb.note.create({
         data: {
           title: title ?? "",
@@ -1773,14 +1722,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           createdById: userId,
           projectId: null,
         },
-      });
-
-      emitNoteCreatedToUser(userId, {
-        noteId: note.id,
-        projectId: null,
-        title: note.title,
-        category: note.category,
-        createdById: userId,
       });
 
       return {
@@ -1804,7 +1745,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         .describe("Ny kategori (slug)"),
     })),
     execute: async ({ noteId, content, title, category }) => {
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const existing = await udb.note.findFirst({
         where: { id: noteId },
       });
@@ -1818,14 +1759,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       const note = await udb.note.update({
         where: { id: noteId },
         data: updateData,
-      });
-
-      emitNoteUpdatedToUser(userId, {
-        noteId: note.id,
-        projectId: null,
-        title: note.title,
-        category: note.category,
-        createdById: userId,
       });
 
       return {
@@ -1844,20 +1777,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ noteId }) => {
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const existing = await udb.note.findFirst({
         where: { id: noteId },
       });
       if (!existing) return { error: "Den personliga anteckningen hittades inte." };
 
       await udb.note.delete({ where: { id: noteId } });
-      emitNoteDeletedToUser(userId, {
-        noteId,
-        projectId: null,
-        title: existing.title,
-        category: existing.category,
-        createdById: userId,
-      });
       return { success: true, message: "Personlig anteckning borttagen." };
     },
   });
@@ -2477,15 +2403,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (existing) return { error: `Kategori med slug "${slug}" finns redan.` };
 
-      const category = await db.noteCategory.create({
+      // Use tenantDb with emitContext for auto-emit
+      const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
+      const category = await dbWithEmit.noteCategory.create({
         data: { name, slug, color: color ?? null, tenantId },
-      });
-
-      emitNoteCategoryCreatedToTenant(tenantId, {
-        categoryId: category.id,
-        name: category.name,
-        slug: category.slug,
-        color: category.color,
       });
 
       return {
@@ -2523,16 +2444,11 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       }
       if (color !== undefined) updateData.color = color;
 
-      const category = await db.noteCategory.update({
+      // Use tenantDb with emitContext for auto-emit
+      const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
+      const category = await dbWithEmit.noteCategory.update({
         where: { id: categoryId },
         data: updateData,
-      });
-
-      emitNoteCategoryUpdatedToTenant(tenantId, {
-        categoryId: category.id,
-        name: category.name,
-        slug: category.slug,
-        color: category.color,
       });
 
       return {
@@ -2556,14 +2472,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (!existing) return { error: "Kategorin hittades inte." };
 
-      await db.noteCategory.delete({ where: { id: categoryId } });
-
-      emitNoteCategoryDeletedToTenant(tenantId, {
-        categoryId,
-        name: existing.name,
-        slug: existing.slug,
-        color: existing.color,
-      });
+      // Use tenantDb with emitContext for auto-emit
+      const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
+      await dbWithEmit.noteCategory.delete({ where: { id: categoryId } });
 
       return { success: true, message: "Kategori borttagen." };
     },

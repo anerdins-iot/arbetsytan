@@ -6,7 +6,6 @@ import { hasPermission, requireAuth, requirePermission, requireProject } from "@
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
-import { emitProjectUpdatedToProject } from "@/lib/socket";
 import type { Project, ProjectStatus, TaskStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -140,7 +139,7 @@ export async function createProject(
   }
 
   const { name, description, address } = result.data;
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId });
 
   const project = await db.project.create({
     data: {
@@ -329,7 +328,7 @@ export async function updateProject(
   }
 
   const { name, description, address, status } = result.data;
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const project = await db.project.update({
     where: { id: projectId },
@@ -351,15 +350,6 @@ export async function updateProject(
   });
 
   if (action === "statusChanged") {
-// ... (omitting for brevity, but matching correctly)
-// Wait, I should provide enough context.
-    emitProjectUpdatedToProject(projectId, {
-      projectId,
-      actorUserId: userId,
-      previousStatus: currentProject.status,
-      newStatus: status,
-    });
-
     const members = await db.projectMember.findMany({
       where: { projectId },
       include: {
@@ -408,7 +398,7 @@ export async function archiveProject(
     return { success: false, error: "ALREADY_ARCHIVED" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
   const project = await db.project.update({
     where: { id: projectId },
     data: { status: "ARCHIVED" },
@@ -416,13 +406,6 @@ export async function archiveProject(
 
   await logActivity(tenantId, projectId, userId, "statusChanged", "project", projectId, {
     name: project.name,
-    previousStatus: currentProject.status,
-    newStatus: "ARCHIVED",
-  });
-
-  emitProjectUpdatedToProject(projectId, {
-    projectId,
-    actorUserId: userId,
     previousStatus: currentProject.status,
     newStatus: "ARCHIVED",
   });

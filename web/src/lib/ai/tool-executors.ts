@@ -4,14 +4,9 @@
  * Import this only from server-side code.
  */
 
-import { prisma, tenantDb } from "@/lib/db";
+import { prisma, tenantDb, userDb } from "@/lib/db";
 import { createNotification } from "@/actions/notifications";
 import { logActivity } from "@/lib/activity-log";
-import {
-  emitTaskCreatedToProject,
-  emitTaskUpdatedToProject,
-  emitTimeEntryCreatedToProject,
-} from "@/lib/socket";
 import { sendEmail } from "@/lib/email";
 import { sendPushToSubscriptions } from "@/lib/push";
 import { sendExpoPush } from "@/lib/expo-push";
@@ -48,7 +43,10 @@ const executeNotify: ToolExecutor = async (params, ctx) => {
   const title = params.title ? String(params.title) : "Automatisering";
   const sendEmailParam = params.sendEmail !== false; // Default true
   const sendPushParam = params.sendPush !== false; // Default true
-  const db = tenantDb(ctx.tenantId);
+  const db = tenantDb(ctx.tenantId, {
+    actorUserId: ctx.userId,
+    projectId: ctx.projectId ?? undefined,
+  });
 
   // 1. Create in-app notification
   const res = await createNotification({
@@ -165,7 +163,7 @@ const executeCreateTask: ToolExecutor = async (params, ctx) => {
     return { success: false, error: "title required" };
   }
 
-  const db = tenantDb(ctx.tenantId);
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId });
 
   const project = await db.project.findUnique({ where: { id: projectId } });
   if (!project) {
@@ -188,12 +186,6 @@ const executeCreateTask: ToolExecutor = async (params, ctx) => {
     source: "automation",
   });
 
-  emitTaskCreatedToProject(projectId, {
-    projectId,
-    taskId: task.id,
-    actorUserId: ctx.userId,
-  });
-
   return { success: true, data: { taskId: task.id } };
 };
 
@@ -208,7 +200,7 @@ const executeUpdateTask: ToolExecutor = async (params, ctx) => {
     return { success: false, error: "projectId required" };
   }
 
-  const db = tenantDb(ctx.tenantId);
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId });
 
   const task = await db.task.findFirst({
     where: { id: taskId, projectId },
@@ -236,12 +228,6 @@ const executeUpdateTask: ToolExecutor = async (params, ctx) => {
     source: "automation",
   });
 
-  emitTaskUpdatedToProject(projectId, {
-    projectId,
-    taskId,
-    actorUserId: ctx.userId,
-  });
-
   return { success: true, data: { taskId: updated.id } };
 };
 
@@ -252,7 +238,7 @@ const executeCreateNote: ToolExecutor = async (params, ctx) => {
   }
 
   const projectId = (params.projectId as string) ?? ctx.projectId;
-  const db = tenantDb(ctx.tenantId);
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId: projectId ?? undefined });
 
   if (projectId) {
     const project = await db.project.findUnique({ where: { id: projectId } });
@@ -287,14 +273,14 @@ const executeCreatePersonalNote: ToolExecutor = async (params, ctx) => {
     return { success: false, error: "content required" };
   }
 
-  const db = tenantDb(ctx.tenantId);
+  const db = userDb(ctx.userId, {});
 
   const note = await db.note.create({
     data: {
       title: (params.title as string) ?? "",
       content,
       category: (params.category as string) ?? null,
-      createdBy: { connect: { id: ctx.userId } },
+      createdById: ctx.userId,
     },
   });
 
@@ -311,7 +297,7 @@ const executeCreateComment: ToolExecutor = async (params, ctx) => {
   const projectId = (params.projectId as string) ?? ctx.projectId;
   if (!projectId) return { success: false, error: "projectId required" };
 
-  const db = tenantDb(ctx.tenantId);
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId });
 
   const task = await db.task.findFirst({ where: { id: taskId, projectId } });
   if (!task) return { success: false, error: "Task not found" };
@@ -348,7 +334,7 @@ const executeCreateTimeEntry: ToolExecutor = async (params, ctx) => {
   }
 
   const date = params.date ? new Date(params.date as string) : new Date();
-  const db = tenantDb(ctx.tenantId);
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId });
 
   const project = await db.project.findUnique({ where: { id: projectId } });
   if (!project) return { success: false, error: "Project not found" };
@@ -367,12 +353,6 @@ const executeCreateTimeEntry: ToolExecutor = async (params, ctx) => {
       ...(taskId ? { task: { connect: { id: taskId } } } : {}),
       userId: ctx.userId,
     },
-  });
-
-  emitTimeEntryCreatedToProject(projectId, {
-    projectId,
-    timeEntryId: timeEntry.id,
-    actorUserId: ctx.userId,
   });
 
   await logActivity(ctx.tenantId, projectId, ctx.userId, "created", "timeEntry", timeEntry.id, {

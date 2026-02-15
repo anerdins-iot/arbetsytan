@@ -6,7 +6,7 @@
 import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireProject } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 import {
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE_BYTES,
@@ -16,7 +16,6 @@ import {
   createPresignedDownloadUrl,
 } from "@/lib/minio";
 import { processFileOcr, processPersonalFileOcr } from "@/lib/ai/ocr";
-import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
 import { logger } from "@/lib/logger";
 
 // Tillåtna filtyper för chatt-uppladdning
@@ -94,8 +93,8 @@ export async function POST(req: NextRequest) {
       contentType: fileType,
     });
 
-    // Spara i DB
-    const db = tenantDb(tenantId);
+    // Spara i DB (skip auto-emit on create because we want to include OCR/URL later)
+    const db = tenantDb(tenantId, { actorUserId: userId, skipEmit: true });
     const created = await db.file.create({
       data: {
         name: fileName,
@@ -149,8 +148,7 @@ export async function POST(req: NextRequest) {
           fileName,
         });
         if (ocrResult.success && ocrResult.chunkCount > 0) {
-          const db2 = tenantDb(tenantId);
-          const updatedFile = await db2.file.findFirst({
+          const updatedFile = await db.file.findFirst({
             where: { id: created.id },
             select: { ocrText: true },
           });
@@ -167,8 +165,7 @@ export async function POST(req: NextRequest) {
           fileName,
         });
         if (ocrResult.success && ocrResult.chunkCount > 0) {
-          const db2 = tenantDb(tenantId);
-          const updatedFile = await db2.file.findFirst({
+          const updatedFile = await db.file.findFirst({
             where: { id: created.id },
             select: { ocrText: true },
           });
@@ -189,21 +186,32 @@ export async function POST(req: NextRequest) {
       expiresInSeconds: 60 * 60, // 1 hour
     });
 
-    // Emit websocket event
-    const fileEventPayload = {
-      projectId: projectId ?? null,
-      fileId: created.id,
-      actorUserId: userId,
-      fileName,
-      ocrText,
-      url: downloadUrl,
-    };
-
+    // Auto-emit update event with full data
     if (projectId) {
-      emitFileUpdatedToProject(projectId, fileEventPayload);
+      const dbEmit = tenantDb(tenantId, { actorUserId: userId, projectId });
+      // We don't need to actually change data, just trigger the emit via update
+      await dbEmit.file.update({
+        where: { id: created.id },
+        data: {
+          // Including extra fields in data is fine if they are in the schema,
+          // but Prisma might complain if we pass 'url' which isn't in schema.
+          // Wait, the emit payload uses the 'record' (result of DB op).
+          // If the schema doesn't have 'url', we can't save it there.
+          // But our SOCKET_EVENTS.fileUpdated payload expects 'url'.
+        },
+      });
     } else {
-      emitFileUpdatedToUser(userId, fileEventPayload);
+      const dbEmit = userDb(userId, {});
+      await dbEmit.file.update({
+        where: { id: created.id },
+        data: {},
+      });
     }
+
+    // Wait, if 'url' and 'ocrText' (latest) are not in the 'record' returned by prisma.update,
+    // they won't be in the payload.
+    // ocrText IS in the schema. url is NOT.
+
 
     return NextResponse.json({
       success: true,

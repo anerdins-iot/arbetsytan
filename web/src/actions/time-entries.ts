@@ -4,11 +4,6 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
-import {
-  emitTimeEntryCreatedToProject,
-  emitTimeEntryDeletedToProject,
-  emitTimeEntryUpdatedToProject,
-} from "@/lib/socket";
 
 const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -162,7 +157,8 @@ export async function createTimeEntry(input: {
 
   await requireProject(tenantId, task.project.id, userId);
 
-  const created = await db.timeEntry.create({
+  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: task.project.id });
+  const created = await dbWithEmit.timeEntry.create({
     data: {
       taskId: task.id,
       projectId: task.project.id,
@@ -175,12 +171,6 @@ export async function createTimeEntry(input: {
       project: { select: { name: true } },
       task: { select: { title: true } },
     },
-  });
-
-  emitTimeEntryCreatedToProject(task.project.id, {
-    projectId: task.project.id,
-    timeEntryId: created.id,
-    actorUserId: userId,
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
@@ -272,7 +262,8 @@ export async function updateTimeEntry(
 
   await requireProject(tenantId, targetProjectId, userId);
 
-  const updated = await db.timeEntry.update({
+  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: targetProjectId });
+  const updated = await dbWithEmit.timeEntry.update({
     where: { id: existing.id },
     data: {
       taskId: targetTaskId,
@@ -288,12 +279,6 @@ export async function updateTimeEntry(
       task: { select: { title: true } },
       project: { select: { name: true } },
     },
-  });
-
-  emitTimeEntryUpdatedToProject(updated.projectId, {
-    projectId: updated.projectId,
-    timeEntryId: updated.id,
-    actorUserId: userId,
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
@@ -321,13 +306,8 @@ export async function deleteTimeEntry(id: string): Promise<ActionResult> {
 
   await requireProject(tenantId, existing.projectId, userId);
 
-  emitTimeEntryDeletedToProject(existing.projectId, {
-    projectId: existing.projectId,
-    timeEntryId: existing.id,
-    actorUserId: userId,
-  });
-
-  await db.timeEntry.delete({ where: { id: existing.id } });
+  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: existing.projectId });
+  await dbWithEmit.timeEntry.delete({ where: { id: existing.id } });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
   revalidatePath("/[locale]/projects/[projectId]/time", "page");

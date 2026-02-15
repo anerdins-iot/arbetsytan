@@ -3,13 +3,12 @@
 import { z } from "zod";
 import { getTranslations } from "next-intl/server";
 import { requireAuth } from "@/lib/auth";
-import { prisma, tenantDb } from "@/lib/db";
-import { emitNotificationToUser } from "@/lib/socket";
-import type { RealtimeNotification } from "@/lib/socket-events";
+import { prisma, tenantDb, userDb } from "@/lib/db";
 import {
   getNotificationPreferences as getStoredNotificationPreferences,
   updateNotificationPreferences as updateStoredNotificationPreferences,
 } from "@/actions/notification-preferences";
+import type { RealtimeNotification } from "@/lib/socket-events";
 
 const notificationParamsSchema = z.record(z.string(), z.union([z.string(), z.number()]));
 
@@ -121,16 +120,18 @@ export async function createNotification(
   }
 
   const data = parsed.data;
-  const db = tenantDb(data.tenantId);
+  const tenantClient = tenantDb(data.tenantId);
 
   if (data.projectId) {
-    const project = await db.project.findUnique({ where: { id: data.projectId } });
+    const project = await tenantClient.project.findUnique({ where: { id: data.projectId } });
     if (!project) {
       return { success: false, error: "PROJECT_NOT_FOUND" };
     }
   }
 
   const translated = await resolveLocalizedText(data);
+  const db = userDb(data.userId, {});
+
   const created = await db.notification.create({
     data: {
       title: translated.title,
@@ -152,25 +153,22 @@ export async function createNotification(
     projectId: created.projectId,
   };
 
-  emitNotificationToUser(data.userId, payload);
-
   return { success: true, notification: payload };
 }
 
 export async function markNotificationRead(input: {
   notificationId: string;
 }): Promise<{ success: boolean; error?: string }> {
-  const { userId, tenantId } = await requireAuth();
+  const { userId } = await requireAuth();
   const parsed = markReadSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = userDb(userId, {});
   await db.notification.updateMany({
     where: {
       id: parsed.data.notificationId,
-      userId,
       channel: "IN_APP",
     },
     data: { read: true },
@@ -182,12 +180,11 @@ export async function markAllNotificationsRead(): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const { userId, tenantId } = await requireAuth();
-  const db = tenantDb(tenantId);
+  const { userId } = await requireAuth();
+  const db = userDb(userId, {});
 
   await db.notification.updateMany({
     where: {
-      userId,
       channel: "IN_APP",
       read: false,
     },

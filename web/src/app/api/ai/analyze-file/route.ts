@@ -10,9 +10,8 @@ import { generateText } from "ai";
 import { anthropic } from "@ai-sdk/anthropic";
 import { z } from "zod";
 import { getSession, requireProject } from "@/lib/auth";
-import { prisma, userDb } from "@/lib/db";
+import { prisma, tenantDb, userDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
-import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
 import { fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 
@@ -245,8 +244,10 @@ export async function POST(req: NextRequest) {
       file.key
     );
 
+    // Update database using scoped client with emitContext
     if (file.projectId) {
-      await prisma.file.update({
+      const db = tenantDb(tenantId, { actorUserId: userId, projectId: file.projectId });
+      await db.file.update({
         where: { id: fileId },
         data: {
           label,
@@ -255,30 +256,14 @@ export async function POST(req: NextRequest) {
         },
       });
     } else {
-      await userDb(userId).file.update({
+      const db = userDb(userId, {});
+      await db.file.update({
         where: { id: fileId },
         data: {
           label,
           userDescription: userDescription || null,
           aiAnalysis: description,
         },
-      });
-    }
-
-    // Emit websocket event for real-time UI update
-    if (file.projectId) {
-      emitFileUpdatedToProject(file.projectId, {
-        projectId: file.projectId,
-        fileId: file.id,
-        actorUserId: userId,
-        label,
-      });
-    } else {
-      emitFileUpdatedToUser(userId, {
-        projectId: null,
-        fileId: file.id,
-        actorUserId: userId,
-        label,
       });
     }
 

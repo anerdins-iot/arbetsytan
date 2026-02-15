@@ -6,11 +6,6 @@ import { requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import { notifyTaskAssigned } from "@/lib/notification-delivery";
-import {
-  emitTaskCreatedToProject,
-  emitTaskDeletedToProject,
-  emitTaskUpdatedToProject,
-} from "@/lib/socket";
 import type { TaskStatus, Priority } from "../../generated/prisma/client";
 
 // ─────────────────────────────────────────
@@ -166,7 +161,7 @@ export async function updateTaskStatus(
     };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   // Verify task belongs to project
   const task = await db.task.findFirst({
@@ -194,12 +189,6 @@ export async function updateTaskStatus(
       newStatus: parsed.data.status,
     }
   );
-
-  emitTaskUpdatedToProject(projectId, {
-    projectId,
-    taskId: task.id,
-    actorUserId: userId,
-  });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
@@ -235,7 +224,7 @@ export async function createTask(
     };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const createdTask = await db.task.create({
     data: {
@@ -252,12 +241,6 @@ export async function createTask(
     title: createdTask.title,
     status: createdTask.status,
     priority: createdTask.priority,
-  });
-
-  emitTaskCreatedToProject(projectId, {
-    projectId,
-    taskId: createdTask.id,
-    actorUserId: userId,
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
@@ -281,7 +264,7 @@ export async function assignTask(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   // Verify task belongs to project
   const task = await db.task.findFirst({
@@ -337,12 +320,6 @@ export async function assignTask(
     }
   );
 
-  emitTaskUpdatedToProject(projectId, {
-    projectId,
-    taskId: task.id,
-    actorUserId: userId,
-  });
-
   if (membership.user.id !== userId) {
     await notifyTaskAssigned({
       tenantId,
@@ -389,7 +366,7 @@ export async function updateTask(
     };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const task = await db.task.findFirst({
     where: { id: parsed.data.taskId, projectId },
@@ -423,12 +400,6 @@ export async function updateTask(
     priority: parsed.data.priority,
   });
 
-  emitTaskUpdatedToProject(projectId, {
-    projectId,
-    taskId: task.id,
-    actorUserId: userId,
-  });
-
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -450,7 +421,7 @@ export async function deleteTask(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const task = await db.task.findFirst({
     where: { id: parsed.data.taskId, projectId },
@@ -471,12 +442,6 @@ export async function deleteTask(
   await logActivity(tenantId, projectId, userId, "deleted", "task", task.id, {
     title: task.title,
     status: task.status,
-  });
-
-  emitTaskDeletedToProject(projectId, {
-    projectId,
-    taskId: task.id,
-    actorUserId: userId,
   });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
@@ -500,7 +465,7 @@ export async function unassignTask(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const assignment = await db.taskAssignment.findFirst({
     where: {
@@ -528,12 +493,6 @@ export async function unassignTask(
       change: "unassigned",
     }
   );
-
-  emitTaskUpdatedToProject(projectId, {
-    projectId,
-    taskId: parsed.data.taskId,
-    actorUserId: userId,
-  });
 
   revalidatePath("/[locale]/projects/[projectId]", "page");
 

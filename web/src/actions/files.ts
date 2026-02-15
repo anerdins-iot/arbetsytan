@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requirePermission, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
-import { emitFileCreatedToProject, emitFileDeletedToProject } from "@/lib/socket";
 import {
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE_BYTES,
@@ -193,7 +192,7 @@ export async function completeFileUpload(input: {
     await assertTenantStorageLimit(tenantId, fileSize);
     await assertObjectExists({ bucket, key });
 
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
     const created = await db.file.create({
       data: {
         name: fileName,
@@ -210,12 +209,6 @@ export async function completeFileUpload(input: {
       fileName: created.name,
       fileSize: created.size,
       fileType: created.type,
-    });
-
-    emitFileCreatedToProject(projectId, {
-      projectId,
-      fileId: created.id,
-      actorUserId: userId,
     });
 
     // Trigger OCR in background (fire-and-forget)
@@ -293,7 +286,7 @@ export async function uploadFile(
       contentType: fileType,
     });
 
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
     const created = await db.file.create({
       data: {
         name: fileName,
@@ -310,12 +303,6 @@ export async function uploadFile(
       fileName: created.name,
       fileSize: created.size,
       fileType: created.type,
-    });
-
-    emitFileCreatedToProject(projectId, {
-      projectId,
-      fileId: created.id,
-      actorUserId: userId,
     });
 
     // Trigger OCR in background (fire-and-forget)
@@ -374,7 +361,7 @@ export async function getProjectFiles(
 
   try {
     await requireProject(tenantId, validatedProjectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId: validatedProjectId });
 
     // Alla filer för projektet (både uppladdade och AI-genererade) – ingen filtrering på source
     const files = await db.file.findMany({
@@ -458,7 +445,7 @@ export async function deleteFile(input: {
 
   try {
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     // Fetch file with uploadedById to check ownership
     const file = await db.file.findFirst({
@@ -518,12 +505,6 @@ export async function deleteFile(input: {
       fileType: file.type,
     });
 
-    emitFileDeletedToProject(projectId, {
-      projectId,
-      fileId: file.id,
-      actorUserId: userId,
-    });
-
     revalidatePath("/[locale]/projects/[projectId]", "page");
     return { success: true };
   } catch (error) {
@@ -567,7 +548,7 @@ export async function getFilePreviewData(input: {
       await requireProject(tenantId, projectId, userId);
     }
 
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const whereClause: Record<string, unknown> = { id: fileId };
     if (projectId) {
@@ -639,7 +620,7 @@ export async function getFileOcrText(input: {
 
   try {
     await requireProject(tenantId, projectId, userId);
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
     const file = await db.file.findFirst({
       where: { id: fileId, projectId },

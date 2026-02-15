@@ -11,7 +11,6 @@ import { anthropic } from "@ai-sdk/anthropic";
 import { tenantDb, userDb, prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { generateEmbedding } from "@/lib/ai/embeddings";
-import { emitFileUpdatedToUser, emitFileUpdatedToProject } from "@/lib/socket";
 import { fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 
@@ -136,13 +135,13 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
 
   // Spara till DB - använd rätt klient beroende på om det är projektfil eller personlig fil
   if (projectId) {
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
     await db.file.update({
       where: { id: fileId, projectId },
       data: { label, aiAnalysis: description },
     });
   } else {
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     await udb.file.update({
       where: { id: fileId },
       data: { label, aiAnalysis: description },
@@ -199,20 +198,6 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
         error: err instanceof Error ? err.message : String(err),
       });
     }
-  }
-
-  // Emit websocket event
-  const eventPayload = {
-    projectId: projectId ?? null,
-    fileId,
-    actorUserId: userId,
-    label,
-  };
-
-  if (projectId) {
-    emitFileUpdatedToProject(projectId, eventPayload);
-  } else {
-    emitFileUpdatedToUser(userId, eventPayload);
   }
 
   logger.info("Background file analysis completed", { fileId, label });

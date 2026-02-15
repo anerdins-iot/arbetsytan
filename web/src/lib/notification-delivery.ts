@@ -1,6 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { prisma, tenantDb } from "@/lib/db";
-import { emitNotificationToUser } from "@/lib/socket";
+import { prisma, tenantDb, userDb } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { sendPushToSubscriptions } from "@/lib/push";
 import { sendExpoPush } from "@/lib/expo-push";
@@ -78,8 +77,8 @@ async function createInAppNotification(args: {
   title: string;
   body: string;
 }) {
-  const db = tenantDb(args.tenantId);
-  const created = await db.notification.create({
+  const db = userDb(args.userId, { projectId: args.projectId });
+  await db.notification.create({
     data: {
       user: { connect: { id: args.userId } },
       project: { connect: { id: args.projectId } },
@@ -91,15 +90,6 @@ async function createInAppNotification(args: {
       read: false,
       sent: true,
     },
-  });
-
-  emitNotificationToUser(args.userId, {
-    id: created.id,
-    title: created.title,
-    body: created.body,
-    read: created.read,
-    createdAt: created.createdAt.toISOString(),
-    projectId: created.projectId,
   });
 }
 

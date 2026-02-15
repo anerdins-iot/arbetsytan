@@ -3,11 +3,6 @@
 import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
-import {
-  emitNoteCategoryCreatedToTenant,
-  emitNoteCategoryUpdatedToTenant,
-  emitNoteCategoryDeletedToTenant,
-} from "@/lib/socket";
 
 // ─────────────────────────────────────────
 // Types
@@ -95,13 +90,13 @@ export async function createNoteCategory(
   data: { name: string; slug?: string; color?: string }
 ): Promise<{ success: true; category: NoteCategoryItem } | { success: false; error: string }> {
   try {
-    const { tenantId } = await requireAuth();
+    const { tenantId, userId } = await requireAuth();
     const parsed = createSchema.safeParse(data);
     if (!parsed.success) {
       return { success: false, error: "Ogiltiga data." };
     }
 
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId });
     const slug = parsed.data.slug || generateSlug(parsed.data.name);
 
     // Check for duplicate slug
@@ -121,13 +116,6 @@ export async function createNoteCategory(
       },
     });
 
-    emitNoteCategoryCreatedToTenant(tenantId, {
-      categoryId: category.id,
-      name: category.name,
-      slug: category.slug,
-      color: category.color,
-    });
-
     return { success: true, category: formatCategory(category) };
   } catch {
     return { success: false, error: "Kunde inte skapa kategori." };
@@ -139,13 +127,13 @@ export async function updateNoteCategory(
   data: { name?: string; slug?: string; color?: string | null }
 ): Promise<{ success: true; category: NoteCategoryItem } | { success: false; error: string }> {
   try {
-    const { tenantId } = await requireAuth();
+    const { tenantId, userId } = await requireAuth();
     const parsed = updateSchema.safeParse({ id, ...data });
     if (!parsed.success) {
       return { success: false, error: "Ogiltiga data." };
     }
 
-    const db = tenantDb(tenantId);
+    const db = tenantDb(tenantId, { actorUserId: userId });
 
     const existing = await db.noteCategory.findFirst({
       where: { id },
@@ -175,13 +163,6 @@ export async function updateNoteCategory(
       data: updateData,
     });
 
-    emitNoteCategoryUpdatedToTenant(tenantId, {
-      categoryId: category.id,
-      name: category.name,
-      slug: category.slug,
-      color: category.color,
-    });
-
     return { success: true, category: formatCategory(category) };
   } catch {
     return { success: false, error: "Kunde inte uppdatera kategori." };
@@ -192,8 +173,8 @@ export async function deleteNoteCategory(
   id: string
 ): Promise<{ success: true } | { success: false; error: string }> {
   try {
-    const { tenantId } = await requireAuth();
-    const db = tenantDb(tenantId);
+    const { tenantId, userId } = await requireAuth();
+    const db = tenantDb(tenantId, { actorUserId: userId });
 
     const existing = await db.noteCategory.findFirst({
       where: { id },
@@ -214,13 +195,6 @@ export async function deleteNoteCategory(
     }
 
     await db.noteCategory.delete({ where: { id } });
-
-    emitNoteCategoryDeletedToTenant(tenantId, {
-      categoryId: existing.id,
-      name: existing.name,
-      slug: existing.slug,
-      color: existing.color,
-    });
 
     return { success: true };
   } catch {

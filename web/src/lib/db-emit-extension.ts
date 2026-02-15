@@ -83,6 +83,8 @@ function getEventInfo(
             fileId: record.id as string,
             actorUserId: context.actorUserId,
             fileName: record.name as string | undefined,
+            ocrText: record.ocrText as string | undefined,
+            url: record.url as string | undefined,
           },
         };
       }
@@ -95,6 +97,8 @@ function getEventInfo(
           fileId: record.id as string,
           actorUserId: context.actorUserId,
           fileName: record.name as string | undefined,
+          ocrText: record.ocrText as string | undefined,
+          url: record.url as string | undefined,
         },
       };
     }

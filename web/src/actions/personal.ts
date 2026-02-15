@@ -5,11 +5,6 @@ import { z } from "zod";
 import { requireAuth } from "@/lib/auth";
 import { tenantDb, userDb } from "@/lib/db";
 import {
-  emitNoteCreatedToUser,
-  emitNoteUpdatedToUser,
-  emitNoteDeletedToUser,
-} from "@/lib/socket";
-import {
   createPresignedDownloadUrl,
   createPresignedUploadUrl,
   personalObjectKey,
@@ -86,7 +81,7 @@ export async function getPersonalNotes(options?: {
 > {
   try {
     const { userId } = await requireAuth();
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
 
     const where: Record<string, unknown> = {};
     if (options?.category) {
@@ -149,7 +144,7 @@ export async function createPersonalNote(data: {
     const parsed = createNoteSchema.safeParse(data);
     if (!parsed.success) return { success: false, error: "Ogiltiga data." };
 
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     const note = await udb.note.create({
       data: {
         title: parsed.data.title ?? "",
@@ -157,14 +152,6 @@ export async function createPersonalNote(data: {
         category: parsed.data.category ?? null,
         createdById: userId,
       },
-    });
-
-    emitNoteCreatedToUser(userId, {
-      noteId: note.id,
-      projectId: null,
-      title: note.title,
-      category: note.category,
-      createdById: userId,
     });
 
     return {
@@ -203,7 +190,7 @@ export async function updatePersonalNote(
     const parsed = updateNoteSchema.safeParse({ noteId, ...data });
     if (!parsed.success) return { success: false, error: "Ogiltiga data." };
 
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     const note = await udb.note.update({
       where: { id: noteId },
       data: {
@@ -211,14 +198,6 @@ export async function updatePersonalNote(
         ...(data.content !== undefined && { content: data.content }),
         ...(data.category !== undefined && { category: data.category }),
       },
-    });
-
-    emitNoteUpdatedToUser(userId, {
-      noteId: note.id,
-      projectId: null,
-      title: note.title,
-      category: note.category,
-      createdById: userId,
     });
 
     return {
@@ -243,15 +222,8 @@ export async function deletePersonalNote(noteId: string): Promise<
 > {
   try {
     const { userId } = await requireAuth();
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     await udb.note.delete({ where: { id: noteId } });
-    emitNoteDeletedToUser(userId, {
-      noteId,
-      projectId: null,
-      title: "",
-      category: null,
-      createdById: userId,
-    });
     return { success: true };
   } catch {
     return { success: false, error: "Kunde inte ta bort anteckning." };
@@ -263,19 +235,12 @@ export async function togglePersonalNotePin(noteId: string): Promise<
 > {
   try {
     const { userId } = await requireAuth();
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     const existing = await udb.note.findFirst({ where: { id: noteId } });
     if (!existing) return { success: false, error: "Anteckningen hittades inte." };
     const updated = await udb.note.update({
       where: { id: noteId },
       data: { isPinned: !existing.isPinned },
-    });
-    emitNoteUpdatedToUser(userId, {
-      noteId: updated.id,
-      projectId: null,
-      title: updated.title,
-      category: updated.category,
-      createdById: userId,
     });
     return { success: true, isPinned: updated.isPinned };
   } catch {
@@ -295,7 +260,7 @@ export async function getPersonalFiles(options?: {
 > {
   try {
     const { userId } = await requireAuth();
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
 
     const files = await udb.file.findMany({
       select: {
@@ -336,7 +301,7 @@ export async function getPersonalFilesWithUrls(options?: {
 > {
   try {
     const { userId } = await requireAuth();
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
 
     const files = await udb.file.findMany({
       select: {
@@ -405,7 +370,7 @@ export async function deletePersonalFile(input: {
     const parsed = z.object({ fileId: z.string().min(1) }).safeParse(input);
     if (!parsed.success) return { success: false, error: "VALIDATION_ERROR" };
 
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     const file = await udb.file.findFirst({
       where: { id: parsed.data.fileId },
       select: { id: true, bucket: true, key: true },
@@ -489,7 +454,7 @@ export async function completePersonalFileUpload(input: {
     validateType(fileName, fileType);
     await assertObjectExists({ bucket, key });
 
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     const created = await udb.file.create({
       data: {
         name: fileName,

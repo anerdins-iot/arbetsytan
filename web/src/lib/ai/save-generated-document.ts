@@ -10,7 +10,6 @@ import {
   projectObjectKey,
   putObjectToMinio,
 } from "@/lib/minio";
-import { emitFileCreatedToProject } from "@/lib/socket";
 import type { TenantScopedClient } from "@/lib/db";
 
 export async function saveGeneratedDocumentToProject(params: {
@@ -51,11 +50,6 @@ export async function saveGeneratedDocumentToProject(params: {
       fileSize: file.size,
       fileType: file.type,
       source: "ai_generated",
-    });
-    emitFileCreatedToProject(projectId, {
-      projectId,
-      fileId: file.id,
-      actorUserId: userId,
     });
 
     return { fileId: file.id, name: file.name };
