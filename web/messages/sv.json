@@ -780,6 +780,7 @@
         "canRemoveUsers": "Ta bort användare",
         "canManageRolePermissions": "Hantera rättighetssystemet",
         "canInviteUsers": "Skicka inbjudningar",
+        "canSendEmails": "Skicka e-post",
         "canCreateProject": "Skapa projekt",
         "canUpdateProject": "Uppdatera projekt",
         "canDeleteProject": "Ta bort projekt",

@@ -13,6 +13,8 @@ import {
   MAX_FILE_SIZE_BYTES,
   ALLOWED_FILE_TYPES,
 } from "@/lib/minio";
+import { processPersonalFileOcr } from "@/lib/ai/ocr";
+import { logger } from "@/lib/logger";
 
 const hasAllowedExtension = (fileName: string): boolean =>
   /\.(pdf|jpe?g|png|webp|docx|xlsx)$/i.test(fileName);
@@ -433,7 +435,7 @@ export async function completePersonalFileUpload(input: {
   | { success: false; error: string }
 > {
   try {
-    const { userId } = await requireAuth();
+    const { userId, tenantId } = await requireAuth();
     const parsed = completePersonalUploadSchema.safeParse(input);
     if (!parsed.success) return { success: false, error: "VALIDATION_ERROR" };
 
@@ -452,6 +454,22 @@ export async function completePersonalFileUpload(input: {
         key,
         uploadedById: userId,
       },
+    });
+
+    // Trigger OCR + bildanalys i bakgrunden (samma som projektfiler)
+    processPersonalFileOcr({
+      fileId: created.id,
+      tenantId,
+      userId,
+      bucket: created.bucket,
+      key: created.key,
+      fileType: created.type,
+      fileName: created.name,
+    }).catch((err) => {
+      logger.error("Background OCR failed for personal file", {
+        fileId: created.id,
+        error: err instanceof Error ? err.message : String(err),
+      });
     });
 
     return {

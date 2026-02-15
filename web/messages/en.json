@@ -780,6 +780,7 @@
         "canRemoveUsers": "Remove users",
         "canManageRolePermissions": "Manage the permissions system",
         "canInviteUsers": "Send invitations",
+        "canSendEmails": "Send emails",
         "canCreateProject": "Create projects",
         "canUpdateProject": "Update projects",
         "canDeleteProject": "Delete projects",

@@ -227,7 +227,7 @@ export async function sendExternalEmail(
   formData: FormData,
   attachments?: EmailAttachmentInput[]
 ): Promise<SendEmailActionResult> {
-  const { tenantId, userId } = await requirePermission("canInviteUsers");
+  const { tenantId, userId } = await requirePermission("canSendEmails");
 
   // Parse recipients from comma-separated string or array
   const recipientsRaw = formData.get("recipients");
@@ -310,7 +310,7 @@ export async function sendExternalEmail(
 export async function sendToTeamMember(
   formData: FormData
 ): Promise<SendEmailActionResult> {
-  const { tenantId, userId } = await requirePermission("canInviteUsers");
+  const { tenantId, userId } = await requirePermission("canSendEmails");
 
   const raw = {
     memberId: formData.get("memberId"),
@@ -379,7 +379,7 @@ export async function sendToTeamMembers(
   body: string,
   attachments?: EmailAttachmentInput[]
 ): Promise<SendEmailActionResult> {
-  const { tenantId, userId } = await requirePermission("canInviteUsers");
+  const { tenantId, userId } = await requirePermission("canSendEmails");
   const db = tenantDb(tenantId);
 
   // Get all members
@@ -444,7 +444,7 @@ export async function sendToTeamMembers(
 export async function getTeamMembersForEmail(): Promise<
   Array<{ id: string; name: string; email: string; role: string }>
 > {
-  const { tenantId } = await requirePermission("canInviteUsers");
+  const { tenantId } = await requirePermission("canSendEmails");
   const db = tenantDb(tenantId);
 
   const memberships = await db.membership.findMany({
@@ -476,7 +476,7 @@ export type ProjectWithMembers = {
 };
 
 export async function getProjectsWithMembersForEmail(): Promise<ProjectWithMembers[]> {
-  const { tenantId, userId } = await requirePermission("canInviteUsers");
+  const { tenantId, userId } = await requirePermission("canSendEmails");
   const db = tenantDb(tenantId);
 
   // First get user's membership to check project access
