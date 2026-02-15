@@ -9,8 +9,8 @@ import ExcelJS from "exceljs";
 import { searchDocuments, searchDocumentsGlobal } from "@/lib/ai/embeddings";
 import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
 import { createPresignedDownloadUrl } from "@/lib/minio";
-import { buildSimplePdf } from "@/lib/reports/simple-content-pdf";
-import { buildSimpleDocx } from "@/lib/reports/simple-content-docx";
+import { buildSimplePdf, type PdfTemplate } from "@/lib/reports/simple-content-pdf";
+import { buildSimpleDocx, type DocxTemplate } from "@/lib/reports/simple-content-docx";
 import { openai } from "@ai-sdk/openai";
 import type { TenantScopedClient } from "@/lib/db";
 
@@ -170,30 +170,115 @@ export async function searchDocumentsAcrossProjects(params: SearchDocumentsGloba
 // Dokumentgenerering (Excel, PDF, Word)
 // ============================================================================
 
+export type ExcelTemplate = "materiallista" | null;
+
+type ExcelSheet = {
+  name: string;
+  headers: string[];
+  rows: (string | number)[][];
+};
+
 type GenerateExcelParams = {
   db: TenantScopedClient;
   tenantId: string;
   projectId: string;
   userId: string;
   fileName: string;
+  title?: string;
+  sheets?: ExcelSheet[];
+  /** @deprecated Use sheets instead */
   sheetName?: string;
-  rows: string[][];
+  /** @deprecated Use sheets instead */
+  rows?: (string | number)[][];
+  template?: ExcelTemplate;
 };
 
 /**
  * Genererar ett Excel-dokument (.xlsx) och sparar det i projektets fillista.
+ * Supports multi-sheet via `sheets` param or legacy single-sheet via `sheetName`+`rows`.
  */
 export async function generateExcelDocument(params: GenerateExcelParams) {
-  const { db, tenantId, projectId, userId, fileName, sheetName, rows } = params;
+  const { db, tenantId, projectId, userId, fileName, title, template } = params;
 
   if (!fileName.toLowerCase().endsWith(".xlsx")) {
     return { error: "fileName måste sluta med .xlsx" };
   }
 
   const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet(sheetName ?? "Blad1", {});
-  for (const row of rows) {
-    sheet.addRow(row);
+
+  // Determine sheets: new multi-sheet API or legacy single-sheet
+  const sheetDefs: ExcelSheet[] = params.sheets && params.sheets.length > 0
+    ? params.sheets
+    : [{
+        name: params.sheetName ?? title ?? "Blad1",
+        headers: [],
+        rows: (params.rows ?? []) as (string | number)[][],
+      }];
+
+  for (const sheetDef of sheetDefs) {
+    const ws = workbook.addWorksheet(sheetDef.name);
+
+    if (sheetDef.headers.length > 0) {
+      const headerRow = ws.addRow(sheetDef.headers);
+
+      if (template === "materiallista") {
+        // Bold header row with fill
+        headerRow.font = { bold: true };
+        headerRow.fill = {
+          type: "pattern",
+          pattern: "solid",
+          fgColor: { argb: "FFE5E7EB" },
+        };
+      }
+    }
+
+    for (const row of sheetDef.rows) {
+      ws.addRow(row);
+    }
+
+    if (template === "materiallista") {
+      // Auto-width columns
+      for (let colIdx = 0; colIdx < (sheetDef.headers.length || 1); colIdx++) {
+        const col = ws.getColumn(colIdx + 1);
+        let maxLen = sheetDef.headers[colIdx]?.length ?? 10;
+        for (const row of sheetDef.rows) {
+          const cellVal = row[colIdx];
+          const len = cellVal != null ? String(cellVal).length : 0;
+          if (len > maxLen) maxLen = len;
+        }
+        col.width = Math.min(maxLen + 4, 60);
+      }
+
+      // Add summary row if there are numeric columns
+      if (sheetDef.rows.length > 0) {
+        const colCount = sheetDef.headers.length || (sheetDef.rows[0]?.length ?? 0);
+        const sumRow: (string | number)[] = [];
+        let hasNumeric = false;
+
+        for (let c = 0; c < colCount; c++) {
+          const numericValues = sheetDef.rows
+            .map((r) => r[c])
+            .filter((v): v is number => typeof v === "number");
+
+          if (numericValues.length > 0) {
+            hasNumeric = true;
+            sumRow.push(numericValues.reduce((a, b) => a + b, 0));
+          } else if (c === 0) {
+            sumRow.push("Summa");
+          } else {
+            sumRow.push("");
+          }
+        }
+
+        if (hasNumeric) {
+          const summaryRow = ws.addRow(sumRow);
+          summaryRow.font = { bold: true };
+          summaryRow.border = {
+            top: { style: "thin" },
+          };
+        }
+      }
+    }
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
@@ -211,7 +296,22 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
     return { error: saved.error };
   }
 
-  return { fileId: saved.fileId, name: saved.name, message: "Excel-fil sparad i projektets fillista." };
+  // Create presigned download URL
+  const downloadUrl = await createPresignedDownloadUrl({
+    bucket: saved.bucket,
+    key: saved.key,
+    expiresInSeconds: 60 * 30, // 30 minutes
+  });
+
+  return {
+    __fileCreated: true as const,
+    fileId: saved.fileId,
+    fileName: saved.name,
+    fileType: "excel" as const,
+    fileSize: saved.size,
+    downloadUrl,
+    message: "Excel-fil skapad och redo att laddas ner",
+  };
 }
 
 type GeneratePdfParams = {
@@ -222,19 +322,20 @@ type GeneratePdfParams = {
   fileName: string;
   title: string;
   content: string;
+  template?: PdfTemplate;
 };
 
 /**
  * Genererar ett PDF-dokument och sparar det i projektets fillista.
  */
 export async function generatePdfDocument(params: GeneratePdfParams) {
-  const { db, tenantId, projectId, userId, fileName, title, content } = params;
+  const { db, tenantId, projectId, userId, fileName, title, content, template } = params;
 
   if (!fileName.toLowerCase().endsWith(".pdf")) {
     return { error: "fileName måste sluta med .pdf" };
   }
 
-  const buffer = await buildSimplePdf(title, content);
+  const buffer = await buildSimplePdf(title, content, template ?? undefined);
   const saved = await saveGeneratedDocumentToProject({
     db,
     tenantId,
@@ -249,7 +350,23 @@ export async function generatePdfDocument(params: GeneratePdfParams) {
     return { error: saved.error };
   }
 
-  return { fileId: saved.fileId, name: saved.name, message: "PDF sparad i projektets fillista." };
+  // Create presigned download URL (also serves as preview URL for PDFs)
+  const downloadUrl = await createPresignedDownloadUrl({
+    bucket: saved.bucket,
+    key: saved.key,
+    expiresInSeconds: 60 * 30, // 30 minutes
+  });
+
+  return {
+    __fileCreated: true as const,
+    fileId: saved.fileId,
+    fileName: saved.name,
+    fileType: "pdf" as const,
+    fileSize: saved.size,
+    downloadUrl,
+    previewUrl: downloadUrl, // PDFs can be previewed directly
+    message: "PDF skapad och redo att laddas ner",
+  };
 }
 
 type GenerateWordParams = {
@@ -259,20 +376,25 @@ type GenerateWordParams = {
   userId: string;
   fileName: string;
   title: string;
-  paragraphs: string[];
+  content?: string;
+  /** @deprecated Use content instead */
+  paragraphs?: string[];
+  template?: DocxTemplate;
 };
 
 /**
  * Genererar ett Word-dokument (.docx) och sparar det i projektets fillista.
  */
 export async function generateWordDocument(params: GenerateWordParams) {
-  const { db, tenantId, projectId, userId, fileName, title, paragraphs } = params;
+  const { db, tenantId, projectId, userId, fileName, title, content, paragraphs, template } = params;
 
   if (!fileName.toLowerCase().endsWith(".docx")) {
     return { error: "fileName måste sluta med .docx" };
   }
 
-  const buffer = await buildSimpleDocx(title, paragraphs);
+  // Support both new content string and legacy paragraphs array
+  const contentOrParagraphs = content ?? paragraphs ?? [];
+  const buffer = await buildSimpleDocx(title, contentOrParagraphs, template ?? undefined);
   const saved = await saveGeneratedDocumentToProject({
     db,
     tenantId,
@@ -287,7 +409,22 @@ export async function generateWordDocument(params: GenerateWordParams) {
     return { error: saved.error };
   }
 
-  return { fileId: saved.fileId, name: saved.name, message: "Word-dokument sparat i projektets fillista." };
+  // Create presigned download URL
+  const downloadUrl = await createPresignedDownloadUrl({
+    bucket: saved.bucket,
+    key: saved.key,
+    expiresInSeconds: 60 * 30, // 30 minutes
+  });
+
+  return {
+    __fileCreated: true as const,
+    fileId: saved.fileId,
+    fileName: saved.name,
+    fileType: "word" as const,
+    fileSize: saved.size,
+    downloadUrl,
+    message: "Word-dokument skapat och redo att laddas ner",
+  };
 }
 
 // ============================================================================
@@ -384,16 +521,23 @@ export function createGenerateExcelDocumentTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Generera ett Excel-dokument (.xlsx) och spara det i projektets fillista. Ange filnamn (t.ex. materiallista.xlsx) och rader som en lista av listor: varje rad är en lista av cellvärden (strängar). Det sparade dokumentet syns i projektets filflik.",
+      "Generera en Excel-fil (.xlsx) och spara i projektets fillista. Ange filnamn, valfri titel och ett eller flera blad (sheets). Varje blad har namn, rubrikrad (headers) och datarader (rows). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och summeringsrad.",
     inputSchema: toolInputSchema(z.object({
-      fileName: z.string().describe("Filnamn med .xlsx, t.ex. materiallista.xlsx"),
-      sheetName: z.string().optional().describe("Namn på arbetsbladet"),
-      rows: z
-        .array(z.array(z.string()))
-        .describe("Rader: varje rad är en array av cellvärden (strängar)"),
+      fileName: z.string().describe("Filnamn t.ex. materiallista.xlsx"),
+      title: z.string().optional().describe("Dokumenttitel"),
+      sheets: z.array(z.object({
+        name: z.string().describe("Bladnamn"),
+        headers: z.array(z.string()).describe("Rubrikrad"),
+        rows: z.array(z.array(z.union([z.string(), z.number()]))).describe("Datarader"),
+      })).describe("Blad med data"),
+      template: z.enum(["materiallista"]).optional().nullable()
+        .describe("Layout-mall: materiallista (formaterad tabell) eller null för standard"),
     })),
-    execute: async ({ fileName, sheetName, rows }) => {
-      return generateExcelDocument({ db, tenantId, projectId, userId, fileName, sheetName, rows });
+    execute: async ({ fileName, title, sheets, template }) => {
+      return generateExcelDocument({
+        db, tenantId, projectId, userId, fileName, title,
+        sheets, template: template ?? null,
+      });
     },
   });
 }
@@ -405,14 +549,19 @@ export function createGeneratePdfDocumentTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Generera ett PDF-dokument och spara det i projektets fillista. Ange filnamn (t.ex. rapport.pdf), titel och innehåll (brödtext). Innehållet kan ha stycken separerade med dubbla radbrytningar. Det sparade dokumentet syns i projektets filflik.",
+      "Generera en PDF-fil och spara i projektets fillista. Ange filnamn (.pdf), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer), offert (villkor i footer), protokoll (deltagarlista-format), eller null för fritt format.",
     inputSchema: toolInputSchema(z.object({
-      fileName: z.string().describe("Filnamn med .pdf, t.ex. rapport.pdf"),
+      fileName: z.string().describe("Filnamn t.ex. rapport.pdf"),
       title: z.string().describe("Dokumentets titel"),
-      content: z.string().describe("Brödtext; stycken separeras med dubbla radbrytningar"),
+      content: z.string().describe("Brödtext i markdown eller vanlig text"),
+      template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
+        .describe("Layout-mall eller null för fritt format"),
     })),
-    execute: async ({ fileName, title, content }) => {
-      return generatePdfDocument({ db, tenantId, projectId, userId, fileName, title, content });
+    execute: async ({ fileName, title, content, template }) => {
+      return generatePdfDocument({
+        db, tenantId, projectId, userId, fileName, title, content,
+        template: template ?? null,
+      });
     },
   });
 }
@@ -424,14 +573,19 @@ export function createGenerateWordDocumentTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Generera ett Word-dokument (.docx) och spara det i projektets fillista. Ange filnamn (t.ex. offert.docx), titel och stycken (lista av strängar). Det sparade dokumentet syns i projektets filflik.",
+      "Generera ett Word-dokument (.docx) och spara i projektets fillista. Ange filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport, offert, protokoll, eller null för fritt format.",
     inputSchema: toolInputSchema(z.object({
-      fileName: z.string().describe("Filnamn med .docx, t.ex. offert.docx"),
+      fileName: z.string().describe("Filnamn t.ex. offert.docx"),
       title: z.string().describe("Dokumentets titel"),
-      paragraphs: z.array(z.string()).describe("Lista av stycken (strängar)"),
+      content: z.string().describe("Brödtext, stycken separeras med dubbla radbrytningar"),
+      template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
+        .describe("Layout-mall eller null för fritt format"),
     })),
-    execute: async ({ fileName, title, paragraphs }) => {
-      return generateWordDocument({ db, tenantId, projectId, userId, fileName, title, paragraphs });
+    execute: async ({ fileName, title, content, template }) => {
+      return generateWordDocument({
+        db, tenantId, projectId, userId, fileName, title, content,
+        template: template ?? null,
+      });
     },
   });
 }

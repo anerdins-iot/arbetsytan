@@ -20,7 +20,7 @@ export async function saveGeneratedDocumentToProject(params: {
   fileName: string;
   contentType: string;
   buffer: Uint8Array;
-}): Promise<{ fileId: string; name: string } | { error: string }> {
+}): Promise<{ fileId: string; name: string; bucket: string; key: string; size: number } | { error: string }> {
   const { db, tenantId, projectId, userId, fileName, contentType, buffer } = params;
 
   try {
@@ -52,7 +52,7 @@ export async function saveGeneratedDocumentToProject(params: {
       source: "ai_generated",
     });
 
-    return { fileId: file.id, name: file.name };
+    return { fileId: file.id, name: file.name, bucket, key, size: buffer.length };
   } catch (error) {
     const message = error instanceof Error ? error.message : "SAVE_DOCUMENT_FAILED";
     return { error: message };

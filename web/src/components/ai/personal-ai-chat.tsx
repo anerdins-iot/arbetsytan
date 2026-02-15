@@ -34,6 +34,7 @@ import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle } from "@/components/ai/voice-mode-toggle";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
+import { FileCreatedCard, type FileCreatedData } from "@/components/ai/file-created-card";
 import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
 import { getProjects } from "@/actions/projects";
 import { getDailyBriefing } from "@/actions/briefing";
@@ -773,6 +774,27 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       <SearchResultsCard
                         key={i}
                         results={result.results as SearchResult[]}
+                      />
+                    );
+                  }
+
+                  if (result?.__fileCreated) {
+                    const fileData = result as unknown as FileCreatedData & {
+                      __fileCreated: true;
+                    };
+
+                    return (
+                      <FileCreatedCard
+                        key={i}
+                        data={{
+                          fileId: fileData.fileId,
+                          fileName: fileData.fileName,
+                          fileType: fileData.fileType,
+                          fileSize: fileData.fileSize,
+                          downloadUrl: fileData.downloadUrl,
+                          previewUrl: fileData.previewUrl,
+                          message: fileData.message,
+                        }}
                       />
                     );
                   }

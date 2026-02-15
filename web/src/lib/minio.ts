@@ -211,6 +211,26 @@ export async function createPresignedDownloadUrl(params: {
   });
 }
 
+export async function getObjectFromMinio(params: {
+  bucket: string;
+  key: string;
+}): Promise<Buffer> {
+  const command = new GetObjectCommand({
+    Bucket: params.bucket,
+    Key: params.key,
+  });
+  const response = await minioClient.send(command);
+  if (!response.Body) {
+    throw new Error("No body in S3 response");
+  }
+  // Convert stream to buffer
+  const chunks: Uint8Array[] = [];
+  for await (const chunk of response.Body as AsyncIterable<Uint8Array>) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
+}
+
 export async function deleteObject(params: {
   bucket: string;
   key: string;

@@ -29,6 +29,8 @@ import {
   searchDocumentsAcrossProjects,
   parseScheduleFromText,
   generatePdfDocument,
+  generateExcelDocument,
+  generateWordDocument,
 } from "@/lib/ai/tools/shared-tools";
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
@@ -860,8 +862,8 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
       return {
         fileId: pdfResult.fileId,
-        name: pdfResult.name,
-        message: `Rapporten "${pdfResult.name}" har sparats i projektets fillista.`,
+        name: pdfResult.fileName,
+        message: `Rapporten "${pdfResult.fileName}" har sparats i projektets fillista.`,
       };
     },
   });
@@ -2514,6 +2516,71 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  // ─── Generiska filgenereringsverktyg ──────────────────────
+  const generatePdf = tool({
+    description:
+      "Generera en PDF-fil och spara den i ett projekts fillista. Ange projektets ID, filnamn (.pdf), titel och innehåll (markdown eller vanlig text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer med datum), offert (villkorstext i footer), protokoll (deltagarlista-format med beslutspunkter), eller null för fritt format.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileName: z.string().describe("Filnamn t.ex. rapport.pdf"),
+      title: z.string().describe("Dokumentets titel"),
+      content: z.string().describe("Brödtext i markdown eller vanlig text"),
+      template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
+        .describe("Layout-mall eller null för fritt format"),
+    })),
+    execute: async ({ projectId: pid, fileName, title, content, template }) => {
+      await requireProject(tenantId, pid, userId);
+      return generatePdfDocument({
+        db, tenantId, projectId: pid, userId,
+        fileName, title, content, template: template ?? null,
+      });
+    },
+  });
+
+  const generateExcel = tool({
+    description:
+      "Generera en Excel-fil (.xlsx) med ett eller flera blad och spara i ett projekts fillista. Ange projektets ID, filnamn (.xlsx), valfri titel och sheets (array av { name, headers, rows }). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och automatisk summeringsrad för numeriska kolumner.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileName: z.string().describe("Filnamn t.ex. materiallista.xlsx"),
+      title: z.string().optional().describe("Dokumenttitel"),
+      sheets: z.array(z.object({
+        name: z.string().describe("Bladnamn"),
+        headers: z.array(z.string()).describe("Rubrikrad"),
+        rows: z.array(z.array(z.union([z.string(), z.number()]))).describe("Datarader"),
+      })).describe("Blad med data"),
+      template: z.enum(["materiallista"]).optional().nullable()
+        .describe("Layout-mall: materiallista (formaterad tabell) eller null för standard"),
+    })),
+    execute: async ({ projectId: pid, fileName, title, sheets, template }) => {
+      await requireProject(tenantId, pid, userId);
+      return generateExcelDocument({
+        db, tenantId, projectId: pid, userId,
+        fileName, title, sheets, template: template ?? null,
+      });
+    },
+  });
+
+  const generateWord = tool({
+    description:
+      "Generera ett Word-dokument (.docx) och spara i ett projekts fillista. Ange projektets ID, filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport (professionell header, sektionsrubriker, footer), offert (villkorstext i footer), protokoll (beslutspunkter, deltagarlista), eller null för fritt format.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileName: z.string().describe("Filnamn t.ex. offert.docx"),
+      title: z.string().describe("Dokumentets titel"),
+      content: z.string().describe("Brödtext, stycken separeras med dubbla radbrytningar"),
+      template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
+        .describe("Layout-mall eller null för fritt format"),
+    })),
+    execute: async ({ projectId: pid, fileName, title, content, template }) => {
+      await requireProject(tenantId, pid, userId);
+      return generateWordDocument({
+        db, tenantId, projectId: pid, userId,
+        fileName, title, content, template: template ?? null,
+      });
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -2544,6 +2611,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     exportTimeReport,
     exportTaskList,
     generateProjectReport,
+    // Filgenerering
+    generatePdf,
+    generateExcel,
+    generateWord,
     // Filer
     listFiles,
     getProjectFiles: listFiles,
