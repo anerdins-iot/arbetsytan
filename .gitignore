@@ -60,3 +60,4 @@ logs/
 .worktrees/
 screenshots/
 docs/
+.playwright-mcp/
