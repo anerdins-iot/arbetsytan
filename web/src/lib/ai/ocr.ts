@@ -327,6 +327,14 @@ export async function processFileOcr(params: {
 
     if (!text.trim()) {
       logger.info("No text extracted for file", { fileId });
+      const db = tenantDb(tenantId);
+      await db.file.update({
+        where: { id: fileId },
+        data: { ocrText: "" },
+      });
+      await db.documentChunk.deleteMany({
+        where: { fileId },
+      });
       return { success: true, chunkCount: 0 };
     }
 
@@ -458,6 +466,14 @@ export async function processPersonalFileOcr(params: {
 
     if (!text.trim()) {
       logger.info("No text extracted for personal file", { fileId });
+      const db = tenantDb(tenantId);
+      await db.file.update({
+        where: { id: fileId },
+        data: { ocrText: "" },
+      });
+      await db.documentChunk.deleteMany({
+        where: { fileId },
+      });
       return { success: true, chunkCount: 0 };
     }
 
