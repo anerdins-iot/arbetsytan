@@ -5,6 +5,7 @@
  * Uses Vercel AI SDK for streaming via SSE.
  */
 import { streamText, stepCountIs, type UIMessage, convertToModelMessages } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireProject } from "@/lib/auth";
 import { tenantDb, userDb } from "@/lib/db";
@@ -175,7 +176,26 @@ export async function POST(req: NextRequest) {
   const model = getModel(providerKey);
 
   // Always use personal tools (they accept projectId per call when user works in a project)
-  const tools = createPersonalTools({ db, tenantId, userId });
+  const personalTools = createPersonalTools({ db, tenantId, userId });
+
+  // Add web search tool
+  const webSearchTool = anthropic.tools.webSearch_20250305({
+    maxUses: 10,  // Max 10 sökningar per konversation
+    blockedDomains: [
+      // Sociala medier
+      'facebook.com', 'instagram.com', 'tiktok.com', 'twitter.com', 'x.com',
+      'snapchat.com', 'linkedin.com',
+      // Underhållning
+      'reddit.com', 'youtube.com', 'twitch.tv',
+      // Övrigt irrelevant
+      'pinterest.com', 'tumblr.com',
+    ],
+  });
+
+  const tools = {
+    ...personalTools,
+    web_search: webSearchTool,
+  };
 
   // Project context for system prompt when request has projectId
   let projectContext: { name: string; address: string | null; status: string; taskCount: number; memberCount: number } | undefined;
@@ -399,6 +419,23 @@ GE INTE UPP efter ett misslyckat verktygsanrop! Prova nästa verktyg i listan.
 Om searchFiles ger 0 resultat, prova getProjectFiles för att lista alla filer och sök manuellt.
 Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.`;
 
+  // Web search guidance - when and how to use web search
+  const webSearchGuidance = `
+WEB SEARCH - Du har tillgång till web_search för att hitta aktuell information från internet.
+
+Använd web_search när:
+- Användaren frågar om aktuella priser, nyheter eller händelser
+- Information kan vara föråldrad (lagar, regler, byggstandarder)
+- Specifika produkter, leverantörer eller kontaktinfo behövs
+- Tekniska specifikationer eller produktdata saknas i systemet
+
+Använd INTE web_search för:
+- Projektdata som finns i systemet (använd dina andra verktyg först)
+- Generella frågor du redan kan svara på
+- Uppgifter, filer, tidrapporter, anteckningar etc.
+
+VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
+
   // Document search guidance - always instruct, but especially when no project context
   const searchGuidance = projectId
     ? ""
@@ -410,6 +447,7 @@ Om användaren nämner ett specifikt projekt eller är i ett projekt, börja dä
     "Om du inte vet svaret efter att ha sökt ordentligt, säg det.",
     proactivePolicy,
     searchStrategy,
+    webSearchGuidance,
     searchGuidance,
     summaryBlock
   );
