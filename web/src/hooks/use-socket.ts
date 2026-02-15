@@ -10,6 +10,7 @@ import {
   type RealtimeNoteEvent,
   type RealtimeProjectUpdatedEvent,
   type RealtimeTaskEvent,
+  type RealtimeCommentEvent,
   type RealtimeTimeEntryEvent,
 } from "@/lib/socket-events";
 
@@ -21,6 +22,9 @@ type UseSocketOptions = {
   onTaskCreated?: (event: RealtimeTaskEvent) => void;
   onTaskUpdated?: (event: RealtimeTaskEvent) => void;
   onTaskDeleted?: (event: RealtimeTaskEvent) => void;
+  onCommentCreated?: (event: RealtimeCommentEvent) => void;
+  onCommentUpdated?: (event: RealtimeCommentEvent) => void;
+  onCommentDeleted?: (event: RealtimeCommentEvent) => void;
   onTimeEntryCreated?: (event: RealtimeTimeEntryEvent) => void;
   onTimeEntryUpdated?: (event: RealtimeTimeEntryEvent) => void;
   onTimeEntryDeleted?: (event: RealtimeTimeEntryEvent) => void;
@@ -61,6 +65,9 @@ export function useSocket({
   onTaskCreated,
   onTaskUpdated,
   onTaskDeleted,
+  onCommentCreated,
+  onCommentUpdated,
+  onCommentDeleted,
   onTimeEntryCreated,
   onTimeEntryUpdated,
   onTimeEntryDeleted,
@@ -115,6 +122,15 @@ export function useSocket({
     const handleTaskDeleted = (payload: RealtimeTaskEvent) => {
       onTaskDeleted?.(payload);
     };
+    const handleCommentCreated = (payload: RealtimeCommentEvent) => {
+      onCommentCreated?.(payload);
+    };
+    const handleCommentUpdated = (payload: RealtimeCommentEvent) => {
+      onCommentUpdated?.(payload);
+    };
+    const handleCommentDeleted = (payload: RealtimeCommentEvent) => {
+      onCommentDeleted?.(payload);
+    };
     const handleTimeEntryCreated = (payload: RealtimeTimeEntryEvent) => {
       onTimeEntryCreated?.(payload);
     };
@@ -162,6 +178,9 @@ export function useSocket({
     connection.on(SOCKET_EVENTS.taskCreated, handleTaskCreated);
     connection.on(SOCKET_EVENTS.taskUpdated, handleTaskUpdated);
     connection.on(SOCKET_EVENTS.taskDeleted, handleTaskDeleted);
+    connection.on(SOCKET_EVENTS.commentCreated, handleCommentCreated);
+    connection.on(SOCKET_EVENTS.commentUpdated, handleCommentUpdated);
+    connection.on(SOCKET_EVENTS.commentDeleted, handleCommentDeleted);
     connection.on(SOCKET_EVENTS.timeEntryCreated, handleTimeEntryCreated);
     connection.on(SOCKET_EVENTS.timeEntryUpdated, handleTimeEntryUpdated);
     connection.on(SOCKET_EVENTS.timeEntryDeleted, handleTimeEntryDeleted);
@@ -186,6 +205,9 @@ export function useSocket({
       connection.off(SOCKET_EVENTS.taskCreated, handleTaskCreated);
       connection.off(SOCKET_EVENTS.taskUpdated, handleTaskUpdated);
       connection.off(SOCKET_EVENTS.taskDeleted, handleTaskDeleted);
+      connection.off(SOCKET_EVENTS.commentCreated, handleCommentCreated);
+      connection.off(SOCKET_EVENTS.commentUpdated, handleCommentUpdated);
+      connection.off(SOCKET_EVENTS.commentDeleted, handleCommentDeleted);
       connection.off(SOCKET_EVENTS.timeEntryCreated, handleTimeEntryCreated);
       connection.off(SOCKET_EVENTS.timeEntryUpdated, handleTimeEntryUpdated);
       connection.off(SOCKET_EVENTS.timeEntryDeleted, handleTimeEntryDeleted);
@@ -220,6 +242,9 @@ export function useSocket({
     onTaskCreated,
     onTaskDeleted,
     onTaskUpdated,
+    onCommentCreated,
+    onCommentDeleted,
+    onCommentUpdated,
     onTimeEntryCreated,
     onTimeEntryUpdated,
     onTimeEntryDeleted,

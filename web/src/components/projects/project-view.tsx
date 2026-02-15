@@ -25,6 +25,7 @@ import { NotesTab } from "./notes-tab";
 import type { NoteItem } from "@/actions/notes";
 import type { AutomationItem } from "@/actions/automations";
 import { AutomationsManager } from "@/components/automations";
+import type { RealtimeProjectUpdatedEvent } from "@/lib/socket-events";
 
 type ProjectViewProps = {
   project: ProjectDetail;
@@ -85,17 +86,31 @@ export function ProjectView({
     setSocketCategoryVersion((v) => v + 1);
   }, []);
 
+  const handleProjectUpdated = useCallback(
+    (event: RealtimeProjectUpdatedEvent) => {
+      if (event.projectId === project.id && event.newStatus === "ARCHIVED") {
+        router.push(`/${locale}/projects`);
+        return;
+      }
+      refreshProjectView();
+    },
+    [project.id, locale, router, refreshProjectView]
+  );
+
   const { status, joinProjectRoom } = useSocket({
     enabled: true,
     onTaskCreated: refreshProjectView,
     onTaskUpdated: refreshProjectView,
     onTaskDeleted: refreshProjectView,
+    onCommentCreated: refreshProjectView,
+    onCommentUpdated: refreshProjectView,
+    onCommentDeleted: refreshProjectView,
     onTimeEntryCreated: refreshProjectView,
     onTimeEntryUpdated: refreshProjectView,
     onTimeEntryDeleted: refreshProjectView,
     onFileCreated: refreshProjectView,
     onFileDeleted: refreshProjectView,
-    onProjectUpdated: refreshProjectView,
+    onProjectUpdated: handleProjectUpdated,
     onNoteCreated: handleNoteEvent,
     onNoteUpdated: handleNoteEvent,
     onNoteDeleted: handleNoteEvent,

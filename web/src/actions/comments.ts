@@ -196,7 +196,7 @@ export async function createComment(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   // Verify task belongs to project
   const task = await db.task.findFirst({
@@ -258,7 +258,7 @@ export async function updateComment(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const comment = await db.comment.findFirst({
     where: { id: parsed.data.commentId },
@@ -298,7 +298,7 @@ export async function deleteComment(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, projectId });
 
   const comment = await db.comment.findFirst({
     where: { id: parsed.data.commentId },

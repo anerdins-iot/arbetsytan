@@ -269,12 +269,18 @@ Lägg till event när ett projekt raderas.
 
 Efter alla block i Fas 4:
 
-- [ ] Block 4.1: Comment-design klar
-- [ ] Block 4.2: Comment-frontend implementerad
-- [ ] Block 4.3: Comment-backend implementerad
-- [ ] Block 4.4: Invitation-design klar
-- [ ] Block 4.5: Project-delete event implementerad
-- [ ] Commit: `feat: Add real-time updates for comments and project deletion`
+- [x] Block 4.1: Comment-design klar
+- [x] Block 4.2: Comment-frontend implementerad
+- [x] Block 4.3: Comment-backend implementerad
+- [ ] Block 4.4: Invitation-design — **SKIPPED** (lägre prioritet, kan läggas till senare)
+- [x] Block 4.5: Project-archive redirect implementerad (använder projectUpdated med newStatus)
+- [ ] Commit: `feat: Add real-time updates for comments and project archiving`
+
+### Avvikelser från plan
+
+1. **Block 4.4 (Invitation-events) skippades** — Invitations är ett separat flöde med låg prioritet för realtidsuppdatering. Kan läggas till i framtida iteration.
+
+2. **Block 4.5 ändrades från "delete" till "archive"** — Projektet har ingen delete-funktion, bara archive. Frontend reagerar nu på `projectUpdated` med `newStatus: "ARCHIVED"` och navigerar användaren till projektlistan.
 
 ---
 
