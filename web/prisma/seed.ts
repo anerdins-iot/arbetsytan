@@ -72,6 +72,17 @@ async function main() {
     },
   });
 
+  const malareUser = await prisma.user.upsert({
+    where: { email: "malare@example.com" },
+    update: { password: testPasswordHash },
+    create: {
+      name: "Kalle Målare",
+      email: "malare@example.com",
+      locale: "sv",
+      password: testPasswordHash,
+    },
+  });
+
   const adminMembership = await prisma.membership.upsert({
     where: {
       userId_tenantId: { userId: adminUser.id, tenantId: tenant.id },
@@ -108,6 +119,18 @@ async function main() {
     },
   });
 
+  const malareMembership = await prisma.membership.upsert({
+    where: {
+      userId_tenantId: { userId: malareUser.id, tenantId: tenant.id },
+    },
+    update: {},
+    create: {
+      userId: malareUser.id,
+      tenantId: tenant.id,
+      role: "WORKER",
+    },
+  });
+
   const project = await prisma.project.upsert({
     where: { id: "seed-project-1" },
     update: {},
@@ -122,7 +145,7 @@ async function main() {
   });
 
   // Koppla medlemmar till projektet via ProjectMember
-  for (const membership of [adminMembership, pmMembership, workerMembership]) {
+  for (const membership of [adminMembership, pmMembership, workerMembership, malareMembership]) {
     await prisma.projectMember.upsert({
       where: {
         projectId_membershipId: {
@@ -193,6 +216,19 @@ async function main() {
     },
   });
 
+  const taskQA = await prisma.task.upsert({
+    where: { id: "seed-task-qa" },
+    update: {},
+    create: {
+      id: "seed-task-qa",
+      title: "QA slutkontroll",
+      description: "Slutkontroll enligt QA-checklista",
+      status: "TODO",
+      priority: "MEDIUM",
+      projectId: project.id,
+    },
+  });
+
   // Idempotent task assignments
   await prisma.taskAssignment.upsert({
     where: {
@@ -209,14 +245,14 @@ async function main() {
     create: { taskId: task2.id, membershipId: workerMembership.id },
   });
 
-  // Idempotent målare-kommentar (Comment, inte note)
+  // Idempotent målare-kommentar (Comment, inte note): användare med "Målare" i namn på task med "QA" i titel (post-seed validering)
   await prisma.comment.upsert({
     where: { id: "seed-comment-1" },
-    update: {},
+    update: { taskId: taskQA.id, authorId: malareUser.id },
     create: {
       id: "seed-comment-1",
-      taskId: task2.id,
-      authorId: workerUser.id,
+      taskId: taskQA.id,
+      authorId: malareUser.id,
       content: "Jag har kollat ritningen och kan börja montera nästa vecka. Behöver elräkning från elnätsbolaget först.",
     },
   });
