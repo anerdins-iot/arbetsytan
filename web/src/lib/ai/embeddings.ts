@@ -139,11 +139,12 @@ export async function processFileEmbeddings(
 }
 
 /**
- * Plaintext search in File metadata (name, userDescription, ocrText).
+ * Plaintext search in File metadata (name, userDescription, ocrText, label, aiAnalysis).
+ * File has no tenantId - scope via projectId only (tenant validated by requireProject).
  * Returns results in same format as embedding search for consistency.
  */
 async function searchFilesPlaintext(
-  tenantId: string,
+  _tenantId: string,
   projectId: string,
   queryText: string,
   limit: number
@@ -155,6 +156,9 @@ async function searchFilesPlaintext(
     page: number | null;
     fileId: string;
     fileName: string;
+    bucket: string;
+    key: string;
+    type: string;
   }>
 > {
   const files = await prisma.$queryRawUnsafe<
@@ -163,19 +167,24 @@ async function searchFilesPlaintext(
       name: string;
       userDescription: string | null;
       ocrText: string | null;
+      label: string | null;
+      aiAnalysis: string | null;
+      bucket: string;
+      key: string;
+      type: string;
     }>
   >(
-    `SELECT "id", "name", "userDescription", "ocrText"
+    `SELECT "id", "name", "userDescription", "ocrText", "label", "aiAnalysis", "bucket", "key", "type"
      FROM "File"
-     WHERE "tenantId" = $1
-       AND "projectId" = $2
+     WHERE "projectId" = $1
        AND (
-         "name" ILIKE $3
-         OR "userDescription" ILIKE $3
-         OR "ocrText" ILIKE $3
+         "name" ILIKE $2
+         OR "userDescription" ILIKE $2
+         OR "ocrText" ILIKE $2
+         OR "label" ILIKE $2
+         OR "aiAnalysis" ILIKE $2
        )
-     LIMIT $4`,
-    tenantId,
+     LIMIT $3`,
     projectId,
     `%${queryText}%`,
     limit
@@ -183,11 +192,14 @@ async function searchFilesPlaintext(
 
   return files.map((file) => ({
     id: `plaintext-${file.id}`,
-    content: file.userDescription || file.ocrText?.slice(0, 200) || file.name,
+    content: file.label || file.aiAnalysis || file.userDescription || file.ocrText?.slice(0, 200) || file.name,
     similarity: 0.5,
     page: null,
     fileId: file.id,
     fileName: file.name,
+    bucket: file.bucket,
+    key: file.key,
+    type: file.type,
   }));
 }
 
@@ -208,6 +220,9 @@ export async function searchDocuments(
     page: number | null;
     fileId: string;
     fileName: string;
+    bucket: string;
+    key: string;
+    type: string;
   }>
 > {
   const { limit = 10, threshold = 0.3 } = options;
@@ -228,6 +243,9 @@ export async function searchDocuments(
             page: number | null;
             fileId: string;
             fileName: string;
+            bucket: string;
+            key: string;
+            type: string;
           }>
         >(
           `SELECT
@@ -236,7 +254,10 @@ export async function searchDocuments(
              1 - (dc."embedding" <=> $1::vector) AS similarity,
              dc."page",
              dc."fileId",
-             f."name" AS "fileName"
+             f."name" AS "fileName",
+             f."bucket",
+             f."key",
+             f."type"
            FROM "DocumentChunk" dc
            JOIN "File" f ON f."id" = dc."fileId"
            WHERE dc."tenantId" = $2
@@ -271,6 +292,7 @@ export async function searchDocuments(
 
 /**
  * Plaintext search in File metadata for global search (multiple projects + personal files).
+ * File has no tenantId - scope via (f.projectId IS NULL OR p.tenantId = tenantId).
  * Returns results in same format as embedding search for consistency.
  */
 async function searchFilesPlaintextGlobal(
@@ -289,6 +311,9 @@ async function searchFilesPlaintextGlobal(
     fileName: string;
     projectId: string | null;
     projectName: string | null;
+    bucket: string;
+    key: string;
+    type: string;
   }>
 > {
   const hasProjects = accessibleProjectIds.length > 0;
@@ -299,7 +324,8 @@ async function searchFilesPlaintextGlobal(
   }
 
   // Build dynamic SQL query for scope filtering
-  let nextParam = 3; // $1=tenantId, $2=queryPattern, then dynamic params
+  // $1=tenantId, $2=queryPattern, then dynamic params for scope, then limit
+  let nextParam = 3;
   const scopeConditions: string[] = [];
   const params: (string | number)[] = [tenantId, `%${queryText}%`];
 
@@ -323,8 +349,13 @@ async function searchFilesPlaintextGlobal(
       name: string;
       userDescription: string | null;
       ocrText: string | null;
+      label: string | null;
+      aiAnalysis: string | null;
       projectId: string | null;
       projectName: string | null;
+      bucket: string;
+      key: string;
+      type: string;
     }>
   >(
     `SELECT
@@ -332,16 +363,23 @@ async function searchFilesPlaintextGlobal(
        f."name",
        f."userDescription",
        f."ocrText",
+       f."label",
+       f."aiAnalysis",
        f."projectId",
-       p."name" AS "projectName"
+       p."name" AS "projectName",
+       f."bucket",
+       f."key",
+       f."type"
      FROM "File" f
      LEFT JOIN "Project" p ON p."id" = f."projectId"
-     WHERE f."tenantId" = $1
+     WHERE (f."projectId" IS NULL OR p."tenantId" = $1)
        AND (${scopeConditions.join(" OR ")})
        AND (
          f."name" ILIKE $2
          OR f."userDescription" ILIKE $2
          OR f."ocrText" ILIKE $2
+         OR f."label" ILIKE $2
+         OR f."aiAnalysis" ILIKE $2
        )
      LIMIT ${limitParam}`,
     ...params
@@ -349,13 +387,16 @@ async function searchFilesPlaintextGlobal(
 
   return files.map((file) => ({
     id: `plaintext-${file.id}`,
-    content: file.userDescription || file.ocrText?.slice(0, 200) || file.name,
+    content: file.label || file.aiAnalysis || file.userDescription || file.ocrText?.slice(0, 200) || file.name,
     similarity: 0.5,
     page: null,
     fileId: file.id,
     fileName: file.name,
     projectId: file.projectId,
     projectName: file.projectName,
+    bucket: file.bucket,
+    key: file.key,
+    type: file.type,
   }));
 }
 
@@ -378,6 +419,9 @@ export async function searchDocumentsGlobal(
     fileName: string;
     projectId: string | null;
     projectName: string | null;
+    bucket: string;
+    key: string;
+    type: string;
   }>
 > {
   const hasProjects = accessibleProjectIds.length > 0;
@@ -480,6 +524,9 @@ export async function searchDocumentsGlobal(
             fileName: string;
             projectId: string | null;
             projectName: string | null;
+            bucket: string;
+            key: string;
+            type: string;
           }>
         >(
           `SELECT
@@ -490,7 +537,10 @@ export async function searchDocumentsGlobal(
              dc."fileId",
              f."name" AS "fileName",
              dc."projectId",
-             p."name" AS "projectName"
+             p."name" AS "projectName",
+             f."bucket",
+             f."key",
+             f."type"
            FROM "DocumentChunk" dc
            JOIN "File" f ON f."id" = dc."fileId"
            LEFT JOIN "Project" p ON p."id" = dc."projectId"

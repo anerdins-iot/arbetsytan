@@ -28,15 +28,25 @@ export type SearchResult = {
   page: number | null;
   similarity: number;
   excerpt: string;
+  previewUrl?: string;
+  type?: string;
 };
 
 type Props = {
   results: SearchResult[];
 };
 
-function getFileIcon(fileName: string) {
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "gif"];
+const IMAGE_TYPES = /^image\/(jpeg|png|gif|webp)/i;
+
+function isImageFile(fileName: string, type?: string) {
+  if (type && IMAGE_TYPES.test(type)) return true;
   const ext = fileName.split(".").pop()?.toLowerCase();
-  if (ext && ["jpg", "jpeg", "png", "webp", "gif"].includes(ext)) {
+  return ext ? IMAGE_EXTENSIONS.includes(ext) : false;
+}
+
+function getFileIcon(fileName: string) {
+  if (isImageFile(fileName)) {
     return <ImageIcon className="size-4 shrink-0 text-muted-foreground" />;
   }
   return <FileText className="size-4 shrink-0 text-muted-foreground" />;
@@ -83,6 +93,9 @@ export function SearchResultsCard({ results }: Props) {
           <CardContent className="space-y-1 pt-0">
             {results.map((result, i) => {
               const similarity = Math.round(result.similarity * 100);
+              const showImageThumb =
+                result.previewUrl &&
+                isImageFile(result.fileName, result.type);
               return (
                 <button
                   key={`${result.fileId}-${i}`}
@@ -91,7 +104,15 @@ export function SearchResultsCard({ results }: Props) {
                   onClick={() => setPreviewFile(result)}
                 >
                   <div className="flex items-center gap-2">
-                    {getFileIcon(result.fileName)}
+                    {showImageThumb ? (
+                      <img
+                        src={result.previewUrl}
+                        alt=""
+                        className="size-10 shrink-0 rounded object-cover"
+                      />
+                    ) : (
+                      getFileIcon(result.fileName)
+                    )}
                     <span className="flex-1 truncate text-sm font-medium text-foreground">
                       {result.fileName}
                     </span>

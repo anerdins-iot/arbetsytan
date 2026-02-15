@@ -8,6 +8,7 @@ import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import ExcelJS from "exceljs";
 import { searchDocuments, searchDocumentsGlobal } from "@/lib/ai/embeddings";
 import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
+import { createPresignedDownloadUrl } from "@/lib/minio";
 import { buildSimplePdf } from "@/lib/reports/simple-content-pdf";
 import { buildSimpleDocx } from "@/lib/reports/simple-content-docx";
 import { openai } from "@ai-sdk/openai";
@@ -101,17 +102,25 @@ type SearchDocumentsProjectParams = {
 export async function searchDocumentsForProject(params: SearchDocumentsProjectParams) {
   const { tenantId, projectId, query, limit } = params;
   const results = await searchDocuments(tenantId, projectId, query, { limit, threshold: 0.3 });
+  const resultsWithUrls = await Promise.all(
+    results.map(async (r) => {
+      const previewUrl = await createPresignedDownloadUrl({ bucket: r.bucket, key: r.key });
+      return {
+        fileId: r.fileId,
+        fileName: r.fileName,
+        projectId,
+        projectName: null as string | null,
+        page: r.page,
+        similarity: r.similarity,
+        excerpt: r.content.slice(0, 300) + (r.content.length > 300 ? "…" : ""),
+        previewUrl,
+        type: r.type,
+      };
+    })
+  );
   return {
     __searchResults: true as const,
-    results: results.map((r) => ({
-      fileId: r.fileId,
-      fileName: r.fileName,
-      projectId,
-      projectName: null as string | null,
-      page: r.page,
-      similarity: r.similarity,
-      excerpt: r.content.slice(0, 300) + (r.content.length > 300 ? "…" : ""),
-    })),
+    results: resultsWithUrls,
   };
 }
 
@@ -125,6 +134,7 @@ type SearchDocumentsGlobalParams = {
 
 /**
  * Söker i dokument över flera projekt OCH personliga filer (används av personlig AI).
+ * Returnerar previewUrl (presigned) så att chatten kan rendera bilder.
  */
 export async function searchDocumentsAcrossProjects(params: SearchDocumentsGlobalParams) {
   const { tenantId, projectIds, query, limit, userId } = params;
@@ -134,17 +144,25 @@ export async function searchDocumentsAcrossProjects(params: SearchDocumentsGloba
     threshold: 0.3,
     userId,
   });
+  const resultsWithUrls = await Promise.all(
+    results.map(async (r) => {
+      const previewUrl = await createPresignedDownloadUrl({ bucket: r.bucket, key: r.key });
+      return {
+        fileId: r.fileId,
+        fileName: r.fileName,
+        projectId: r.projectId,
+        projectName: r.projectName ?? "Personliga filer",
+        page: r.page,
+        similarity: r.similarity,
+        excerpt: r.content.slice(0, 250) + (r.content.length > 250 ? "…" : ""),
+        previewUrl,
+        type: r.type,
+      };
+    })
+  );
   return {
     __searchResults: true as const,
-    results: results.map((r) => ({
-      fileId: r.fileId,
-      fileName: r.fileName,
-      projectId: r.projectId,
-      projectName: r.projectName ?? "Personliga filer",
-      page: r.page,
-      similarity: r.similarity,
-      excerpt: r.content.slice(0, 250) + (r.content.length > 250 ? "…" : ""),
-    })),
+    results: resultsWithUrls,
   };
 }
 
