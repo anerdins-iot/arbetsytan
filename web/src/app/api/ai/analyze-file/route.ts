@@ -267,6 +267,20 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // Skapa FileAnalysis-post (manuell analys)
+    await prisma.fileAnalysis.create({
+      data: {
+        content: description,
+        prompt: null, // Manuell analys utan specifik fråga
+        model: "claude-haiku-4-5-20251001",
+        type: "manual",
+        fileId,
+        tenantId,
+        projectId: file.projectId || null,
+        userId,
+      },
+    });
+
     // Return result with optional warning if analysis had an error but still produced fallback
     if (analysisError) {
       return NextResponse.json({

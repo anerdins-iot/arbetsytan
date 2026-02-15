@@ -148,6 +148,20 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
     });
   }
 
+  // Skapa FileAnalysis-post
+  await prisma.fileAnalysis.create({
+    data: {
+      content: description,
+      prompt: null, // Generell auto-analys
+      model: "claude-haiku-4-5-20251001",
+      type: "auto",
+      fileId,
+      tenantId,
+      projectId: projectId || null,
+      userId,
+    },
+  });
+
   logger.info("File label and description saved", { fileId, label });
 
   // Skapa embedding för description (så det blir sökbart)

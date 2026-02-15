@@ -291,6 +291,7 @@ export type FileWhereInput = {
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   chunks?: Prisma.DocumentChunkListRelationFilter
+  analyses?: Prisma.FileAnalysisListRelationFilter
 }
 
 export type FileOrderByWithRelationInput = {
@@ -311,6 +312,7 @@ export type FileOrderByWithRelationInput = {
   project?: Prisma.ProjectOrderByWithRelationInput
   uploadedBy?: Prisma.UserOrderByWithRelationInput
   chunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
+  analyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
 }
 
 export type FileWhereUniqueInput = Prisma.AtLeast<{
@@ -334,6 +336,7 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   uploadedBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   chunks?: Prisma.DocumentChunkListRelationFilter
+  analyses?: Prisma.FileAnalysisListRelationFilter
 }, "id">
 
 export type FileOrderByWithAggregationInput = {
@@ -394,6 +397,7 @@ export type FileCreateInput = {
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutFilesInput
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
+  analyses?: Prisma.FileAnalysisCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateInput = {
@@ -412,6 +416,7 @@ export type FileUncheckedCreateInput = {
   aiAnalysis?: string | null
   label?: string | null
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
+  analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileUpdateInput = {
@@ -430,6 +435,7 @@ export type FileUpdateInput = {
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateInput = {
@@ -448,6 +454,7 @@ export type FileUncheckedUpdateInput = {
   aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateManyInput = {
@@ -657,6 +664,20 @@ export type FileUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.FileScalarWhereInput | Prisma.FileScalarWhereInput[]
 }
 
+export type FileCreateNestedOneWithoutAnalysesInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutAnalysesInput, Prisma.FileUncheckedCreateWithoutAnalysesInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutAnalysesInput
+  connect?: Prisma.FileWhereUniqueInput
+}
+
+export type FileUpdateOneRequiredWithoutAnalysesNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutAnalysesInput, Prisma.FileUncheckedCreateWithoutAnalysesInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutAnalysesInput
+  upsert?: Prisma.FileUpsertWithoutAnalysesInput
+  connect?: Prisma.FileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileUpdateToOneWithWhereWithoutAnalysesInput, Prisma.FileUpdateWithoutAnalysesInput>, Prisma.FileUncheckedUpdateWithoutAnalysesInput>
+}
+
 export type FileCreateNestedOneWithoutChunksInput = {
   create?: Prisma.XOR<Prisma.FileCreateWithoutChunksInput, Prisma.FileUncheckedCreateWithoutChunksInput>
   connectOrCreate?: Prisma.FileCreateOrConnectWithoutChunksInput
@@ -686,6 +707,7 @@ export type FileCreateWithoutUploadedByInput = {
   label?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
+  analyses?: Prisma.FileAnalysisCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutUploadedByInput = {
@@ -703,6 +725,7 @@ export type FileUncheckedCreateWithoutUploadedByInput = {
   aiAnalysis?: string | null
   label?: string | null
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
+  analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutUploadedByInput = {
@@ -766,6 +789,7 @@ export type FileCreateWithoutProjectInput = {
   label?: string | null
   uploadedBy: Prisma.UserCreateNestedOneWithoutFilesInput
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
+  analyses?: Prisma.FileAnalysisCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutProjectInput = {
@@ -783,6 +807,7 @@ export type FileUncheckedCreateWithoutProjectInput = {
   aiAnalysis?: string | null
   label?: string | null
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
+  analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutProjectInput = {
@@ -811,6 +836,94 @@ export type FileUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.FileUpdateManyMutationInput, Prisma.FileUncheckedUpdateManyWithoutProjectInput>
 }
 
+export type FileCreateWithoutAnalysesInput = {
+  id?: string
+  name: string
+  type: string
+  size: number
+  bucket: string
+  key: string
+  ocrText?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userDescription?: string | null
+  aiAnalysis?: string | null
+  label?: string | null
+  project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  uploadedBy: Prisma.UserCreateNestedOneWithoutFilesInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
+}
+
+export type FileUncheckedCreateWithoutAnalysesInput = {
+  id?: string
+  name: string
+  type: string
+  size: number
+  bucket: string
+  key: string
+  ocrText?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  projectId?: string | null
+  uploadedById: string
+  userDescription?: string | null
+  aiAnalysis?: string | null
+  label?: string | null
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
+}
+
+export type FileCreateOrConnectWithoutAnalysesInput = {
+  where: Prisma.FileWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCreateWithoutAnalysesInput, Prisma.FileUncheckedCreateWithoutAnalysesInput>
+}
+
+export type FileUpsertWithoutAnalysesInput = {
+  update: Prisma.XOR<Prisma.FileUpdateWithoutAnalysesInput, Prisma.FileUncheckedUpdateWithoutAnalysesInput>
+  create: Prisma.XOR<Prisma.FileCreateWithoutAnalysesInput, Prisma.FileUncheckedCreateWithoutAnalysesInput>
+  where?: Prisma.FileWhereInput
+}
+
+export type FileUpdateToOneWithWhereWithoutAnalysesInput = {
+  where?: Prisma.FileWhereInput
+  data: Prisma.XOR<Prisma.FileUpdateWithoutAnalysesInput, Prisma.FileUncheckedUpdateWithoutAnalysesInput>
+}
+
+export type FileUpdateWithoutAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
+  uploadedBy?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
+}
+
+export type FileUncheckedUpdateWithoutAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
+  userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
+}
+
 export type FileCreateWithoutChunksInput = {
   id?: string
   name: string
@@ -826,6 +939,7 @@ export type FileCreateWithoutChunksInput = {
   label?: string | null
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   uploadedBy: Prisma.UserCreateNestedOneWithoutFilesInput
+  analyses?: Prisma.FileAnalysisCreateNestedManyWithoutFileInput
 }
 
 export type FileUncheckedCreateWithoutChunksInput = {
@@ -843,6 +957,7 @@ export type FileUncheckedCreateWithoutChunksInput = {
   userDescription?: string | null
   aiAnalysis?: string | null
   label?: string | null
+  analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
 
 export type FileCreateOrConnectWithoutChunksInput = {
@@ -876,6 +991,7 @@ export type FileUpdateWithoutChunksInput = {
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
+  analyses?: Prisma.FileAnalysisUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutChunksInput = {
@@ -893,6 +1009,7 @@ export type FileUncheckedUpdateWithoutChunksInput = {
   userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateManyUploadedByInput = {
@@ -926,6 +1043,7 @@ export type FileUpdateWithoutUploadedByInput = {
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutUploadedByInput = {
@@ -943,6 +1061,7 @@ export type FileUncheckedUpdateWithoutUploadedByInput = {
   aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutUploadedByInput = {
@@ -992,6 +1111,7 @@ export type FileUpdateWithoutProjectInput = {
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   uploadedBy?: Prisma.UserUpdateOneRequiredWithoutFilesNestedInput
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateWithoutProjectInput = {
@@ -1009,6 +1129,7 @@ export type FileUncheckedUpdateWithoutProjectInput = {
   aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileUncheckedUpdateManyWithoutProjectInput = {
@@ -1034,10 +1155,12 @@ export type FileUncheckedUpdateManyWithoutProjectInput = {
 
 export type FileCountOutputType = {
   chunks: number
+  analyses: number
 }
 
 export type FileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   chunks?: boolean | FileCountOutputTypeCountChunksArgs
+  analyses?: boolean | FileCountOutputTypeCountAnalysesArgs
 }
 
 /**
@@ -1055,6 +1178,13 @@ export type FileCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
  */
 export type FileCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DocumentChunkWhereInput
+}
+
+/**
+ * FileCountOutputType without action
+ */
+export type FileCountOutputTypeCountAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileAnalysisWhereInput
 }
 
 
@@ -1076,6 +1206,7 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   project?: boolean | Prisma.File$projectArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   chunks?: boolean | Prisma.File$chunksArgs<ExtArgs>
+  analyses?: boolean | Prisma.File$analysesArgs<ExtArgs>
   _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["file"]>
 
@@ -1139,6 +1270,7 @@ export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   project?: boolean | Prisma.File$projectArgs<ExtArgs>
   uploadedBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   chunks?: boolean | Prisma.File$chunksArgs<ExtArgs>
+  analyses?: boolean | Prisma.File$analysesArgs<ExtArgs>
   _count?: boolean | Prisma.FileCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type FileIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1156,6 +1288,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     project: Prisma.$ProjectPayload<ExtArgs> | null
     uploadedBy: Prisma.$UserPayload<ExtArgs>
     chunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
+    analyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1569,6 +1702,7 @@ export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Typ
   project<T extends Prisma.File$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   uploadedBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   chunks<T extends Prisma.File$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  analyses<T extends Prisma.File$analysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$analysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2048,6 +2182,30 @@ export type File$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   distinct?: Prisma.DocumentChunkScalarFieldEnum | Prisma.DocumentChunkScalarFieldEnum[]
+}
+
+/**
+ * File.analyses
+ */
+export type File$analysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileAnalysis
+   */
+  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileAnalysis
+   */
+  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
+  where?: Prisma.FileAnalysisWhereInput
+  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
+  cursor?: Prisma.FileAnalysisWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
 }
 
 /**

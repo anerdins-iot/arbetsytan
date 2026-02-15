@@ -78,6 +78,11 @@ export type TaskAssignment = Prisma.TaskAssignmentModel
  */
 export type File = Prisma.FileModel
 /**
+ * Model FileAnalysis
+ * 
+ */
+export type FileAnalysis = Prisma.FileAnalysisModel
+/**
  * Model DocumentChunk
  * Vektorsökning via pgvector. Se AI.md för arkitektur.
  * Tenant-isolerad: alla rader har tenantId. Projektfiler har projectId; personliga filer har userId.

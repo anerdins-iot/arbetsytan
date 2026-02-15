@@ -63,6 +63,7 @@ export const ModelName = {
   Task: 'Task',
   TaskAssignment: 'TaskAssignment',
   File: 'File',
+  FileAnalysis: 'FileAnalysis',
   DocumentChunk: 'DocumentChunk',
   Conversation: 'Conversation',
   Message: 'Message',
@@ -261,6 +262,22 @@ export const FileScalarFieldEnum = {
 } as const
 
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
+
+
+export const FileAnalysisScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  prompt: 'prompt',
+  model: 'model',
+  type: 'type',
+  createdAt: 'createdAt',
+  fileId: 'fileId',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId'
+} as const
+
+export type FileAnalysisScalarFieldEnum = (typeof FileAnalysisScalarFieldEnum)[keyof typeof FileAnalysisScalarFieldEnum]
 
 
 export const DocumentChunkScalarFieldEnum = {

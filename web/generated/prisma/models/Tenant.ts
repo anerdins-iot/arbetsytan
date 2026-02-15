@@ -207,6 +207,7 @@ export type TenantWhereInput = {
   emailTemplates?: Prisma.EmailTemplateListRelationFilter
   documentChunks?: Prisma.DocumentChunkListRelationFilter
   noteCategories?: Prisma.NoteCategoryListRelationFilter
+  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
@@ -226,6 +227,7 @@ export type TenantOrderByWithRelationInput = {
   emailTemplates?: Prisma.EmailTemplateOrderByRelationAggregateInput
   documentChunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
   noteCategories?: Prisma.NoteCategoryOrderByRelationAggregateInput
+  fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -248,6 +250,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   emailTemplates?: Prisma.EmailTemplateListRelationFilter
   documentChunks?: Prisma.DocumentChunkListRelationFilter
   noteCategories?: Prisma.NoteCategoryListRelationFilter
+  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
 }, "id" | "stripeCustomerId">
 
 export type TenantOrderByWithAggregationInput = {
@@ -293,6 +296,7 @@ export type TenantCreateInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
@@ -312,6 +316,7 @@ export type TenantUncheckedCreateInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
@@ -331,6 +336,7 @@ export type TenantUpdateInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
@@ -350,6 +356,7 @@ export type TenantUncheckedUpdateInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
@@ -471,6 +478,20 @@ export type TenantUpdateOneRequiredWithoutProjectsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutProjectsInput, Prisma.TenantUpdateWithoutProjectsInput>, Prisma.TenantUncheckedUpdateWithoutProjectsInput>
 }
 
+export type TenantCreateNestedOneWithoutFileAnalysesInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFileAnalysesInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutFileAnalysesNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFileAnalysesInput
+  upsert?: Prisma.TenantUpsertWithoutFileAnalysesInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutFileAnalysesInput, Prisma.TenantUpdateWithoutFileAnalysesInput>, Prisma.TenantUncheckedUpdateWithoutFileAnalysesInput>
+}
+
 export type TenantCreateNestedOneWithoutDocumentChunksInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunksInput, Prisma.TenantUncheckedCreateWithoutDocumentChunksInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentChunksInput
@@ -571,6 +592,7 @@ export type TenantCreateWithoutMembershipsInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutMembershipsInput = {
@@ -589,6 +611,7 @@ export type TenantUncheckedCreateWithoutMembershipsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutMembershipsInput = {
@@ -623,6 +646,7 @@ export type TenantUpdateWithoutMembershipsInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutMembershipsInput = {
@@ -641,6 +665,7 @@ export type TenantUncheckedUpdateWithoutMembershipsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutInvitationsInput = {
@@ -659,6 +684,7 @@ export type TenantCreateWithoutInvitationsInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutInvitationsInput = {
@@ -677,6 +703,7 @@ export type TenantUncheckedCreateWithoutInvitationsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutInvitationsInput = {
@@ -711,6 +738,7 @@ export type TenantUpdateWithoutInvitationsInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutInvitationsInput = {
@@ -729,6 +757,7 @@ export type TenantUncheckedUpdateWithoutInvitationsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutProjectsInput = {
@@ -747,6 +776,7 @@ export type TenantCreateWithoutProjectsInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutProjectsInput = {
@@ -765,6 +795,7 @@ export type TenantUncheckedCreateWithoutProjectsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutProjectsInput = {
@@ -799,6 +830,7 @@ export type TenantUpdateWithoutProjectsInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutProjectsInput = {
@@ -810,6 +842,99 @@ export type TenantUncheckedUpdateWithoutProjectsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutFileAnalysesInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  address?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutFileAnalysesInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  address?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutFileAnalysesInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
+}
+
+export type TenantUpsertWithoutFileAnalysesInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutFileAnalysesInput, Prisma.TenantUncheckedUpdateWithoutFileAnalysesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutFileAnalysesInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutFileAnalysesInput, Prisma.TenantUncheckedUpdateWithoutFileAnalysesInput>
+}
+
+export type TenantUpdateWithoutFileAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutFileAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
@@ -835,6 +960,7 @@ export type TenantCreateWithoutDocumentChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutDocumentChunksInput = {
@@ -853,6 +979,7 @@ export type TenantUncheckedCreateWithoutDocumentChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutDocumentChunksInput = {
@@ -887,6 +1014,7 @@ export type TenantUpdateWithoutDocumentChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutDocumentChunksInput = {
@@ -905,6 +1033,7 @@ export type TenantUncheckedUpdateWithoutDocumentChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutNotificationPreferencesInput = {
@@ -923,6 +1052,7 @@ export type TenantCreateWithoutNotificationPreferencesInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -941,6 +1071,7 @@ export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -975,6 +1106,7 @@ export type TenantUpdateWithoutNotificationPreferencesInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -993,6 +1125,7 @@ export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutEmailTemplatesInput = {
@@ -1011,6 +1144,7 @@ export type TenantCreateWithoutEmailTemplatesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutEmailTemplatesInput = {
@@ -1029,6 +1163,7 @@ export type TenantUncheckedCreateWithoutEmailTemplatesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutEmailTemplatesInput = {
@@ -1063,6 +1198,7 @@ export type TenantUpdateWithoutEmailTemplatesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutEmailTemplatesInput = {
@@ -1081,6 +1217,7 @@ export type TenantUncheckedUpdateWithoutEmailTemplatesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutPushSubscriptionsInput = {
@@ -1099,6 +1236,7 @@ export type TenantCreateWithoutPushSubscriptionsInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -1117,6 +1255,7 @@ export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -1151,6 +1290,7 @@ export type TenantUpdateWithoutPushSubscriptionsInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -1169,6 +1309,7 @@ export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutNoteCategoriesInput = {
@@ -1187,6 +1328,7 @@ export type TenantCreateWithoutNoteCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutNoteCategoriesInput = {
@@ -1205,6 +1347,7 @@ export type TenantUncheckedCreateWithoutNoteCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutNoteCategoriesInput = {
@@ -1239,6 +1382,7 @@ export type TenantUpdateWithoutNoteCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutNoteCategoriesInput = {
@@ -1257,6 +1401,7 @@ export type TenantUncheckedUpdateWithoutNoteCategoriesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutSubscriptionInput = {
@@ -1275,6 +1420,7 @@ export type TenantCreateWithoutSubscriptionInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutSubscriptionInput = {
@@ -1293,6 +1439,7 @@ export type TenantUncheckedCreateWithoutSubscriptionInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutSubscriptionInput = {
@@ -1327,6 +1474,7 @@ export type TenantUpdateWithoutSubscriptionInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutSubscriptionInput = {
@@ -1345,6 +1493,7 @@ export type TenantUncheckedUpdateWithoutSubscriptionInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 
@@ -1361,6 +1510,7 @@ export type TenantCountOutputType = {
   emailTemplates: number
   documentChunks: number
   noteCategories: number
+  fileAnalyses: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1372,6 +1522,7 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   emailTemplates?: boolean | TenantCountOutputTypeCountEmailTemplatesArgs
   documentChunks?: boolean | TenantCountOutputTypeCountDocumentChunksArgs
   noteCategories?: boolean | TenantCountOutputTypeCountNoteCategoriesArgs
+  fileAnalyses?: boolean | TenantCountOutputTypeCountFileAnalysesArgs
 }
 
 /**
@@ -1440,6 +1591,13 @@ export type TenantCountOutputTypeCountNoteCategoriesArgs<ExtArgs extends runtime
   where?: Prisma.NoteCategoryWhereInput
 }
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileAnalysisWhereInput
+}
+
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1458,6 +1616,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   emailTemplates?: boolean | Prisma.Tenant$emailTemplatesArgs<ExtArgs>
   documentChunks?: boolean | Prisma.Tenant$documentChunksArgs<ExtArgs>
   noteCategories?: boolean | Prisma.Tenant$noteCategoriesArgs<ExtArgs>
+  fileAnalyses?: boolean | Prisma.Tenant$fileAnalysesArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
@@ -1502,6 +1661,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   emailTemplates?: boolean | Prisma.Tenant$emailTemplatesArgs<ExtArgs>
   documentChunks?: boolean | Prisma.Tenant$documentChunksArgs<ExtArgs>
   noteCategories?: boolean | Prisma.Tenant$noteCategoriesArgs<ExtArgs>
+  fileAnalyses?: boolean | Prisma.Tenant$fileAnalysesArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1519,6 +1679,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     emailTemplates: Prisma.$EmailTemplatePayload<ExtArgs>[]
     documentChunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
     noteCategories: Prisma.$NoteCategoryPayload<ExtArgs>[]
+    fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1931,6 +2092,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   emailTemplates<T extends Prisma.Tenant$emailTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$emailTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documentChunks<T extends Prisma.Tenant$documentChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$documentChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   noteCategories<T extends Prisma.Tenant$noteCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$noteCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NoteCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fileAnalyses<T extends Prisma.Tenant$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2563,6 +2725,30 @@ export type Tenant$noteCategoriesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.NoteCategoryScalarFieldEnum | Prisma.NoteCategoryScalarFieldEnum[]
+}
+
+/**
+ * Tenant.fileAnalyses
+ */
+export type Tenant$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileAnalysis
+   */
+  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileAnalysis
+   */
+  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
+  where?: Prisma.FileAnalysisWhereInput
+  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
+  cursor?: Prisma.FileAnalysisWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
 }
 
 /**

@@ -219,6 +219,7 @@ export type ProjectWhereInput = {
   notes?: Prisma.NoteListRelationFilter
   automations?: Prisma.AutomationListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -243,6 +244,7 @@ export type ProjectOrderByWithRelationInput = {
   notes?: Prisma.NoteOrderByRelationAggregateInput
   automations?: Prisma.AutomationOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
+  fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -270,6 +272,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.NoteListRelationFilter
   automations?: Prisma.AutomationListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -321,6 +324,7 @@ export type ProjectCreateInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -344,6 +348,7 @@ export type ProjectUncheckedCreateInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -367,6 +372,7 @@ export type ProjectUpdateInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -390,6 +396,7 @@ export type ProjectUncheckedUpdateInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -567,6 +574,22 @@ export type ProjectUpdateOneWithoutFilesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFilesInput, Prisma.ProjectUpdateWithoutFilesInput>, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
 }
 
+export type ProjectCreateNestedOneWithoutFileAnalysesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFileAnalysesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutFileAnalysesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFileAnalysesInput
+  upsert?: Prisma.ProjectUpsertWithoutFileAnalysesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFileAnalysesInput, Prisma.ProjectUpdateWithoutFileAnalysesInput>, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
+}
+
 export type ProjectCreateNestedOneWithoutChunksInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutChunksInput, Prisma.ProjectUncheckedCreateWithoutChunksInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutChunksInput
@@ -725,6 +748,7 @@ export type ProjectCreateWithoutTenantInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTenantInput = {
@@ -747,6 +771,7 @@ export type ProjectUncheckedCreateWithoutTenantInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTenantInput = {
@@ -809,6 +834,7 @@ export type ProjectCreateWithoutProjectMembersInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutProjectMembersInput = {
@@ -831,6 +857,7 @@ export type ProjectUncheckedCreateWithoutProjectMembersInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutProjectMembersInput = {
@@ -869,6 +896,7 @@ export type ProjectUpdateWithoutProjectMembersInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
@@ -891,6 +919,7 @@ export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTasksInput = {
@@ -913,6 +942,7 @@ export type ProjectCreateWithoutTasksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -935,6 +965,7 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -973,6 +1004,7 @@ export type ProjectUpdateWithoutTasksInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -995,6 +1027,7 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFilesInput = {
@@ -1017,6 +1050,7 @@ export type ProjectCreateWithoutFilesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -1039,6 +1073,7 @@ export type ProjectUncheckedCreateWithoutFilesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -1077,6 +1112,7 @@ export type ProjectUpdateWithoutFilesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -1090,6 +1126,115 @@ export type ProjectUncheckedUpdateWithoutFilesInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutFileAnalysesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutFileAnalysesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutFileAnalysesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+}
+
+export type ProjectUpsertWithoutFileAnalysesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFileAnalysesInput, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutFileAnalysesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFileAnalysesInput, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
+}
+
+export type ProjectUpdateWithoutFileAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutFileAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
   aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
@@ -1121,6 +1266,7 @@ export type ProjectCreateWithoutChunksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutChunksInput = {
@@ -1143,6 +1289,7 @@ export type ProjectUncheckedCreateWithoutChunksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutChunksInput = {
@@ -1181,6 +1328,7 @@ export type ProjectUpdateWithoutChunksInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutChunksInput = {
@@ -1203,6 +1351,7 @@ export type ProjectUncheckedUpdateWithoutChunksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutConversationsInput = {
@@ -1225,6 +1374,7 @@ export type ProjectCreateWithoutConversationsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutConversationsInput = {
@@ -1247,6 +1397,7 @@ export type ProjectUncheckedCreateWithoutConversationsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutConversationsInput = {
@@ -1285,6 +1436,7 @@ export type ProjectUpdateWithoutConversationsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutConversationsInput = {
@@ -1307,6 +1459,7 @@ export type ProjectUncheckedUpdateWithoutConversationsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutMessagesInput = {
@@ -1329,6 +1482,7 @@ export type ProjectCreateWithoutMessagesInput = {
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutMessagesInput = {
@@ -1351,6 +1505,7 @@ export type ProjectUncheckedCreateWithoutMessagesInput = {
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutMessagesInput = {
@@ -1389,6 +1544,7 @@ export type ProjectUpdateWithoutMessagesInput = {
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutMessagesInput = {
@@ -1411,6 +1567,7 @@ export type ProjectUncheckedUpdateWithoutMessagesInput = {
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutAiMessagesInput = {
@@ -1433,6 +1590,7 @@ export type ProjectCreateWithoutAiMessagesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutAiMessagesInput = {
@@ -1455,6 +1613,7 @@ export type ProjectUncheckedCreateWithoutAiMessagesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutAiMessagesInput = {
@@ -1493,6 +1652,7 @@ export type ProjectUpdateWithoutAiMessagesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutAiMessagesInput = {
@@ -1515,6 +1675,7 @@ export type ProjectUncheckedUpdateWithoutAiMessagesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNotificationsInput = {
@@ -1537,6 +1698,7 @@ export type ProjectCreateWithoutNotificationsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNotificationsInput = {
@@ -1559,6 +1721,7 @@ export type ProjectUncheckedCreateWithoutNotificationsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNotificationsInput = {
@@ -1597,6 +1760,7 @@ export type ProjectUpdateWithoutNotificationsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNotificationsInput = {
@@ -1619,6 +1783,7 @@ export type ProjectUncheckedUpdateWithoutNotificationsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutActivityLogsInput = {
@@ -1641,6 +1806,7 @@ export type ProjectCreateWithoutActivityLogsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutActivityLogsInput = {
@@ -1663,6 +1829,7 @@ export type ProjectUncheckedCreateWithoutActivityLogsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutActivityLogsInput = {
@@ -1701,6 +1868,7 @@ export type ProjectUpdateWithoutActivityLogsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
@@ -1723,6 +1891,7 @@ export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTimeEntriesInput = {
@@ -1745,6 +1914,7 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
@@ -1767,6 +1937,7 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTimeEntriesInput = {
@@ -1805,6 +1976,7 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
@@ -1827,6 +1999,7 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNotesInput = {
@@ -1849,6 +2022,7 @@ export type ProjectCreateWithoutNotesInput = {
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNotesInput = {
@@ -1871,6 +2045,7 @@ export type ProjectUncheckedCreateWithoutNotesInput = {
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNotesInput = {
@@ -1909,6 +2084,7 @@ export type ProjectUpdateWithoutNotesInput = {
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNotesInput = {
@@ -1931,6 +2107,7 @@ export type ProjectUncheckedUpdateWithoutNotesInput = {
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutAutomationsInput = {
@@ -1953,6 +2130,7 @@ export type ProjectCreateWithoutAutomationsInput = {
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutAutomationsInput = {
@@ -1975,6 +2153,7 @@ export type ProjectUncheckedCreateWithoutAutomationsInput = {
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutAutomationsInput = {
@@ -2013,6 +2192,7 @@ export type ProjectUpdateWithoutAutomationsInput = {
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutAutomationsInput = {
@@ -2035,6 +2215,7 @@ export type ProjectUncheckedUpdateWithoutAutomationsInput = {
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyTenantInput = {
@@ -2067,6 +2248,7 @@ export type ProjectUpdateWithoutTenantInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTenantInput = {
@@ -2089,6 +2271,7 @@ export type ProjectUncheckedUpdateWithoutTenantInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutTenantInput = {
@@ -2119,6 +2302,7 @@ export type ProjectCountOutputType = {
   notes: number
   automations: number
   messages: number
+  fileAnalyses: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2134,6 +2318,7 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   notes?: boolean | ProjectCountOutputTypeCountNotesArgs
   automations?: boolean | ProjectCountOutputTypeCountAutomationsArgs
   messages?: boolean | ProjectCountOutputTypeCountMessagesArgs
+  fileAnalyses?: boolean | ProjectCountOutputTypeCountFileAnalysesArgs
 }
 
 /**
@@ -2230,6 +2415,13 @@ export type ProjectCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Type
   where?: Prisma.MessageWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileAnalysisWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2253,6 +2445,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
   automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
   messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
+  fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -2306,6 +2499,7 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
   automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
   messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
+  fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2331,6 +2525,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     notes: Prisma.$NotePayload<ExtArgs>[]
     automations: Prisma.$AutomationPayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
+    fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2748,6 +2943,7 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   notes<T extends Prisma.Project$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   automations<T extends Prisma.Project$automationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$automationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Project$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fileAnalyses<T extends Prisma.Project$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3466,6 +3662,30 @@ export type Project$messagesArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+}
+
+/**
+ * Project.fileAnalyses
+ */
+export type Project$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileAnalysis
+   */
+  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileAnalysis
+   */
+  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
+  where?: Prisma.FileAnalysisWhereInput
+  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
+  cursor?: Prisma.FileAnalysisWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
 }
 
 /**

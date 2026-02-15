@@ -396,6 +396,7 @@ export const ModelName = {
   Task: 'Task',
   TaskAssignment: 'TaskAssignment',
   File: 'File',
+  FileAnalysis: 'FileAnalysis',
   DocumentChunk: 'DocumentChunk',
   Conversation: 'Conversation',
   Message: 'Message',
@@ -427,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription"
+    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "fileAnalysis" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1316,6 +1317,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.FileCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.FileCountAggregateOutputType> | number
+        }
+      }
+    }
+    FileAnalysis: {
+      payload: Prisma.$FileAnalysisPayload<ExtArgs>
+      fields: Prisma.FileAnalysisFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FileAnalysisFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FileAnalysisFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>
+        }
+        findFirst: {
+          args: Prisma.FileAnalysisFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FileAnalysisFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>
+        }
+        findMany: {
+          args: Prisma.FileAnalysisFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>[]
+        }
+        create: {
+          args: Prisma.FileAnalysisCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>
+        }
+        createMany: {
+          args: Prisma.FileAnalysisCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FileAnalysisCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>[]
+        }
+        delete: {
+          args: Prisma.FileAnalysisDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>
+        }
+        update: {
+          args: Prisma.FileAnalysisUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>
+        }
+        deleteMany: {
+          args: Prisma.FileAnalysisDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FileAnalysisUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FileAnalysisUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>[]
+        }
+        upsert: {
+          args: Prisma.FileAnalysisUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FileAnalysisPayload>
+        }
+        aggregate: {
+          args: Prisma.FileAnalysisAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFileAnalysis>
+        }
+        groupBy: {
+          args: Prisma.FileAnalysisGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileAnalysisGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FileAnalysisCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FileAnalysisCountAggregateOutputType> | number
         }
       }
     }
@@ -2708,6 +2783,22 @@ export const FileScalarFieldEnum = {
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
 
 
+export const FileAnalysisScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  prompt: 'prompt',
+  model: 'model',
+  type: 'type',
+  createdAt: 'createdAt',
+  fileId: 'fileId',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId'
+} as const
+
+export type FileAnalysisScalarFieldEnum = (typeof FileAnalysisScalarFieldEnum)[keyof typeof FileAnalysisScalarFieldEnum]
+
+
 export const DocumentChunkScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -3397,6 +3488,7 @@ export type GlobalOmitConfig = {
   task?: Prisma.TaskOmit
   taskAssignment?: Prisma.TaskAssignmentOmit
   file?: Prisma.FileOmit
+  fileAnalysis?: Prisma.FileAnalysisOmit
   documentChunk?: Prisma.DocumentChunkOmit
   conversation?: Prisma.ConversationOmit
   message?: Prisma.MessageOmit

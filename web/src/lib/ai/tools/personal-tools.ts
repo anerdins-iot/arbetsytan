@@ -7,7 +7,7 @@ import { z } from "zod";
 import { openai } from "@ai-sdk/openai";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject, requirePermission } from "@/lib/auth";
-import { userDb, tenantDb, type TenantScopedClient } from "@/lib/db";
+import { userDb, tenantDb, prisma, type TenantScopedClient } from "@/lib/db";
 import {
   createProject as createProjectAction,
   updateProject as updateProjectAction,
@@ -1047,7 +1047,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   // ─── Filer (Files) ────────────────────────────────────
 
   const listFiles = tool({
-    description: "Lista filer i ett projekt (id, namn, typ, storlek, datum).",
+    description: "Lista filer i ett projekt (id, namn, typ, storlek, datum, analyser).",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets unika ID (från listProjects, t.ex. 'cmlmey73b00071fo435f077if'). INTE filnamn!"),
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
@@ -1060,7 +1060,21 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         where: { projectId: pid },
         orderBy: { createdAt: "desc" },
         take: limit,
-        select: { id: true, name: true, type: true, size: true, createdAt: true },
+        select: {
+          id: true,
+          name: true,
+          type: true,
+          size: true,
+          createdAt: true,
+          ocrText: true,
+          userDescription: true,
+          label: true,
+          analyses: {
+            select: { prompt: true, content: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 5,
+          },
+        },
       });
       return files.map((f) => ({
         id: f.id,
@@ -1068,6 +1082,14 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         type: f.type,
         size: f.size,
         createdAt: f.createdAt.toISOString(),
+        label: f.label,
+        userDescription: f.userDescription,
+        ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
+        analyses: f.analyses.map((a) => ({
+          prompt: a.prompt,
+          content: a.content,
+          createdAt: a.createdAt.toISOString(),
+        })),
       }));
     },
   });
@@ -1096,7 +1118,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const getPersonalFiles = tool({
     description:
-      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar filens ID (för movePersonalFileToProject), namn, typ, storlek och datum. ANROPA DETTA FÖRST för att få fileId innan du flyttar filer.",
+      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar filens ID (för movePersonalFileToProject), namn, typ, storlek, datum och analyser. ANROPA DETTA FÖRST för att få fileId innan du flyttar filer.",
     inputSchema: toolInputSchema(z.object({
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
     })),
@@ -1112,6 +1134,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           size: true,
           createdAt: true,
           ocrText: true,
+          userDescription: true,
+          label: true,
+          analyses: {
+            select: { prompt: true, content: true, createdAt: true },
+            orderBy: { createdAt: "desc" },
+            take: 5,
+          },
         },
       });
       return files.map((f) => ({
@@ -1120,8 +1149,15 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         type: f.type,
         size: f.size,
         createdAt: f.createdAt.toISOString(),
+        label: f.label,
+        userDescription: f.userDescription,
         hasOcrText: !!f.ocrText,
         ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
+        analyses: f.analyses.map((a) => ({
+          prompt: a.prompt,
+          content: a.content,
+          createdAt: a.createdAt.toISOString(),
+        })),
       }));
     },
   });
@@ -1243,6 +1279,24 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         return { error: "Filen är inte en bild. Använd analyzeDocument för PDF:er och andra dokument." };
       }
 
+      // Kolla om exakt samma fråga redan ställts - returnera cachad om så
+      if (question) {
+        const cached = await prisma.fileAnalysis.findFirst({
+          where: { fileId, prompt: question, tenantId },
+          orderBy: { createdAt: "desc" },
+          select: { content: true, createdAt: true },
+        });
+        if (cached) {
+          return {
+            fileName: file.name,
+            analysis: cached.content,
+            ocrText: file.ocrText || null,
+            message: "Bildanalys klar (cachad).",
+            cached: true,
+          };
+        }
+      }
+
       // Hämta bilden från MinIO
       let buffer: Buffer;
       try {
@@ -1253,6 +1307,20 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
       // Analysera med Claude vision
       const analysis = await analyzeImageWithVision(buffer, file.type, file.ocrText, question);
+
+      // Spara analys till FileAnalysis
+      await prisma.fileAnalysis.create({
+        data: {
+          content: analysis,
+          prompt: question || null,
+          model: "claude-opus-4-6",
+          type: "agent",
+          fileId,
+          tenantId,
+          projectId: pid || null,
+          userId,
+        },
+      });
 
       return {
         fileName: file.name,
