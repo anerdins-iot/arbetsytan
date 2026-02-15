@@ -36,6 +36,14 @@ Baserat på all tillgänglig information (OCR-text, bildanalys, användarens bes
 Svara ALLTID i JSON-format: {"label": "...", "description": "..."}`;
 
 /**
+ * Kör filanalys synkront (för t.ex. seed).
+ * Samma pipeline som queueFileAnalysis men väntar tills analysen är klar.
+ */
+export async function runFileAnalysisSync(params: QueueFileAnalysisParams): Promise<void> {
+  await runAnalysis(params);
+}
+
+/**
  * Kör filanalys i bakgrunden.
  * Blockerar INTE anroparen - allt körs asynkront.
  */
