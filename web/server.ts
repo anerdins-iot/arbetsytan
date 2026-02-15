@@ -117,12 +117,26 @@ app.prepare().then(async () => {
       }
 
       // Fall back to Auth.js session token
+      // In production behind HTTPS proxy, Auth.js uses __Secure- prefix for cookies
+      const isSecure = process.env.NEXTAUTH_URL?.startsWith("https://") ||
+                       process.env.NODE_ENV === "production";
+      const cookieName = isSecure
+        ? "__Secure-authjs.session-token"
+        : "authjs.session-token";
+
       const token = await getToken({
         req: socket.request as Parameters<typeof getToken>[0]["req"],
         secret,
+        cookieName,
       });
 
       if (!token?.sub || typeof token.tenantId !== "string" || typeof token.role !== "string") {
+        console.error("Socket Auth Failed:", {
+          hasCookie: !!socket.request.headers.cookie,
+          cookieName,
+          tokenSub: token?.sub,
+          tokenTenantId: token?.tenantId,
+        });
         return next(new Error("UNAUTHORIZED"));
       }
 

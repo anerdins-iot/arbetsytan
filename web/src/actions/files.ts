@@ -334,7 +334,7 @@ export async function uploadFile(
 
     return {
       success: true,
-        file: {
+      file: {
         id: created.id,
         name: created.name,
         type: created.type,

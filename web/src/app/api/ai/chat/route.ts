@@ -376,6 +376,16 @@ function buildSystemPrompt(opts: {
     unreadHint,
   );
 
+  // PROACTIVE POLICY - Strict rules for agent behavior
+  const proactivePolicy = `
+PROAKTIV POLICY - Du MÅSTE följa dessa regler:
+1. VAR ALLTID PROAKTIV: Vid otydliga eller korta frågor, börja undersöka direkt istället för att ställa motfrågor.
+2. INGA MOTFRÅGOR FÖRST: Om det går att undersöka med verktyg först, gör det. Fråga aldrig "Vilket projekt menar du?" om du kan hitta svaret genom att söka i projektlistan eller senast ändrade projekt.
+3. BRED SÖKNING: Kör breda sökningar (gärna parallellt om möjligt) över alla relevanta verktyg och datakällor innan du ger upp.
+4. MEST SANNOLIKA RESULTAT FÖRST: Presentera de mest troliga svaren/resultaten tydligt.
+5. GE ALLTID ETT FÖRSLAG: Om osäkerhet kvarstår efter sökning, ge ett konkret förslag baserat på vad du hittat och fråga "Menar du detta?" istället för en generell fråga.
+6. SLUTA ALDRIG MED EN FRÅGA UTAN ATT HA GJORT NÅGOT: Du ska alltid ha utfört minst ett verktygsanrop eller presenterat information innan du frågar användaren om något.`;
+
   // Search strategy guidance - helps AI find information systematically
   const searchStrategy = `
 SÖKSTRATEGI - Använd denna ordning när användaren söker efter något:
@@ -387,12 +397,7 @@ SÖKSTRATEGI - Använd denna ordning när användaren söker efter något:
 
 GE INTE UPP efter ett misslyckat verktygsanrop! Prova nästa verktyg i listan.
 Om searchFiles ger 0 resultat, prova getProjectFiles för att lista alla filer och sök manuellt.
-Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.
-
-EXEMPEL på sökfrågor:
-- "elschema för badrum" → searchFiles först, sedan getProjectFiles om inga träffar
-- "offert från Bygg AB" → searchFiles, sedan searchNotes
-- "ventilationsritning plan 2" → searchFiles med projektkontext`;
+Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.`;
 
   // Document search guidance - always instruct, but especially when no project context
   const searchGuidance = projectId
@@ -403,6 +408,7 @@ EXEMPEL på sökfrågor:
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
     "Om du inte vet svaret efter att ha sökt ordentligt, säg det.",
+    proactivePolicy,
     searchStrategy,
     searchGuidance,
     summaryBlock
