@@ -22,8 +22,21 @@ export async function saveGeneratedDocumentToProject(params: {
   contentType: string;
   buffer: Uint8Array;
   content?: string;
+  /** When saving a new version of an existing file (e.g. after edit/fill), link to parent and set versionNumber. */
+  parentFileId?: string;
 }): Promise<{ fileId: string; name: string; bucket: string; key: string; size: number } | { error: string }> {
-  const { db, tenantId, projectId, userId, fileName, contentType, buffer, content } = params;
+  const { db, tenantId, projectId, userId, fileName, contentType, buffer, content, parentFileId } = params;
+
+  let versionNumber = 1;
+  if (parentFileId) {
+    const parent = await db.file.findUnique({
+      where: { id: parentFileId },
+      select: { versionNumber: true },
+    });
+    if (parent) {
+      versionNumber = parent.versionNumber + 1;
+    }
+  }
 
   try {
     const bucket = await ensureTenantBucket(tenantId);
@@ -62,6 +75,8 @@ export async function saveGeneratedDocumentToProject(params: {
         ocrText: content ?? null,
         userDescription,
         aiAnalysis,
+        parentFileId: parentFileId ?? null,
+        versionNumber,
       },
     });
 

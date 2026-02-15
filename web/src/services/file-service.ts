@@ -13,6 +13,7 @@ export type FileListItem = {
   label: string | null;
   bucket: string;
   objectKey: string; // key - for presigned URLs i Actions
+  versionNumber: number;
   analyses: Array<{
     prompt: string | null;
     content: string;
@@ -36,7 +37,10 @@ export async function getProjectFilesCore(
   const db = tenantDb(ctx.tenantId);
 
   const files = await db.file.findMany({
-    where: { projectId },
+    where: {
+      projectId,
+      childVersions: { none: {} }, // only latest version per version chain
+    },
     orderBy: { createdAt: "desc" },
     take: options?.limit,
     skip: options?.offset,
@@ -63,6 +67,7 @@ export async function getProjectFilesCore(
     label: f.label,
     bucket: f.bucket,
     objectKey: f.key,
+    versionNumber: f.versionNumber ?? 1,
     analyses: f.analyses?.map((a: any) => ({
       prompt: a.prompt,
       content: a.content,
@@ -82,6 +87,9 @@ export async function getPersonalFilesCore(
   const udb = userDb(ctx.userId);
 
   const files = await udb.file.findMany({
+    where: {
+      childVersions: { none: {} }, // only latest version per version chain
+    },
     orderBy: { createdAt: "desc" },
     take: options?.limit,
     skip: options?.offset,
@@ -108,6 +116,7 @@ export async function getPersonalFilesCore(
     label: f.label,
     bucket: f.bucket,
     objectKey: f.key,
+    versionNumber: f.versionNumber ?? 1,
     analyses: f.analyses?.map((a: any) => ({
       prompt: a.prompt,
       content: a.content,

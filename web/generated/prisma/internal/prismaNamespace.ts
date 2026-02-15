@@ -2777,7 +2777,9 @@ export const FileScalarFieldEnum = {
   uploadedById: 'uploadedById',
   userDescription: 'userDescription',
   aiAnalysis: 'aiAnalysis',
-  label: 'label'
+  label: 'label',
+  parentFileId: 'parentFileId',
+  versionNumber: 'versionNumber'
 } as const
 
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]

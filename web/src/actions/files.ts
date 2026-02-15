@@ -21,6 +21,8 @@ import {
 import { processFileOcr } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
 import { getProjectFilesCore } from "@/services/file-service";
+import { fillDocxTemplate } from "@/lib/ai/tools/shared-tools";
+import ExcelJS from "exceljs";
 
 const uploadPreparationSchema = z.object({
   projectId: z.string().min(1),
@@ -61,6 +63,7 @@ export type FileItem = {
   aiAnalysis: string | null;
   label: string | null;
   createdAt: Date;
+  versionNumber: number;
   previewUrl: string;
   downloadUrl: string;
 };
@@ -249,6 +252,7 @@ export async function completeFileUpload(input: {
         aiAnalysis: null,
         label: null,
         createdAt: created.createdAt,
+        versionNumber: 1,
         previewUrl,
         downloadUrl: previewUrl,
       },
@@ -346,6 +350,7 @@ export async function uploadFile(
         aiAnalysis: null,
         label: null,
         createdAt: created.createdAt,
+        versionNumber: 1,
         previewUrl,
         downloadUrl: previewUrl,
       },
@@ -405,6 +410,7 @@ export async function getProjectFiles(
           aiAnalysis: file.aiAnalysis,
           label: file.label,
           createdAt: file.createdAt,
+          versionNumber: file.versionNumber ?? 1,
           previewUrl: downloadUrl,
           downloadUrl,
         };
@@ -432,6 +438,7 @@ export async function getProjectFiles(
         aiAnalysis: file.aiAnalysis,
         label: file.label,
         createdAt: file.createdAt,
+        versionNumber: file.versionNumber ?? 1,
         previewUrl: "#",
         downloadUrl: "#",
       };
@@ -660,6 +667,233 @@ export async function getFileOcrText(input: {
     return { success: true, ocrText: file.ocrText, chunkCount };
   } catch (error) {
     const message = error instanceof Error ? error.message : "FETCH_OCR_FAILED";
+    return { success: false, error: message };
+  }
+}
+
+const fillTemplateSchema = z.object({
+  projectId: z.string().min(1),
+  sourceFileId: z.string().min(1),
+  newFileName: z.string().min(1).max(255),
+  data: z.record(z.string(), z.unknown()),
+});
+
+export async function fillTemplate(input: {
+  projectId: string;
+  sourceFileId: string;
+  newFileName: string;
+  data: Record<string, unknown>;
+}): Promise<
+  | {
+      success: true;
+      file: {
+        fileId: string;
+        fileName: string;
+        downloadUrl: string;
+      };
+    }
+  | { success: false; error: string }
+> {
+  const { tenantId, userId } = await requirePermission("canUploadFiles");
+  const parsed = fillTemplateSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+
+  const { projectId, sourceFileId, newFileName, data } = parsed.data;
+
+  try {
+    await requireProject(tenantId, projectId, userId);
+
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
+
+    const result = await fillDocxTemplate({
+      db,
+      tenantId,
+      projectId,
+      userId,
+      sourceFileId,
+      data,
+      newFileName,
+    });
+
+    if ("error" in result) {
+      return { success: false, error: result.error ?? "FILL_TEMPLATE_FAILED" };
+    }
+
+    await logActivity(tenantId, projectId, userId, "created", "file", result.fileId, {
+      fileName: result.fileName,
+      templateFileId: sourceFileId,
+    });
+
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+
+    return {
+      success: true,
+      file: {
+        fileId: result.fileId,
+        fileName: result.fileName,
+        downloadUrl: result.downloadUrl,
+      },
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "FILL_TEMPLATE_FAILED";
+    logger.error("fillTemplate failed", { projectId, sourceFileId, error: message });
+    return { success: false, error: message };
+  }
+}
+
+// ============================================================================
+// Save edited Excel as new file
+// ============================================================================
+
+const saveEditedExcelSchema = z.object({
+  sourceFileId: z.string().min(1),
+  projectId: z.string().min(1).nullable(),
+  newFileName: z.string().min(1).max(255),
+  sheets: z.array(
+    z.object({
+      name: z.string(),
+      headers: z.array(z.string()),
+      rows: z.array(z.array(z.union([z.string(), z.number()]))),
+    })
+  ),
+});
+
+export async function saveEditedExcel(input: {
+  sourceFileId: string;
+  projectId: string | null;
+  newFileName: string;
+  sheets: Array<{
+    name: string;
+    headers: string[];
+    rows: (string | number)[][];
+  }>;
+}): Promise<{ success: true; fileId: string } | { success: false; error: string }> {
+  const { tenantId, userId } = await requireAuth();
+  const parsed = saveEditedExcelSchema.safeParse(input);
+  if (!parsed.success) {
+    return { success: false, error: "VALIDATION_ERROR" };
+  }
+
+  const { sourceFileId, projectId, newFileName, sheets } = parsed.data;
+
+  if (!newFileName.toLowerCase().endsWith(".xlsx")) {
+    return { success: false, error: "FILE_MUST_END_XLSX" };
+  }
+
+  try {
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId: projectId ?? undefined });
+
+    // Verify source file access
+    const sourceFile = await db.file.findFirst({
+      where: projectId
+        ? { id: sourceFileId, projectId }
+        : { id: sourceFileId, projectId: null, uploadedById: userId },
+      select: { id: true, name: true },
+    });
+
+    if (!sourceFile) {
+      return { success: false, error: "FILE_NOT_FOUND" };
+    }
+
+    if (projectId) {
+      await requireProject(tenantId, projectId, userId);
+    }
+
+    // Build workbook from edited sheets
+    const workbook = new ExcelJS.Workbook();
+
+    for (const sheetDef of sheets) {
+      const ws = workbook.addWorksheet(sheetDef.name);
+
+      if (sheetDef.headers.length > 0) {
+        const headerRow = ws.addRow(sheetDef.headers);
+        headerRow.font = { bold: true };
+      }
+
+      for (const row of sheetDef.rows) {
+        ws.addRow(row);
+      }
+
+      // Auto-width columns
+      const colCount = sheetDef.headers.length || (sheetDef.rows[0]?.length ?? 0);
+      for (let colIdx = 0; colIdx < colCount; colIdx++) {
+        const col = ws.getColumn(colIdx + 1);
+        let maxLen = sheetDef.headers[colIdx]?.length ?? 10;
+        for (const row of sheetDef.rows) {
+          const cellVal = row[colIdx];
+          const len = cellVal != null ? String(cellVal).length : 0;
+          if (len > maxLen) maxLen = len;
+        }
+        col.width = Math.min(maxLen + 4, 60);
+      }
+    }
+
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    // Extract text content for OCR indexing
+    const textParts: string[] = [];
+    for (const sheet of sheets) {
+      textParts.push(`--- ${sheet.name} ---`);
+      if (sheet.headers.length > 0) {
+        textParts.push(sheet.headers.join(" | "));
+      }
+      for (const row of sheet.rows) {
+        textParts.push(row.join(" | "));
+      }
+    }
+    const textContent = textParts.join("\n");
+
+    // Upload to MinIO
+    const bucket = await ensureTenantBucket(tenantId);
+    const key = projectId
+      ? projectObjectKey(projectId, newFileName, randomUUID())
+      : `personal/${userId}/${randomUUID()}/${newFileName}`;
+
+    await putObjectToMinio({
+      bucket,
+      key,
+      body: new Uint8Array(buffer),
+      contentType:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    // Create file record
+    const created = await db.file.create({
+      data: {
+        name: newFileName,
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        size: buffer.byteLength,
+        bucket,
+        key,
+        projectId: projectId ?? null,
+        uploadedById: userId,
+        ocrText: textContent,
+        userDescription: `Redigerad kopia av ${sourceFile.name}`,
+      },
+    });
+
+    if (projectId) {
+      await logActivity(tenantId, projectId, userId, "uploaded", "file", created.id, {
+        fileName: created.name,
+        fileSize: created.size,
+        fileType: created.type,
+        source: "excel_editor",
+      });
+    }
+
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+    revalidatePath("/[locale]/personal", "page");
+
+    return { success: true, fileId: created.id };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "SAVE_EXCEL_FAILED";
+    logger.error("saveEditedExcel failed", {
+      sourceFileId,
+      newFileName,
+      error: message,
+    });
     return { success: false, error: message };
   }
 }

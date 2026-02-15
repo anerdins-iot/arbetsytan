@@ -74,6 +74,7 @@ export type PersonalFileItemWithUrls = PersonalFileItem & {
   userDescription: string | null;
   aiAnalysis: string | null;
   label: string | null;
+  versionNumber: number;
 };
 
 // ─────────────────────────────────────────
@@ -288,6 +289,9 @@ export async function getPersonalFilesWithUrls(options?: {
     const udb = userDb(userId, {});
 
     const files = await udb.file.findMany({
+      where: {
+        childVersions: { none: {} }, // only latest version per version chain
+      },
       select: {
         id: true,
         name: true,
@@ -300,6 +304,7 @@ export async function getPersonalFilesWithUrls(options?: {
         aiAnalysis: true,
         label: true,
         createdAt: true,
+        versionNumber: true,
       },
       orderBy: { createdAt: "desc" },
       take: options?.limit ?? 100,
@@ -323,6 +328,7 @@ export async function getPersonalFilesWithUrls(options?: {
           userDescription: file.userDescription,
           aiAnalysis: file.aiAnalysis,
           label: file.label,
+          versionNumber: file.versionNumber ?? 1,
         };
       })
     );
@@ -342,6 +348,7 @@ export async function getPersonalFilesWithUrls(options?: {
         userDescription: file!.userDescription,
         aiAnalysis: file!.aiAnalysis,
         label: file!.label,
+        versionNumber: file!.versionNumber ?? 1,
       };
     });
 

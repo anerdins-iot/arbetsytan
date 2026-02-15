@@ -476,6 +476,11 @@ export function ProjectFilesUpload({
                         <p className="text-xs text-muted-foreground">
                           {formatBytes(file.size)}
                         </p>
+                        {file.versionNumber > 1 ? (
+                          <span className="inline-flex items-center rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                            {t("versionBadge", { number: file.versionNumber })}
+                          </span>
+                        ) : null}
                         {file.ocrText ? (
                           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                             <ScanText className="size-2.5" />
@@ -533,6 +538,7 @@ export function ProjectFilesUpload({
         }}
         file={previewFile}
         translationNamespace="projects.files"
+        projectId={projectId}
         onSaved={refreshFiles}
       />
     </div>

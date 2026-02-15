@@ -271,6 +271,12 @@ model File {
   aiAnalysis      String? // AI-genererad analys
   label           String? // Formaterad etikett
 
+  // Versioning: parent = previous version, children = newer versions
+  parentFileId  String?
+  parentFile    File?     @relation("FileVersions", fields: [parentFileId], references: [id], onDelete: SetNull)
+  childVersions File[]    @relation("FileVersions")
+  versionNumber Int       @default(1)
+
   chunks DocumentChunk[]
   analyses FileAnalysis[]
 }
