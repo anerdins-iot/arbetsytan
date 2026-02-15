@@ -56,8 +56,9 @@ COPY --from=builder /app/package.json ./package.json
 # Copy node_modules (needed for tsx and socket.io)
 COPY --from=builder /app/node_modules ./node_modules
 
-# Copy custom server
+# Copy custom server and its runtime dependencies (tsx resolves imports at runtime)
 COPY --from=builder /app/server.ts ./server.ts
+COPY --from=builder /app/src/lib/socket-events.ts ./src/lib/socket-events.ts
 
 # Copy public assets
 COPY --from=builder /app/public ./public
