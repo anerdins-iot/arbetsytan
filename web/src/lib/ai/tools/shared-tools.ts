@@ -282,6 +282,23 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
   }
 
   const buffer = await workbook.xlsx.writeBuffer();
+
+  // Extract text content from sheets for OCR
+  const textParts: string[] = [];
+  if (title) {
+    textParts.push(title);
+  }
+  for (const sheet of sheetDefs) {
+    textParts.push(`\n--- ${sheet.name} ---`);
+    if (sheet.headers.length > 0) {
+      textParts.push(sheet.headers.join(' | '));
+    }
+    for (const row of sheet.rows) {
+      textParts.push(row.join(' | '));
+    }
+  }
+  const textContent = textParts.join('\n');
+
   const saved = await saveGeneratedDocumentToProject({
     db,
     tenantId,
@@ -290,6 +307,7 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
     fileName,
     contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     buffer: new Uint8Array(buffer),
+    content: textContent,
   });
 
   if ("error" in saved) {
@@ -344,6 +362,7 @@ export async function generatePdfDocument(params: GeneratePdfParams) {
     fileName,
     contentType: "application/pdf",
     buffer,
+    content: `${title}\n\n${content}`,
   });
 
   if ("error" in saved) {
@@ -395,6 +414,12 @@ export async function generateWordDocument(params: GenerateWordParams) {
   // Support both new content string and legacy paragraphs array
   const contentOrParagraphs = content ?? paragraphs ?? [];
   const buffer = await buildSimpleDocx(title, contentOrParagraphs, template ?? undefined);
+
+  // Extract text content for OCR
+  const textContent = typeof contentOrParagraphs === 'string'
+    ? `${title}\n\n${contentOrParagraphs}`
+    : `${title}\n\n${contentOrParagraphs.join('\n\n')}`;
+
   const saved = await saveGeneratedDocumentToProject({
     db,
     tenantId,
@@ -403,6 +428,7 @@ export async function generateWordDocument(params: GenerateWordParams) {
     fileName,
     contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     buffer,
+    content: textContent,
   });
 
   if ("error" in saved) {

@@ -11,6 +11,7 @@ import {
   putObjectToMinio,
 } from "@/lib/minio";
 import type { TenantScopedClient } from "@/lib/db";
+import { queueFileAnalysis } from "@/lib/ai/queue-file-analysis";
 
 export async function saveGeneratedDocumentToProject(params: {
   db: TenantScopedClient;
@@ -20,8 +21,9 @@ export async function saveGeneratedDocumentToProject(params: {
   fileName: string;
   contentType: string;
   buffer: Uint8Array;
+  content?: string;
 }): Promise<{ fileId: string; name: string; bucket: string; key: string; size: number } | { error: string }> {
-  const { db, tenantId, projectId, userId, fileName, contentType, buffer } = params;
+  const { db, tenantId, projectId, userId, fileName, contentType, buffer, content } = params;
 
   try {
     const bucket = await ensureTenantBucket(tenantId);
@@ -33,6 +35,21 @@ export async function saveGeneratedDocumentToProject(params: {
       contentType,
     });
 
+    // Bestäm filtyp för beskrivning
+    const fileTypeDisplay = contentType.includes("pdf")
+      ? "PDF"
+      : contentType.includes("word") || contentType.includes("document")
+      ? "Word-dokument"
+      : contentType.includes("spreadsheet") || contentType.includes("excel")
+      ? "Excel-fil"
+      : "dokument";
+
+    // Skapa AI-analys och användarens beskrivning
+    const userDescription = `Automatiskt genererad ${fileTypeDisplay}`;
+    const aiAnalysis = content
+      ? `Automatiskt genererad ${fileTypeDisplay} - ${fileName}`
+      : `Automatiskt genererad ${fileTypeDisplay}`;
+
     const file = await db.file.create({
       data: {
         name: fileName,
@@ -42,6 +59,9 @@ export async function saveGeneratedDocumentToProject(params: {
         key,
         projectId,
         uploadedById: userId,
+        ocrText: content ?? null,
+        userDescription,
+        aiAnalysis,
       },
     });
 
@@ -50,6 +70,20 @@ export async function saveGeneratedDocumentToProject(params: {
       fileSize: file.size,
       fileType: file.type,
       source: "ai_generated",
+    });
+
+    // Köa filanalys i bakgrunden för att generera bättre label/description och embeddings
+    queueFileAnalysis({
+      fileId: file.id,
+      fileName: file.name,
+      fileType: file.type,
+      bucket,
+      key,
+      tenantId,
+      projectId,
+      userId,
+      ocrText: content ?? "",
+      userDescription,
     });
 
     return { fileId: file.id, name: file.name, bucket, key, size: buffer.length };
