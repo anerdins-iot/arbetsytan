@@ -139,6 +139,59 @@ export async function processFileEmbeddings(
 }
 
 /**
+ * Plaintext search in File metadata (name, userDescription, ocrText).
+ * Returns results in same format as embedding search for consistency.
+ */
+async function searchFilesPlaintext(
+  tenantId: string,
+  projectId: string,
+  queryText: string,
+  limit: number
+): Promise<
+  Array<{
+    id: string;
+    content: string;
+    similarity: number;
+    page: number | null;
+    fileId: string;
+    fileName: string;
+  }>
+> {
+  const files = await prisma.$queryRawUnsafe<
+    Array<{
+      id: string;
+      name: string;
+      userDescription: string | null;
+      ocrText: string | null;
+    }>
+  >(
+    `SELECT "id", "name", "userDescription", "ocrText"
+     FROM "File"
+     WHERE "tenantId" = $1
+       AND "projectId" = $2
+       AND (
+         "name" ILIKE $3
+         OR "userDescription" ILIKE $3
+         OR "ocrText" ILIKE $3
+       )
+     LIMIT $4`,
+    tenantId,
+    projectId,
+    `%${queryText}%`,
+    limit
+  );
+
+  return files.map((file) => ({
+    id: `plaintext-${file.id}`,
+    content: file.userDescription || file.ocrText?.slice(0, 200) || file.name,
+    similarity: 0.5,
+    page: null,
+    fileId: file.id,
+    fileName: file.name,
+  }));
+}
+
+/**
  * Cosine similarity search in DocumentChunk via pgvector.
  * Filtrerar alltid på tenantId och projectId (projektfiler) för multi-tenant-isolering.
  */
@@ -159,42 +212,151 @@ export async function searchDocuments(
 > {
   const { limit = 10, threshold = 0.3 } = options;
 
-  const queryEmbedding = await generateEmbedding(queryText);
-  const vectorStr = `[${queryEmbedding.join(",")}]`;
+  // Run both embedding and plaintext search in parallel
+  const [embeddingResults, plaintextResults] = await Promise.all([
+    // Embedding search with error handling
+    (async () => {
+      try {
+        const queryEmbedding = await generateEmbedding(queryText);
+        const vectorStr = `[${queryEmbedding.join(",")}]`;
 
-  const results = await prisma.$queryRawUnsafe<
+        return await prisma.$queryRawUnsafe<
+          Array<{
+            id: string;
+            content: string;
+            similarity: number;
+            page: number | null;
+            fileId: string;
+            fileName: string;
+          }>
+        >(
+          `SELECT
+             dc."id",
+             dc."content",
+             1 - (dc."embedding" <=> $1::vector) AS similarity,
+             dc."page",
+             dc."fileId",
+             f."name" AS "fileName"
+           FROM "DocumentChunk" dc
+           JOIN "File" f ON f."id" = dc."fileId"
+           WHERE dc."tenantId" = $2
+             AND dc."projectId" = $3
+             AND dc."embedding" IS NOT NULL
+             AND 1 - (dc."embedding" <=> $1::vector) > $4
+           ORDER BY dc."embedding" <=> $1::vector
+           LIMIT $5`,
+          vectorStr,
+          tenantId,
+          projectId,
+          threshold,
+          limit
+        );
+      } catch (error) {
+        logger.warn("Embedding search failed, continuing with plaintext only", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+        return [];
+      }
+    })(),
+    // Plaintext search
+    searchFilesPlaintext(tenantId, projectId, queryText, limit),
+  ]);
+
+  // Merge results: embedding first, then plaintext-only (deduplicate on fileId)
+  const embeddingFileIds = new Set(embeddingResults.map((r) => r.fileId));
+  const plaintextOnly = plaintextResults.filter((r) => !embeddingFileIds.has(r.fileId));
+
+  return [...embeddingResults, ...plaintextOnly].slice(0, limit);
+}
+
+/**
+ * Plaintext search in File metadata for global search (multiple projects + personal files).
+ * Returns results in same format as embedding search for consistency.
+ */
+async function searchFilesPlaintextGlobal(
+  tenantId: string,
+  accessibleProjectIds: string[],
+  queryText: string,
+  limit: number,
+  userId?: string
+): Promise<
+  Array<{
+    id: string;
+    content: string;
+    similarity: number;
+    page: number | null;
+    fileId: string;
+    fileName: string;
+    projectId: string | null;
+    projectName: string | null;
+  }>
+> {
+  const hasProjects = accessibleProjectIds.length > 0;
+  const hasUserId = !!userId;
+
+  if (!hasProjects && !hasUserId) {
+    return [];
+  }
+
+  // Build dynamic SQL query for scope filtering
+  let nextParam = 3; // $1=tenantId, $2=queryPattern, then dynamic params
+  const scopeConditions: string[] = [];
+  const params: (string | number)[] = [tenantId, `%${queryText}%`];
+
+  if (hasProjects) {
+    const projectPlaceholders = accessibleProjectIds.map(() => `$${nextParam++}`).join(", ");
+    scopeConditions.push(`f."projectId" IN (${projectPlaceholders})`);
+    params.push(...accessibleProjectIds);
+  }
+
+  if (hasUserId) {
+    scopeConditions.push(`(f."projectId" IS NULL AND f."uploadedById" = $${nextParam++})`);
+    params.push(userId!);
+  }
+
+  params.push(limit);
+  const limitParam = `$${nextParam++}`;
+
+  const files = await prisma.$queryRawUnsafe<
     Array<{
       id: string;
-      content: string;
-      similarity: number;
-      page: number | null;
-      fileId: string;
-      fileName: string;
+      name: string;
+      userDescription: string | null;
+      ocrText: string | null;
+      projectId: string | null;
+      projectName: string | null;
     }>
   >(
     `SELECT
-       dc."id",
-       dc."content",
-       1 - (dc."embedding" <=> $1::vector) AS similarity,
-       dc."page",
-       dc."fileId",
-       f."name" AS "fileName"
-     FROM "DocumentChunk" dc
-     JOIN "File" f ON f."id" = dc."fileId"
-     WHERE dc."tenantId" = $2
-       AND dc."projectId" = $3
-       AND dc."embedding" IS NOT NULL
-       AND 1 - (dc."embedding" <=> $1::vector) > $4
-     ORDER BY dc."embedding" <=> $1::vector
-     LIMIT $5`,
-    vectorStr,
-    tenantId,
-    projectId,
-    threshold,
-    limit
+       f."id",
+       f."name",
+       f."userDescription",
+       f."ocrText",
+       f."projectId",
+       p."name" AS "projectName"
+     FROM "File" f
+     LEFT JOIN "Project" p ON p."id" = f."projectId"
+     WHERE f."tenantId" = $1
+       AND (${scopeConditions.join(" OR ")})
+       AND (
+         f."name" ILIKE $2
+         OR f."userDescription" ILIKE $2
+         OR f."ocrText" ILIKE $2
+       )
+     LIMIT ${limitParam}`,
+    ...params
   );
 
-  return results;
+  return files.map((file) => ({
+    id: `plaintext-${file.id}`,
+    content: file.userDescription || file.ocrText?.slice(0, 200) || file.name,
+    similarity: 0.5,
+    page: null,
+    fileId: file.id,
+    fileName: file.name,
+    projectId: file.projectId,
+    projectName: file.projectName,
+  }));
 }
 
 /**
@@ -238,115 +400,144 @@ export async function searchDocumentsGlobal(
     limit,
   });
 
-  const queryEmbedding = await generateEmbedding(queryText);
-  const vectorStr = `[${queryEmbedding.join(",")}]`;
+  // Run both embedding and plaintext search in parallel
+  const [embeddingResults, plaintextResults] = await Promise.all([
+    // Embedding search with error handling
+    (async () => {
+      try {
+        const queryEmbedding = await generateEmbedding(queryText);
+        const vectorStr = `[${queryEmbedding.join(",")}]`;
 
-  // Build dynamic WHERE clause to include both project chunks AND personal chunks
-  // Parameters: $1=vector, $2=tenantId, $3=threshold, $4=limit, then dynamic params
-  let nextParam = 5;
-  const scopeConditions: string[] = [];
+        // Build dynamic WHERE clause to include both project chunks AND personal chunks
+        // Parameters: $1=vector, $2=tenantId, $3=threshold, $4=limit, then dynamic params
+        let nextParam = 5;
+        const scopeConditions: string[] = [];
 
-  if (hasProjects) {
-    const projectPlaceholders = accessibleProjectIds
-      .map(() => `$${nextParam++}`)
-      .join(", ");
-    scopeConditions.push(`dc."projectId" IN (${projectPlaceholders})`);
-  }
+        if (hasProjects) {
+          const projectPlaceholders = accessibleProjectIds
+            .map(() => `$${nextParam++}`)
+            .join(", ");
+          scopeConditions.push(`dc."projectId" IN (${projectPlaceholders})`);
+        }
 
-  if (hasUserId) {
-    scopeConditions.push(`(dc."projectId" IS NULL AND dc."userId" = $${nextParam++})`);
-  }
+        if (hasUserId) {
+          scopeConditions.push(`(dc."projectId" IS NULL AND dc."userId" = $${nextParam++})`);
+        }
 
-  const scopeWhere = scopeConditions.join(" OR ");
+        const scopeWhere = scopeConditions.join(" OR ");
 
-  // Build parameter array
-  const dynamicParams: (string | number)[] = [
-    vectorStr,
-    tenantId,
-    threshold,
-    limit,
-    ...accessibleProjectIds,
-  ];
-  if (hasUserId) {
-    dynamicParams.push(userId!);
-  }
+        // Build parameter array
+        const dynamicParams: (string | number)[] = [
+          vectorStr,
+          tenantId,
+          threshold,
+          limit,
+          ...accessibleProjectIds,
+        ];
+        if (hasUserId) {
+          dynamicParams.push(userId!);
+        }
 
-  // Debug: count total chunks in scope
-  const debugScopeWhere = scopeWhere; // same conditions
-  const debugParams: (string | number)[] = [tenantId, ...accessibleProjectIds];
-  if (hasUserId) debugParams.push(userId!);
+        // Debug: count total chunks in scope
+        const debugParams: (string | number)[] = [tenantId, ...accessibleProjectIds];
+        if (hasUserId) debugParams.push(userId!);
 
-  const debugPlaceholderStart = 2;
-  let debugNextParam = debugPlaceholderStart;
-  const debugScopeConditions: string[] = [];
-  if (hasProjects) {
-    const dp = accessibleProjectIds.map(() => `$${debugNextParam++}`).join(", ");
-    debugScopeConditions.push(`"projectId" IN (${dp})`);
-  }
-  if (hasUserId) {
-    debugScopeConditions.push(`("projectId" IS NULL AND "userId" = $${debugNextParam++})`);
-  }
+        const debugPlaceholderStart = 2;
+        let debugNextParam = debugPlaceholderStart;
+        const debugScopeConditions: string[] = [];
+        if (hasProjects) {
+          const dp = accessibleProjectIds.map(() => `$${debugNextParam++}`).join(", ");
+          debugScopeConditions.push(`"projectId" IN (${dp})`);
+        }
+        if (hasUserId) {
+          debugScopeConditions.push(`("projectId" IS NULL AND "userId" = $${debugNextParam++})`);
+        }
 
-  const chunkStats = await prisma.$queryRawUnsafe<
-    Array<{ total: bigint; with_embedding: bigint }>
-  >(
-    `SELECT
-       COUNT(*) AS total,
-       COUNT(*) FILTER (WHERE "embedding" IS NOT NULL) AS with_embedding
-     FROM "DocumentChunk"
-     WHERE "tenantId" = $1
-       AND (${debugScopeConditions.join(" OR ")})`,
-    ...debugParams
-  );
+        const chunkStats = await prisma.$queryRawUnsafe<
+          Array<{ total: bigint; with_embedding: bigint }>
+        >(
+          `SELECT
+             COUNT(*) AS total,
+             COUNT(*) FILTER (WHERE "embedding" IS NOT NULL) AS with_embedding
+           FROM "DocumentChunk"
+           WHERE "tenantId" = $1
+             AND (${debugScopeConditions.join(" OR ")})`,
+          ...debugParams
+        );
 
-  logger.info("searchDocumentsGlobal: chunk stats in scope", {
-    total: Number(chunkStats[0]?.total ?? 0),
-    withEmbedding: Number(chunkStats[0]?.with_embedding ?? 0),
-  });
+        logger.info("searchDocumentsGlobal: chunk stats in scope", {
+          total: Number(chunkStats[0]?.total ?? 0),
+          withEmbedding: Number(chunkStats[0]?.with_embedding ?? 0),
+        });
 
-  const results = await prisma.$queryRawUnsafe<
-    Array<{
-      id: string;
-      content: string;
-      similarity: number;
-      page: number | null;
-      fileId: string;
-      fileName: string;
-      projectId: string | null;
-      projectName: string | null;
-    }>
-  >(
-    `SELECT
-       dc."id",
-       dc."content",
-       1 - (dc."embedding" <=> $1::vector) AS similarity,
-       dc."page",
-       dc."fileId",
-       f."name" AS "fileName",
-       dc."projectId",
-       p."name" AS "projectName"
-     FROM "DocumentChunk" dc
-     JOIN "File" f ON f."id" = dc."fileId"
-     LEFT JOIN "Project" p ON p."id" = dc."projectId"
-     WHERE dc."tenantId" = $2
-       AND (${scopeWhere})
-       AND dc."embedding" IS NOT NULL
-       AND 1 - (dc."embedding" <=> $1::vector) > $3
-     ORDER BY dc."embedding" <=> $1::vector
-     LIMIT $4`,
-    ...dynamicParams
-  );
+        const results = await prisma.$queryRawUnsafe<
+          Array<{
+            id: string;
+            content: string;
+            similarity: number;
+            page: number | null;
+            fileId: string;
+            fileName: string;
+            projectId: string | null;
+            projectName: string | null;
+          }>
+        >(
+          `SELECT
+             dc."id",
+             dc."content",
+             1 - (dc."embedding" <=> $1::vector) AS similarity,
+             dc."page",
+             dc."fileId",
+             f."name" AS "fileName",
+             dc."projectId",
+             p."name" AS "projectName"
+           FROM "DocumentChunk" dc
+           JOIN "File" f ON f."id" = dc."fileId"
+           LEFT JOIN "Project" p ON p."id" = dc."projectId"
+           WHERE dc."tenantId" = $2
+             AND (${scopeWhere})
+             AND dc."embedding" IS NOT NULL
+             AND 1 - (dc."embedding" <=> $1::vector) > $3
+           ORDER BY dc."embedding" <=> $1::vector
+           LIMIT $4`,
+          ...dynamicParams
+        );
+
+        logger.info("searchDocumentsGlobal: embedding search complete", {
+          resultCount: results.length,
+          topSimilarities: results.slice(0, 3).map((r) => ({
+            fileName: r.fileName,
+            similarity: r.similarity,
+            projectName: r.projectName,
+          })),
+        });
+
+        return results;
+      } catch (error) {
+        logger.warn("Embedding search failed in global search, continuing with plaintext only", {
+          error: error instanceof Error ? error.message : String(error),
+        });
+        return [];
+      }
+    })(),
+    // Plaintext search
+    searchFilesPlaintextGlobal(tenantId, accessibleProjectIds, queryText, limit, userId),
+  ]);
+
+  // Merge results: embedding first, then plaintext-only (deduplicate on fileId)
+  const embeddingFileIds = new Set(embeddingResults.map((r) => r.fileId));
+  const plaintextOnly = plaintextResults.filter((r) => !embeddingFileIds.has(r.fileId));
+
+  const finalResults = [...embeddingResults, ...plaintextOnly].slice(0, limit);
 
   logger.info("searchDocumentsGlobal: search complete", {
-    resultCount: results.length,
-    topSimilarities: results.slice(0, 3).map((r) => ({
-      fileName: r.fileName,
-      similarity: r.similarity,
-      projectName: r.projectName,
-    })),
+    embeddingCount: embeddingResults.length,
+    plaintextCount: plaintextResults.length,
+    plaintextOnlyCount: plaintextOnly.length,
+    finalCount: finalResults.length,
   });
 
-  return results;
+  return finalResults;
 }
 
 /**

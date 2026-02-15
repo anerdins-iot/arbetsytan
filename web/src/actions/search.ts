@@ -120,7 +120,11 @@ export async function globalSearch(input: { query: string }): Promise<GlobalSear
     db.file.findMany({
       where: {
         project: memberProjectFilter,
-        name: { contains: query, mode: "insensitive" },
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { userDescription: { contains: query, mode: "insensitive" } },
+          { ocrText: { contains: query, mode: "insensitive" } },
+        ],
       },
       select: {
         id: true,
@@ -148,12 +152,12 @@ export async function globalSearch(input: { query: string }): Promise<GlobalSear
       });
       const accessibleProjectIds = accessibleProjects.map((p) => p.id);
 
-      if (accessibleProjectIds.length > 0) {
+      if (accessibleProjectIds.length > 0 || userId) {
         const docResults = await searchDocumentsGlobal(
           tenantId,
           accessibleProjectIds,
           query,
-          { limit: 5, threshold: 0.3 }
+          { limit: 5, threshold: 0.3, userId }
         );
 
         documents = docResults.map((doc) => ({
