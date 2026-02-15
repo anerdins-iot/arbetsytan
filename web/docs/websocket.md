@@ -1,116 +1,122 @@
-# WebSocket och Realtidsuppdatering
+# WebSocket — Realtidsuppdateringar
 
-## Översikt
+## Varför?
 
-ArbetsYtan använder Socket.IO för realtidsuppdatering av data. Systemet har en automatisk emit-mekanism via Prisma extensions som gör att CRUD-operationer automatiskt skickar events till relevanta klienter.
+Utan WebSocket måste användaren ladda om sidan för att se ändringar som andra gjort. Med realtidsuppdateringar syns nya uppgifter, filer, kommentarer etc. direkt — utan sidladdning.
 
-## Auto-Emit System
+Systemet bygger på **Socket.IO** och har två sidor:
+
+1. **Backend (emit)** — Skickar events automatiskt när data ändras i databasen
+2. **Frontend (lyssna)** — Tar emot events och uppdaterar vyn
+
+---
+
+## Backend: Automatisk emit
 
 ### Hur det fungerar
 
-1. **Prisma Extension**: `createEmitExtension()` i `db-emit-extension.ts` skapar en extension som interceptar alla create/update/delete-operationer
-2. **EmitContext**: Kontext som innehåller `actorUserId`, `projectId`, `tenantId`
-3. **Automatisk routing**: Events skickas till rätt rum baserat på modelltyp
+En Prisma extension (`db-emit-extension.ts`) interceptar alla `create`, `update`, `delete` och `upsert`-operationer. Efter att databasoperationen lyckats skickas automatiskt ett Socket.IO-event till rätt "rum".
 
-### Användning
+Det enda utvecklaren behöver göra är att skicka med en `EmitContext` när databasanslutningen skapas:
 
 ```typescript
-// Med auto-emit (rekommenderat)
-const db = tenantDb(tenantId, { 
-  actorUserId: userId, 
-  projectId,
-  tenantId 
-});
-await db.task.create({ data: { ... } });
-// Event emittas automatiskt till project:${projectId}
+// Auto-emit aktivt — events skickas automatiskt
+const db = tenantDb(tenantId, { actorUserId: userId, projectId });
+await db.task.create({ data: { title: "Ny uppgift", projectId } });
+// → Socket.IO event "task:created" skickas till room "project:<projectId>"
 
-// Utan auto-emit (bakåtkompatibelt)
+// Utan context — inga events (bakåtkompatibelt)
 const db = tenantDb(tenantId);
-await db.task.create({ data: { ... } });
-// Inget event skickas
+await db.task.create({ data: { title: "Ny uppgift", projectId } });
+// → Inget event skickas
 
-// Explicit skippa emit
-const db = tenantDb(tenantId, { 
-  actorUserId: userId, 
-  skipEmit: true 
-});
+// Explicit avstängt — för batch/migrering/seed
+const db = tenantDb(tenantId, { actorUserId: userId, skipEmit: true });
 ```
 
-## Events
+### EmitContext
 
-### Task Events
-| Event | Rum | Payload |
-|-------|-----|---------|
-| task:created | project:X | { projectId, taskId, actorUserId } |
-| task:updated | project:X | { projectId, taskId, actorUserId } |
-| task:deleted | project:X | { projectId, taskId, actorUserId } |
+| Fält | Krävs | Beskrivning |
+|------|-------|-------------|
+| `actorUserId` | Ja | Vem som utför operationen |
+| `projectId` | Nej | Projektscope — behövs för task, comment, timeEntry |
+| `tenantId` | Nej | Fylls i automatiskt av `tenantDb()` |
+| `skipEmit` | Nej | `true` för att stänga av emit helt |
 
-### File Events
-| Event | Rum | Payload |
-|-------|-----|---------|
-| file:created | project:X / user:Y | { projectId, fileId, actorUserId, fileName, ocrText, url } |
-| file:updated | project:X / user:Y | { projectId, fileId, actorUserId, fileName, ocrText, url } |
-| file:deleted | project:X / user:Y | { projectId, fileId, actorUserId } |
+### Rum-routing
 
-### Note Events
-| Event | Rum | Payload |
-|-------|-----|---------|
-| note:created | project:X / user:Y | { noteId, projectId, title, category, createdById } |
-| note:updated | project:X / user:Y | { noteId, projectId, title, category, createdById } |
-| note:deleted | project:X / user:Y | { noteId, projectId, title, category, createdById } |
+Events skickas till olika "rum" beroende på modelltyp. Klienter som gått med i ett rum tar emot alla events för det rummet.
 
-### Comment Events
-| Event | Rum | Payload |
-|-------|-----|---------|
-| comment:created | project:X | { projectId, commentId, taskId, actorUserId } |
-| comment:updated | project:X | { projectId, commentId, taskId, actorUserId } |
-| comment:deleted | project:X | { projectId, commentId, taskId, actorUserId } |
+| Modell | Rum | Logik |
+|--------|-----|-------|
+| Task, Comment, TimeEntry | `project:<id>` | Alltid projektscope |
+| File, Note | `project:<id>` eller `user:<id>` | Beroende på om de tillhör ett projekt eller är personliga |
+| Notification | `user:<id>` | Alltid till mottagaren |
+| NoteCategory, Project | `tenant:<id>` | Organisation-scope |
+| Invitation, Membership | `tenant:<id>` | Organisation-scope |
 
-### Invitation Events
-| Event | Rum | Payload |
-|-------|-----|---------|
-| invitation:created | tenant:X | { tenantId, invitationId, email, role, status, actorUserId } |
-| invitation:updated | tenant:X | { tenantId, invitationId, email, role, status, actorUserId } |
-| invitation:deleted | tenant:X | { tenantId, invitationId, email, role, status, actorUserId } |
+### Event-format
 
-### Membership Events
-| Event | Rum | Payload |
-|-------|-----|---------|
-| membership:created | tenant:X | { tenantId, membershipId, userId, role, actorUserId } |
+Events följer mönstret `modell:operation`, t.ex. `task:created`, `file:updated`, `note:deleted`.
 
-## Frontend-lyssnare
+Alla events definieras i `socket-events.ts` via `SOCKET_EVENTS`-objektet. Lägg till nya events där.
 
-### useSocket Hook
+---
+
+## Frontend: Ta emot events
+
+### useSocket-hooken
+
+`useSocket` (`hooks/use-socket.ts`) hanterar Socket.IO-anslutningen och exponerar callbacks per event-typ:
 
 ```typescript
 import { useSocket } from "@/hooks/use-socket";
 
-function MyComponent() {
-  const handleTaskEvent = useCallback((event) => {
-    if (event.projectId === currentProjectId) {
-      router.refresh(); // Hämta ny data
-    }
-  }, [currentProjectId]);
+function KanbanBoard({ projectId }: { projectId: string }) {
+  const handleTaskChange = useCallback(() => {
+    router.refresh(); // Hämtar ny data från servern
+  }, []);
 
-  useSocket({
+  const { joinProjectRoom } = useSocket({
     enabled: !!session,
-    onTaskCreated: handleTaskEvent,
-    onTaskUpdated: handleTaskEvent,
-    onTaskDeleted: handleTaskEvent,
+    onTaskCreated: handleTaskChange,
+    onTaskUpdated: handleTaskChange,
+    onTaskDeleted: handleTaskChange,
   });
+
+  // VIKTIGT: Gå med i projektets rum för att ta emot events
+  useEffect(() => {
+    if (projectId) {
+      joinProjectRoom(projectId);
+    }
+  }, [projectId, joinProjectRoom]);
 }
 ```
 
-## Rum-routing
+### Viktigt att veta
 
-| Modell | Rum |
-|--------|-----|
-| Task, Comment, TimeEntry | project:${projectId} |
-| File (projekt) | project:${projectId} |
-| File (personlig) | user:${userId} |
-| Note (projekt) | project:${projectId} |
-| Note (personlig) | user:${userId} |
-| Notification | user:${userId} |
-| NoteCategory | tenant:${tenantId} |
-| Project | tenant:${tenantId} |
-| Invitation, Membership | tenant:${tenantId} |
+1. **`joinProjectRoom(projectId)`** — Klienten måste explicit gå med i ett projekts rum för att ta emot projekt-events. Utan detta kommer inga events fram. User- och tenant-rum joinas automatiskt vid anslutning.
+
+2. **Wrappa callbacks i `useCallback`** — Alla callbacks som skickas till `useSocket` bör vara stabila referens (via `useCallback`). Annars kommer Socket.IO-anslutningen att kopplas ned och upp vid varje re-render.
+
+3. **`router.refresh()`** — Det vanligaste mönstret. Istället för att uppdatera lokal state med event-datan, triggar vi en server-side refresh som hämtar korrekt data via Server Components.
+
+---
+
+## Lägga till en ny modell
+
+Om en ny Prisma-modell behöver realtidsuppdateringar:
+
+1. **`socket-events.ts`** — Lägg till event-namn och TypeScript-typ
+2. **`db-emit-extension.ts`** — Lägg till modellen i `EMIT_MODELS` och en `case` i `getEventInfo()` som bestämmer rum och payload
+3. **`use-socket.ts`** — Lägg till callback i `UseSocketOptions` och registrera lyssnaren med `connection.on()`
+4. **Komponenten** — Använd `useSocket` med den nya callbacken
+
+---
+
+## Felsökning
+
+- **Events skickas inte** — Kontrollera att `EmitContext` skickas med till `tenantDb()`. Utan context → ingen emit.
+- **Frontend tar inte emot** — Kontrollera att `joinProjectRoom()` anropas. Kontrollera att `enabled` är `true`.
+- **Anslutningen fladdrar** — Callbacks till `useSocket` saknar troligen `useCallback`.
+- **Emit under build** — `getIO()` returnerar `null` vid build-time, så emit skipas automatiskt. Inga specialfall behövs.

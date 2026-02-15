@@ -307,16 +307,66 @@ Inget — cleanup utan ny funktionalitet.
 
 ---
 
+## Block 3.6: Migrera övriga actions (TILLAGT)
+
+> **OBS:** Detta block lades till under implementationen då fler filer än planerat behövde migreras.
+
+**Agenttyp:** Implementation (Gemini)
+
+### Filer att ändra
+
+- `/workspace/web/src/actions/projects.ts` - emitProjectUpdatedToProject
+- `/workspace/web/src/actions/note-categories.ts` - emitNoteCategory*
+- `/workspace/web/src/actions/notifications.ts` - emitNotificationToUser
+
+### Verifiering
+
+- [ ] `npm run build` utan fel
+- [ ] Inga manuella emit-anrop kvar
+
+---
+
+## Block 3.7: Migrera AI-filer (TILLAGT)
+
+> **OBS:** Dessa filer upptäcktes under kodanalys och var inte med i ursprunglig plan.
+
+**Agenttyp:** Implementation (Gemini)
+
+### Filer att ändra
+
+- `/workspace/web/src/lib/ai/tool-executors.ts`
+- `/workspace/web/src/lib/ai/tools/personal-tools.ts`
+- `/workspace/web/src/lib/ai/queue-file-analysis.ts`
+- `/workspace/web/src/lib/ai/save-generated-document.ts`
+- `/workspace/web/src/lib/notification-delivery.ts`
+- `/workspace/web/src/app/api/ai/analyze-file/route.ts`
+- `/workspace/web/src/app/api/ai/upload/route.ts`
+
+### Komplexa fall
+
+**personal-tools.ts:** Tar emot `db` via `ctx` parameter. Lösning: Skapa ny `tenantDb(tenantId, { emitContext })` inuti varje funktion som behöver emit.
+
+**tool-executors.ts:** Behövde `createdById` i note.create (manuell fix krävdes).
+
+### Verifiering
+
+- [ ] `npm run build` utan fel
+- [ ] Grep bekräftar inga emit-anrop kvar
+
+---
+
 ## Checkpoint Fas 3
 
 Efter alla block i Fas 3:
 
-- [ ] Block 3.1: Task-actions migrerade
-- [ ] Block 3.2: File-actions migrerade
-- [ ] Block 3.3: Note-actions migrerade
-- [ ] Block 3.4: TimeEntry-actions migrerade
-- [ ] Block 3.5: socket.ts städad
-- [ ] Commit: `refactor: Migrate all actions to use auto-emit instead of manual emits`
+- [x] Block 3.1: Task-actions migrerade
+- [x] Block 3.2: File-actions migrerade
+- [x] Block 3.3: Note-actions migrerade
+- [x] Block 3.4: TimeEntry-actions migrerade
+- [x] Block 3.5: socket.ts städad (22 emit-funktioner borttagna)
+- [x] Block 3.6: Övriga actions migrerade (TILLAGT)
+- [x] Block 3.7: AI-filer migrerade (TILLAGT)
+- [x] Commit: `8035042` - refactor: Migrate all actions to use auto-emit instead of manual emits
 
 ---
 

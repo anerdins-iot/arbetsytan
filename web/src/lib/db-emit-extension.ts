@@ -19,6 +19,7 @@ const EMIT_MODELS = new Set([
   "project",
   "invitation",
   "membership",
+  "projectMember",
 ]);
 
 /** Operations to intercept */
@@ -245,6 +246,20 @@ function getEventInfo(
           membershipId: record.id as string,
           userId: record.userId as string,
           role: record.role as string,
+          actorUserId: context.actorUserId,
+        },
+      };
+    }
+
+    case "projectMember": {
+      const pid = context.projectId ?? (record.projectId as string);
+      if (!pid) return null;
+      return {
+        eventName,
+        room: projectRoom(pid),
+        payload: {
+          projectId: pid,
+          membershipId: record.membershipId as string,
           actorUserId: context.actorUserId,
         },
       };

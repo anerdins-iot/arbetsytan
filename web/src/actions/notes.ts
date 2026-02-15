@@ -209,6 +209,10 @@ export async function updateNote(
     if (parsed.data.content !== undefined) updateData.content = parsed.data.content;
     if (parsed.data.category !== undefined) updateData.category = parsed.data.category;
 
+    if (Object.keys(updateData).length === 0) {
+      return { success: false, error: "Ange minst ett fält att uppdatera (titel, innehåll eller kategori)." };
+    }
+
     const note = await db.note.update({
       where: { id: noteId },
       data: updateData,

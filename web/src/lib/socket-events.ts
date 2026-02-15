@@ -34,7 +34,9 @@ export const SOCKET_EVENTS = {
   notificationCreated: "notification:new",
 
   // Projects
+  projectCreated: "project:created",
   projectUpdated: "project:updated",
+  projectArchived: "project:archived",
 
   // Invitations
   invitationCreated: "invitation:created",
@@ -43,6 +45,12 @@ export const SOCKET_EVENTS = {
 
   // Memberships
   membershipCreated: "membership:created",
+
+  // Project members
+  projectMemberAdded: "projectMember:created",
+  projectMemberRemoved: "projectMember:deleted",
+  projectMemberCreated: "projectMember:created",
+  projectMemberDeleted: "projectMember:deleted",
 
   // Rooms
   projectJoin: "project:join",

@@ -118,6 +118,8 @@ export function ProjectView({
     onNoteCategoryCreated: handleNoteCategoryEvent,
     onNoteCategoryUpdated: handleNoteCategoryEvent,
     onNoteCategoryDeleted: handleNoteCategoryEvent,
+    onProjectMemberAdded: refreshProjectView,
+    onProjectMemberRemoved: refreshProjectView,
   });
 
   useEffect(() => {

@@ -470,7 +470,8 @@ export async function addProjectMember(
   if (existing) {
     return { success: false, error: "ALREADY_MEMBER" };
   }
-  await db.projectMember.create({
+  const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId });
+  await projectDb.projectMember.create({
     data: { projectId, membershipId },
   });
   await logActivity(tenantId, projectId, userId, "added", "member", membershipId, {
@@ -494,13 +495,13 @@ export async function removeProjectMember(
   if (!parsed.success) {
     return { success: false, error: "VALIDATION_ERROR" };
   }
-  const db = tenantDb(tenantId);
-  const membership = await db.membership.findFirst({
+  const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId });
+  const membership = await projectDb.membership.findFirst({
     where: { id: membershipId },
   });
 
-  await db.projectMember.deleteMany({
-    where: { projectId, membershipId },
+  await projectDb.projectMember.delete({
+    where: { projectId_membershipId: { projectId, membershipId } },
   });
   await logActivity(tenantId, projectId, userId, "removed", "member", membershipId, {
     membershipId,

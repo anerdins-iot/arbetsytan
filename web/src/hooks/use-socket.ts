@@ -33,7 +33,9 @@ type UseSocketOptions = {
   onFileCreated?: (event: RealtimeFileEvent) => void;
   onFileUpdated?: (event: RealtimeFileEvent) => void;
   onFileDeleted?: (event: RealtimeFileEvent) => void;
+  onProjectCreated?: (data: any) => void;
   onProjectUpdated?: (event: RealtimeProjectUpdatedEvent) => void;
+  onProjectArchived?: (data: any) => void;
   onNoteCreated?: (event: RealtimeNoteEvent) => void;
   onNoteUpdated?: (event: RealtimeNoteEvent) => void;
   onNoteDeleted?: (event: RealtimeNoteEvent) => void;
@@ -44,6 +46,8 @@ type UseSocketOptions = {
   onInvitationUpdated?: (event: RealtimeInvitationEvent) => void;
   onInvitationDeleted?: (event: RealtimeInvitationEvent) => void;
   onMembershipCreated?: (event: RealtimeMembershipEvent) => void;
+  onProjectMemberAdded?: (data: any) => void;
+  onProjectMemberRemoved?: (data: any) => void;
   mobileToken?: string;
 };
 
@@ -80,7 +84,9 @@ export function useSocket({
   onFileCreated,
   onFileUpdated,
   onFileDeleted,
+  onProjectCreated,
   onProjectUpdated,
+  onProjectArchived,
   onNoteCreated,
   onNoteUpdated,
   onNoteDeleted,
@@ -91,6 +97,8 @@ export function useSocket({
   onInvitationUpdated,
   onInvitationDeleted,
   onMembershipCreated,
+  onProjectMemberAdded,
+  onProjectMemberRemoved,
   mobileToken,
 }: UseSocketOptions): UseSocketResult {
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -159,8 +167,14 @@ export function useSocket({
     const handleFileDeleted = (payload: RealtimeFileEvent) => {
       onFileDeleted?.(payload);
     };
+    const handleProjectCreated = (payload: any) => {
+      onProjectCreated?.(payload);
+    };
     const handleProjectUpdated = (payload: RealtimeProjectUpdatedEvent) => {
       onProjectUpdated?.(payload);
+    };
+    const handleProjectArchived = (payload: any) => {
+      onProjectArchived?.(payload);
     };
     const handleNoteCreated = (payload: RealtimeNoteEvent) => {
       onNoteCreated?.(payload);
@@ -192,6 +206,12 @@ export function useSocket({
     const handleMembershipCreated = (payload: RealtimeMembershipEvent) => {
       onMembershipCreated?.(payload);
     };
+    const handleProjectMemberAdded = (payload: any) => {
+      onProjectMemberAdded?.(payload);
+    };
+    const handleProjectMemberRemoved = (payload: any) => {
+      onProjectMemberRemoved?.(payload);
+    };
 
     connection.on("connect", handleConnect);
     connection.on("disconnect", handleDisconnect);
@@ -209,7 +229,9 @@ export function useSocket({
     connection.on(SOCKET_EVENTS.fileCreated, handleFileCreated);
     connection.on(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
     connection.on(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
+    connection.on(SOCKET_EVENTS.projectCreated, handleProjectCreated);
     connection.on(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
+    connection.on(SOCKET_EVENTS.projectArchived, handleProjectArchived);
     connection.on(SOCKET_EVENTS.noteCreated, handleNoteCreated);
     connection.on(SOCKET_EVENTS.noteUpdated, handleNoteUpdated);
     connection.on(SOCKET_EVENTS.noteDeleted, handleNoteDeleted);
@@ -220,6 +242,8 @@ export function useSocket({
     connection.on(SOCKET_EVENTS.invitationUpdated, handleInvitationUpdated);
     connection.on(SOCKET_EVENTS.invitationDeleted, handleInvitationDeleted);
     connection.on(SOCKET_EVENTS.membershipCreated, handleMembershipCreated);
+    connection.on(SOCKET_EVENTS.projectMemberAdded, handleProjectMemberAdded);
+    connection.on(SOCKET_EVENTS.projectMemberRemoved, handleProjectMemberRemoved);
 
     setSocket(connection);
 
@@ -240,7 +264,9 @@ export function useSocket({
       connection.off(SOCKET_EVENTS.fileCreated, handleFileCreated);
       connection.off(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
       connection.off(SOCKET_EVENTS.fileDeleted, handleFileDeleted);
+      connection.off(SOCKET_EVENTS.projectCreated, handleProjectCreated);
       connection.off(SOCKET_EVENTS.projectUpdated, handleProjectUpdated);
+      connection.off(SOCKET_EVENTS.projectArchived, handleProjectArchived);
       connection.off(SOCKET_EVENTS.noteCreated, handleNoteCreated);
       connection.off(SOCKET_EVENTS.noteUpdated, handleNoteUpdated);
       connection.off(SOCKET_EVENTS.noteDeleted, handleNoteDeleted);
@@ -251,6 +277,8 @@ export function useSocket({
       connection.off(SOCKET_EVENTS.invitationUpdated, handleInvitationUpdated);
       connection.off(SOCKET_EVENTS.invitationDeleted, handleInvitationDeleted);
       connection.off(SOCKET_EVENTS.membershipCreated, handleMembershipCreated);
+      connection.off(SOCKET_EVENTS.projectMemberAdded, handleProjectMemberAdded);
+      connection.off(SOCKET_EVENTS.projectMemberRemoved, handleProjectMemberRemoved);
       connection.disconnect();
       setSocket(null);
       setStatus("disconnected");
@@ -268,7 +296,9 @@ export function useSocket({
     onNoteDeleted,
     onNoteUpdated,
     onNotification,
+    onProjectCreated,
     onProjectUpdated,
+    onProjectArchived,
     onTaskCreated,
     onTaskDeleted,
     onTaskUpdated,
@@ -282,6 +312,8 @@ export function useSocket({
     onInvitationUpdated,
     onInvitationDeleted,
     onMembershipCreated,
+    onProjectMemberAdded,
+    onProjectMemberRemoved,
   ]);
 
   const joinProjectRoom = useMemo(
