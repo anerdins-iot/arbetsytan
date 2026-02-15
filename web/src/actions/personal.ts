@@ -406,7 +406,22 @@ export async function moveProjectFileToPersonal(input: {
     const db = tenantDb(tenantId, { actorUserId: userId, projectId });
     const file = await db.file.findFirst({
       where: { id: fileId, projectId },
-      select: { id: true, name: true, type: true, size: true, bucket: true, key: true, ocrText: true },
+      select: {
+        id: true,
+        name: true,
+        type: true,
+        size: true,
+        bucket: true,
+        key: true,
+        ocrText: true,
+        userDescription: true,
+        aiAnalysis: true,
+        label: true,
+      },
+      include: {
+        analyses: { select: { content: true, prompt: true, model: true, type: true } },
+        chunks: { select: { content: true, embedding: true, metadata: true, page: true } },
+      },
     });
     if (!file) return { success: false, error: "FILE_NOT_FOUND" };
 
@@ -433,9 +448,45 @@ export async function moveProjectFileToPersonal(input: {
         key: newKey,
         uploadedById: userId,
         ocrText: file.ocrText,
+        userDescription: file.userDescription,
+        aiAnalysis: file.aiAnalysis,
+        label: file.label,
         projectId: null,
       },
     });
+
+    // Migrera FileAnalysis till den nya personliga filen
+    const tdb = tenantDb(tenantId, { actorUserId: userId });
+    for (const a of file.analyses) {
+      await tdb.fileAnalysis.create({
+        data: {
+          fileId: created.id,
+          content: a.content,
+          prompt: a.prompt,
+          model: a.model,
+          type: a.type,
+          tenantId,
+          projectId: null,
+          userId,
+        },
+      });
+    }
+
+    // Migrera DocumentChunk (embeddings) till den nya personliga filen
+    for (const c of file.chunks) {
+      await tdb.documentChunk.create({
+        data: {
+          fileId: created.id,
+          content: c.content,
+          embedding: c.embedding,
+          metadata: c.metadata,
+          page: c.page,
+          tenantId,
+          projectId: null,
+          userId,
+        },
+      });
+    }
 
     await deleteObject({ bucket: file.bucket, key: file.key });
     await db.file.delete({ where: { id: fileId } });
