@@ -1,5 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../../generated/prisma/client";
+import type { EmitContext } from "./emit-context";
+import { createEmitExtension } from "./db-emit-extension";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -552,13 +554,24 @@ export type TenantScopedClient = Omit<
 export const prisma = basePrisma;
 
 /**
- * Returns a Prisma client that automatically scopes all queries to the given tenant:
- * - Injects WHERE tenantId = ? on find*, update*, delete*, count, aggregate, groupBy.
- * - Injects tenantId into data on create, createMany, upsert.
+ * Returns a Prisma client that automatically scopes all queries to the given tenant.
+ * 
+ * @param tenantId - The tenant ID to scope queries to
+ * @param emitContext - Optional context for automatic WebSocket event emission
+ * @returns Tenant-scoped Prisma client
  */
-export function tenantDb(tenantId: string): TenantScopedClient {
+export function tenantDb(tenantId: string, emitContext?: EmitContext): TenantScopedClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return basePrisma.$extends(createTenantExtension(tenantId) as any) as unknown as TenantScopedClient;
+  let client = basePrisma.$extends(createTenantExtension(tenantId) as any);
+
+  if (emitContext && !emitContext.skipEmit) {
+    // Auto-fill tenantId from the tenantDb call
+    const ctx: EmitContext = { ...emitContext, tenantId };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    client = client.$extends(createEmitExtension(ctx) as any);
+  }
+
+  return client as unknown as TenantScopedClient;
 }
 
 // ─────────────────────────────────────────
@@ -742,17 +755,23 @@ export type UserScopedClient = Pick<
 >;
 
 /**
- * Returns a Prisma client scoped to a user's personal data:
- * - file: uploadedById = userId, projectId = null
- * - note: createdById = userId, projectId = null
- * - conversation: userId = userId, projectId = null
- * - notification: userId = userId
- * - aIMessage: userId = userId
- *
- * Use this for operations on personal/private data.
- * For project-related data, use tenantDb(tenantId) instead.
+ * Returns a Prisma client scoped to a user's personal data.
+ * 
+ * @param userId - The user ID to scope queries to
+ * @param emitContext - Optional context for automatic WebSocket event emission.
+ *                      Note: actorUserId will be set to userId automatically.
+ * @returns User-scoped Prisma client
  */
-export function userDb(userId: string): UserScopedClient {
+export function userDb(userId: string, emitContext?: Omit<EmitContext, "actorUserId">): UserScopedClient {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return basePrisma.$extends(createUserExtension(userId) as any) as unknown as UserScopedClient;
+  let client = basePrisma.$extends(createUserExtension(userId) as any);
+
+  if (emitContext && !emitContext.skipEmit) {
+    // For userDb, actorUserId is always the userId
+    const ctx: EmitContext = { ...emitContext, actorUserId: userId };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    client = client.$extends(createEmitExtension(ctx) as any);
+  }
+
+  return client as unknown as UserScopedClient;
 }

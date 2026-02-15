@@ -294,10 +294,10 @@ Inget — ingen synlig ändring ännu.
 
 Efter alla block i Fas 2:
 
-- [ ] Block 2.1: Auto-emit extension implementerad
-- [ ] Block 2.2: tenantDb() integrerad
-- [ ] Block 2.3: userDb() integrerad
-- [ ] Commit: `feat: Add auto-emit Prisma extension for WebSocket events`
+- [x] Block 2.1: Auto-emit extension implementerad
+- [x] Block 2.2: tenantDb() integrerad
+- [x] Block 2.3: userDb() integrerad
+- [x] Commit: `feat: Add auto-emit Prisma extension for WebSocket events`
 
 ---
 
