@@ -9,6 +9,8 @@ import { sendEmail } from "@/lib/email";
 import { getAppBaseUrl, renderEmailTemplate } from "@/lib/email-templates";
 import { signIn } from "@/lib/auth";
 import { updateSubscriptionQuantity } from "@/actions/subscription";
+import { getSocketServer } from "@/lib/socket";
+import { SOCKET_EVENTS, tenantRoom } from "@/lib/socket-events";
 import type { Role, InvitationStatus } from "../../generated/prisma/client";
 
 // ─── Schemas ───────────────────────────────────────────
@@ -101,7 +103,7 @@ export async function inviteUser(
   const { email, role } = result.data;
   const normalizedEmail = email.trim().toLowerCase();
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, tenantId });
 
   // Check if user is already a member of this tenant
   const existingMembership = await db.membership.findFirst({
@@ -226,7 +228,7 @@ export async function getInvitations(): Promise<InvitationItem[]> {
 export async function cancelInvitation(
   formData: FormData
 ): Promise<InvitationActionResult> {
-  const { tenantId } = await requirePermission("canInviteUsers");
+  const { tenantId, userId } = await requirePermission("canInviteUsers");
 
   const raw = { invitationId: formData.get("invitationId") };
   const result = cancelInvitationSchema.safeParse(raw);
@@ -234,7 +236,7 @@ export async function cancelInvitation(
     return { success: false, error: "INVALID_INPUT" };
   }
 
-  const db = tenantDb(tenantId);
+  const db = tenantDb(tenantId, { actorUserId: userId, tenantId });
 
   const invitation = await db.invitation.findUnique({
     where: { id: result.data.invitationId },
@@ -348,7 +350,7 @@ export async function acceptInvitation(
   }
 
   // Create membership and mark invitation as accepted
-  await prisma.$transaction([
+  const [membership, updatedInvitation] = await prisma.$transaction([
     prisma.membership.create({
       data: {
         userId,
@@ -361,6 +363,36 @@ export async function acceptInvitation(
       data: { status: "ACCEPTED" },
     }),
   ]);
+
+  // Emit events
+  try {
+    const io = getSocketServer();
+    const room = tenantRoom(invitation.tenantId);
+
+    // Membership created
+    io.to(room).emit(SOCKET_EVENTS.membershipCreated, {
+      tenantId: invitation.tenantId,
+      membershipId: membership.id,
+      userId: membership.userId,
+      role: membership.role,
+      actorUserId: userId,
+    });
+
+    // Invitation updated
+    io.to(room).emit(SOCKET_EVENTS.invitationUpdated, {
+      tenantId: invitation.tenantId,
+      invitationId: updatedInvitation.id,
+      email: updatedInvitation.email,
+      role: updatedInvitation.role,
+      status: updatedInvitation.status,
+      actorUserId: userId,
+    });
+  } catch (err) {
+    console.warn(
+      "[invitations] Failed to emit events after acceptInvitation:",
+      err
+    );
+  }
 
   try {
     const count = await prisma.membership.count({
@@ -432,28 +464,61 @@ export async function acceptInvitationWithRegistration(
 
   const hashedPassword = await bcrypt.hash(password, 12);
 
-  await prisma.$transaction(async (tx) => {
-    const user = await tx.user.create({
-      data: {
-        name,
-        email: normalizedEmail,
-        password: hashedPassword,
-      },
+  const { membership: resultMembership, invitation: resultInvitation } =
+    await prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          name,
+          email: normalizedEmail,
+          password: hashedPassword,
+        },
+      });
+
+      const membership = await tx.membership.create({
+        data: {
+          userId: user.id,
+          tenantId: invitation.tenantId,
+          role: invitation.role,
+        },
+      });
+
+      const updatedInvitation = await tx.invitation.update({
+        where: { id: invitation.id },
+        data: { status: "ACCEPTED" },
+      });
+
+      return { membership, invitation: updatedInvitation };
     });
 
-    await tx.membership.create({
-      data: {
-        userId: user.id,
-        tenantId: invitation.tenantId,
-        role: invitation.role,
-      },
+  // Emit events
+  try {
+    const io = getSocketServer();
+    const room = tenantRoom(invitation.tenantId);
+
+    // Membership created
+    io.to(room).emit(SOCKET_EVENTS.membershipCreated, {
+      tenantId: invitation.tenantId,
+      membershipId: resultMembership.id,
+      userId: resultMembership.userId,
+      role: resultMembership.role,
+      actorUserId: resultMembership.userId,
     });
 
-    await tx.invitation.update({
-      where: { id: invitation.id },
-      data: { status: "ACCEPTED" },
+    // Invitation updated
+    io.to(room).emit(SOCKET_EVENTS.invitationUpdated, {
+      tenantId: invitation.tenantId,
+      invitationId: resultInvitation.id,
+      email: resultInvitation.email,
+      role: resultInvitation.role,
+      status: resultInvitation.status,
+      actorUserId: resultMembership.userId,
     });
-  });
+  } catch (err) {
+    console.warn(
+      "[invitations] Failed to emit events after acceptInvitationWithRegistration:",
+      err
+    );
+  }
 
   try {
     const count = await prisma.membership.count({

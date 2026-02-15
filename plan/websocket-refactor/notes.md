@@ -185,9 +185,35 @@ const dbNoEmit = tenantDb(tenantId, { actorUserId: userId, skipEmit: true });
 
 ---
 
+---
+
+## KRITISK REGEL: Planen är ett kontrakt
+
+**Hoppa ALDRIG över planerade block utan explicit godkännande från användaren.**
+
+Planen är inte ett förslag. Den är ett kontrakt för vad som ska levereras.
+
+**Om något verkar onödigt eller har lägre prioritet:**
+1. FRÅGA användaren först: "Block X verkar ha lägre prioritet. Ska jag implementera det eller hoppa över?"
+2. VÄNTA på svar. Agera ALDRIG på egen bedömning.
+3. DOKUMENTERA beslutet i planfilen med användarens godkännande.
+
+**Varför detta är kritiskt:**
+- Produktionsmiljöer förväntar sig komplett leverans
+- Andra delar av systemet kan bero på funktioner som verkar "lågprioriterade"
+- Användaren har valt att inkludera blocket av en anledning
+- Att skippa utan godkännande bryter förtroendet
+
+**Konsekvens:** Inkomplett leverans, oväntade buggar, förlorat förtroende.
+
+**Historik:** 2026-02-15 — Orkestern skippade Block 4.4 (Invitation-events) utan att fråga. Detta var ett allvarligt fel som korrigerades efter tillrättavisning.
+
+---
+
 ## Ändringslogg för denna fil
 
 | Datum | Ändring |
 |-------|---------|
 | 2026-02-15 | Första version skapad under pågående arbete |
 | 2026-02-15 | Lade till tekniska lärdomar och rekommendationer |
+| 2026-02-15 | Lade till kritisk regel om att aldrig skippa planerade block |

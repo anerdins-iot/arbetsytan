@@ -35,6 +35,14 @@ export const SOCKET_EVENTS = {
   // Projects
   projectUpdated: "project:updated",
 
+  // Invitations
+  invitationCreated: "invitation:created",
+  invitationUpdated: "invitation:updated",
+  invitationDeleted: "invitation:deleted",
+
+  // Memberships
+  membershipCreated: "membership:created",
+
   // Rooms
   projectJoin: "project:join",
 } as const;
@@ -82,6 +90,23 @@ export type RealtimeProjectUpdatedEvent = {
   actorUserId: string;
   previousStatus: string;
   newStatus: string;
+};
+
+export type RealtimeInvitationEvent = {
+  tenantId: string;
+  invitationId: string;
+  email: string;
+  role: string;
+  status: string;
+  actorUserId: string;
+};
+
+export type RealtimeMembershipEvent = {
+  tenantId: string;
+  membershipId: string;
+  userId: string;
+  role: string;
+  actorUserId: string;
 };
 
 export type RealtimeNoteEvent = {

@@ -17,6 +17,8 @@ const EMIT_MODELS = new Set([
   "notification",
   "noteCategory",
   "project",
+  "invitation",
+  "membership",
 ]);
 
 /** Operations to intercept */
@@ -211,6 +213,39 @@ function getEventInfo(
           projectId: record.id as string,
           actorUserId: context.actorUserId,
           ...(record.status ? { newStatus: record.status as string } : {}),
+        },
+      };
+    }
+
+    case "invitation": {
+      const tid = context.tenantId ?? (record.tenantId as string);
+      if (!tid) return null;
+      return {
+        eventName,
+        room: tenantRoom(tid),
+        payload: {
+          tenantId: tid,
+          invitationId: record.id as string,
+          email: record.email as string,
+          role: record.role as string,
+          status: record.status as string,
+          actorUserId: context.actorUserId,
+        },
+      };
+    }
+
+    case "membership": {
+      const tid = context.tenantId ?? (record.tenantId as string);
+      if (!tid) return null;
+      return {
+        eventName,
+        room: tenantRoom(tid),
+        payload: {
+          tenantId: tid,
+          membershipId: record.id as string,
+          userId: record.userId as string,
+          role: record.role as string,
+          actorUserId: context.actorUserId,
         },
       };
     }
