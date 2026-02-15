@@ -171,37 +171,39 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
       const embeddingText = `${label}\n\n${description}`;
       const embedding = await generateEmbedding(embeddingText);
 
-      // Skapa eller uppdatera DocumentChunk för filen
-      // Vi använder en speciell chunk som representerar filens AI-analys
+      // Skapa eller uppdatera DocumentChunk för filens AI-analys
+      // Vi använder metadata.type = "ai-analysis" för att markera denna chunk
+      const chunkId = `${fileId}-analysis`;
       const existingChunk = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
-        `SELECT "id" FROM "DocumentChunk" WHERE "fileId" = $1 AND "tenantId" = $2 AND "chunkIndex" = -1 LIMIT 1`,
-        fileId,
-        tenantId
+        `SELECT "id" FROM "DocumentChunk" WHERE "id" = $1 LIMIT 1`,
+        chunkId
       );
+
+      const vectorStr = `[${embedding.join(",")}]`;
+      const metadata = JSON.stringify({ type: "ai-analysis", label });
 
       if (existingChunk.length > 0) {
         // Uppdatera befintlig chunk
-        const vectorStr = `[${embedding.join(",")}]`;
         await prisma.$queryRawUnsafe(
-          `UPDATE "DocumentChunk" SET "content" = $1, "embedding" = $2::vector WHERE "id" = $3`,
+          `UPDATE "DocumentChunk" SET "content" = $1, "embedding" = $2::vector, "metadata" = $3::jsonb WHERE "id" = $4`,
           embeddingText,
           vectorStr,
-          existingChunk[0].id
+          metadata,
+          chunkId
         );
       } else {
-        // Skapa ny chunk med chunkIndex = -1 (markerar AI-analys)
-        const vectorStr = `[${embedding.join(",")}]`;
-        const chunkId = `${fileId}-analysis`;
+        // Skapa ny chunk med metadata.type = "ai-analysis"
         await prisma.$queryRawUnsafe(
-          `INSERT INTO "DocumentChunk" ("id", "fileId", "tenantId", "projectId", "userId", "chunkIndex", "page", "content", "embedding", "createdAt", "updatedAt")
-           VALUES ($1, $2, $3, $4, $5, -1, NULL, $6, $7::vector, NOW(), NOW())`,
+          `INSERT INTO "DocumentChunk" ("id", "fileId", "tenantId", "projectId", "userId", "page", "content", "embedding", "metadata", "createdAt")
+           VALUES ($1, $2, $3, $4, $5, NULL, $6, $7::vector, $8::jsonb, NOW())`,
           chunkId,
           fileId,
           tenantId,
           projectId ?? null,
           projectId ? null : userId,
           embeddingText,
-          vectorStr
+          vectorStr,
+          metadata
         );
       }
 
