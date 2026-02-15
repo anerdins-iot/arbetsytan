@@ -292,10 +292,16 @@ export async function updateAutomation(
 ): Promise<{ success: true; automation: AutomationItem } | { success: false; error: string }> {
   try {
     const { userId, tenantId } = await requireAuth();
+    console.log("[updateAutomation] Input data:", { automationId, data });
     const parsed = updateAutomationSchema.safeParse({ automationId, ...data });
     if (!parsed.success) {
+      console.log("[updateAutomation] Parse failed:", parsed.error.flatten());
       return { success: false, error: "Ogiltiga data." };
     }
+    console.log("[updateAutomation] Parsed data:", {
+      ...parsed.data,
+      triggerAt: parsed.data.triggerAt?.toISOString?.() ?? parsed.data.triggerAt,
+    });
 
     const db = tenantDb(tenantId);
     const existing = await db.automation.findFirst({
@@ -309,13 +315,28 @@ export async function updateAutomation(
     if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
     if (parsed.data.description !== undefined) updateData.description = parsed.data.description;
     if (parsed.data.triggerAt !== undefined) {
-      updateData.triggerAt = parsed.data.triggerAt instanceof Date ? parsed.data.triggerAt : new Date(parsed.data.triggerAt);
+      const triggerAt =
+        parsed.data.triggerAt instanceof Date
+          ? parsed.data.triggerAt
+          : new Date(parsed.data.triggerAt as string);
+      if (Number.isNaN(triggerAt.getTime())) {
+        return { success: false, error: "Ogiltigt triggerAt-datum." };
+      }
+      updateData.triggerAt = triggerAt;
+      // Keep nextRunAt in sync so UI and scheduler see the new time
+      updateData.nextRunAt = triggerAt;
     }
     if (parsed.data.recurrence !== undefined) updateData.recurrence = parsed.data.recurrence;
     if (parsed.data.timezone !== undefined) updateData.timezone = parsed.data.timezone;
     if (parsed.data.actionTool !== undefined) updateData.actionTool = parsed.data.actionTool;
     if (parsed.data.actionParams !== undefined) updateData.actionParams = parsed.data.actionParams;
     if (parsed.data.status !== undefined) updateData.status = parsed.data.status;
+
+    console.log("[updateAutomation] updateData:", {
+      ...updateData,
+      triggerAt: (updateData.triggerAt as Date)?.toISOString?.() ?? updateData.triggerAt,
+      nextRunAt: (updateData.nextRunAt as Date)?.toISOString?.() ?? updateData.nextRunAt,
+    });
 
     const automation = await db.automation.update({
       where: { id: parsed.data.automationId },
