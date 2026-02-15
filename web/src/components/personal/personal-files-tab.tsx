@@ -8,7 +8,9 @@ import {
   FileSpreadsheet,
   FileText,
   Loader2,
+  PenLine,
   ScanText,
+  Sparkles,
   Trash2,
   UploadCloud,
 } from "lucide-react";
@@ -438,7 +440,7 @@ export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: P
                       <p className="truncate text-sm font-medium text-foreground">
                         {file.name}
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-wrap items-center gap-2">
                         <p className="text-xs text-muted-foreground">
                           {formatBytes(file.size)}
                         </p>
@@ -446,6 +448,18 @@ export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: P
                           <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                             <ScanText className="size-2.5" />
                             {t("ocrBadge")}
+                          </span>
+                        ) : null}
+                        {file.aiAnalysis ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                            <Sparkles className="size-2.5" />
+                            {t("aiAnalysisBadge")}
+                          </span>
+                        ) : null}
+                        {file.userDescription ? (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                            <PenLine className="size-2.5" />
+                            {t("userDescriptionBadge")}
                           </span>
                         ) : null}
                       </div>
