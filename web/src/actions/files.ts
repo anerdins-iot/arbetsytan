@@ -350,6 +350,13 @@ export async function getProjectFiles(
   projectId: string
 ): Promise<{ success: true; files: FileItem[] } | { success: false; error: string }> {
   logger.info("getProjectFiles called", { projectId });
+
+  // Validera att det inte är ett filnamn (AI kan ibland skicka bildnamn som projectId)
+  if (/\.(jpe?g|png|gif|webp|pdf|docx?|xlsx?|txt|csv)$/i.test(projectId)) {
+    logger.warn("getProjectFiles rejected filename as projectId", { projectId });
+    return { success: false, error: `"${projectId}" är ett filnamn, inte ett projekt-ID.` };
+  }
+
   const { tenantId, userId } = await requireAuth();
   logger.info("getProjectFiles auth", { tenantId, userId });
   const parsed = projectIdSchema.safeParse(projectId);
