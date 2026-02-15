@@ -572,6 +572,40 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     [handleFileSelect]
   );
 
+  const handlePaste = useCallback(
+    (e: React.ClipboardEvent) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      const files: File[] = [];
+
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        // Bilder (screenshots)
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            // Ge filen ett namn med timestamp
+            const namedFile = new File([file], `screenshot-${Date.now()}.png`, {
+              type: file.type,
+            });
+            files.push(namedFile);
+          }
+        }
+        // Filer
+        else if (item.kind === "file") {
+          const file = item.getAsFile();
+          if (file) files.push(file);
+        }
+      }
+
+      if (files.length > 0) {
+        handleFileSelect(files);
+      }
+    },
+    [handleFileSelect]
+  );
+
   const removeUploadedFile = useCallback((fileId: string) => {
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
   }, []);
@@ -1054,6 +1088,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               handleSubmit();
             }
           }}
+          onPaste={handlePaste}
         />
 
         {/* Verktygsfält under textarea */}
