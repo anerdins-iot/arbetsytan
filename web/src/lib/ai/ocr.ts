@@ -66,7 +66,7 @@ export async function fetchFileFromMinIO(bucket: string, key: string): Promise<B
   return Buffer.concat(chunks);
 }
 
-type OcrPage = {
+export type OcrPage = {
   index: number;
   markdown: string;
 };
@@ -240,7 +240,7 @@ type TextChunk = {
  * Splits text into chunks of roughly 500–1000 tokens (2000–4000 chars).
  * Tries to break at paragraph boundaries.
  */
-function chunkText(pages: OcrPage[]): TextChunk[] {
+export function chunkText(pages: OcrPage[]): TextChunk[] {
   const chunks: TextChunk[] = [];
   let position = 0;
 

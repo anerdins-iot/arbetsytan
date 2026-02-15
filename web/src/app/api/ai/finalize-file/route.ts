@@ -11,9 +11,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSession, requireProject } from "@/lib/auth";
-import { userDb, prisma } from "@/lib/db";
+import { userDb, prisma, tenantDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { queueFileAnalysis } from "@/lib/ai/queue-file-analysis";
+import { chunkText } from "@/lib/ai/ocr";
+import { queueEmbeddingProcessing } from "@/lib/ai/embeddings";
 
 const bodySchema = z.object({
   fileId: z.string().min(1, "fileId is required"),
@@ -103,6 +105,69 @@ export async function POST(req: NextRequest) {
       userDescriptionLength: userDescription?.length ?? 0,
       projectId: file.projectId,
     });
+
+    // Create DocumentChunks from OCR text and userDescription for semantic search
+    const db = tenantDb(tenantId);
+
+    // Delete existing chunks for this file (avoid duplicates on re-finalize)
+    await db.documentChunk.deleteMany({
+      where: { fileId },
+    });
+
+    let totalChunksCreated = 0;
+
+    // Chunk and store OCR text
+    if (ocrText.trim()) {
+      const pages = [{ index: 0, markdown: ocrText }];
+      const textChunks = chunkText(pages);
+
+      for (const chunk of textChunks) {
+        await db.documentChunk.create({
+          data: {
+            content: chunk.content,
+            page: chunk.page,
+            metadata: { position: chunk.position, source: "finalize-ocr" },
+            fileId,
+            tenantId,
+            projectId: file.projectId ?? null,
+            userId: isPersonalFile ? userId : null,
+          },
+        });
+      }
+      totalChunksCreated += textChunks.length;
+
+      logger.info("finalize-file: OCR text chunks created", {
+        fileId,
+        chunkCount: textChunks.length,
+      });
+    }
+
+    // Create separate chunk for userDescription
+    if (userDescription?.trim()) {
+      await db.documentChunk.create({
+        data: {
+          content: userDescription.trim(),
+          page: null,
+          metadata: { type: "user-description" },
+          fileId,
+          tenantId,
+          projectId: file.projectId ?? null,
+          userId: isPersonalFile ? userId : null,
+        },
+      });
+      totalChunksCreated += 1;
+
+      logger.info("finalize-file: user description chunk created", {
+        fileId,
+      });
+    }
+
+    // Queue embedding processing for all chunks
+    if (totalChunksCreated > 0 && process.env.OPENAI_API_KEY) {
+      queueEmbeddingProcessing(fileId, tenantId);
+    } else if (totalChunksCreated > 0) {
+      logger.warn("OPENAI_API_KEY not set — skipping embedding queue", { fileId });
+    }
 
     // Kö bakgrundsanalys (AI label + description + embeddings)
     queueFileAnalysis({
