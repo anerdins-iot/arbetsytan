@@ -475,7 +475,13 @@
       "errorStorage": "Kunde inte ladda upp till lagringen.",
       "errorGeneric": "Något gick fel vid uppladdning. Försök igen.",
       "ocrBadge": "OCR",
-      "ocrTitle": "Extraherad text (OCR)"
+      "ocrTitle": "Extraherad text (OCR)",
+      "descriptionLabel": "Beskrivning",
+      "descriptionPlaceholder": "Lägg till en beskrivning av filen...",
+      "aiAnalysisTitle": "AI-analys",
+      "aiAnalysisLabel": "Etikett",
+      "saveFileDetails": "Spara",
+      "savingFileDetails": "Sparar..."
     },
     "overview": {
       "projectInfo": "Projektinfo",
@@ -1068,7 +1074,13 @@
       "errorStorage": "Kunde inte ladda upp till lagringen.",
       "errorGeneric": "Något gick fel vid uppladdning. Försök igen.",
       "ocrBadge": "OCR",
-      "ocrTitle": "Extraherad text (OCR)"
+      "ocrTitle": "Extraherad text (OCR)",
+      "descriptionLabel": "Beskrivning",
+      "descriptionPlaceholder": "Lägg till en beskrivning av filen...",
+      "aiAnalysisTitle": "AI-analys",
+      "aiAnalysisLabel": "Etikett",
+      "saveFileDetails": "Spara",
+      "savingFileDetails": "Sparar..."
     }
   },
   "sidebar": {

@@ -9,6 +9,7 @@ export type FileListItem = {
   createdAt: Date;
   ocrText: string | null;
   userDescription: string | null;
+  aiAnalysis: string | null;
   label: string | null;
   bucket: string;
   objectKey: string; // key - for presigned URLs i Actions
@@ -58,6 +59,7 @@ export async function getProjectFilesCore(
     createdAt: f.createdAt,
     ocrText: f.ocrText,
     userDescription: f.userDescription,
+    aiAnalysis: f.aiAnalysis,
     label: f.label,
     bucket: f.bucket,
     objectKey: f.key,
@@ -102,6 +104,7 @@ export async function getPersonalFilesCore(
     createdAt: f.createdAt,
     ocrText: f.ocrText,
     userDescription: f.userDescription,
+    aiAnalysis: f.aiAnalysis,
     label: f.label,
     bucket: f.bucket,
     objectKey: f.key,

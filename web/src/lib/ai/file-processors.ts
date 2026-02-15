@@ -107,6 +107,58 @@ export async function analyzeImageWithVision(
   }
 }
 
+/**
+ * Analyze an image using Claude Haiku 4.5 vision (faster, for background processing).
+ * Used by queueFileAnalysis for automatic label/description generation.
+ */
+export async function analyzeImageWithVisionHaiku(
+  buffer: Buffer,
+  mimeType: string,
+  ocrText?: string | null,
+  userDescription?: string | null
+): Promise<string> {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    logger.warn("ANTHROPIC_API_KEY not set - skipping image analysis");
+    return ocrText || "Bildanalys ej tillgänglig (ANTHROPIC_API_KEY saknas).";
+  }
+
+  try {
+    const base64 = buffer.toString("base64");
+    let prompt =
+      "Beskriv denna bild kort på svenska. Inkludera synliga objekt, kontext och vad bilden visar.";
+
+    if (ocrText && ocrText.trim()) {
+      prompt += `\n\nOCR-text:\n---\n${ocrText}\n---\nAnvänd som kontext.`;
+    }
+    if (userDescription && userDescription.trim()) {
+      prompt += `\n\nAnvändarens beskrivning: ${userDescription}`;
+    }
+
+    const result = await generateText({
+      model: anthropic("claude-haiku-4-5-20251001"),
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "image",
+              image: `data:${mimeType};base64,${base64}`,
+            },
+            { type: "text", text: prompt },
+          ],
+        },
+      ],
+      maxOutputTokens: 1000,
+    });
+    return result.text;
+  } catch (error) {
+    logger.error("Haiku image analysis failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return ocrText || "Bildanalys misslyckades.";
+  }
+}
+
 // Legacy function for backwards compatibility
 export async function processImage(
   buffer: Buffer,

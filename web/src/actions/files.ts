@@ -57,6 +57,9 @@ export type FileItem = {
   bucket: string;
   key: string;
   ocrText: string | null;
+  userDescription: string | null;
+  aiAnalysis: string | null;
+  label: string | null;
   createdAt: Date;
   previewUrl: string;
   downloadUrl: string;
@@ -242,6 +245,9 @@ export async function completeFileUpload(input: {
         bucket: created.bucket,
         key: created.key,
         ocrText: null,
+        userDescription: null,
+        aiAnalysis: null,
+        label: null,
         createdAt: created.createdAt,
         previewUrl,
         downloadUrl: previewUrl,
@@ -328,7 +334,7 @@ export async function uploadFile(
 
     return {
       success: true,
-      file: {
+        file: {
         id: created.id,
         name: created.name,
         type: created.type,
@@ -336,6 +342,9 @@ export async function uploadFile(
         bucket: created.bucket,
         key: created.key,
         ocrText: null,
+        userDescription: null,
+        aiAnalysis: null,
+        label: null,
         createdAt: created.createdAt,
         previewUrl,
         downloadUrl: previewUrl,
@@ -392,6 +401,9 @@ export async function getProjectFiles(
           bucket: file.bucket,
           key: file.objectKey,
           ocrText: file.ocrText,
+          userDescription: file.userDescription,
+          aiAnalysis: file.aiAnalysis,
+          label: file.label,
           createdAt: file.createdAt,
           previewUrl: downloadUrl,
           downloadUrl,
@@ -416,6 +428,9 @@ export async function getProjectFiles(
         bucket: file.bucket,
         key: file.objectKey,
         ocrText: file.ocrText,
+        userDescription: file.userDescription,
+        aiAnalysis: file.aiAnalysis,
+        label: file.label,
         createdAt: file.createdAt,
         previewUrl: "#",
         downloadUrl: "#",

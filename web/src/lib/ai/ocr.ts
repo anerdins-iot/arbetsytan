@@ -8,10 +8,10 @@ import {
   processExcel,
   processWord,
   processCSV,
-  analyzeImageWithVision,
   detectFileType,
   isProcessableFile,
 } from "./file-processors";
+import { queueFileAnalysis } from "./queue-file-analysis";
 
 import type { Document } from "@mistralai/mistralai/models/components/ocrrequest";
 
@@ -385,6 +385,26 @@ export async function processFileOcr(params: {
       });
     }
 
+    // Trigger background file analysis (label + AI description + embeddings)
+    const fileWithUser = await db.file.findFirst({
+      where: { id: fileId },
+      select: { uploadedById: true },
+    });
+    if (fileWithUser?.uploadedById) {
+      queueFileAnalysis({
+        fileId,
+        fileName,
+        fileType,
+        bucket,
+        key,
+        tenantId,
+        projectId,
+        userId: fileWithUser.uploadedById,
+        ocrText: text,
+        userDescription: "",
+      });
+    }
+
     logger.info("processFileOcr: completed", {
       fileId,
       chunkCount: textChunks.length,
@@ -477,6 +497,20 @@ export async function processPersonalFileOcr(params: {
         });
       }
     }
+
+    // Trigger background file analysis (label + AI description + embeddings)
+    queueFileAnalysis({
+      fileId,
+      fileName,
+      fileType,
+      bucket,
+      key,
+      tenantId,
+      projectId: undefined,
+      userId,
+      ocrText: text,
+      userDescription: "",
+    });
 
     logger.info("File processing completed for personal file", {
       fileId,

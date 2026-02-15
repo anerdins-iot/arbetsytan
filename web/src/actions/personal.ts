@@ -66,6 +66,9 @@ export type PersonalFileItemWithUrls = PersonalFileItem & {
   previewUrl: string;
   downloadUrl: string;
   ocrText: string | null;
+  userDescription: string | null;
+  aiAnalysis: string | null;
+  label: string | null;
 };
 
 // ─────────────────────────────────────────
@@ -288,6 +291,9 @@ export async function getPersonalFilesWithUrls(options?: {
         bucket: true,
         key: true,
         ocrText: true,
+        userDescription: true,
+        aiAnalysis: true,
+        label: true,
         createdAt: true,
       },
       orderBy: { createdAt: "desc" },
@@ -309,6 +315,9 @@ export async function getPersonalFilesWithUrls(options?: {
           previewUrl: downloadUrl,
           downloadUrl,
           ocrText: file.ocrText,
+          userDescription: file.userDescription,
+          aiAnalysis: file.aiAnalysis,
+          label: file.label,
         };
       })
     );
@@ -325,6 +334,9 @@ export async function getPersonalFilesWithUrls(options?: {
         previewUrl: "#",
         downloadUrl: "#",
         ocrText: file!.ocrText,
+        userDescription: file!.userDescription,
+        aiAnalysis: file!.aiAnalysis,
+        label: file!.label,
       };
     });
 

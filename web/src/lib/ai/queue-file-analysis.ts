@@ -12,7 +12,7 @@ import { tenantDb, userDb, prisma } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { generateEmbedding } from "@/lib/ai/embeddings";
 import { fetchFileFromMinIO } from "@/lib/ai/ocr";
-import { analyzeImageWithVision } from "@/lib/ai/file-processors";
+import { analyzeImageWithVisionHaiku } from "@/lib/ai/file-processors";
 
 type QueueFileAnalysisParams = {
   fileId: string;
@@ -74,7 +74,7 @@ async function runAnalysis(params: QueueFileAnalysisParams): Promise<void> {
   if (isImage && process.env.ANTHROPIC_API_KEY) {
     try {
       const buffer = await fetchFileFromMinIO(bucket, key);
-      visionAnalysis = await analyzeImageWithVision(
+      visionAnalysis = await analyzeImageWithVisionHaiku(
         buffer,
         fileType,
         ocrText || undefined,

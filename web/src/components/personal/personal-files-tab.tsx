@@ -3,8 +3,6 @@
 import { useRef, useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import {
-  ChevronDown,
-  ChevronUp,
   Download,
   FileImage,
   FileSpreadsheet,
@@ -13,7 +11,6 @@ import {
   ScanText,
   Trash2,
   UploadCloud,
-  X,
 } from "lucide-react";
 import {
   completePersonalFileUpload,
@@ -24,7 +21,7 @@ import {
 } from "@/actions/personal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { FileDetailDialog } from "@/components/files/file-detail-dialog";
 
 type UploadStatus = "queued" | "uploading" | "saving" | "done" | "error";
 
@@ -94,7 +91,6 @@ export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: P
   const [files, setFiles] = useState<PersonalFileItemWithUrls[]>(initialFiles);
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [previewFile, setPreviewFile] = useState<PersonalFileItemWithUrls | null>(null);
-  const [showOcrText, setShowOcrText] = useState(false);
   const [isDeletingFileId, setIsDeletingFileId] = useState<string | null>(null);
 
   function mapErrorCode(errorCode: string): string {
@@ -255,7 +251,6 @@ export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: P
   function handlePreview(file: PersonalFileItemWithUrls): void {
     if (isImageFile(file) || isPdfFile(file)) {
       setPreviewFile(file);
-      setShowOcrText(false);
       return;
     }
     window.open(file.downloadUrl, "_blank", "noopener,noreferrer");
@@ -485,95 +480,15 @@ export function PersonalFilesTab({ initialFiles = [], socketFileVersion = 0 }: P
         </CardContent>
       </Card>
 
-      <Dialog
+      <FileDetailDialog
         open={previewFile !== null}
         onOpenChange={(open) => {
-          if (!open) {
-            setPreviewFile(null);
-          }
+          if (!open) setPreviewFile(null);
         }}
-      >
-        <DialogContent className="max-w-5xl p-0" showCloseButton={false}>
-          {previewFile ? (
-            <div className="flex max-h-[85vh] flex-col">
-              <div className="flex items-center justify-between border-b border-border p-4">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {previewFile.name}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {formatBytes(previewFile.size)}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={previewFile.downloadUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button variant="outline" size="sm" type="button">
-                      <Download className="mr-2 size-4" />
-                      {t("download")}
-                    </Button>
-                  </a>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    type="button"
-                    onClick={() => setPreviewFile(null)}
-                  >
-                    <X className="size-4" />
-                    <span className="sr-only">{t("closePreview")}</span>
-                  </Button>
-                </div>
-              </div>
-
-              <div className="overflow-auto bg-muted/30 p-4">
-                {isImageFile(previewFile) ? (
-                  <img
-                    src={previewFile.previewUrl}
-                    alt={previewFile.name}
-                    className="mx-auto max-h-[70vh] w-auto rounded-md border border-border object-contain"
-                  />
-                ) : (
-                  <iframe
-                    title={previewFile.name}
-                    src={previewFile.previewUrl}
-                    className="h-[70vh] w-full rounded-md border border-border bg-background"
-                  />
-                )}
-              </div>
-
-              {previewFile.ocrText ? (
-                <div className="border-t border-border">
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between p-4 text-left text-sm font-medium text-foreground hover:bg-muted/50"
-                    onClick={() => setShowOcrText(!showOcrText)}
-                  >
-                    <span className="flex items-center gap-2">
-                      <ScanText className="size-4" />
-                      {t("ocrTitle")}
-                    </span>
-                    {showOcrText ? (
-                      <ChevronUp className="size-4 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="size-4 text-muted-foreground" />
-                    )}
-                  </button>
-                  {showOcrText ? (
-                    <div className="max-h-[40vh] overflow-auto border-t border-border bg-muted/20 p-4">
-                      <pre className="whitespace-pre-wrap break-all text-sm text-foreground">
-                        {previewFile.ocrText}
-                      </pre>
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </DialogContent>
-      </Dialog>
+        file={previewFile}
+        translationNamespace="personal.files"
+        onSaved={refreshFiles}
+      />
     </div>
   );
 }
