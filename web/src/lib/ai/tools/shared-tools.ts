@@ -6,6 +6,7 @@ import { tool, generateText } from "ai";
 import { z } from "zod";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import ExcelJS from "exceljs";
+import mammoth from "mammoth";
 import { searchDocuments, searchDocumentsGlobal } from "@/lib/ai/embeddings";
 import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
 import { createPresignedDownloadUrl } from "@/lib/minio";
@@ -13,6 +14,7 @@ import { buildSimplePdf, type PdfTemplate } from "@/lib/reports/simple-content-p
 import { buildSimpleDocx, type DocxTemplate } from "@/lib/reports/simple-content-docx";
 import { openai } from "@ai-sdk/openai";
 import type { TenantScopedClient } from "@/lib/db";
+import { fetchFileFromMinIO } from "@/lib/ai/ocr";
 
 // ============================================================================
 // Task-hantering (gemensamt mellan projekt-AI och personlig AI)
@@ -614,6 +616,326 @@ export function createGenerateWordDocumentTool(ctx: SharedToolsContext) {
       });
     },
   });
+}
+
+/**
+ * Skapar ett readExcelFile-verktyg.
+ */
+export function createReadExcelFileTool(ctx: SharedToolsContext) {
+  const { db, tenantId } = ctx;
+  return tool({
+    description:
+      "Läs innehållet från en Excel-fil i projektet. Returnerar alla ark med rubrikrader och datarader. Använd för att läsa mallfiler eller befintliga Excel-dokument.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("Filens ID från fillistan"),
+    })),
+    execute: async ({ fileId }) => {
+      return readExcelFileContent({ db, tenantId, fileId });
+    },
+  });
+}
+
+/**
+ * Skapar ett editExcelFile-verktyg.
+ */
+export function createEditExcelFileTool(ctx: SharedToolsContext) {
+  const { db, tenantId, projectId, userId } = ctx;
+  return tool({
+    description:
+      "Redigera en Excel-fil och spara som ny fil. Ange källfilens ID, nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata.",
+    inputSchema: toolInputSchema(z.object({
+      sourceFileId: z.string().describe("ID för original-filen (mallen)"),
+      newFileName: z.string().describe("Namn på den nya filen (måste sluta med .xlsx)"),
+      edits: z.array(z.object({
+        sheet: z.string().optional().describe("Arknamn (valfritt, använder första arket om ej angivet)"),
+        cell: z.string().describe("Cellreferens, t.ex. 'A1', 'B5', 'C10'"),
+        value: z.union([z.string(), z.number()]).describe("Nytt värde för cellen"),
+      })).describe("Lista med ändringar att applicera"),
+    })),
+    execute: async ({ sourceFileId, newFileName, edits }) => {
+      return editExcelFileContent({
+        db, tenantId, userId, projectId, sourceFileId, newFileName, edits,
+      });
+    },
+  });
+}
+
+/**
+ * Skapar ett readWordFile-verktyg.
+ */
+export function createReadWordFileTool(ctx: SharedToolsContext) {
+  const { db, tenantId } = ctx;
+  return tool({
+    description:
+      "Läs textinnehållet från en Word-fil (.docx eller .doc) i projektet. Returnerar textinnehållet som sträng. Användbart för att läsa mallar eller befintliga Word-dokument.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("Filens ID från fillistan"),
+    })),
+    execute: async ({ fileId }) => {
+      return readWordFileContent({ db, tenantId, fileId });
+    },
+  });
+}
+
+// ============================================================================
+// Läsa och redigera befintliga filer (Excel, Word)
+// ============================================================================
+
+type ReadExcelParams = {
+  db: TenantScopedClient;
+  tenantId: string;
+  fileId: string;
+};
+
+/**
+ * Läser innehållet från en Excel-fil. Returnerar alla ark med headers och rader.
+ */
+export async function readExcelFileContent(params: ReadExcelParams) {
+  const { db, fileId } = params;
+
+  // Fetch file record from DB (tenantDb already scopes by tenant)
+  const file = await db.file.findUnique({
+    where: { id: fileId },
+  });
+
+  if (!file) {
+    return { error: "Filen hittades inte." };
+  }
+
+  if (!file.key || !file.bucket) {
+    return { error: "Filen har ingen lagringsreferens." };
+  }
+
+  // Verify file is Excel
+  const isExcel = file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+    file.type === "application/vnd.ms-excel" ||
+    file.name.toLowerCase().endsWith(".xlsx") ||
+    file.name.toLowerCase().endsWith(".xls");
+
+  if (!isExcel) {
+    return { error: "Filen är inte en Excel-fil (.xlsx eller .xls)." };
+  }
+
+  try {
+    // Fetch file from MinIO
+    const buffer = await fetchFileFromMinIO(file.bucket, file.key);
+
+    // Parse with ExcelJS (cast for Buffer type compatibility with ExcelJS typings)
+    const workbook = new ExcelJS.Workbook();
+    // @ts-expect-error ExcelJS Buffer type mismatch with Node 22 generic Buffer
+    await workbook.xlsx.load(buffer);
+
+    // Extract sheets
+    const sheets: Array<{
+      name: string;
+      headers: string[];
+      rows: (string | number | null)[][];
+    }> = [];
+
+    workbook.eachSheet((worksheet) => {
+      const sheetName = worksheet.name;
+      const headers: string[] = [];
+      const rows: (string | number | null)[][] = [];
+
+      let isFirstRow = true;
+
+      worksheet.eachRow((row, rowNumber) => {
+        const rowValues = row.values as unknown[];
+        // ExcelJS row.values has a weird structure: [empty, val1, val2, ...]
+        const cleanValues = Array.isArray(rowValues) ? rowValues.slice(1) : [];
+
+        const cellValues = cleanValues.map((cell) => {
+          if (cell === null || cell === undefined) return null;
+          if (typeof cell === "object" && "text" in cell) return String((cell as { text?: unknown }).text);
+          if (typeof cell === "object" && "result" in cell) return (cell as { result?: unknown }).result as string | number | null;
+          return cell as string | number | null;
+        });
+
+        if (isFirstRow) {
+          headers.push(...cellValues.map(v => v != null ? String(v) : ""));
+          isFirstRow = false;
+        } else {
+          rows.push(cellValues);
+        }
+      });
+
+      sheets.push({ name: sheetName, headers, rows });
+    });
+
+    return {
+      fileId: file.id,
+      fileName: file.name,
+      sheets,
+    };
+  } catch (error) {
+    return { error: `Kunde inte läsa Excel-filen: ${error instanceof Error ? error.message : "Okänt fel"}` };
+  }
+}
+
+type EditExcelParams = {
+  db: TenantScopedClient;
+  tenantId: string;
+  userId: string;
+  projectId: string;
+  sourceFileId: string;
+  newFileName: string;
+  edits: Array<{
+    sheet?: string;
+    cell: string;
+    value: string | number;
+  }>;
+};
+
+/**
+ * Redigerar en Excel-fil och sparar som ny fil.
+ */
+export async function editExcelFileContent(params: EditExcelParams) {
+  const { db, tenantId, userId, projectId, sourceFileId, newFileName, edits } = params;
+
+  if (!newFileName.toLowerCase().endsWith(".xlsx")) {
+    return { error: "newFileName måste sluta med .xlsx" };
+  }
+
+  // Fetch original file (tenantDb already scopes by tenant)
+  const sourceFile = await db.file.findUnique({
+    where: { id: sourceFileId },
+  });
+
+  if (!sourceFile) {
+    return { error: "Källfilen hittades inte." };
+  }
+
+  if (!sourceFile.key || !sourceFile.bucket) {
+    return { error: "Källfilen har ingen lagringsreferens." };
+  }
+
+  try {
+    // Fetch file from MinIO
+    const buffer = await fetchFileFromMinIO(sourceFile.bucket, sourceFile.key);
+
+    // Parse with ExcelJS (cast for Buffer type compatibility with ExcelJS typings)
+    const workbook = new ExcelJS.Workbook();
+    // @ts-expect-error ExcelJS Buffer type mismatch with Node 22 generic Buffer
+    await workbook.xlsx.load(buffer);
+
+    // Apply edits
+    for (const edit of edits) {
+      const sheetName = edit.sheet ?? workbook.worksheets[0]?.name;
+      if (!sheetName) {
+        return { error: "Inget ark hittades i arbetsboken." };
+      }
+
+      const worksheet = workbook.getWorksheet(sheetName);
+      if (!worksheet) {
+        return { error: `Ark "${sheetName}" hittades inte.` };
+      }
+
+      const cell = worksheet.getCell(edit.cell);
+      cell.value = edit.value;
+    }
+
+    // Write to buffer
+    const outputBuffer = await workbook.xlsx.writeBuffer();
+
+    // Extract text content for OCR
+    const textParts: string[] = [];
+    for (const ws of workbook.worksheets) {
+      textParts.push(`\n--- ${ws.name} ---`);
+      ws.eachRow((row) => {
+        const rowValues = row.values as unknown[];
+        const cleanValues = Array.isArray(rowValues) ? rowValues.slice(1) : [];
+        textParts.push(cleanValues.join(' | '));
+      });
+    }
+    const textContent = textParts.join('\n');
+
+    // Save as new file
+    const saved = await saveGeneratedDocumentToProject({
+      db,
+      tenantId,
+      projectId,
+      userId,
+      fileName: newFileName,
+      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      buffer: new Uint8Array(outputBuffer),
+      content: textContent,
+    });
+
+    if ("error" in saved) {
+      return { error: saved.error };
+    }
+
+    // Create presigned download URL
+    const downloadUrl = await createPresignedDownloadUrl({
+      bucket: saved.bucket,
+      key: saved.key,
+      expiresInSeconds: 60 * 30,
+    });
+
+    return {
+      __fileCreated: true as const,
+      fileId: saved.fileId,
+      fileName: saved.name,
+      fileType: "excel" as const,
+      fileSize: saved.size,
+      downloadUrl,
+      message: `Excel-fil "${newFileName}" skapad från mall "${sourceFile.name}"`,
+    };
+  } catch (error) {
+    return { error: `Kunde inte redigera Excel-filen: ${error instanceof Error ? error.message : "Okänt fel"}` };
+  }
+}
+
+type ReadWordParams = {
+  db: TenantScopedClient;
+  tenantId: string;
+  fileId: string;
+};
+
+/**
+ * Läser innehållet från en Word-fil. Returnerar text och HTML.
+ */
+export async function readWordFileContent(params: ReadWordParams) {
+  const { db, fileId } = params;
+
+  // Fetch file record from DB (tenantDb already scopes by tenant)
+  const file = await db.file.findUnique({
+    where: { id: fileId },
+  });
+
+  if (!file) {
+    return { error: "Filen hittades inte." };
+  }
+
+  if (!file.key || !file.bucket) {
+    return { error: "Filen har ingen lagringsreferens." };
+  }
+
+  // Verify file is Word
+  const isWord = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    file.type === "application/msword" ||
+    file.name.toLowerCase().endsWith(".docx") ||
+    file.name.toLowerCase().endsWith(".doc");
+
+  if (!isWord) {
+    return { error: "Filen är inte en Word-fil (.docx eller .doc)." };
+  }
+
+  try {
+    // Fetch file from MinIO
+    const buffer = await fetchFileFromMinIO(file.bucket, file.key);
+
+    const result = await mammoth.extractRawText({ buffer });
+
+    return {
+      fileId: file.id,
+      fileName: file.name,
+      text: result.value,
+      messages: result.messages.map(m => m.message),
+    };
+  } catch (error) {
+    return { error: `Kunde inte läsa Word-filen: ${error instanceof Error ? error.message : "Okänt fel"}` };
+  }
 }
 
 // ============================================================================

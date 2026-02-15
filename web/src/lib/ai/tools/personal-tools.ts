@@ -31,6 +31,9 @@ import {
   generatePdfDocument,
   generateExcelDocument,
   generateWordDocument,
+  readExcelFileContent,
+  editExcelFileContent,
+  readWordFileContent,
 } from "@/lib/ai/tools/shared-tools";
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
@@ -109,11 +112,6 @@ import {
   deletePersonalFile as deletePersonalFileAction,
   moveProjectFileToPersonal as moveProjectFileToPersonalAction,
 } from "@/actions/personal";
-import {
-  exportTimeReportExcel,
-  exportProjectSummaryPdf,
-  exportTaskListExcel,
-} from "@/actions/export";
 import { deleteNoteCategory as deleteNoteCategoryAction } from "@/actions/note-categories";
 
 export type PersonalToolsContext = {
@@ -678,52 +676,6 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           hours: `${Math.floor(p.totalMinutes / 60)}h ${p.totalMinutes % 60}min`,
         })),
         byWeek: summary.byWeek.slice(0, 12),
-      };
-    },
-  });
-
-  const exportTimeReport = tool({
-    description: "Exportera en tidsrapport för ett projekt som Excel eller PDF. Returnerar en nedladdningslänk.",
-    inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
-      format: z.enum(["excel", "pdf"]).describe("Filformat: 'excel' eller 'pdf'"),
-      fromDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Startdatum YYYY-MM-DD (valfritt, endast för excel)"),
-      toDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional().describe("Slutdatum YYYY-MM-DD (valfritt, endast för excel)"),
-      targetUserId: z.string().optional().describe("Filtrera på specifik användare (valfritt, endast för excel)"),
-    })),
-    execute: async ({ projectId: pid, format, fromDate, toDate, targetUserId }) => {
-      await requireProject(tenantId, pid, userId);
-
-      if (format === "excel") {
-        const result = await exportTimeReportExcel(pid, { fromDate, toDate, userId: targetUserId });
-        if (!result.success) return { error: result.error };
-        return {
-          downloadUrl: result.downloadUrl,
-          message: `Tidsrapporten (Excel) har genererats. Du kan ladda ner den här: ${result.downloadUrl}`,
-        };
-      } else {
-        const result = await exportProjectSummaryPdf(pid);
-        if (!result.success) return { error: result.error };
-        return {
-          downloadUrl: result.downloadUrl,
-          message: `Projektsammanställningen (PDF) som inkluderar tidsrapportering har genererats. Du kan ladda ner den här: ${result.downloadUrl}`,
-        };
-      }
-    },
-  });
-
-  const exportTaskList = tool({
-    description: "Exportera en lista över alla uppgifter i ett projekt som en Excel-fil.",
-    inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
-    })),
-    execute: async ({ projectId: pid }) => {
-      await requireProject(tenantId, pid, userId);
-      const result = await exportTaskListExcel(pid);
-      if (!result.success) return { error: result.error };
-      return {
-        downloadUrl: result.downloadUrl,
-        message: `Uppgiftslistan (Excel) har genererats. Du kan ladda ner den här: ${result.downloadUrl}`,
       };
     },
   });
@@ -2581,6 +2533,55 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
+  // ─── Läsa befintliga filer (mallar) ────────────────────────
+
+  const readExcelFile = tool({
+    description:
+      "Läs innehållet från en Excel-fil i ett projekt. Returnerar alla ark med rubrikrader och datarader. Användbart för att läsa mallfiler eller befintliga Excel-dokument. Ange projektets ID och filens ID.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileId: z.string().describe("Filens ID från fillistan"),
+    })),
+    execute: async ({ projectId: pid, fileId }) => {
+      await requireProject(tenantId, pid, userId);
+      return readExcelFileContent({ db, tenantId, fileId });
+    },
+  });
+
+  const editExcelFile = tool({
+    description:
+      "Redigera en Excel-fil och spara som ny fil. Ange projektets ID, källfilens ID (t.ex. en mallfil), nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata, t.ex. gruppförteckning, mätprotokoll eller installationsintyg.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      sourceFileId: z.string().describe("ID för original-filen (mallen)"),
+      newFileName: z.string().describe("Namn på den nya filen (måste sluta med .xlsx)"),
+      edits: z.array(z.object({
+        sheet: z.string().optional().describe("Arknamn (valfritt, använder första arket om ej angivet)"),
+        cell: z.string().describe("Cellreferens, t.ex. 'A1', 'B5', 'C10'"),
+        value: z.union([z.string(), z.number()]).describe("Nytt värde för cellen"),
+      })).describe("Lista med ändringar att applicera"),
+    })),
+    execute: async ({ projectId: pid, sourceFileId, newFileName, edits }) => {
+      await requireProject(tenantId, pid, userId);
+      return editExcelFileContent({
+        db, tenantId, userId, projectId: pid, sourceFileId, newFileName, edits,
+      });
+    },
+  });
+
+  const readWordFile = tool({
+    description:
+      "Läs textinnehållet från en Word-fil (.docx eller .doc) i ett projekt. Returnerar textinnehållet som sträng. Användbart för att läsa mallar eller befintliga Word-dokument. Ange projektets ID och filens ID.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileId: z.string().describe("Filens ID från fillistan"),
+    })),
+    execute: async ({ projectId: pid, fileId }) => {
+      await requireProject(tenantId, pid, userId);
+      return readWordFileContent({ db, tenantId, fileId });
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -2608,13 +2609,15 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     deleteTimeEntry,
     getProjectTimeSummary,
     getMyTimeEntries,
-    exportTimeReport,
-    exportTaskList,
     generateProjectReport,
     // Filgenerering
     generatePdf,
     generateExcel,
     generateWord,
+    // Läsa och redigera befintliga filer (mallar)
+    readExcelFile,
+    editExcelFile,
+    readWordFile,
     // Filer
     listFiles,
     getProjectFiles: listFiles,
