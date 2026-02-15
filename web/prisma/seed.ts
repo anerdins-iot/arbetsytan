@@ -1,4 +1,6 @@
 import "dotenv/config";
+import fs from "node:fs";
+import path from "node:path";
 import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/db";
 import { processPersonalFileOcr } from "../src/lib/ai/ocr";
@@ -363,11 +365,20 @@ async function main() {
   } else {
     try {
       const bucket = await ensureTenantBucket(tenant.id);
-      // 1x1 PNG (minimal bild för pipeline)
+      // 1x1 PNG (fallback när seed-assets saknas)
       const minimalPng = Buffer.from(
         "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
         "base64"
       );
+
+      const seedAssetsDir = path.join(__dirname, "seed-assets");
+      const readSeedAsset = (fileName: string): Buffer => {
+        const filePath = path.join(seedAssetsDir, fileName);
+        if (fs.existsSync(filePath)) {
+          return fs.readFileSync(filePath);
+        }
+        return minimalPng;
+      };
 
       const personalKey = (fileName: string): string =>
         `${process.env.S3_BUCKET}/personal/${adminUser.id}/seed-${fileName}`;
@@ -376,6 +387,7 @@ async function main() {
         { id: "seed-file-ritning", name: "ritning-a101.png", type: "image/png" },
         { id: "seed-file-senaste-bild", name: "senaste-bild-plats.png", type: "image/png" },
       ]) {
+        const body = readSeedAsset(entry.name);
         const key = personalKey(entry.name);
         await prisma.file.upsert({
           where: { id: entry.id },
@@ -384,7 +396,7 @@ async function main() {
             id: entry.id,
             name: entry.name,
             type: entry.type,
-            size: minimalPng.length,
+            size: body.length,
             bucket,
             key,
             projectId: null,
@@ -394,7 +406,7 @@ async function main() {
         await putObjectToMinio({
           bucket,
           key,
-          body: new Uint8Array(minimalPng),
+          body: new Uint8Array(body),
           contentType: entry.type,
         });
       }
