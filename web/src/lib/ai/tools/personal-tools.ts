@@ -34,6 +34,8 @@ import {
   readExcelFileContent,
   editExcelFileContent,
   readWordFileContent,
+  analyzeDocxTemplate,
+  fillDocxTemplate,
 } from "@/lib/ai/tools/shared-tools";
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
@@ -2471,27 +2473,29 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
   // ─── Generiska filgenereringsverktyg ──────────────────────
   const generatePdf = tool({
     description:
-      "Generera en PDF-fil och spara den i ett projekts fillista. Ange projektets ID, filnamn (.pdf), titel och innehåll (markdown eller vanlig text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer med datum), offert (villkorstext i footer), protokoll (deltagarlista-format med beslutspunkter), eller null för fritt format.",
+      "Generera en PDF-fil och spara den i ett projekts fillista. Ange projektets ID, filnamn (.pdf), titel och innehåll (markdown eller vanlig text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer med datum), offert (villkorstext i footer), protokoll (deltagarlista-format med beslutspunkter), eller null för fritt format. TIP: Om du anger instructions istället för content kommer en avancerad AI (Opus) att generera professionellt innehåll baserat på instruktionerna.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       fileName: z.string().describe("Filnamn t.ex. rapport.pdf"),
       title: z.string().describe("Dokumentets titel"),
-      content: z.string().describe("Brödtext i markdown eller vanlig text"),
+      content: z.string().optional().describe("Brödtext i markdown eller vanlig text (valfritt om instructions anges)"),
       template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
         .describe("Layout-mall eller null för fritt format"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att generera innehållet, t.ex. 'Skapa en offert för elinstallation i villa'"),
     })),
-    execute: async ({ projectId: pid, fileName, title, content, template }) => {
+    execute: async ({ projectId: pid, fileName, title, content, template, instructions }) => {
       await requireProject(tenantId, pid, userId);
       return generatePdfDocument({
         db, tenantId, projectId: pid, userId,
-        fileName, title, content, template: template ?? null,
+        fileName, title, content: content ?? "", template: template ?? null, instructions,
       });
     },
   });
 
   const generateExcel = tool({
     description:
-      "Generera en Excel-fil (.xlsx) med ett eller flera blad och spara i ett projekts fillista. Ange projektets ID, filnamn (.xlsx), valfri titel och sheets (array av { name, headers, rows }). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och automatisk summeringsrad för numeriska kolumner.",
+      "Generera en Excel-fil (.xlsx) med ett eller flera blad och spara i ett projekts fillista. Ange projektets ID, filnamn (.xlsx), valfri titel och sheets (array av { name, headers, rows }). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och automatisk summeringsrad för numeriska kolumner. TIP: Om du anger instructions istället för sheets kommer en avancerad AI (Opus) att generera data baserat på instruktionerna.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       fileName: z.string().describe("Filnamn t.ex. materiallista.xlsx"),
@@ -2500,35 +2504,39 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         name: z.string().describe("Bladnamn"),
         headers: z.array(z.string()).describe("Rubrikrad"),
         rows: z.array(z.array(z.union([z.string(), z.number()]))).describe("Datarader"),
-      })).describe("Blad med data"),
+      })).optional().describe("Blad med data (valfritt om instructions anges)"),
       template: z.enum(["materiallista"]).optional().nullable()
         .describe("Layout-mall: materiallista (formaterad tabell) eller null för standard"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att generera data, t.ex. 'Skapa en materiallista för badrumsrenovering'"),
     })),
-    execute: async ({ projectId: pid, fileName, title, sheets, template }) => {
+    execute: async ({ projectId: pid, fileName, title, sheets, template, instructions }) => {
       await requireProject(tenantId, pid, userId);
       return generateExcelDocument({
         db, tenantId, projectId: pid, userId,
-        fileName, title, sheets, template: template ?? null,
+        fileName, title, sheets, template: template ?? null, instructions,
       });
     },
   });
 
   const generateWord = tool({
     description:
-      "Generera ett Word-dokument (.docx) och spara i ett projekts fillista. Ange projektets ID, filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport (professionell header, sektionsrubriker, footer), offert (villkorstext i footer), protokoll (beslutspunkter, deltagarlista), eller null för fritt format.",
+      "Generera ett Word-dokument (.docx) och spara i ett projekts fillista. Ange projektets ID, filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport (professionell header, sektionsrubriker, footer), offert (villkorstext i footer), protokoll (beslutspunkter, deltagarlista), eller null för fritt format. TIP: Om du anger instructions istället för content kommer en avancerad AI (Opus) att generera professionellt innehåll baserat på instruktionerna.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       fileName: z.string().describe("Filnamn t.ex. offert.docx"),
       title: z.string().describe("Dokumentets titel"),
-      content: z.string().describe("Brödtext, stycken separeras med dubbla radbrytningar"),
+      content: z.string().optional().describe("Brödtext, stycken separeras med dubbla radbrytningar (valfritt om instructions anges)"),
       template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
         .describe("Layout-mall eller null för fritt format"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att generera innehållet, t.ex. 'Skriv ett mötesprotokoll'"),
     })),
-    execute: async ({ projectId: pid, fileName, title, content, template }) => {
+    execute: async ({ projectId: pid, fileName, title, content, template, instructions }) => {
       await requireProject(tenantId, pid, userId);
       return generateWordDocument({
         db, tenantId, projectId: pid, userId,
-        fileName, title, content, template: template ?? null,
+        fileName, title, content, template: template ?? null, instructions,
       });
     },
   });
@@ -2550,7 +2558,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
 
   const editExcelFile = tool({
     description:
-      "Redigera en Excel-fil och spara som ny fil. Ange projektets ID, källfilens ID (t.ex. en mallfil), nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata, t.ex. gruppförteckning, mätprotokoll eller installationsintyg.",
+      "Redigera en Excel-fil och spara som ny fil. Ange projektets ID, källfilens ID (t.ex. en mallfil), nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata, t.ex. gruppförteckning, mätprotokoll eller installationsintyg. TIP: Om du anger instructions istället för edits kommer en avancerad AI (Opus) att bestämma vilka ändringar som ska göras.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       sourceFileId: z.string().describe("ID för original-filen (mallen)"),
@@ -2559,12 +2567,14 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         sheet: z.string().optional().describe("Arknamn (valfritt, använder första arket om ej angivet)"),
         cell: z.string().describe("Cellreferens, t.ex. 'A1', 'B5', 'C10'"),
         value: z.union([z.string(), z.number()]).describe("Nytt värde för cellen"),
-      })).describe("Lista med ändringar att applicera"),
+      })).optional().default([]).describe("Lista med ändringar att applicera (valfritt om instructions anges)"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att bestämma ändringar, t.ex. 'Fyll i projektdata för Kund AB'"),
     })),
-    execute: async ({ projectId: pid, sourceFileId, newFileName, edits }) => {
+    execute: async ({ projectId: pid, sourceFileId, newFileName, edits, instructions }) => {
       await requireProject(tenantId, pid, userId);
       return editExcelFileContent({
-        db, tenantId, userId, projectId: pid, sourceFileId, newFileName, edits,
+        db, tenantId, userId, projectId: pid, sourceFileId, newFileName, edits: edits ?? [], instructions,
       });
     },
   });
@@ -2579,6 +2589,38 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     execute: async ({ projectId: pid, fileId }) => {
       await requireProject(tenantId, pid, userId);
       return readWordFileContent({ db, tenantId, fileId });
+    },
+  });
+
+  // ─── Docxtemplater – mallanalys och ifyllning ─────────────
+
+  const analyzeDocumentTemplate = tool({
+    description:
+      "Analysera en dokumentmall (.docx eller .pptx) och extrahera alla platshållare. Mallen använder {variabel}-syntax för enkla variabler och {#loop}...{/loop} för upprepade sektioner. Returnerar en lista med variabler och loopar som behöver fyllas i. Använd detta INNAN fillDocumentTemplate för att förstå vilka data mallen behöver. Ange projektets ID och filens ID.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      fileId: z.string().describe("Filens ID (mallfilen) från fillistan"),
+    })),
+    execute: async ({ projectId: pid, fileId }) => {
+      await requireProject(tenantId, pid, userId);
+      return analyzeDocxTemplate({ db, tenantId, fileId });
+    },
+  });
+
+  const fillDocumentTemplate = tool({
+    description:
+      "Fyll i en dokumentmall (.docx eller .pptx) med data och spara som ny fil i projektet. Mallen innehåller platshållare som {kundnamn}, {projektadress} och loopar som {#rader}{beskrivning} - {pris}{/rader}. Analysera mallen med analyzeDocumentTemplate först för att se vilka variabler som behövs. Data skickas som JSON-objekt där nycklar matchar variabelnamnen. Loopar skickas som arrayer av objekt. Ange projektets ID, mallfilens ID, nytt filnamn och data.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      sourceFileId: z.string().describe("ID för mallfilen"),
+      newFileName: z.string().describe("Namn på den nya filen (samma filändelse som mallen, t.ex. offert-kund-abc.docx)"),
+      data: z.record(z.string(), z.unknown()).describe("JSON-objekt med data att fylla i. Nycklar matchar mallens platshållare. Loopar = arrayer av objekt, t.ex. { kundnamn: 'AB Bygg', rader: [{ beskrivning: 'Kabel', pris: 500 }] }"),
+    })),
+    execute: async ({ projectId: pid, sourceFileId, newFileName, data }) => {
+      await requireProject(tenantId, pid, userId);
+      return fillDocxTemplate({
+        db, tenantId, projectId: pid, userId, sourceFileId, data, newFileName,
+      });
     },
   });
 
@@ -2618,6 +2660,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     readExcelFile,
     editExcelFile,
     readWordFile,
+    // Dokumentmallar (docxtemplater)
+    analyzeDocumentTemplate,
+    fillDocumentTemplate,
     // Filer
     listFiles,
     getProjectFiles: listFiles,

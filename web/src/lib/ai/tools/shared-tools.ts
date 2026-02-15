@@ -7,14 +7,19 @@ import { z } from "zod";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import ExcelJS from "exceljs";
 import mammoth from "mammoth";
+import Docxtemplater from "docxtemplater";
+import InspectModule from "docxtemplater/inspect-module";
+import PizZip from "pizzip";
 import { searchDocuments, searchDocumentsGlobal } from "@/lib/ai/embeddings";
 import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
 import { createPresignedDownloadUrl } from "@/lib/minio";
 import { buildSimplePdf, type PdfTemplate } from "@/lib/reports/simple-content-pdf";
 import { buildSimpleDocx, type DocxTemplate } from "@/lib/reports/simple-content-docx";
 import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import type { TenantScopedClient } from "@/lib/db";
 import { fetchFileFromMinIO } from "@/lib/ai/ocr";
+import { logger } from "@/lib/logger";
 
 // ============================================================================
 // Task-hantering (gemensamt mellan projekt-AI och personlig AI)
@@ -169,6 +174,87 @@ export async function searchDocumentsAcrossProjects(params: SearchDocumentsGloba
 }
 
 // ============================================================================
+// Opus sub-agent — genererar dokumentinnehåll med Claude Opus
+// ============================================================================
+
+type OpusContentType = "pdf" | "word" | "excel";
+
+/**
+ * Använder Claude Opus 4.6 för att generera professionellt dokumentinnehåll.
+ * Anropas internt av generatePdf/Word/Excel när `instructions` finns.
+ * Vid fel (rate limit, API-fel) returneras null och caller faller tillbaka.
+ */
+async function generateContentWithOpus(opts: {
+  title: string;
+  instructions: string;
+  template?: string | null;
+  contentType: OpusContentType;
+  projectData?: Record<string, unknown> | null;
+}): Promise<string | null> {
+  const { title, instructions, template, contentType, projectData } = opts;
+
+  const formatGuide: Record<OpusContentType, string> = {
+    pdf: "Skriv i markdown. Använd # för rubriker, ## för underrubriker. Separera stycken med dubbla radbrytningar.",
+    word: "Skriv i markdown. Använd # för rubriker. Separera stycken med dubbla radbrytningar.",
+    excel: `Svara ENBART med JSON (inga code-fences, inget annat). Formatet ska vara:
+[{"name":"Bladnamn","headers":["Kolumn1","Kolumn2"],"rows":[["rad1kol1","rad1kol2"],["rad2kol1",123]]}]
+Varje objekt representerar ett ark. rows-värden kan vara strängar eller nummer.`,
+  };
+
+  const systemPrompt = `Du är expert på att skapa professionella dokument för byggbranschen.
+Skriv på svenska. ${formatGuide[contentType]}
+${template ? `Dokumentmall: ${template}` : ""}
+Var koncis, professionell och korrekt.`;
+
+  const userPrompt = `Skapa innehåll för ${template ?? "dokument"}: "${title}"
+${projectData ? `\nProjektdata:\n${JSON.stringify(projectData, null, 2)}` : ""}
+\nInstruktioner: ${instructions}`;
+
+  try {
+    const result = await generateText({
+      model: anthropic("claude-opus-4-6"),
+      system: systemPrompt,
+      prompt: userPrompt,
+      maxOutputTokens: 4096,
+    });
+    return result.text;
+  } catch (err) {
+    logger.error("Opus sub-agent failed", {
+      error: err instanceof Error ? err.message : String(err),
+      contentType,
+      title,
+    });
+    return null;
+  }
+}
+
+/**
+ * Parsar Opus-genererat Excel-JSON till sheets-array.
+ * Returnerar null om parsningen misslyckas.
+ */
+function parseOpusExcelContent(
+  text: string
+): Array<{ name: string; headers: string[]; rows: (string | number)[][] }> | null {
+  try {
+    // Strip potential code fences
+    const cleaned = text.replace(/^```(?:json)?\s*/m, "").replace(/```\s*$/m, "").trim();
+    const parsed = JSON.parse(cleaned);
+    if (!Array.isArray(parsed)) return null;
+    return parsed.map((sheet: Record<string, unknown>) => ({
+      name: String(sheet.name ?? "Blad1"),
+      headers: Array.isArray(sheet.headers) ? sheet.headers.map(String) : [],
+      rows: Array.isArray(sheet.rows)
+        ? sheet.rows.map((row: unknown[]) =>
+            Array.isArray(row) ? row.map((v) => (typeof v === "number" ? v : String(v ?? ""))) : []
+          )
+        : [],
+    }));
+  } catch {
+    return null;
+  }
+}
+
+// ============================================================================
 // Dokumentgenerering (Excel, PDF, Word)
 // ============================================================================
 
@@ -193,6 +279,7 @@ type GenerateExcelParams = {
   /** @deprecated Use sheets instead */
   rows?: (string | number)[][];
   template?: ExcelTemplate;
+  instructions?: string;
 };
 
 /**
@@ -200,7 +287,7 @@ type GenerateExcelParams = {
  * Supports multi-sheet via `sheets` param or legacy single-sheet via `sheetName`+`rows`.
  */
 export async function generateExcelDocument(params: GenerateExcelParams) {
-  const { db, tenantId, projectId, userId, fileName, title, template } = params;
+  const { db, tenantId, projectId, userId, fileName, title, template, instructions } = params;
 
   if (!fileName.toLowerCase().endsWith(".xlsx")) {
     return { error: "fileName måste sluta med .xlsx" };
@@ -208,14 +295,30 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
 
   const workbook = new ExcelJS.Workbook();
 
-  // Determine sheets: new multi-sheet API or legacy single-sheet
-  const sheetDefs: ExcelSheet[] = params.sheets && params.sheets.length > 0
-    ? params.sheets
-    : [{
-        name: params.sheetName ?? title ?? "Blad1",
-        headers: [],
-        rows: (params.rows ?? []) as (string | number)[][],
-      }];
+  // Use Opus to generate sheets when instructions are provided and no sheets given
+  let opusSheets: ExcelSheet[] | null = null;
+  if (instructions && (!params.sheets || params.sheets.length === 0)) {
+    const opusContent = await generateContentWithOpus({
+      title: title ?? fileName,
+      instructions,
+      template: template ?? null,
+      contentType: "excel",
+    });
+    if (opusContent) {
+      opusSheets = parseOpusExcelContent(opusContent);
+    }
+  }
+
+  // Determine sheets: Opus-generated, explicit sheets, or legacy single-sheet
+  const sheetDefs: ExcelSheet[] = opusSheets && opusSheets.length > 0
+    ? opusSheets
+    : params.sheets && params.sheets.length > 0
+      ? params.sheets
+      : [{
+          name: params.sheetName ?? title ?? "Blad1",
+          headers: [],
+          rows: (params.rows ?? []) as (string | number)[][],
+        }];
 
   for (const sheetDef of sheetDefs) {
     const ws = workbook.addWorksheet(sheetDef.name);
@@ -343,16 +446,33 @@ type GeneratePdfParams = {
   title: string;
   content: string;
   template?: PdfTemplate;
+  instructions?: string;
 };
 
 /**
  * Genererar ett PDF-dokument och sparar det i projektets fillista.
  */
 export async function generatePdfDocument(params: GeneratePdfParams) {
-  const { db, tenantId, projectId, userId, fileName, title, content, template } = params;
+  const { db, tenantId, projectId, userId, fileName, title, template, instructions } = params;
+  let { content } = params;
 
   if (!fileName.toLowerCase().endsWith(".pdf")) {
     return { error: "fileName måste sluta med .pdf" };
+  }
+
+  // Use Opus to generate content when instructions are provided
+  if (instructions) {
+    const opusContent = await generateContentWithOpus({
+      title,
+      instructions,
+      template: template ?? null,
+      contentType: "pdf",
+    });
+    if (opusContent) {
+      content = opusContent;
+    } else if (!content) {
+      content = "Kunde inte generera innehåll automatiskt. Vänligen försök igen.";
+    }
   }
 
   const buffer = await buildSimplePdf(title, content, template ?? undefined);
@@ -401,16 +521,33 @@ type GenerateWordParams = {
   /** @deprecated Use content instead */
   paragraphs?: string[];
   template?: DocxTemplate;
+  instructions?: string;
 };
 
 /**
  * Genererar ett Word-dokument (.docx) och sparar det i projektets fillista.
  */
 export async function generateWordDocument(params: GenerateWordParams) {
-  const { db, tenantId, projectId, userId, fileName, title, content, paragraphs, template } = params;
+  const { db, tenantId, projectId, userId, fileName, title, paragraphs, template, instructions } = params;
+  let { content } = params;
 
   if (!fileName.toLowerCase().endsWith(".docx")) {
     return { error: "fileName måste sluta med .docx" };
+  }
+
+  // Use Opus to generate content when instructions are provided
+  if (instructions) {
+    const opusContent = await generateContentWithOpus({
+      title,
+      instructions,
+      template: template ?? null,
+      contentType: "word",
+    });
+    if (opusContent) {
+      content = opusContent;
+    } else if (!content && (!paragraphs || paragraphs.length === 0)) {
+      content = "Kunde inte generera innehåll automatiskt. Vänligen försök igen.";
+    }
   }
 
   // Support both new content string and legacy paragraphs array
@@ -549,7 +686,7 @@ export function createGenerateExcelDocumentTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Generera en Excel-fil (.xlsx) och spara i projektets fillista. Ange filnamn, valfri titel och ett eller flera blad (sheets). Varje blad har namn, rubrikrad (headers) och datarader (rows). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och summeringsrad.",
+      "Generera en Excel-fil (.xlsx) och spara i projektets fillista. Ange filnamn, valfri titel och ett eller flera blad (sheets). Varje blad har namn, rubrikrad (headers) och datarader (rows). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och summeringsrad. TIP: Om du anger instructions istället för sheets kommer en avancerad AI (Opus) att generera data baserat på instruktionerna.",
     inputSchema: toolInputSchema(z.object({
       fileName: z.string().describe("Filnamn t.ex. materiallista.xlsx"),
       title: z.string().optional().describe("Dokumenttitel"),
@@ -557,14 +694,16 @@ export function createGenerateExcelDocumentTool(ctx: SharedToolsContext) {
         name: z.string().describe("Bladnamn"),
         headers: z.array(z.string()).describe("Rubrikrad"),
         rows: z.array(z.array(z.union([z.string(), z.number()]))).describe("Datarader"),
-      })).describe("Blad med data"),
+      })).optional().describe("Blad med data (valfritt om instructions anges)"),
       template: z.enum(["materiallista"]).optional().nullable()
         .describe("Layout-mall: materiallista (formaterad tabell) eller null för standard"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att generera data, t.ex. 'Skapa en materiallista för badrumsrenovering'"),
     })),
-    execute: async ({ fileName, title, sheets, template }) => {
+    execute: async ({ fileName, title, sheets, template, instructions }) => {
       return generateExcelDocument({
         db, tenantId, projectId, userId, fileName, title,
-        sheets, template: template ?? null,
+        sheets, template: template ?? null, instructions,
       });
     },
   });
@@ -577,18 +716,20 @@ export function createGeneratePdfDocumentTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Generera en PDF-fil och spara i projektets fillista. Ange filnamn (.pdf), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer), offert (villkor i footer), protokoll (deltagarlista-format), eller null för fritt format.",
+      "Generera en PDF-fil och spara i projektets fillista. Ange filnamn (.pdf), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer), offert (villkor i footer), protokoll (deltagarlista-format), eller null för fritt format. TIP: Om du anger instructions istället för content kommer en avancerad AI (Opus) att generera professionellt innehåll.",
     inputSchema: toolInputSchema(z.object({
       fileName: z.string().describe("Filnamn t.ex. rapport.pdf"),
       title: z.string().describe("Dokumentets titel"),
-      content: z.string().describe("Brödtext i markdown eller vanlig text"),
+      content: z.string().optional().describe("Brödtext i markdown eller vanlig text (valfritt om instructions anges)"),
       template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
         .describe("Layout-mall eller null för fritt format"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att generera innehållet, t.ex. 'Skapa en offert för elinstallation'"),
     })),
-    execute: async ({ fileName, title, content, template }) => {
+    execute: async ({ fileName, title, content, template, instructions }) => {
       return generatePdfDocument({
-        db, tenantId, projectId, userId, fileName, title, content,
-        template: template ?? null,
+        db, tenantId, projectId, userId, fileName, title, content: content ?? "",
+        template: template ?? null, instructions,
       });
     },
   });
@@ -601,18 +742,20 @@ export function createGenerateWordDocumentTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Generera ett Word-dokument (.docx) och spara i projektets fillista. Ange filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport, offert, protokoll, eller null för fritt format.",
+      "Generera ett Word-dokument (.docx) och spara i projektets fillista. Ange filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport, offert, protokoll, eller null för fritt format. TIP: Om du anger instructions istället för content kommer en avancerad AI (Opus) att generera professionellt innehåll.",
     inputSchema: toolInputSchema(z.object({
       fileName: z.string().describe("Filnamn t.ex. offert.docx"),
       title: z.string().describe("Dokumentets titel"),
-      content: z.string().describe("Brödtext, stycken separeras med dubbla radbrytningar"),
+      content: z.string().optional().describe("Brödtext, stycken separeras med dubbla radbrytningar (valfritt om instructions anges)"),
       template: z.enum(["projektrapport", "offert", "protokoll"]).optional().nullable()
         .describe("Layout-mall eller null för fritt format"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att generera innehållet, t.ex. 'Skriv ett mötesprotokoll'"),
     })),
-    execute: async ({ fileName, title, content, template }) => {
+    execute: async ({ fileName, title, content, template, instructions }) => {
       return generateWordDocument({
         db, tenantId, projectId, userId, fileName, title, content,
-        template: template ?? null,
+        template: template ?? null, instructions,
       });
     },
   });
@@ -642,7 +785,7 @@ export function createEditExcelFileTool(ctx: SharedToolsContext) {
   const { db, tenantId, projectId, userId } = ctx;
   return tool({
     description:
-      "Redigera en Excel-fil och spara som ny fil. Ange källfilens ID, nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata.",
+      "Redigera en Excel-fil och spara som ny fil. Ange källfilens ID, nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata. TIP: Om du anger instructions istället för edits kommer en avancerad AI (Opus) att bestämma vilka ändringar som ska göras.",
     inputSchema: toolInputSchema(z.object({
       sourceFileId: z.string().describe("ID för original-filen (mallen)"),
       newFileName: z.string().describe("Namn på den nya filen (måste sluta med .xlsx)"),
@@ -650,11 +793,13 @@ export function createEditExcelFileTool(ctx: SharedToolsContext) {
         sheet: z.string().optional().describe("Arknamn (valfritt, använder första arket om ej angivet)"),
         cell: z.string().describe("Cellreferens, t.ex. 'A1', 'B5', 'C10'"),
         value: z.union([z.string(), z.number()]).describe("Nytt värde för cellen"),
-      })).describe("Lista med ändringar att applicera"),
+      })).optional().default([]).describe("Lista med ändringar att applicera (valfritt om instructions anges)"),
+      instructions: z.string().optional()
+        .describe("Instruktioner till AI för att bestämma ändringar, t.ex. 'Fyll i projektdata'"),
     })),
-    execute: async ({ sourceFileId, newFileName, edits }) => {
+    execute: async ({ sourceFileId, newFileName, edits, instructions }) => {
       return editExcelFileContent({
-        db, tenantId, userId, projectId, sourceFileId, newFileName, edits,
+        db, tenantId, userId, projectId, sourceFileId, newFileName, edits: edits ?? [], instructions,
       });
     },
   });
@@ -784,16 +929,43 @@ type EditExcelParams = {
     cell: string;
     value: string | number;
   }>;
+  instructions?: string;
 };
 
 /**
  * Redigerar en Excel-fil och sparar som ny fil.
  */
 export async function editExcelFileContent(params: EditExcelParams) {
-  const { db, tenantId, userId, projectId, sourceFileId, newFileName, edits } = params;
+  const { db, tenantId, userId, projectId, sourceFileId, newFileName, instructions } = params;
+  let { edits } = params;
 
   if (!newFileName.toLowerCase().endsWith(".xlsx")) {
     return { error: "newFileName måste sluta med .xlsx" };
+  }
+
+  // Use Opus to generate edits when instructions are provided but no explicit edits
+  if (instructions && edits.length === 0) {
+    const opusContent = await generateContentWithOpus({
+      title: newFileName,
+      instructions,
+      contentType: "excel",
+    });
+    if (opusContent) {
+      // Try to parse as cell edits: [{"cell":"A1","value":"test","sheet":"Blad1"}]
+      try {
+        const cleaned = opusContent.replace(/^```(?:json)?\s*/m, "").replace(/```\s*$/m, "").trim();
+        const parsed = JSON.parse(cleaned);
+        if (Array.isArray(parsed)) {
+          edits = parsed.map((e: Record<string, unknown>) => ({
+            sheet: e.sheet ? String(e.sheet) : undefined,
+            cell: String(e.cell ?? "A1"),
+            value: typeof e.value === "number" ? e.value : String(e.value ?? ""),
+          }));
+        }
+      } catch {
+        // Opus couldn't produce valid edits JSON — fall through with empty edits
+      }
+    }
   }
 
   // Fetch original file (tenantDb already scopes by tenant)
@@ -936,6 +1108,274 @@ export async function readWordFileContent(params: ReadWordParams) {
   } catch (error) {
     return { error: `Kunde inte läsa Word-filen: ${error instanceof Error ? error.message : "Okänt fel"}` };
   }
+}
+
+// ============================================================================
+// Docxtemplater – analysera och fylla i dokumentmallar (.docx/.pptx)
+// ============================================================================
+
+type AnalyzeTemplateParams = {
+  db: TenantScopedClient;
+  tenantId: string;
+  fileId: string;
+};
+
+export type TemplateAnalysis = {
+  fileId: string;
+  fileName: string;
+  variables: string[];
+  loops: Array<{ name: string; variables: string[] }>;
+};
+
+/**
+ * Analysera en docx/pptx-mall och extrahera alla platshållare ({variabel}, {#loop}...{/loop}).
+ * Använder docxtemplater InspectModule för att hitta alla tags.
+ */
+export async function analyzeDocxTemplate(params: AnalyzeTemplateParams): Promise<TemplateAnalysis | { error: string }> {
+  const { db, fileId } = params;
+
+  const file = await db.file.findUnique({
+    where: { id: fileId },
+  });
+
+  if (!file) {
+    return { error: "Filen hittades inte." };
+  }
+
+  if (!file.key || !file.bucket) {
+    return { error: "Filen har ingen lagringsreferens." };
+  }
+
+  // Verify file is docx or pptx
+  const isDocx = file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    file.name.toLowerCase().endsWith(".docx");
+  const isPptx = file.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
+    file.name.toLowerCase().endsWith(".pptx");
+
+  if (!isDocx && !isPptx) {
+    return { error: "Filen måste vara en .docx eller .pptx-fil för mallanalys." };
+  }
+
+  try {
+    const buffer = await fetchFileFromMinIO(file.bucket, file.key);
+    const zip = new PizZip(buffer);
+    const iModule = new InspectModule();
+    const doc = new Docxtemplater(zip, {
+      modules: [iModule],
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    // getAllTags returns a nested object: { var1: {}, loop1: { innerVar: {} } }
+    const tags = iModule.getAllTags();
+
+    const variables: string[] = [];
+    const loops: Array<{ name: string; variables: string[] }> = [];
+
+    function extractTags(obj: Record<string, unknown>, prefix = "") {
+      for (const [key, value] of Object.entries(obj)) {
+        if (value && typeof value === "object" && Object.keys(value as Record<string, unknown>).length > 0) {
+          // This is a loop/section — it has nested variables
+          const innerVars: string[] = [];
+          const inner = value as Record<string, unknown>;
+          for (const [innerKey, innerValue] of Object.entries(inner)) {
+            if (innerValue && typeof innerValue === "object" && Object.keys(innerValue as Record<string, unknown>).length > 0) {
+              // Nested loop inside loop — treat as variable for simplicity
+              innerVars.push(innerKey);
+            } else {
+              innerVars.push(innerKey);
+            }
+          }
+          loops.push({ name: prefix ? `${prefix}.${key}` : key, variables: innerVars });
+        } else {
+          variables.push(prefix ? `${prefix}.${key}` : key);
+        }
+      }
+    }
+
+    extractTags(tags);
+
+    return {
+      fileId: file.id,
+      fileName: file.name,
+      variables,
+      loops,
+    };
+  } catch (error) {
+    return { error: `Kunde inte analysera mallen: ${error instanceof Error ? error.message : "Okänt fel"}` };
+  }
+}
+
+type FillTemplateParams = {
+  db: TenantScopedClient;
+  tenantId: string;
+  projectId: string;
+  userId: string;
+  sourceFileId: string;
+  data: Record<string, unknown>;
+  newFileName: string;
+};
+
+/**
+ * Fyller i en docx/pptx-mall med data och sparar som ny fil i projektet.
+ * Använder docxtemplater för att ersätta platshållare med verkliga värden.
+ */
+export async function fillDocxTemplate(params: FillTemplateParams) {
+  const { db, tenantId, projectId, userId, sourceFileId, data, newFileName } = params;
+
+  // Verify file extension matches source type
+  const sourceFile = await db.file.findUnique({
+    where: { id: sourceFileId },
+  });
+
+  if (!sourceFile) {
+    return { error: "Källfilen (mallen) hittades inte." };
+  }
+
+  if (!sourceFile.key || !sourceFile.bucket) {
+    return { error: "Källfilen har ingen lagringsreferens." };
+  }
+
+  const isDocx = sourceFile.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    sourceFile.name.toLowerCase().endsWith(".docx");
+  const isPptx = sourceFile.type === "application/vnd.openxmlformats-officedocument.presentationml.presentation" ||
+    sourceFile.name.toLowerCase().endsWith(".pptx");
+
+  if (!isDocx && !isPptx) {
+    return { error: "Källfilen måste vara en .docx eller .pptx-fil." };
+  }
+
+  // Validate newFileName extension matches source
+  const expectedExt = isDocx ? ".docx" : ".pptx";
+  if (!newFileName.toLowerCase().endsWith(expectedExt)) {
+    return { error: `Filnamnet måste sluta med ${expectedExt} (samma format som mallen).` };
+  }
+
+  try {
+    const buffer = await fetchFileFromMinIO(sourceFile.bucket, sourceFile.key);
+    const zip = new PizZip(buffer);
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+      // Return empty string for missing variables instead of throwing
+      nullGetter() {
+        return "";
+      },
+    });
+
+    doc.render(data);
+
+    const outputBuffer = doc.toBuffer();
+
+    // Extract text content for OCR/search
+    const textParts: string[] = [];
+    try {
+      const fullText = doc.getFullText();
+      if (fullText) textParts.push(fullText);
+    } catch {
+      // getFullText might fail for pptx, that's ok
+    }
+
+    // Also add the data values as searchable text
+    function flattenData(obj: Record<string, unknown>, prefix = ""): string[] {
+      const parts: string[] = [];
+      for (const [key, value] of Object.entries(obj)) {
+        if (Array.isArray(value)) {
+          for (const item of value) {
+            if (typeof item === "object" && item !== null) {
+              parts.push(...flattenData(item as Record<string, unknown>, `${prefix}${key}.`));
+            } else {
+              parts.push(String(item));
+            }
+          }
+        } else if (typeof value === "object" && value !== null) {
+          parts.push(...flattenData(value as Record<string, unknown>, `${prefix}${key}.`));
+        } else if (value !== null && value !== undefined) {
+          parts.push(String(value));
+        }
+      }
+      return parts;
+    }
+    textParts.push(...flattenData(data));
+
+    const textContent = textParts.join("\n");
+
+    const contentType = isDocx
+      ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      : "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+    const saved = await saveGeneratedDocumentToProject({
+      db,
+      tenantId,
+      projectId,
+      userId,
+      fileName: newFileName,
+      contentType,
+      buffer: new Uint8Array(outputBuffer),
+      content: textContent,
+    });
+
+    if ("error" in saved) {
+      return { error: saved.error };
+    }
+
+    const downloadUrl = await createPresignedDownloadUrl({
+      bucket: saved.bucket,
+      key: saved.key,
+      expiresInSeconds: 60 * 30,
+    });
+
+    return {
+      __fileCreated: true as const,
+      fileId: saved.fileId,
+      fileName: saved.name,
+      fileType: (isDocx ? "word" : "powerpoint") as "word" | "powerpoint",
+      fileSize: saved.size,
+      downloadUrl,
+      message: `Dokument "${newFileName}" skapat från mall "${sourceFile.name}"`,
+    };
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : "Okänt fel";
+    return { error: `Kunde inte fylla i mallen: ${msg}` };
+  }
+}
+
+/**
+ * Skapar ett analyzeDocumentTemplate-verktyg.
+ */
+export function createAnalyzeDocumentTemplateTool(ctx: SharedToolsContext) {
+  const { db, tenantId } = ctx;
+  return tool({
+    description:
+      "Analysera en dokumentmall (.docx eller .pptx) och extrahera alla platshållare. Mallen använder {variabel}-syntax för enkla variabler och {#loop}...{/loop} för upprepade sektioner. Returnerar en lista med variabler och loopar som behöver fyllas i. Använd detta INNAN fillDocumentTemplate för att förstå vilka data mallen behöver.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("Filens ID från fillistan"),
+    })),
+    execute: async ({ fileId }) => {
+      return analyzeDocxTemplate({ db, tenantId, fileId });
+    },
+  });
+}
+
+/**
+ * Skapar ett fillDocumentTemplate-verktyg.
+ */
+export function createFillDocumentTemplateTool(ctx: SharedToolsContext) {
+  const { db, tenantId, projectId, userId } = ctx;
+  return tool({
+    description:
+      "Fyll i en dokumentmall (.docx eller .pptx) med data och spara som ny fil. Mallen innehåller platshållare som {kundnamn}, {projektadress} och loopar som {#rader}{beskrivning} - {pris}{/rader}. Analysera mallen med analyzeDocumentTemplate först för att se vilka variabler som behövs. Data skickas som JSON-objekt där nycklar matchar variabelnamnen. Loopar skickas som arrayer av objekt.",
+    inputSchema: toolInputSchema(z.object({
+      sourceFileId: z.string().describe("ID för mallfilen"),
+      newFileName: z.string().describe("Namn på den nya filen (samma filändelse som mallen)"),
+      data: z.record(z.string(), z.unknown()).describe("JSON-objekt med data att fylla i. Nycklar matchar mallens platshållare. Loopar = arrayer av objekt, t.ex. { kundnamn: 'AB Bygg', rader: [{ beskrivning: 'Kabel', pris: 500 }] }"),
+    })),
+    execute: async ({ sourceFileId, newFileName, data }) => {
+      return fillDocxTemplate({
+        db, tenantId, projectId, userId, sourceFileId, data, newFileName,
+      });
+    },
+  });
 }
 
 // ============================================================================
