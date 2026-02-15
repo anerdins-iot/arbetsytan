@@ -15,6 +15,8 @@ import {
   Loader2,
   FolderOpen,
   PanelRightClose,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -118,6 +120,11 @@ type PersonalAiChatProps = {
   mode?: "sheet" | "docked";
 };
 
+const PANEL_WIDTH_STORAGE_KEY = "ay-ai-chat-panel-width";
+const DEFAULT_PANEL_WIDTH = 384; // 96 * 4 = w-96
+const MIN_PANEL_WIDTH = 320;
+const MAX_PANEL_WIDTH = 800;
+
 export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet" }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
   const [conversationId, setConversationId] = useState<string | null>(null);
@@ -133,6 +140,34 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Fullscreen state
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // Resizable panel state
+  const [panelWidth, setPanelWidth] = useState(() => {
+    if (typeof window === "undefined") return DEFAULT_PANEL_WIDTH;
+    try {
+      const stored = localStorage.getItem(PANEL_WIDTH_STORAGE_KEY);
+      return stored ? parseInt(stored, 10) : DEFAULT_PANEL_WIDTH;
+    } catch {
+      return DEFAULT_PANEL_WIDTH;
+    }
+  });
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStartX = useRef(0);
+  const resizeStartWidth = useRef(0);
+
+  // Persist panel width to localStorage
+  useEffect(() => {
+    if (mode === "docked") {
+      try {
+        localStorage.setItem(PANEL_WIDTH_STORAGE_KEY, String(panelWidth));
+      } catch {
+        // Ignore storage errors
+      }
+    }
+  }, [panelWidth, mode]);
 
   // Real-time file update via websocket
   const handleFileUpdated = useCallback((event: RealtimeFileEvent) => {
@@ -151,6 +186,56 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   }, []);
 
   useSocketEvent(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
+
+  // Fullscreen toggle
+  const toggleFullscreen = useCallback(() => {
+    setIsFullscreen((prev) => !prev);
+  }, []);
+
+  // Close fullscreen on Escape key
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsFullscreen(false);
+      }
+    };
+    window.addEventListener("keydown", handleEscape);
+    return () => window.removeEventListener("keydown", handleEscape);
+  }, [isFullscreen]);
+
+  // Resize handlers
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsResizing(true);
+    resizeStartX.current = e.clientX;
+    resizeStartWidth.current = panelWidth;
+  }, [panelWidth]);
+
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = resizeStartX.current - e.clientX; // Subtract because we're on the right side
+      const newWidth = Math.min(
+        MAX_PANEL_WIDTH,
+        Math.max(MIN_PANEL_WIDTH, resizeStartWidth.current + deltaX)
+      );
+      setPanelWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing]);
 
   // Project selector state
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
@@ -567,17 +652,29 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         <MessageCircle className="size-5 text-muted-foreground" />
         {t("title")}
       </div>
-      {mode === "docked" && (
+      <div className="flex items-center gap-1">
         <Button
           type="button"
           variant="ghost"
           size="icon"
           className="size-7 text-muted-foreground hover:text-foreground"
-          onClick={() => onOpenChange(false)}
+          onClick={toggleFullscreen}
+          aria-label={isFullscreen ? "Minimize" : "Maximize"}
         >
-          <PanelRightClose className="size-4" />
+          {isFullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
         </Button>
-      )}
+        {mode === "docked" && !isFullscreen && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:text-foreground"
+            onClick={() => onOpenChange(false)}
+          >
+            <PanelRightClose className="size-4" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 
@@ -1046,9 +1143,36 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   // Docked mode: render as a static sidebar panel
   if (mode === "docked") {
+    // Fullscreen mode - overlay everything
+    if (isFullscreen) {
+      return (
+        <>
+          <div className="fixed inset-0 z-50 flex flex-col bg-background/80 backdrop-blur-sm">
+            <div className="flex h-full flex-col border border-border bg-card shadow-2xl m-4 rounded-lg overflow-hidden">
+              {headerContent}
+              {chatBody}
+            </div>
+          </div>
+          {fileAnalysisUI}
+        </>
+      );
+    }
+
+    // Regular docked mode with resizable panel
     return (
       <>
-        <div className="flex h-full w-96 shrink-0 flex-col border-l border-border bg-card">
+        <div
+          className="relative flex h-full shrink-0 flex-col border-l border-border bg-card"
+          style={{ width: `${panelWidth}px` }}
+        >
+          {/* Resize handle */}
+          <div
+            className={cn(
+              "absolute left-0 top-0 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50",
+              isResizing && "bg-primary"
+            )}
+            onMouseDown={handleResizeStart}
+          />
           {headerContent}
           {chatBody}
         </div>
@@ -1060,20 +1184,34 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   // Sheet mode: render as overlay (default)
   return (
     <>
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent
-          side="right"
-          className="flex w-full flex-col border-l border-border bg-card p-0 sm:max-w-md"
-        >
-          <SheetHeader className="border-b border-border px-4 py-3">
-            <SheetTitle className="flex items-center gap-2 text-left">
-              <MessageCircle className="size-5 text-muted-foreground" />
-              {t("title")}
-            </SheetTitle>
-          </SheetHeader>
-          {chatBody}
-        </SheetContent>
-      </Sheet>
+      {/* Fullscreen mode - overlay everything */}
+      {isFullscreen && (
+        <div className="fixed inset-0 z-50 flex flex-col bg-background/80 backdrop-blur-sm">
+          <div className="flex h-full flex-col border border-border bg-card shadow-2xl m-4 rounded-lg overflow-hidden">
+            {headerContent}
+            {chatBody}
+          </div>
+        </div>
+      )}
+
+      {/* Regular sheet mode */}
+      {!isFullscreen && (
+        <Sheet open={open} onOpenChange={onOpenChange}>
+          <SheetContent
+            side="right"
+            className="flex w-full flex-col border-l border-border bg-card p-0 sm:max-w-md"
+          >
+            <SheetHeader className="border-b border-border px-4 py-3">
+              <SheetTitle className="flex items-center gap-2 text-left">
+                <MessageCircle className="size-5 text-muted-foreground" />
+                {t("title")}
+              </SheetTitle>
+            </SheetHeader>
+            {chatBody}
+          </SheetContent>
+        </Sheet>
+      )}
+
       {fileAnalysisUI}
     </>
   );
