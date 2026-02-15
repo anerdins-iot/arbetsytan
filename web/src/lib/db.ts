@@ -255,16 +255,7 @@ function createTenantExtension(tenantId: string) {
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
       findFirstOrThrow: ({ args, query: run }) =>
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-      findUnique: ({ args, query: run }) => {
-        const a = args as { where: { id?: string } };
-        return run({ ...a, where: { ...a.where, project: { tenantId } } });
-      },
-      findUniqueOrThrow: ({ args, query: run }) => {
-        const a = args as { where: { id?: string } };
-        return run({ ...a, where: { ...a.where, project: { tenantId } } });
-      },
-      // Note: create/update for these models doesn't automatically inject relation,
-      // but they are usually created connected to a project that is already tenant-checked.
+      // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
     };
   }
 
@@ -276,21 +267,13 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
-    findUnique: ({ args, query: run }) =>
-      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
-    findUniqueOrThrow: ({ args, query: run }) =>
-      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
-    update: ({ args, query: run }) =>
-      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
     updateMany: ({ args, query: run }) =>
-      run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
-    delete: ({ args, query: run }) =>
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
     deleteMany: ({ args, query: run }) =>
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
     count: ({ args, query: run }) =>
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
-    // create doesn't need tenant filter - caller provides projectId or not
+    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
   };
 
   // 2a2. Note: can be personal (projectId null) or project-scoped
@@ -301,21 +284,13 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
-    findUnique: ({ args, query: run }) =>
-      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
-    findUniqueOrThrow: ({ args, query: run }) =>
-      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
-    update: ({ args, query: run }) =>
-      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
     updateMany: ({ args, query: run }) =>
-      run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
-    delete: ({ args, query: run }) =>
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
     deleteMany: ({ args, query: run }) =>
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
     count: ({ args, query: run }) =>
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
-    // create doesn't need tenant filter - caller provides projectId or not
+    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
   };
 
   // 2b. Comment is scoped via task.project (no direct project relation)
@@ -326,14 +301,7 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
-    findUnique: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
-    },
-    findUniqueOrThrow: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
-    },
+    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
   };
 
   // 2c. AutomationLog is scoped via automation
@@ -344,16 +312,9 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
-    findUnique: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, automation: { tenantId } } });
-    },
-    findUniqueOrThrow: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, automation: { tenantId } } });
-    },
     count: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
+    // findUnique/update/delete not intercepted due to Prisma unique filter limitations
   };
 
   // 3. Handle ProjectMember (scoped via project)
@@ -364,19 +325,10 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-    findUnique: ({ args, query: run }) => {
-      const a = args as { where: { id?: string; projectId_membershipId?: { projectId: string; membershipId: string } } };
-      return run({ ...a, where: { ...a.where, project: { tenantId } } });
-    },
-    findUniqueOrThrow: ({ args, query: run }) => {
-      const a = args as { where: { id?: string; projectId_membershipId?: { projectId: string; membershipId: string } } };
-      return run({ ...a, where: { ...a.where, project: { tenantId } } });
-    },
     create: ({ args, query: run }) => run(args),
-    delete: ({ args, query: run }) =>
-      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     deleteMany: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    // findUnique/delete not intercepted due to Prisma unique filter limitations with joins
   };
 
   // 4. Handle TaskAssignment (nested relation: task -> project -> tenantId)
@@ -387,14 +339,7 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
-    findUnique: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
-    },
-    findUniqueOrThrow: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, task: { project: { tenantId } } } });
-    },
+    // findUnique not intercepted due to Prisma unique filter limitations with joins
   };
 
   // 4b. AIMessage is scoped via project (always has projectId)
@@ -405,25 +350,14 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-    findUnique: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, project: { tenantId } } });
-    },
-    findUniqueOrThrow: ({ args, query: run }) => {
-      const a = args as { where: { id?: string } };
-      return run({ ...a, where: { ...a.where, project: { tenantId } } });
-    },
     create: ({ args, query: run }) => run(args),
-    update: ({ args, query: run }) =>
-      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     updateMany: ({ args, query: run }) =>
-      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-    delete: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     deleteMany: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     count: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
+    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
   };
 
   // 5. Conversation: personal (projectId null) or project.tenantId

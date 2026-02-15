@@ -330,8 +330,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, title, description, priority, deadline }) => {
       await requireProject(tenantId, pid, userId);
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
       return createTaskShared({
-        db,
+        db: projectDb,
         projectId: pid,
         title,
         description,
@@ -355,8 +356,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, taskId, title, description, status, priority, deadline }) => {
       await requireProject(tenantId, pid, userId);
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
       return updateTaskShared({
-        db,
+        db: projectDb,
         projectId: pid,
         taskId,
         title,
@@ -396,8 +398,15 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (existing) return { error: "Uppgiften är redan tilldelad denna person." };
 
-      await db.taskAssignment.create({
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      await projectDb.taskAssignment.create({
         data: { taskId, membershipId },
+      });
+
+      // Efter taskAssignment.create, gör en dummy-uppdatering på task för att trigga realtid
+      await projectDb.task.update({
+        where: { id: taskId },
+        data: { updatedAt: new Date() },
       });
 
       return { id: task.id, message: `Uppgiften "${task.title}" har tilldelats.` };
@@ -424,8 +433,9 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       });
       if (!task) return { error: "Uppgiften hittades inte i detta projekt." };
 
-      await db.taskAssignment.deleteMany({ where: { taskId } });
-      await db.task.delete({ where: { id: taskId } });
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      await projectDb.taskAssignment.deleteMany({ where: { taskId } });
+      await projectDb.task.delete({ where: { id: taskId } });
 
       return {
         success: true,
@@ -626,6 +636,13 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       description: z.string().max(500).optional().describe("Beskrivning av arbetet"),
     })),
     execute: async ({ projectId: pid, taskId, minutes, hours, date, description }) => {
+      const projectIdCheck = validateDatabaseId(pid, "projectId");
+      if (!projectIdCheck.valid) return { error: projectIdCheck.error };
+      if (taskId) {
+        const taskIdCheck = validateDatabaseId(taskId, "taskId");
+        if (!taskIdCheck.valid) return { error: taskIdCheck.error };
+      }
+
       await requireProject(tenantId, pid, userId);
 
       if (!minutes && !hours) return { error: "Du måste ange antingen minutes eller hours." };
@@ -648,19 +665,24 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           date: new Date(date),
           description: description?.trim() || null,
         },
-        include: { task: { select: { title: true } } },
+        include: {
+          task: { select: { title: true } },
+          project: { select: { name: true } },
+        },
       });
 
+      const projectName = created.project?.name ?? "Okänt projekt";
       return {
         id: created.id,
         taskId: created.taskId,
         taskTitle: created.task?.title ?? null,
+        projectName,
         minutes: created.minutes,
         hours: Math.floor(created.minutes / 60),
         remainingMinutes: created.minutes % 60,
         date: created.date.toISOString().split("T")[0],
         description: created.description,
-        message: `Tidsrapport skapad: ${Math.floor(created.minutes / 60)}h ${created.minutes % 60}min på ${created.task?.title}`,
+        message: `Tidsrapport på ${totalMinutes} min loggad i projekt "${projectName}". ${Math.floor(created.minutes / 60)}h ${created.minutes % 60}min på ${created.task?.title}`,
       };
     },
   });
@@ -1404,8 +1426,29 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, membershipId }) => {
       await requirePermission("canManageTeam");
-      const result = await addProjectMemberAction(pid, membershipId);
-      if (!result.success) return { error: result.error || "Kunde inte lägga till medlemmen." };
+      await requireProject(tenantId, pid, userId);
+      
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+      
+      const membership = await projectDb.membership.findUnique({
+        where: { id: membershipId },
+      });
+      if (!membership) return { error: "Medlemmen hittades inte." };
+
+      const existing = await projectDb.projectMember.findUnique({
+        where: { projectId_membershipId: { projectId: pid, membershipId } },
+      });
+      if (existing) return { error: "Användaren är redan medlem i projektet." };
+
+      await projectDb.projectMember.create({
+        data: { projectId: pid, membershipId },
+      });
+
+      await logActivity(tenantId, pid, userId, "added", "member", membershipId, {
+        membershipId,
+        memberUserId: membership.userId,
+      });
+
       return { success: true, message: "Medlemmen har lagts till i projektet." };
     },
   });
@@ -1418,8 +1461,23 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ projectId: pid, membershipId }) => {
       await requirePermission("canManageTeam");
-      const result = await removeProjectMemberAction(pid, membershipId);
-      if (!result.success) return { error: result.error || "Kunde inte ta bort medlemmen." };
+      await requireProject(tenantId, pid, userId);
+      
+      const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
+
+      const membership = await projectDb.membership.findUnique({
+        where: { id: membershipId },
+      });
+
+      await projectDb.projectMember.deleteMany({
+        where: { projectId: pid, membershipId },
+      });
+
+      await logActivity(tenantId, pid, userId, "removed", "member", membershipId, {
+        membershipId,
+        memberUserId: membership?.userId ?? null,
+      });
+
       return { success: true, message: "Medlemmen har tagits bort från projektet." };
     },
   });
@@ -1594,6 +1652,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       if (content !== undefined) updateData.content = content;
       if (title !== undefined) updateData.title = title;
       if (category !== undefined) updateData.category = category;
+
+      if (Object.keys(updateData).length === 0) {
+        return { error: "Inga fält att uppdatera. Ange content, title eller category." };
+      }
 
       const projectDb = tenantDb(tenantId, { actorUserId: userId, projectId: pid });
       const note = await projectDb.note.update({

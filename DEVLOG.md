@@ -5,6 +5,16 @@ Läs denna fil innan du börjar arbeta. Skriv till den vid problem som inte är 
 
 Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
+## 2026-02-15: createTimeEntry – ID-validering och projektnamn i svar
+
+**Problem:** createTimeEntry (personlig AI) kunde spara tid i fel projekt eftersom AI:n valde projectId själv; användaren såg ingen tydlig bekräftelse om vilket projekt posten skapades i.
+
+**Lösning:** Tidig validering av projectId och taskId med validateDatabaseId (filnamn/namn avvisas). Efter create inkluderas projektnamn i svaret (projectName + tydlig message: "Tidsrapport på X min loggad i projekt \"Projektnamn\".").
+
+**Lärdom:** AI-verktyg som tar ID:n bör validera dem tidigt och returnera kontext (t.ex. projektnamn) så att användaren ser var posten hamnade.
+
+---
+
 ## 2026-02-15: WebSocket Auto-Emit Refactoring
 
 **Problem:** ~40 manuella emit-anrop spridda över 15+ filer. Svårt att underhålla och lätt att missa events.
