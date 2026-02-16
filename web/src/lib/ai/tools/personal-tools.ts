@@ -79,6 +79,10 @@ import {
   cancelInvitation as cancelInvitationAction,
 } from "@/actions/invitations";
 import {
+  searchWholesalers,
+  type WholesalerProduct,
+} from "@/lib/wholesaler-search";
+import {
   getNotificationPreferences,
   updateNotificationPreferences,
 } from "@/actions/notification-preferences";
@@ -3124,6 +3128,59 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Grossistsökning (Elektroskandia, Ahlsell) ─────────────
+
+  const searchSupplierProducts = tool({
+    description:
+      "GROSSISTSÖKNING: Sök produkter hos grossister Elektroskandia och Ahlsell. " +
+      "Använd detta när användaren behöver hitta material, artiklar, priser eller produktinformation för offerter eller inköp. " +
+      "Returnerar artikelnummer, namn, pris, enhet och lagerstatus från båda grossisterna.",
+    inputSchema: toolInputSchema(
+      z.object({
+        query: z.string().describe("Sökfras, t.ex. 'jordfelsbrytare 16A', 'kabel 5x2.5', 'rörböj 15mm'"),
+        supplier: z
+          .enum(["ELEKTROSKANDIA", "AHLSELL", "ALL"])
+          .optional()
+          .default("ALL")
+          .describe("Välj grossist: ELEKTROSKANDIA, AHLSELL, eller ALL för båda"),
+        maxResults: z.number().optional().default(10).describe("Max antal resultat per grossist"),
+      })
+    ),
+    execute: async ({ query, supplier = "ALL", maxResults = 10 }) => {
+      const suppliers: ("ELEKTROSKANDIA" | "AHLSELL")[] =
+        supplier === "ALL" ? ["ELEKTROSKANDIA", "AHLSELL"] : [supplier];
+
+      const { results, totalFound } = await searchWholesalers(query, {
+        suppliers,
+        limit: maxResults,
+      });
+
+      if (results.length === 0) {
+        return {
+          message: `Inga produkter hittades för "${query}" hos ${suppliers.join(" och ")}.`,
+          products: [],
+          totalFound: 0,
+        };
+      }
+
+      return {
+        message: `Hittade ${totalFound} produkter för "${query}". Visar ${results.length} resultat.`,
+        products: results.map((p) => ({
+          supplier: p.supplier,
+          articleNo: p.articleNo,
+          name: p.name,
+          brand: p.brand,
+          price: p.price ? `${p.price.toLocaleString("sv-SE")} kr` : "Pris ej tillgängligt",
+          unit: p.unit ?? "st",
+          inStock: p.inStock ? "I lager" : "Ej i lager",
+          url: p.productUrl,
+        })),
+        totalFound,
+        hint: "Använd artikelnummer och pris för att lägga till produkter i offerter med createQuote.",
+      };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -3240,6 +3297,8 @@ Returnera ENBART JSON i följande format:
     getMyRecentEmails,
     // Offert
     createQuote,
+    // Grossistsökning
+    searchSupplierProducts,
     // Chatthistorik
     searchConversations: searchConversationsTool,
   };
