@@ -715,6 +715,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       stopSpeakingRef.current?.();
       sendMessage({ text });
       setInputValue("");
+      // Clear any uploaded files after sending
+      setUploadedFiles([]);
     },
     [inputValue, isLoading, sendMessage]
   );
@@ -748,6 +750,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         sendMessage({ text: contextParts.join("") });
       }
       setAnalysisFile(null);
+      // Remove the uploaded file that was just used in OCR review
+      if (file.id) {
+        setUploadedFiles((prev) => prev.filter((f) => f.id !== file.id));
+      }
     },
     [analysisFile, sendMessage]
   );
