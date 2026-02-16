@@ -2785,6 +2785,94 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  const listDocumentTemplates = tool({
+    description:
+      "Lista tillgängliga dokumentmallar för organisationen. Mallar är Word-filer (.docx/.dotx) med platshållare som kan fyllas i automatiskt. Filtrera på kategori: OFFER (offert), REPORT (rapport), CONTRACT (avtal), PROTOCOL (protokoll), eller lämna tomt för alla.",
+    inputSchema: toolInputSchema(z.object({
+      category: z.string().optional().describe("Filtrera på kategori: OFFER, REPORT, CONTRACT, PROTOCOL"),
+    })),
+    execute: async ({ category }) => {
+      const templates = await db.documentTemplate.findMany({
+        where: category ? { category: category.toUpperCase() } : undefined,
+        include: { file: { select: { name: true } } },
+        orderBy: { name: "asc" },
+      });
+
+      if (templates.length === 0) {
+        return {
+          message: category
+            ? `Inga mallar hittades i kategorin "${category}".`
+            : "Inga dokumentmallar finns ännu. Användaren kan ladda upp Word-mallar via filhanteringen.",
+          templates: [],
+        };
+      }
+
+      return {
+        message: `Hittade ${templates.length} mall(ar).`,
+        templates: templates.map((t) => ({
+          id: t.id,
+          name: t.name,
+          description: t.description,
+          category: t.category,
+          fileId: t.fileId,
+          fileName: t.file.name,
+          variables: t.expectedVariables,
+        })),
+      };
+    },
+  });
+
+  const getTemplateDetails = tool({
+    description:
+      "Hämta detaljerad information om en dokumentmall, inklusive vilka platshållare/variabler som finns. Använd detta innan du fyller i en mall för att veta vilken data som behövs.",
+    inputSchema: toolInputSchema(z.object({
+      templateId: z.string().describe("ID för mallen"),
+    })),
+    execute: async ({ templateId }) => {
+      const template = await db.documentTemplate.findFirst({
+        where: { id: templateId },
+        include: { file: { select: { id: true, name: true } } },
+      });
+
+      if (!template) {
+        return { success: false, error: "Mallen hittades inte" };
+      }
+
+      // If we don't have cached variables, analyze the template
+      let variables = template.expectedVariables as string[] | null;
+      if (!variables) {
+        try {
+          const result = await analyzeDocxTemplate({ db, tenantId, fileId: template.file.id });
+          if ("variables" in result && result.variables) {
+            variables = result.variables;
+            await db.documentTemplate.update({
+              where: { id: templateId },
+              data: { expectedVariables: variables ?? undefined },
+            });
+          }
+        } catch {
+          // Ignore analysis errors
+        }
+      }
+
+      return {
+        success: true,
+        template: {
+          id: template.id,
+          name: template.name,
+          description: template.description,
+          category: template.category,
+          fileId: template.fileId,
+          fileName: template.file.name,
+          variables: variables ?? [],
+        },
+        hint: variables?.length
+          ? `Mallen har ${variables.length} variabler: ${variables.join(", ")}. Använd fillDocumentTemplate med dessa som nycklar.`
+          : "Använd analyzeDocumentTemplate för att hitta variablerna.",
+      };
+    },
+  });
+
   // ─── E-postsökning ────────────────────────────────────
 
   const searchMyEmails = tool({
@@ -2985,6 +3073,8 @@ Returnera ENBART JSON i följande format:
     // Dokumentmallar (docxtemplater)
     analyzeDocumentTemplate,
     fillDocumentTemplate,
+    listDocumentTemplates,
+    getTemplateDetails,
     // Filer
     listFiles,
     getProjectFiles: listFiles,

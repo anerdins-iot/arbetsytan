@@ -36,6 +36,7 @@ model Tenant {
   emailChunks    EmailChunk[]
   emailConversations  EmailConversation[]
   messageChunks MessageChunk[]
+  documentTemplates   DocumentTemplate[]
 }
 
 model User {
@@ -295,6 +296,31 @@ model File {
 
   chunks DocumentChunk[]
   analyses FileAnalysis[]
+  template DocumentTemplate?
+}
+
+// ─────────────────────────────────────────
+// Document Templates
+// ─────────────────────────────────────────
+
+model DocumentTemplate {
+  id                String   @id @default(cuid())
+  name              String
+  description       String?
+  category          String   // "OFFER", "REPORT", "CONTRACT", "PROTOCOL", etc.
+  
+  fileId            String   @unique
+  file              File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  
+  expectedVariables Json?    // Cache av variabler från mallanalys
+  
+  tenantId          String
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([tenantId, category])
 }
 
 // ─────────────────────────────────────────

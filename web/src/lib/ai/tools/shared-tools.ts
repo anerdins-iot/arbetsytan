@@ -1406,6 +1406,119 @@ export function createFillDocumentTemplateTool(ctx: SharedToolsContext) {
 }
 
 // ============================================================================
+// Document Template Tools (list and get details for templates)
+// ============================================================================
+
+/**
+ * Creates a tool to list available document templates.
+ */
+export function createListDocumentTemplatesTool(ctx: SharedToolsContext) {
+  const { db } = ctx;
+  return tool({
+    description:
+      "Lista tillgängliga dokumentmallar för organisationen. Mallar är Word-filer (.docx/.dotx) med platshållare som kan fyllas i automatiskt. Filtrera på kategori: OFFER (offert), REPORT (rapport), CONTRACT (avtal), PROTOCOL (protokoll), eller lämna tomt för att visa alla.",
+    inputSchema: toolInputSchema(z.object({
+      category: z.string().optional().describe("Filtrera på kategori: OFFER, REPORT, CONTRACT, PROTOCOL, etc."),
+    })),
+    execute: async ({ category }) => {
+      const templates = await db.documentTemplate.findMany({
+        where: category ? { category: category.toUpperCase() } : undefined,
+        include: {
+          file: { select: { name: true } },
+        },
+        orderBy: { name: "asc" },
+      });
+
+      if (templates.length === 0) {
+        return {
+          message: category
+            ? `Inga mallar hittades i kategorin "${category}". Användaren kan ladda upp mallar via filhanteringen.`
+            : "Inga dokumentmallar finns ännu. Användaren kan ladda upp Word-mallar (.docx) och markera dem som mallar.",
+          templates: [],
+        };
+      }
+
+      return {
+        message: `Hittade ${templates.length} mall(ar)${category ? ` i kategorin "${category}"` : ""}.`,
+        templates: templates.map((t) => ({
+          id: t.id,
+          name: t.name,
+          description: t.description,
+          category: t.category,
+          fileId: t.fileId,
+          fileName: t.file.name,
+          variables: t.expectedVariables,
+        })),
+      };
+    },
+  });
+}
+
+/**
+ * Creates a tool to get detailed information about a specific template.
+ */
+export function createGetTemplateDetailsTool(ctx: SharedToolsContext) {
+  const { db, tenantId } = ctx;
+  return tool({
+    description:
+      "Hämta detaljerad information om en dokumentmall, inklusive vilka platshållare/variabler som finns i mallen. Använd detta innan du fyller i en mall för att veta vilken data som behövs.",
+    inputSchema: toolInputSchema(z.object({
+      templateId: z.string().describe("ID för mallen att hämta detaljer för"),
+    })),
+    execute: async ({ templateId }) => {
+      const template = await db.documentTemplate.findFirst({
+        where: { id: templateId },
+        include: {
+          file: { select: { id: true, name: true, bucket: true, key: true } },
+        },
+      });
+
+      if (!template) {
+        return { success: false, error: "Mallen hittades inte" };
+      }
+
+      // If we don't have cached variables, analyze the template
+      let variables = template.expectedVariables as string[] | null;
+      if (!variables && template.file.bucket && template.file.key) {
+        try {
+          const result = await analyzeDocxTemplate({
+            db,
+            tenantId,
+            fileId: template.file.id,
+          });
+          if ("variables" in result && result.variables) {
+            variables = result.variables;
+            // Cache the variables for next time
+            await db.documentTemplate.update({
+              where: { id: templateId },
+              data: { expectedVariables: variables ?? undefined },
+            });
+          }
+        } catch {
+          // Ignore analysis errors, just return without variables
+        }
+      }
+
+      return {
+        success: true,
+        template: {
+          id: template.id,
+          name: template.name,
+          description: template.description,
+          category: template.category,
+          fileId: template.fileId,
+          fileName: template.file.name,
+          variables: variables ?? [],
+        },
+        hint: variables?.length
+          ? `Mallen har ${variables.length} variabler: ${variables.join(", ")}. Använd fillDocumentTemplate med dessa som nycklar i data-objektet.`
+          : "Inga variabler hittades i mallen, eller mallen har inte analyserats än. Använd analyzeDocumentTemplate för att hitta variablerna.",
+      };
+    },
+  });
+}
+
+// ============================================================================
 // Schedule parsing (natural language → triggerAt + recurrence)
 // ============================================================================
 
