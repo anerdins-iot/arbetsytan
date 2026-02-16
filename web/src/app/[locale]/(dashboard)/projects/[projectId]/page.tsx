@@ -12,7 +12,7 @@ import { getProjectFiles } from "@/actions/files";
 import { getProjectTimeSummary, getTimeEntriesByProject } from "@/actions/time-entries";
 import { getNotes } from "@/actions/notes";
 import { listAutomations } from "@/actions/automations";
-import { getSession } from "@/lib/auth";
+import { getSession, getMyPermissions } from "@/lib/auth";
 import { ProjectView } from "@/components/projects/project-view";
 
 type Props = {
@@ -33,6 +33,7 @@ async function ProjectContent({
     projectResult,
     tasksResult,
     session,
+    permissions,
     activityResult,
     filesResult,
     timeEntriesResult,
@@ -43,6 +44,7 @@ async function ProjectContent({
     getProject(projectId),
     getTasks(projectId),
     getSession(),
+    getMyPermissions(),
     getActivityLog(projectId, { page: 1, pageSize: 5 }),
     getProjectFiles(projectId),
     getTimeEntriesByProject(projectId),
@@ -69,6 +71,7 @@ async function ProjectContent({
       project={projectResult.project}
       tasks={tasks}
       currentUserId={session.user.id}
+      permissions={permissions}
       commentsByTaskId={commentsByTaskId}
       recentActivity={activityResult.success ? activityResult.items : []}
       files={filesResult.success ? filesResult.files : []}

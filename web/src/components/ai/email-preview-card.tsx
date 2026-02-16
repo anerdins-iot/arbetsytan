@@ -272,7 +272,7 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
 
       {/* Full HTML preview dialog */}
       <Dialog open={showFullPreview} onOpenChange={setShowFullPreview}>
-        <DialogContent className="max-w-4xl max-h-[90vh]">
+        <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] sm:max-w-5xl">
           <DialogHeader>
             <DialogTitle>E-postförhandsgranskning</DialogTitle>
             <DialogDescription>

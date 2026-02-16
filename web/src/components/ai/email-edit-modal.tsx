@@ -62,7 +62,7 @@ export function EmailEditModal({ open, onOpenChange, data, onSave }: EmailEditMo
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>Redigera e-post</DialogTitle>
           <DialogDescription>

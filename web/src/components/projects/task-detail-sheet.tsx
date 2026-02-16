@@ -56,6 +56,9 @@ type TaskDetailSheetProps = {
   projectId: string;
   members: ProjectMember[];
   currentUserId: string;
+  canAssignTasks?: boolean;
+  canUpdateTasks?: boolean;
+  canDeleteTasks?: boolean;
   commentsByTaskId: Record<string, CommentItem[]>;
 };
 
@@ -79,6 +82,9 @@ export function TaskDetailSheet({
   projectId,
   members,
   currentUserId,
+  canAssignTasks = true,
+  canUpdateTasks = true,
+  canDeleteTasks = true,
   commentsByTaskId,
 }: TaskDetailSheetProps) {
   const t = useTranslations("projects.kanban");
@@ -179,7 +185,7 @@ export function TaskDetailSheet({
               name="title"
               defaultValue={task.title}
               required
-              disabled={isPending}
+              disabled={isPending || !canUpdateTasks}
             />
           </div>
 
@@ -192,14 +198,14 @@ export function TaskDetailSheet({
               name="description"
               defaultValue={task.description ?? ""}
               rows={4}
-              disabled={isPending}
+              disabled={isPending || !canUpdateTasks}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>{tDetail("taskPriority")}</Label>
-              <Select name="priority" defaultValue={task.priority}>
+              <Select name="priority" defaultValue={task.priority} disabled={!canUpdateTasks}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -215,7 +221,7 @@ export function TaskDetailSheet({
 
             <div className="space-y-2">
               <Label>{tDetail("taskStatus")}</Label>
-              <Select name="status" defaultValue={task.status}>
+              <Select name="status" defaultValue={task.status} disabled={!canUpdateTasks}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -238,7 +244,7 @@ export function TaskDetailSheet({
                 name="deadline"
                 type="date"
                 defaultValue={deadlineValue}
-                disabled={isPending}
+                disabled={isPending || !canUpdateTasks}
               />
               {isOverdue && (
                 <span className="inline-flex items-center gap-1 text-xs text-destructive">
@@ -251,7 +257,7 @@ export function TaskDetailSheet({
 
           <Separator />
 
-          {/* Assignees section */}
+          {/* Assignees section - assign/unassign only when canAssignTasks */}
           <div className="space-y-2">
             <Label>{tDetail("assignees")}</Label>
             <div className="flex flex-wrap items-center gap-2">
@@ -262,14 +268,16 @@ export function TaskDetailSheet({
                 >
                   <User className="size-3" />
                   {a.user.name || a.user.email.split("@")[0]}
-                  <button
-                    type="button"
-                    onClick={() => handleUnassign(a.membershipId)}
-                    className="ml-1 rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive"
-                    disabled={isPending}
-                  >
-                    <X className="size-3" />
-                  </button>
+                  {canAssignTasks && (
+                    <button
+                      type="button"
+                      onClick={() => handleUnassign(a.membershipId)}
+                      className="ml-1 rounded-full p-0.5 hover:bg-destructive/10 hover:text-destructive"
+                      disabled={isPending}
+                    >
+                      <X className="size-3" />
+                    </button>
+                  )}
                 </span>
               ))}
 
@@ -279,7 +287,7 @@ export function TaskDetailSheet({
                 </span>
               )}
 
-              {unassignedMembers.length > 0 && (
+              {canAssignTasks && unassignedMembers.length > 0 && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
@@ -359,16 +367,18 @@ export function TaskDetailSheet({
               </div>
             ) : (
               <>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowDeleteConfirm(true)}
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="mr-1 size-4" />
-                  {tCommon("delete")}
-                </Button>
+                {canDeleteTasks && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="mr-1 size-4" />
+                    {tCommon("delete")}
+                  </Button>
+                )}
                 <div className="flex-1" />
                 <Button
                   type="button"
@@ -378,9 +388,11 @@ export function TaskDetailSheet({
                 >
                   {tCommon("cancel")}
                 </Button>
-                <Button type="submit" disabled={isPending}>
-                  {isPending ? tDetail("saving") : tCommon("save")}
-                </Button>
+                {canUpdateTasks && (
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? tDetail("saving") : tCommon("save")}
+                  </Button>
+                )}
               </>
             )}
           </SheetFooter>

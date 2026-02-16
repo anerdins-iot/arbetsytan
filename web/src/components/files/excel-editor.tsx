@@ -167,7 +167,7 @@ export function ExcelEditor({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl p-0" showCloseButton={true}>
+      <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-7xl" showCloseButton={true}>
         <div className="flex max-h-[90vh] flex-col">
           <DialogHeader className="border-b border-border px-6 py-4">
             <DialogTitle className="flex items-center gap-2">

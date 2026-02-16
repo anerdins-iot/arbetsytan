@@ -12,6 +12,7 @@ type KanbanColumnProps = {
   tasks: TaskItem[];
   projectId: string;
   members: ProjectMember[];
+  canAssignTasks: boolean;
   isPending: boolean;
   onTaskClick?: (task: TaskItem) => void;
 };
@@ -21,6 +22,7 @@ export function KanbanColumn({
   tasks,
   projectId,
   members,
+  canAssignTasks,
   isPending,
   onTaskClick,
 }: KanbanColumnProps) {
@@ -59,6 +61,7 @@ export function KanbanColumn({
               task={task}
               projectId={projectId}
               members={members}
+              canAssignTasks={canAssignTasks}
               onTaskClick={onTaskClick}
             />
           ))

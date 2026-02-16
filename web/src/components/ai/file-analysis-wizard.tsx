@@ -121,7 +121,7 @@ export function FileAnalysisWizard({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-md"
+        className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-lg"
         showCloseButton={step !== 3}
       >
         <DialogHeader className="border-b border-border px-4 py-3">

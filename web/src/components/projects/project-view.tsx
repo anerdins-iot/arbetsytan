@@ -27,11 +27,13 @@ import type { NoteItem } from "@/actions/notes";
 import type { AutomationItem } from "@/actions/automations";
 import { AutomationsManager } from "@/components/automations";
 import type { RealtimeProjectUpdatedEvent } from "@/lib/socket-events";
+import type { PermissionMap } from "@/lib/permissions";
 
 type ProjectViewProps = {
   project: ProjectDetail;
   tasks?: TaskItem[];
   currentUserId: string;
+  permissions: PermissionMap;
   commentsByTaskId: Record<string, CommentItem[]>;
   recentActivity: ActivityLogItem[];
   files: FileItem[];
@@ -47,6 +49,7 @@ export function ProjectView({
   project,
   tasks = [],
   currentUserId,
+  permissions,
   commentsByTaskId,
   recentActivity,
   files,
@@ -172,6 +175,7 @@ export function ProjectView({
             projectId={project.id}
             members={project.members}
             currentUserId={currentUserId}
+            permissions={permissions}
             commentsByTaskId={commentsByTaskId}
             initialTaskId={initialTaskId}
           />

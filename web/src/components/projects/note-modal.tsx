@@ -454,7 +454,7 @@ export function NoteModal({
   if (mode === "view" && note) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-[700px]">
+        <DialogContent className="flex max-h-[90vh] flex-col sm:max-w-2xl">
           <DialogHeader className="flex-shrink-0">
             <div className="flex items-start justify-between gap-4 pr-8">
               <div className="flex-1 space-y-2">
@@ -598,7 +598,7 @@ export function NoteModal({
   // CREATE / EDIT MODE
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-[700px]">
+      <DialogContent className="flex max-h-[90vh] flex-col sm:max-w-2xl">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>
             {mode === "create" ? t("createNote") : t("editNote")}

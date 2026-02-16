@@ -12,6 +12,7 @@ import { prisma, tenantDb } from "./db";
 import type { Role } from "../../generated/prisma/client";
 import {
   type Permission,
+  type PermissionMap,
   parsePermissionOverrides,
   resolvePermissions,
 } from "./permissions";
@@ -88,6 +89,18 @@ export async function hasPermission(
   tenantId: string,
   permission: Permission
 ): Promise<boolean> {
+  const resolved = await getPermissions(userId, tenantId);
+  return resolved ? resolved[permission] : false;
+}
+
+/**
+ * Returns the full permission map for a user in a tenant, or null if no membership.
+ * Use for server components / actions that need to pass permissions to UI.
+ */
+export async function getPermissions(
+  userId: string,
+  tenantId: string
+): Promise<PermissionMap | null> {
   const db = tenantDb(tenantId);
   const membership = await db.membership.findFirst({
     where: { userId },
@@ -98,15 +111,26 @@ export async function hasPermission(
   });
 
   if (!membership) {
-    return false;
+    return null;
   }
 
-  const resolved = resolvePermissions(
-    membership.role,
+  return resolvePermissions(
+    membership.role as import("../../generated/prisma/client").Role,
     parsePermissionOverrides(membership.permissions)
   );
+}
 
-  return resolved[permission];
+/**
+ * Returns the current session user's permission map. Redirects to login if not authenticated.
+ * Use in server components (e.g. project page) to pass permissions to client components.
+ */
+export async function getMyPermissions(): Promise<PermissionMap> {
+  const authResult = await requireAuth();
+  const map = await getPermissions(authResult.userId, authResult.tenantId);
+  if (!map) {
+    throw new Error("FORBIDDEN");
+  }
+  return map;
 }
 
 export async function requirePermission(

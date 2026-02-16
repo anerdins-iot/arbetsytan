@@ -288,8 +288,8 @@ export function FileDetailDialog({
   if (showTemplateFiller && templateAnalysis && projectId) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl p-0" showCloseButton={false}>
-          <div className="flex max-h-[85vh] flex-col">
+        <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-3xl" showCloseButton={false}>
+          <div className="flex max-h-[90vh] flex-col">
             <TemplateFiller
               analysis={templateAnalysis}
               projectId={projectId}
@@ -314,8 +314,8 @@ export function FileDetailDialog({
   if (isEditing && isWord) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-4xl p-0" showCloseButton={false}>
-          <div className="max-h-[85vh] overflow-hidden">
+        <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-5xl" showCloseButton={false}>
+          <div className="max-h-[90vh] overflow-hidden">
             <WordEditor
               fileId={file.id}
               fileName={file.name}
@@ -359,8 +359,8 @@ export function FileDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl p-0" showCloseButton={false}>
-        <div className="flex max-h-[85vh] flex-col">
+      <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-7xl" showCloseButton={false}>
+        <div className="flex max-h-[90vh] flex-col">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-5 py-3">
             <div className="flex min-w-0 items-center gap-3">
@@ -456,7 +456,7 @@ export function FileDetailDialog({
 
             {/* Preview Tab */}
             <TabsContent value="preview" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(85vh-8rem)]">
+              <ScrollArea className="h-[calc(90vh-8rem)]">
                 <div className="p-5">
                   {isImage ? (
                     <img
@@ -573,36 +573,30 @@ export function FileDetailDialog({
 
             {/* OCR Text Tab */}
             <TabsContent value="ocr" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(85vh-8rem)]">
+              <ScrollArea className="h-[calc(90vh-8rem)]">
                 <div className="space-y-4 p-5">
-                  {hasOcr ? (
-                    <div className="rounded-md border border-border bg-muted/20 p-4">
-                      <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed text-foreground">
-                        {file.ocrText}
-                      </pre>
-                    </div>
-                  ) : (
-                    <div className="flex h-48 items-center justify-center rounded-md border border-border bg-muted/20">
-                      <div className="text-center">
-                        <ScanText className="mx-auto mb-2 size-10 text-muted-foreground" />
-                        <p className="text-sm text-muted-foreground">{t("noOcrText")}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Editable OCR text */}
+                  {/* Editable OCR text - shows existing text or empty for editing */}
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="ocr-text" className="text-sm font-medium">
                       {t("ocrTitle")}
                     </Label>
-                    <Textarea
-                      id="ocr-text"
-                      value={ocrText}
-                      onChange={(e) => setOcrText(e.target.value)}
-                      placeholder={t("ocrTitle")}
-                      rows={6}
-                      className="resize-y font-mono text-sm"
-                    />
+                    {hasOcr || ocrText ? (
+                      <Textarea
+                        id="ocr-text"
+                        value={ocrText}
+                        onChange={(e) => setOcrText(e.target.value)}
+                        placeholder={t("ocrTitle")}
+                        rows={12}
+                        className="resize-y font-mono text-sm"
+                      />
+                    ) : (
+                      <div className="flex h-48 items-center justify-center rounded-md border border-border bg-muted/20">
+                        <div className="text-center">
+                          <ScanText className="mx-auto mb-2 size-10 text-muted-foreground" />
+                          <p className="text-sm text-muted-foreground">{t("noOcrText")}</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* User description */}
@@ -642,7 +636,7 @@ export function FileDetailDialog({
 
             {/* AI Analysis Tab */}
             <TabsContent value="ai" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(85vh-8rem)]">
+              <ScrollArea className="h-[calc(90vh-8rem)]">
                 <div className="p-5">
                   {hasAiAnalysis ? (
                     <div className="space-y-4">
@@ -676,7 +670,7 @@ export function FileDetailDialog({
 
             {/* Info Tab */}
             <TabsContent value="info" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(85vh-8rem)]">
+              <ScrollArea className="h-[calc(90vh-8rem)]">
                 <div className="p-5">
                   <div className="space-y-3 rounded-md border border-border p-4">
                     <div className="flex items-center justify-between border-b border-border pb-3">

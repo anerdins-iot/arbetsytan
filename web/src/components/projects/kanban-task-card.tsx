@@ -29,6 +29,7 @@ type KanbanTaskCardProps = {
   task: TaskItem;
   projectId: string;
   members: ProjectMember[];
+  canAssignTasks?: boolean;
   isDragging?: boolean;
   onTaskClick?: (task: TaskItem) => void;
 };
@@ -44,6 +45,7 @@ export function KanbanTaskCard({
   task,
   projectId,
   members,
+  canAssignTasks = true,
   isDragging = false,
   onTaskClick,
 }: KanbanTaskCardProps) {
@@ -150,7 +152,7 @@ export function KanbanTaskCard({
             )}
           </div>
 
-          {/* Assignees */}
+          {/* Assignees - only show assign/unassign UI when user has permission */}
           <div className="flex items-center gap-1">
             {task.assignments.map((a) => (
               <span
@@ -159,17 +161,19 @@ export function KanbanTaskCard({
               >
                 <User className="size-3" />
                 {a.user.name || a.user.email.split("@")[0]}
-                <button
-                  onClick={() => handleUnassign(a.membershipId)}
-                  className="hidden group-hover:inline-flex"
-                  disabled={isPending}
-                >
-                  <X className="size-3" />
-                </button>
+                {canAssignTasks && (
+                  <button
+                    onClick={() => handleUnassign(a.membershipId)}
+                    className="hidden group-hover:inline-flex"
+                    disabled={isPending}
+                  >
+                    <X className="size-3" />
+                  </button>
+                )}
               </span>
             ))}
 
-            {unassignedMembers.length > 0 && (
+            {canAssignTasks && unassignedMembers.length > 0 && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button

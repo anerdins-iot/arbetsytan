@@ -223,7 +223,7 @@ export function FileCreatedCard({ data, onDownload }: Props) {
       {/* PDF Preview Dialog */}
       {data.fileType === "pdf" && (
         <Dialog open={showPreview} onOpenChange={setShowPreview}>
-          <DialogContent className="max-w-4xl max-h-[90vh]">
+          <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] sm:max-w-5xl">
             <DialogHeader>
               <DialogTitle>Förhandsgranskning</DialogTitle>
               <DialogDescription>{data.fileName}</DialogDescription>

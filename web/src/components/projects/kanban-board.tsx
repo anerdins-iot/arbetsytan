@@ -19,6 +19,7 @@ import { updateTaskStatus } from "@/actions/tasks";
 import type { TaskItem } from "@/actions/tasks";
 import type { ProjectMember } from "@/actions/projects";
 import type { CommentItem } from "@/actions/comments";
+import type { PermissionMap } from "@/lib/permissions";
 import { KanbanColumn } from "./kanban-column";
 import { KanbanTaskCard } from "./kanban-task-card";
 import { CreateTaskDialog } from "./create-task-dialog";
@@ -30,6 +31,7 @@ type KanbanBoardProps = {
   projectId: string;
   members: ProjectMember[];
   currentUserId: string;
+  permissions: PermissionMap;
   commentsByTaskId: Record<string, CommentItem[]>;
   initialTaskId?: string;
 };
@@ -42,6 +44,7 @@ export function KanbanBoard({
   projectId,
   members,
   currentUserId,
+  permissions,
   commentsByTaskId,
   initialTaskId,
 }: KanbanBoardProps) {
@@ -136,15 +139,22 @@ export function KanbanBoard({
     setDetailOpen(true);
   }
 
+  const canCreateTasks = permissions.canCreateTasks;
+  const canAssignTasks = permissions.canAssignTasks;
+  const canDeleteTasks = permissions.canDeleteTasks;
+  const canUpdateTasks = permissions.canUpdateTasks;
+
   if (tasks.length === 0) {
     return (
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-foreground">{t("title")}</h2>
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
-            <Plus className="mr-1 size-4" />
-            {t("addTask")}
-          </Button>
+          {canCreateTasks && (
+            <Button size="sm" onClick={() => setCreateOpen(true)}>
+              <Plus className="mr-1 size-4" />
+              {t("addTask")}
+            </Button>
+          )}
         </div>
         <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-border">
           <p className="text-muted-foreground">{t("emptyBoard")}</p>
@@ -163,10 +173,12 @@ export function KanbanBoard({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-foreground">{t("title")}</h2>
-        <Button size="sm" onClick={() => setCreateOpen(true)}>
-          <Plus className="mr-1 size-4" />
-          {t("addTask")}
-        </Button>
+        {canCreateTasks && (
+          <Button size="sm" onClick={() => setCreateOpen(true)}>
+            <Plus className="mr-1 size-4" />
+            {t("addTask")}
+          </Button>
+        )}
       </div>
 
       <KanbanFiltersBar
@@ -189,6 +201,7 @@ export function KanbanBoard({
               tasks={tasksByStatus[status]}
               projectId={projectId}
               members={members}
+              canAssignTasks={canAssignTasks}
               isPending={isPending}
               onTaskClick={handleTaskClick}
             />
@@ -201,6 +214,7 @@ export function KanbanBoard({
               task={activeTask}
               projectId={projectId}
               members={members}
+              canAssignTasks={canAssignTasks}
               isDragging
             />
           ) : null}
@@ -212,6 +226,7 @@ export function KanbanBoard({
         onOpenChange={setCreateOpen}
         projectId={projectId}
         members={members}
+        canAssignTasks={canAssignTasks}
       />
 
       <TaskDetailSheet
@@ -221,6 +236,9 @@ export function KanbanBoard({
         projectId={projectId}
         members={members}
         currentUserId={currentUserId}
+        canAssignTasks={canAssignTasks}
+        canUpdateTasks={canUpdateTasks}
+        canDeleteTasks={canDeleteTasks}
         commentsByTaskId={commentsByTaskId}
       />
     </div>

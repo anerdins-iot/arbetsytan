@@ -133,7 +133,7 @@ export function FilePreviewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] flex-col gap-4 sm:max-w-5xl">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-4 max-w-[calc(100%-2rem)] sm:max-w-6xl">
         <DialogHeader>
           <DialogTitle className="truncate pr-8 text-base">
             {fileName}

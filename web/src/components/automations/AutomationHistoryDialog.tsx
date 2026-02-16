@@ -31,7 +31,7 @@ export function AutomationHistoryDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-h-[90vh] sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{t("historyTitle")}</DialogTitle>
         </DialogHeader>

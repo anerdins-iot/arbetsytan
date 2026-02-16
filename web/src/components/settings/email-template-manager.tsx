@@ -255,7 +255,7 @@ export function EmailTemplateManager({ templates }: Props) {
 
       {/* Edit Dialog */}
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto sm:max-w-5xl">
           <DialogHeader>
             <DialogTitle>
               Redigera e-postmall:{" "}
@@ -370,7 +370,7 @@ export function EmailTemplateManager({ templates }: Props) {
 
       {/* Preview Dialog */}
       <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh]">
+        <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] sm:max-w-5xl">
           <DialogHeader>
             <DialogTitle>Förhandsgranskning</DialogTitle>
             {previewSubject && (

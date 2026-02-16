@@ -121,7 +121,7 @@ export function OcrReviewDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[85vh] flex-col gap-0 p-0 sm:max-w-lg">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 p-0 sm:max-w-xl">
         <DialogHeader className="border-b border-border px-4 py-3">
           <DialogTitle className="flex items-center gap-2 text-base">
             <FileText className="size-5 text-muted-foreground" />

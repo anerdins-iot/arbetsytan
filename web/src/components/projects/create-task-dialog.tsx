@@ -30,6 +30,7 @@ type CreateTaskDialogProps = {
   onOpenChange: (open: boolean) => void;
   projectId: string;
   members: ProjectMember[];
+  canAssignTasks?: boolean;
 };
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"] as const;
@@ -39,6 +40,7 @@ export function CreateTaskDialog({
   onOpenChange,
   projectId,
   members,
+  canAssignTasks = true,
 }: CreateTaskDialogProps) {
   const t = useTranslations("projects.kanban.createTask");
   const tPriority = useTranslations("projects.kanban.priority");
@@ -124,7 +126,7 @@ export function CreateTaskDialog({
             </div>
           </div>
 
-          {members.length > 0 && (
+          {canAssignTasks && members.length > 0 && (
             <div className="space-y-2">
               <Label>{t("taskAssign")}</Label>
               <Select name="assignTo" defaultValue="__none__">
