@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { usePathname } from "@/i18n/routing"
 import { Link } from "@/i18n/routing"
@@ -8,6 +9,10 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Separator } from "@/components/ui/separator"
+import { Badge } from "@/components/ui/badge"
+import { useSocketEvent } from "@/contexts/socket-context"
+import { SOCKET_EVENTS } from "@/lib/socket-events"
+import { getEmailUnreadCount } from "@/actions/email-conversations"
 
 type SidebarProps = {
   collapsed: boolean
@@ -26,6 +31,80 @@ const navItems = [
 const bottomItems = [
   { href: "/settings", icon: Settings, labelKey: "settings" as const },
 ] as const
+
+function EmailNavLink({
+  href,
+  icon: Icon,
+  label,
+  isActive,
+  collapsed,
+}: {
+  href: string
+  icon: typeof Mail
+  label: string
+  isActive: boolean
+  collapsed: boolean
+}) {
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  const refresh = () => {
+    getEmailUnreadCount().then((r) => setUnreadCount(r.unreadCount))
+  }
+
+  useEffect(() => {
+    refresh()
+  }, [])
+
+  useSocketEvent(SOCKET_EVENTS.emailNew, refresh)
+
+  const linkContent = (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+        isActive
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+        collapsed && "justify-center px-2"
+      )}
+    >
+      <span className="relative inline-flex shrink-0">
+        <Icon className="size-5" />
+        {unreadCount > 0 && (
+          <span
+            className={cn(
+              "absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-destructive-foreground",
+              collapsed && "-right-0.5 -top-0.5"
+            )}
+          >
+            {unreadCount > 99 ? "99+" : unreadCount}
+          </span>
+        )}
+      </span>
+      {!collapsed && (
+        <>
+          <span>{label}</span>
+          {unreadCount > 0 && (
+            <Badge variant="secondary" className="ml-auto size-5 rounded-full p-0 text-xs">
+              {unreadCount > 99 ? "99+" : unreadCount}
+            </Badge>
+          )}
+        </>
+      )}
+    </Link>
+  )
+
+  if (collapsed) {
+    return (
+      <Tooltip delayDuration={0}>
+        <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+        <TooltipContent side="right">{label}</TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return <div>{linkContent}</div>
+}
 
 export function Sidebar({ collapsed, onToggle }: SidebarProps) {
   const t = useTranslations("nav")
@@ -56,6 +135,19 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
           const label = t(item.labelKey)
+
+          if (item.href === "/email") {
+            return (
+              <EmailNavLink
+                key={item.href}
+                href={item.href}
+                icon={item.icon}
+                label={label}
+                isActive={isActive}
+                collapsed={collapsed}
+              />
+            )
+          }
 
           const linkContent = (
             <Link

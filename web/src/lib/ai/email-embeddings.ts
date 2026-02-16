@@ -229,6 +229,8 @@ export async function searchEmails(
     similarity: number;
     createdAt: Date;
     direction: "INBOUND" | "OUTBOUND";
+    /** Set when this email is part of a conversation thread (EmailLog linked to EmailMessage). */
+    conversationId: string | null;
   }>
 > {
   const { limit = 10, threshold = 0.3, projectId, userId } = options ?? {};
@@ -270,6 +272,7 @@ export async function searchEmails(
             similarity: number;
             createdAt: Date;
             direction: "INBOUND" | "OUTBOUND";
+            conversationId: string | null;
           }>
         >(
           `SELECT DISTINCT ON (el."id")
@@ -280,9 +283,11 @@ export async function searchEmails(
              el."body",
              1 - (ec."embedding" <=> $1::vector) AS similarity,
              el."createdAt",
-             el."direction"
+             el."direction",
+             em."conversationId" AS "conversationId"
            FROM "EmailChunk" ec
            JOIN "EmailLog" el ON el."id" = ec."emailLogId"
+           LEFT JOIN "EmailMessage" em ON em."emailLogId" = el."id"
            WHERE ${conditions.join(" AND ")}
              AND ec."embedding" IS NOT NULL
              AND 1 - (ec."embedding" <=> $1::vector) > $${thresholdParam}
@@ -301,6 +306,7 @@ export async function searchEmails(
           similarity: r.similarity,
           createdAt: r.createdAt,
           direction: r.direction,
+          conversationId: r.conversationId ?? null,
         }));
       } catch (error) {
         logger.warn("Email embedding search failed, continuing with fulltext only", {
@@ -340,6 +346,7 @@ export async function searchEmails(
           body: string;
           createdAt: Date;
           direction: "INBOUND" | "OUTBOUND";
+          conversationId: string | null;
         }>
       >(
         `SELECT
@@ -349,8 +356,10 @@ export async function searchEmails(
            el."to",
            el."body",
            el."createdAt",
-           el."direction"
+           el."direction",
+           em."conversationId" AS "conversationId"
          FROM "EmailLog" el
+         LEFT JOIN "EmailMessage" em ON em."emailLogId" = el."id"
          WHERE ${conditions.join(" AND ")}
            AND (
              el."subject" ILIKE $${patternParam}
@@ -372,6 +381,7 @@ export async function searchEmails(
         similarity: 0.5,
         createdAt: r.createdAt,
         direction: r.direction,
+        conversationId: r.conversationId ?? null,
       }));
     })(),
   ]);

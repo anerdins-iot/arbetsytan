@@ -186,6 +186,16 @@ export type NoteCategory = Prisma.NoteCategoryModel
  */
 export type Subscription = Prisma.SubscriptionModel
 /**
+ * Model EmailConversation
+ * 
+ */
+export type EmailConversation = Prisma.EmailConversationModel
+/**
+ * Model EmailMessage
+ * 
+ */
+export type EmailMessage = Prisma.EmailMessageModel
+/**
  * Model EmailLog
  * 
  */

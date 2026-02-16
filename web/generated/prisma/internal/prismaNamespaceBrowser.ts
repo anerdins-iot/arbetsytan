@@ -80,6 +80,8 @@ export const ModelName = {
   AutomationLog: 'AutomationLog',
   NoteCategory: 'NoteCategory',
   Subscription: 'Subscription',
+  EmailConversation: 'EmailConversation',
+  EmailMessage: 'EmailMessage',
   EmailLog: 'EmailLog',
   EmailAttachment: 'EmailAttachment',
   EmailChunk: 'EmailChunk'
@@ -120,6 +122,8 @@ export const UserScalarFieldEnum = {
   email: 'email',
   emailVerified: 'emailVerified',
   image: 'image',
+  phone: 'phone',
+  bio: 'bio',
   password: 'password',
   isSuperAdmin: 'isSuperAdmin',
   locale: 'locale',
@@ -527,6 +531,45 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const EmailConversationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId',
+  externalEmail: 'externalEmail',
+  externalName: 'externalName',
+  trackingCode: 'trackingCode',
+  subject: 'subject',
+  lastMessageAt: 'lastMessageAt',
+  unreadCount: 'unreadCount',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EmailConversationScalarFieldEnum = (typeof EmailConversationScalarFieldEnum)[keyof typeof EmailConversationScalarFieldEnum]
+
+
+export const EmailMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  emailLogId: 'emailLogId',
+  direction: 'direction',
+  fromEmail: 'fromEmail',
+  fromName: 'fromName',
+  toEmail: 'toEmail',
+  subject: 'subject',
+  bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
+  isRead: 'isRead',
+  sentAt: 'sentAt',
+  receivedAt: 'receivedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailMessageScalarFieldEnum = (typeof EmailMessageScalarFieldEnum)[keyof typeof EmailMessageScalarFieldEnum]
 
 
 export const EmailLogScalarFieldEnum = {

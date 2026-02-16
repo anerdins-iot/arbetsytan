@@ -245,30 +245,54 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
-        const email = String(credentials.email).trim().toLowerCase();
-        const password = String(credentials.password);
+        try {
+          console.log("Auth authorize called with:", { email: credentials?.email });
+          if (!credentials?.email || !credentials?.password) {
+            console.log("Auth: Missing email or password");
+            return null;
+          }
+          const email = String(credentials.email).trim().toLowerCase();
+          const password = String(credentials.password);
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-          include: {
-            memberships: { take: 1, orderBy: { createdAt: "asc" } },
-          },
-        });
-        if (!user?.password) return null;
+          console.log("Auth: Searching for user:", email);
+          const user = await prisma.user.findUnique({
+            where: { email },
+            include: {
+              memberships: { take: 1, orderBy: { createdAt: "asc" } },
+            },
+          });
 
-        const ok = await bcrypt.compare(password, user.password);
-        if (!ok) return null;
+          if (!user) {
+            console.log("Auth: User not found");
+            return null;
+          }
 
-        const membership = user.memberships[0];
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name ?? undefined,
-          image: user.image ?? undefined,
-          tenantId: membership?.tenantId ?? undefined,
-          role: membership?.role ?? undefined,
-        };
+          if (!user.password) {
+            console.log("Auth: User has no password");
+            return null;
+          }
+
+          console.log("Auth: Comparing passwords");
+          const ok = await bcrypt.compare(password, user.password);
+          if (!ok) {
+            console.log("Auth: Password mismatch");
+            return null;
+          }
+
+          const membership = user.memberships[0];
+          console.log("Auth: Success, membership:", membership?.id);
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name ?? undefined,
+            image: user.image ?? undefined,
+            tenantId: membership?.tenantId ?? undefined,
+            role: membership?.role ?? undefined,
+          };
+        } catch (error) {
+          console.error("Auth authorize error:", error);
+          throw error;
+        }
       },
     }),
   ],

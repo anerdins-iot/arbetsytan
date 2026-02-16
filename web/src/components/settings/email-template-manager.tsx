@@ -51,6 +51,10 @@ const TEMPLATE_LABELS: Record<TemplateName, { sv: string; en: string }> = {
     sv: "Projektstatus ändrad",
     en: "Project Status Changed",
   },
+  "email-reply-notification": {
+    sv: "Nytt mailsvar",
+    en: "New Email Reply",
+  },
 };
 
 export function EmailTemplateManager({ templates }: Props) {

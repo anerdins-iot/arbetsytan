@@ -12,7 +12,8 @@ export type TemplateName =
   | "invitation"
   | "task-assigned"
   | "deadline-reminder"
-  | "project-status-changed";
+  | "project-status-changed"
+  | "email-reply-notification";
 
 export type TemplateVariables = Record<string, string>;
 
@@ -24,6 +25,7 @@ export const EMAIL_TEMPLATE_NAMES = [
   "task-assigned",
   "deadline-reminder",
   "project-status-changed",
+  "email-reply-notification",
 ] as const;
 
 export const EMAIL_TEMPLATE_LOCALES = ["sv", "en"] as const;
@@ -34,6 +36,7 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<TemplateName, string[]> = {
   "task-assigned": ["taskTitle", "projectName", "assignedBy", "projectUrl"],
   "deadline-reminder": ["taskTitle", "projectName", "deadline", "projectUrl"],
   "project-status-changed": ["projectName", "previousStatus", "newStatus", "projectUrl"],
+  "email-reply-notification": ["senderName", "subject", "preview", "conversationUrl"],
 };
 
 export type RenderOptions = {
@@ -673,6 +676,93 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
       `,
       footerText: "You receive this email because you have notifications enabled.",
+    },
+  },
+
+  "email-reply-notification": {
+    sv: {
+      subject: "Nytt svar från {{senderName}}",
+      content: `
+        <div style="text-align: center; margin-bottom: 32px;">
+          <div style="display: inline-block; background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%); border-radius: 50%; padding: 16px; margin-bottom: 16px;">
+            <span style="font-size: 32px;">✉️</span>
+          </div>
+          <h2 style="margin: 0; color: #111827; font-size: 24px; font-weight: 600;">
+            Du har fått ett nytt e-postmeddelande
+          </h2>
+        </div>
+
+        <div style="background-color: #f9fafb; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+          <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Från
+          </p>
+          <p style="margin: 0 0 16px; color: #111827; font-size: 16px; font-weight: 600;">
+            {{senderName}}
+          </p>
+          <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Ämne
+          </p>
+          <p style="margin: 0 0 16px; color: #111827; font-size: 16px;">
+            {{subject}}
+          </p>
+          <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Förhandsgranskning
+          </p>
+          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">{{preview}}</p>
+        </div>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="{{conversationUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
+            Öppna konversation
+          </a>
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{conversationUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Eller klicka här: {{conversationUrl}}</a>
+          </p>
+        </div>
+      `,
+      footerText: "Detta mail skickades från ArbetsYtan. Svara inte på detta mail.",
+    },
+    en: {
+      subject: "New reply from {{senderName}}",
+      content: `
+        <div style="text-align: center; margin-bottom: 32px;">
+          <div style="display: inline-block; background: linear-gradient(135deg, #dbeafe 0%, #93c5fd 100%); border-radius: 50%; padding: 16px; margin-bottom: 16px;">
+            <span style="font-size: 32px;">✉️</span>
+          </div>
+          <h2 style="margin: 0; color: #111827; font-size: 24px; font-weight: 600;">
+            You have a new email message
+          </h2>
+        </div>
+
+        <div style="background-color: #f9fafb; border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+          <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            From
+          </p>
+          <p style="margin: 0 0 16px; color: #111827; font-size: 16px; font-weight: 600;">
+            {{senderName}}
+          </p>
+          <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Subject
+          </p>
+          <p style="margin: 0 0 16px; color: #111827; font-size: 16px;">
+            {{subject}}
+          </p>
+          <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+            Preview
+          </p>
+          <p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6; white-space: pre-wrap;">{{preview}}</p>
+        </div>
+
+        <div style="text-align: center; margin: 32px 0;">
+          <a href="{{conversationUrl}}" style="display: inline-block; background: linear-gradient(135deg, ${BRAND.primary} 0%, ${BRAND.primaryLight} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-weight: 600; font-size: 16px; box-shadow: 0 4px 14px rgba(30, 58, 138, 0.4);">
+            Open conversation
+          </a>
+          <p style="margin: 8px 0 0; text-align: center;">
+            <a href="{{conversationUrl}}" style="color: #1e3a8a; font-size: 13px; text-decoration: underline;">Or click here: {{conversationUrl}}</a>
+          </p>
+        </div>
+      `,
+      footerText: "This email was sent from ArbetsYtan. Please do not reply to this email.",
     },
   },
 };

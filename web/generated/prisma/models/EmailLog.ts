@@ -295,6 +295,7 @@ export type EmailLogWhereInput = {
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   attachments?: Prisma.EmailAttachmentListRelationFilter
   chunks?: Prisma.EmailChunkListRelationFilter
+  emailMessage?: Prisma.XOR<Prisma.EmailMessageNullableScalarRelationFilter, Prisma.EmailMessageWhereInput> | null
 }
 
 export type EmailLogOrderByWithRelationInput = {
@@ -323,6 +324,7 @@ export type EmailLogOrderByWithRelationInput = {
   project?: Prisma.ProjectOrderByWithRelationInput
   attachments?: Prisma.EmailAttachmentOrderByRelationAggregateInput
   chunks?: Prisma.EmailChunkOrderByRelationAggregateInput
+  emailMessage?: Prisma.EmailMessageOrderByWithRelationInput
 }
 
 export type EmailLogWhereUniqueInput = Prisma.AtLeast<{
@@ -354,6 +356,7 @@ export type EmailLogWhereUniqueInput = Prisma.AtLeast<{
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   attachments?: Prisma.EmailAttachmentListRelationFilter
   chunks?: Prisma.EmailChunkListRelationFilter
+  emailMessage?: Prisma.XOR<Prisma.EmailMessageNullableScalarRelationFilter, Prisma.EmailMessageWhereInput> | null
 }, "id" | "resendMessageId">
 
 export type EmailLogOrderByWithAggregationInput = {
@@ -431,6 +434,7 @@ export type EmailLogCreateInput = {
   project?: Prisma.ProjectCreateNestedOneWithoutEmailLogsInput
   attachments?: Prisma.EmailAttachmentCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUncheckedCreateInput = {
@@ -456,6 +460,7 @@ export type EmailLogUncheckedCreateInput = {
   failedAt?: Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageUncheckedCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUpdateInput = {
@@ -481,6 +486,7 @@ export type EmailLogUpdateInput = {
   project?: Prisma.ProjectUpdateOneWithoutEmailLogsNestedInput
   attachments?: Prisma.EmailAttachmentUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateInput = {
@@ -506,6 +512,7 @@ export type EmailLogUncheckedUpdateInput = {
   failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUncheckedUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogCreateManyInput = {
@@ -582,6 +589,11 @@ export type EmailLogListRelationFilter = {
 
 export type EmailLogOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type EmailLogNullableScalarRelationFilter = {
+  is?: Prisma.EmailLogWhereInput | null
+  isNot?: Prisma.EmailLogWhereInput | null
 }
 
 export type EmailLogCountOrderByAggregateInput = {
@@ -778,8 +790,20 @@ export type EmailLogUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.EmailLogScalarWhereInput | Prisma.EmailLogScalarWhereInput[]
 }
 
-export type EnumEmailDirectionFieldUpdateOperationsInput = {
-  set?: $Enums.EmailDirection
+export type EmailLogCreateNestedOneWithoutEmailMessageInput = {
+  create?: Prisma.XOR<Prisma.EmailLogCreateWithoutEmailMessageInput, Prisma.EmailLogUncheckedCreateWithoutEmailMessageInput>
+  connectOrCreate?: Prisma.EmailLogCreateOrConnectWithoutEmailMessageInput
+  connect?: Prisma.EmailLogWhereUniqueInput
+}
+
+export type EmailLogUpdateOneWithoutEmailMessageNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailLogCreateWithoutEmailMessageInput, Prisma.EmailLogUncheckedCreateWithoutEmailMessageInput>
+  connectOrCreate?: Prisma.EmailLogCreateOrConnectWithoutEmailMessageInput
+  upsert?: Prisma.EmailLogUpsertWithoutEmailMessageInput
+  disconnect?: Prisma.EmailLogWhereInput | boolean
+  delete?: Prisma.EmailLogWhereInput | boolean
+  connect?: Prisma.EmailLogWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmailLogUpdateToOneWithWhereWithoutEmailMessageInput, Prisma.EmailLogUpdateWithoutEmailMessageInput>, Prisma.EmailLogUncheckedUpdateWithoutEmailMessageInput>
 }
 
 export type EnumEmailStatusFieldUpdateOperationsInput = {
@@ -836,6 +860,7 @@ export type EmailLogCreateWithoutTenantInput = {
   project?: Prisma.ProjectCreateNestedOneWithoutEmailLogsInput
   attachments?: Prisma.EmailAttachmentCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUncheckedCreateWithoutTenantInput = {
@@ -860,6 +885,7 @@ export type EmailLogUncheckedCreateWithoutTenantInput = {
   failedAt?: Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageUncheckedCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogCreateOrConnectWithoutTenantInput = {
@@ -936,6 +962,7 @@ export type EmailLogCreateWithoutUserInput = {
   project?: Prisma.ProjectCreateNestedOneWithoutEmailLogsInput
   attachments?: Prisma.EmailAttachmentCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUncheckedCreateWithoutUserInput = {
@@ -960,6 +987,7 @@ export type EmailLogUncheckedCreateWithoutUserInput = {
   failedAt?: Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageUncheckedCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogCreateOrConnectWithoutUserInput = {
@@ -1010,6 +1038,7 @@ export type EmailLogCreateWithoutProjectInput = {
   user: Prisma.UserCreateNestedOneWithoutEmailLogsInput
   attachments?: Prisma.EmailAttachmentCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUncheckedCreateWithoutProjectInput = {
@@ -1034,6 +1063,7 @@ export type EmailLogUncheckedCreateWithoutProjectInput = {
   failedAt?: Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedCreateNestedManyWithoutEmailLogInput
   chunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageUncheckedCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogCreateOrConnectWithoutProjectInput = {
@@ -1062,6 +1092,122 @@ export type EmailLogUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.EmailLogUpdateManyMutationInput, Prisma.EmailLogUncheckedUpdateManyWithoutProjectInput>
 }
 
+export type EmailLogCreateWithoutEmailMessageInput = {
+  id?: string
+  direction: $Enums.EmailDirection
+  status?: $Enums.EmailStatus
+  from: string
+  to: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  bcc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  subject: string
+  body: string
+  htmlBody?: string | null
+  resendMessageId?: string | null
+  resendError?: string | null
+  createdAt?: Date | string
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  failedAt?: Date | string | null
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailLogsInput
+  user: Prisma.UserCreateNestedOneWithoutEmailLogsInput
+  project?: Prisma.ProjectCreateNestedOneWithoutEmailLogsInput
+  attachments?: Prisma.EmailAttachmentCreateNestedManyWithoutEmailLogInput
+  chunks?: Prisma.EmailChunkCreateNestedManyWithoutEmailLogInput
+}
+
+export type EmailLogUncheckedCreateWithoutEmailMessageInput = {
+  id?: string
+  direction: $Enums.EmailDirection
+  status?: $Enums.EmailStatus
+  from: string
+  to: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  bcc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  subject: string
+  body: string
+  htmlBody?: string | null
+  resendMessageId?: string | null
+  resendError?: string | null
+  tenantId: string
+  userId: string
+  projectId?: string | null
+  createdAt?: Date | string
+  sentAt?: Date | string | null
+  deliveredAt?: Date | string | null
+  bouncedAt?: Date | string | null
+  failedAt?: Date | string | null
+  attachments?: Prisma.EmailAttachmentUncheckedCreateNestedManyWithoutEmailLogInput
+  chunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput
+}
+
+export type EmailLogCreateOrConnectWithoutEmailMessageInput = {
+  where: Prisma.EmailLogWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmailLogCreateWithoutEmailMessageInput, Prisma.EmailLogUncheckedCreateWithoutEmailMessageInput>
+}
+
+export type EmailLogUpsertWithoutEmailMessageInput = {
+  update: Prisma.XOR<Prisma.EmailLogUpdateWithoutEmailMessageInput, Prisma.EmailLogUncheckedUpdateWithoutEmailMessageInput>
+  create: Prisma.XOR<Prisma.EmailLogCreateWithoutEmailMessageInput, Prisma.EmailLogUncheckedCreateWithoutEmailMessageInput>
+  where?: Prisma.EmailLogWhereInput
+}
+
+export type EmailLogUpdateToOneWithWhereWithoutEmailMessageInput = {
+  where?: Prisma.EmailLogWhereInput
+  data: Prisma.XOR<Prisma.EmailLogUpdateWithoutEmailMessageInput, Prisma.EmailLogUncheckedUpdateWithoutEmailMessageInput>
+}
+
+export type EmailLogUpdateWithoutEmailMessageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  direction?: Prisma.EnumEmailDirectionFieldUpdateOperationsInput | $Enums.EmailDirection
+  status?: Prisma.EnumEmailStatusFieldUpdateOperationsInput | $Enums.EmailStatus
+  from?: Prisma.StringFieldUpdateOperationsInput | string
+  to?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  bcc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.StringFieldUpdateOperationsInput | string
+  htmlBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resendMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resendError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailLogsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailLogsNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutEmailLogsNestedInput
+  attachments?: Prisma.EmailAttachmentUpdateManyWithoutEmailLogNestedInput
+  chunks?: Prisma.EmailChunkUpdateManyWithoutEmailLogNestedInput
+}
+
+export type EmailLogUncheckedUpdateWithoutEmailMessageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  direction?: Prisma.EnumEmailDirectionFieldUpdateOperationsInput | $Enums.EmailDirection
+  status?: Prisma.EnumEmailStatusFieldUpdateOperationsInput | $Enums.EmailStatus
+  from?: Prisma.StringFieldUpdateOperationsInput | string
+  to?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  cc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  bcc?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  body?: Prisma.StringFieldUpdateOperationsInput | string
+  htmlBody?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resendMessageId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  resendError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deliveredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  attachments?: Prisma.EmailAttachmentUncheckedUpdateManyWithoutEmailLogNestedInput
+  chunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput
+}
+
 export type EmailLogCreateWithoutAttachmentsInput = {
   id?: string
   direction: $Enums.EmailDirection
@@ -1084,6 +1230,7 @@ export type EmailLogCreateWithoutAttachmentsInput = {
   user: Prisma.UserCreateNestedOneWithoutEmailLogsInput
   project?: Prisma.ProjectCreateNestedOneWithoutEmailLogsInput
   chunks?: Prisma.EmailChunkCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUncheckedCreateWithoutAttachmentsInput = {
@@ -1108,6 +1255,7 @@ export type EmailLogUncheckedCreateWithoutAttachmentsInput = {
   bouncedAt?: Date | string | null
   failedAt?: Date | string | null
   chunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageUncheckedCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogCreateOrConnectWithoutAttachmentsInput = {
@@ -1148,6 +1296,7 @@ export type EmailLogUpdateWithoutAttachmentsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutEmailLogsNestedInput
   project?: Prisma.ProjectUpdateOneWithoutEmailLogsNestedInput
   chunks?: Prisma.EmailChunkUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateWithoutAttachmentsInput = {
@@ -1172,6 +1321,7 @@ export type EmailLogUncheckedUpdateWithoutAttachmentsInput = {
   bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   chunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUncheckedUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogCreateWithoutChunksInput = {
@@ -1196,6 +1346,7 @@ export type EmailLogCreateWithoutChunksInput = {
   user: Prisma.UserCreateNestedOneWithoutEmailLogsInput
   project?: Prisma.ProjectCreateNestedOneWithoutEmailLogsInput
   attachments?: Prisma.EmailAttachmentCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogUncheckedCreateWithoutChunksInput = {
@@ -1220,6 +1371,7 @@ export type EmailLogUncheckedCreateWithoutChunksInput = {
   bouncedAt?: Date | string | null
   failedAt?: Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedCreateNestedManyWithoutEmailLogInput
+  emailMessage?: Prisma.EmailMessageUncheckedCreateNestedOneWithoutEmailLogInput
 }
 
 export type EmailLogCreateOrConnectWithoutChunksInput = {
@@ -1260,6 +1412,7 @@ export type EmailLogUpdateWithoutChunksInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutEmailLogsNestedInput
   project?: Prisma.ProjectUpdateOneWithoutEmailLogsNestedInput
   attachments?: Prisma.EmailAttachmentUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateWithoutChunksInput = {
@@ -1284,6 +1437,7 @@ export type EmailLogUncheckedUpdateWithoutChunksInput = {
   bouncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUncheckedUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogCreateManyTenantInput = {
@@ -1330,6 +1484,7 @@ export type EmailLogUpdateWithoutTenantInput = {
   project?: Prisma.ProjectUpdateOneWithoutEmailLogsNestedInput
   attachments?: Prisma.EmailAttachmentUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateWithoutTenantInput = {
@@ -1354,6 +1509,7 @@ export type EmailLogUncheckedUpdateWithoutTenantInput = {
   failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUncheckedUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateManyWithoutTenantInput = {
@@ -1422,6 +1578,7 @@ export type EmailLogUpdateWithoutUserInput = {
   project?: Prisma.ProjectUpdateOneWithoutEmailLogsNestedInput
   attachments?: Prisma.EmailAttachmentUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateWithoutUserInput = {
@@ -1446,6 +1603,7 @@ export type EmailLogUncheckedUpdateWithoutUserInput = {
   failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUncheckedUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateManyWithoutUserInput = {
@@ -1514,6 +1672,7 @@ export type EmailLogUpdateWithoutProjectInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutEmailLogsNestedInput
   attachments?: Prisma.EmailAttachmentUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateWithoutProjectInput = {
@@ -1538,6 +1697,7 @@ export type EmailLogUncheckedUpdateWithoutProjectInput = {
   failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   attachments?: Prisma.EmailAttachmentUncheckedUpdateManyWithoutEmailLogNestedInput
   chunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput
+  emailMessage?: Prisma.EmailMessageUncheckedUpdateOneWithoutEmailLogNestedInput
 }
 
 export type EmailLogUncheckedUpdateManyWithoutProjectInput = {
@@ -1628,6 +1788,7 @@ export type EmailLogSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   project?: boolean | Prisma.EmailLog$projectArgs<ExtArgs>
   attachments?: boolean | Prisma.EmailLog$attachmentsArgs<ExtArgs>
   chunks?: boolean | Prisma.EmailLog$chunksArgs<ExtArgs>
+  emailMessage?: boolean | Prisma.EmailLog$emailMessageArgs<ExtArgs>
   _count?: boolean | Prisma.EmailLogCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailLog"]>
 
@@ -1713,6 +1874,7 @@ export type EmailLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   project?: boolean | Prisma.EmailLog$projectArgs<ExtArgs>
   attachments?: boolean | Prisma.EmailLog$attachmentsArgs<ExtArgs>
   chunks?: boolean | Prisma.EmailLog$chunksArgs<ExtArgs>
+  emailMessage?: boolean | Prisma.EmailLog$emailMessageArgs<ExtArgs>
   _count?: boolean | Prisma.EmailLogCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type EmailLogIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1734,6 +1896,7 @@ export type $EmailLogPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     project: Prisma.$ProjectPayload<ExtArgs> | null
     attachments: Prisma.$EmailAttachmentPayload<ExtArgs>[]
     chunks: Prisma.$EmailChunkPayload<ExtArgs>[]
+    emailMessage: Prisma.$EmailMessagePayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2155,6 +2318,7 @@ export interface Prisma__EmailLogClient<T, Null = never, ExtArgs extends runtime
   project<T extends Prisma.EmailLog$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailLog$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   attachments<T extends Prisma.EmailLog$attachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailLog$attachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   chunks<T extends Prisma.EmailLog$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailLog$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailMessage<T extends Prisma.EmailLog$emailMessageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailLog$emailMessageArgs<ExtArgs>>): Prisma.Prisma__EmailMessageClient<runtime.Types.Result.GetResult<Prisma.$EmailMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2664,6 +2828,25 @@ export type EmailLog$chunksArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.EmailChunkScalarFieldEnum | Prisma.EmailChunkScalarFieldEnum[]
+}
+
+/**
+ * EmailLog.emailMessage
+ */
+export type EmailLog$emailMessageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailMessage
+   */
+  select?: Prisma.EmailMessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailMessage
+   */
+  omit?: Prisma.EmailMessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailMessageInclude<ExtArgs> | null
+  where?: Prisma.EmailMessageWhereInput
 }
 
 /**
