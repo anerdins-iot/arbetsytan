@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSocketEvent } from "@/contexts/socket-context";
@@ -22,6 +23,8 @@ export function PersonalView({
   initialTab = "overview",
 }: PersonalViewProps) {
   const t = useTranslations("personal");
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [socketNoteVersion, setSocketNoteVersion] = useState(0);
   const [socketFileVersion, setSocketFileVersion] = useState(0);
 
@@ -44,6 +47,13 @@ export function PersonalView({
   useSocketEvent(SOCKET_EVENTS.fileUpdated, handlePersonalFileEvent);
   useSocketEvent(SOCKET_EVENTS.fileDeleted, handlePersonalFileEvent);
 
+  // When on overview tab, refresh server data so "Senaste anteckningar" / "Senaste filer" update in real time
+  useEffect(() => {
+    if (activeTab === "overview" && (socketNoteVersion > 0 || socketFileVersion > 0)) {
+      router.refresh();
+    }
+  }, [activeTab, socketNoteVersion, socketFileVersion, router]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -53,7 +63,7 @@ export function PersonalView({
         </p>
       </div>
 
-      <Tabs defaultValue={initialTab}>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
         <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
           <TabsList>
             <TabsTrigger value="overview">

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getProject } from "@/actions/projects";
 import { getActivityLog } from "@/actions/activity-log";
 import { ProjectActivityLog } from "@/components/projects/project-activity-log";
+import { ProjectActivityRealtimeWrapper } from "@/components/projects/project-activity-realtime-wrapper";
 
 type Props = {
   params: Promise<{ locale: string; projectId: string }>;
@@ -49,16 +50,18 @@ export default async function ProjectActivityPage({ params, searchParams }: Prop
   const projectPath = `/${locale}/projects/${projectId}`;
 
   return (
-    <ProjectActivityLog
-      locale={locale}
-      projectName={projectResult.project.name}
-      projectPath={projectPath}
-      currentPage={activityResult.page}
-      totalPages={activityResult.totalPages}
-      total={activityResult.total}
-      currentAction={action}
-      currentEntity={entity}
-      items={activityResult.items}
-    />
+    <ProjectActivityRealtimeWrapper projectId={projectId}>
+      <ProjectActivityLog
+        locale={locale}
+        projectName={projectResult.project.name}
+        projectPath={projectPath}
+        currentPage={activityResult.page}
+        totalPages={activityResult.totalPages}
+        total={activityResult.total}
+        currentAction={action}
+        currentEntity={entity}
+        items={activityResult.items}
+      />
+    </ProjectActivityRealtimeWrapper>
   );
 }

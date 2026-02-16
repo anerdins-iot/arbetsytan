@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getMyTimeEntries } from "@/actions/time-entries";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatMinutes } from "@/components/time/time-utils";
+import { TimePageRealtimeWrapper } from "@/components/time/time-page-realtime-wrapper";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -85,6 +86,7 @@ export default async function MyTimePage({ params, searchParams }: Props) {
   );
 
   return (
+    <TimePageRealtimeWrapper>
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -195,5 +197,6 @@ export default async function MyTimePage({ params, searchParams }: Props) {
         </CardContent>
       </Card>
     </div>
+    </TimePageRealtimeWrapper>
   );
 }

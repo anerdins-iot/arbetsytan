@@ -404,7 +404,8 @@ PROAKTIV POLICY - Du MÅSTE följa dessa regler:
 3. BRED SÖKNING: Kör breda sökningar (gärna parallellt om möjligt) över alla relevanta verktyg och datakällor innan du ger upp.
 4. MEST SANNOLIKA RESULTAT FÖRST: Presentera de mest troliga svaren/resultaten tydligt.
 5. GE ALLTID ETT FÖRSLAG: Om osäkerhet kvarstår efter sökning, ge ett konkret förslag baserat på vad du hittat och fråga "Menar du detta?" istället för en generell fråga.
-6. SLUTA ALDRIG MED EN FRÅGA UTAN ATT HA GJORT NÅGOT: Du ska alltid ha utfört minst ett verktygsanrop eller presenterat information innan du frågar användaren om något.`;
+6. SLUTA ALDRIG MED EN FRÅGA UTAN ATT HA GJORT NÅGOT: Du ska alltid ha utfört minst ett verktygsanrop eller presenterat information innan du frågar användaren om något.
+7. OBLIGATORISK SÖKNING: Innan du svarar på någon fråga, sök alltid först i användarens data. Svara aldrig "jag vet inte" eller "vill du att jag söker" utan att först ha sökt. Om sökningen inte ger resultat, säg det, men sök först.`;
 
   // Search strategy guidance - helps AI find information systematically
   const searchStrategy = `
