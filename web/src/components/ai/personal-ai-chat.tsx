@@ -140,6 +140,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [isLoadingContext, setIsLoadingContext] = useState(false);
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sentinelRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fullscreen state
@@ -243,6 +245,12 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [projectList, setProjectList] = useState<Array<{ id: string; name: string }>>([]);
   const activeProjectIdRef = useRef<string | null>(null);
   activeProjectIdRef.current = activeProjectId;
+
+  // Pagination state
+  const [nextCursor, setNextCursor] = useState<string | null>(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const lastScrollHeightRef = useRef<number>(0);
 
   // Sync activeProjectId with URL-based initialProjectId
   useEffect(() => {
@@ -402,6 +410,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const startNewConversation = useCallback(() => {
     setConversationId(null);
     setMessages([]);
+    setNextCursor(null);
+    setHasMore(false);
     setHistoryOpen(false);
     setUploadedFiles([]);
     lastSpokenMessageIdRef.current = null;
@@ -412,6 +422,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       const result = await getConversationWithMessages(convId);
       if (!result.success) return;
       setConversationId(result.conversation.id);
+      setNextCursor(result.nextCursor);
+      setHasMore(result.hasMore);
       const uiMessages = result.messages.map((m) => ({
         id: m.id,
         role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
@@ -427,6 +439,61 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     },
     [setMessages]
   );
+
+  const loadMoreMessages = useCallback(async () => {
+    if (!conversationId || !nextCursor || isLoadingMore) return;
+
+    setIsLoadingMore(true);
+    // Store current scroll height to maintain position
+    if (scrollContainerRef.current) {
+      lastScrollHeightRef.current = scrollContainerRef.current.scrollHeight;
+    }
+
+    const result = await getConversationWithMessages(conversationId, undefined, nextCursor);
+    setIsLoadingMore(false);
+
+    if (result.success) {
+      setNextCursor(result.nextCursor);
+      setHasMore(result.hasMore);
+      const olderMessages = result.messages.map((m) => ({
+        id: m.id,
+        role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
+        parts: [{ type: "text" as const, text: m.content }],
+      }));
+      setMessages((prev) => [...olderMessages, ...prev]);
+    }
+  }, [conversationId, nextCursor, isLoadingMore, setMessages]);
+
+  // Adjust scroll position after loading more messages
+  useEffect(() => {
+    if (lastScrollHeightRef.current > 0 && scrollContainerRef.current && !isLoadingMore) {
+      const newScrollHeight = scrollContainerRef.current.scrollHeight;
+      const scrollDiff = newScrollHeight - lastScrollHeightRef.current;
+      scrollContainerRef.current.scrollTop = scrollDiff;
+      lastScrollHeightRef.current = 0;
+    }
+  }, [messages, isLoadingMore]);
+
+  // Infinite scroll: load more when sentinel (top of list) becomes visible
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current;
+    const sentinel = sentinelRef.current;
+    if (!scrollContainer || !sentinel || !conversationId) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (!entry?.isIntersecting) return;
+        if (hasMore && !isLoadingMore) {
+          void loadMoreMessages();
+        }
+      },
+      { root: scrollContainer, rootMargin: "200px 0px 0px 0px", threshold: 0 }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [conversationId, hasMore, isLoadingMore, loadMoreMessages]);
 
   // Filuppladdning
   const uploadFile = useCallback(
@@ -818,7 +885,20 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       )}
 
       {/* Meddelandelista */}
-      <div className="flex-1 overflow-y-auto">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto"
+      >
+        {/* Sentinel for infinite scroll (observer triggers load when visible near top) */}
+        <div ref={sentinelRef} className="h-0 shrink-0" aria-hidden="true" />
+
+        {/* Loading indicator when fetching older messages */}
+        {isLoadingMore && (
+          <div className="flex justify-center py-2">
+            <Loader2 className="size-5 animate-spin text-muted-foreground" />
+          </div>
+        )}
+
         {/* Briefing */}
         {briefingData && messages.length === 0 && (
           <DailyBriefing data={briefingData} />
