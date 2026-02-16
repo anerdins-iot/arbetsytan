@@ -916,7 +916,33 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           </div>
         )}
         <div className="space-y-4 p-4">
-          {messages.map((message) => (
+          {messages.map((message) => {
+            // Gruppera på varandra följande text-parts till en bubbla så att punktlistor
+            // och långa svar inte blir en bubbla per rad/segment (AI SDK kan skicka flera text-parts per meddelande).
+            const parts = message.parts ?? [];
+            type TextGroup = { type: "text"; text: string };
+            type ToolGroup = { type: "tool"; part: (typeof parts)[number]; index: number };
+            const groups: Array<TextGroup | ToolGroup> = [];
+            let textAcc: string[] = [];
+            for (let i = 0; i < parts.length; i++) {
+              const part = parts[i];
+              if (part.type === "text") {
+                textAcc.push((part as { text: string }).text);
+              } else {
+                if (textAcc.length > 0) {
+                  groups.push({ type: "text", text: textAcc.join("") });
+                  textAcc = [];
+                }
+                if (part.type.startsWith("tool-") && part.type !== "tool-invocation") {
+                  groups.push({ type: "tool", part, index: i });
+                }
+              }
+            }
+            if (textAcc.length > 0) {
+              groups.push({ type: "text", text: textAcc.join("") });
+            }
+
+            return (
             <div
               key={message.id}
               className={cn(
@@ -924,13 +950,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                 message.role === "user" ? "items-end" : "items-start"
               )}
             >
-              {/* Rendera message parts */}
-              {(message.parts ?? []).map((part, i) => {
-                // Text content
-                if (part.type === "text") {
+              {groups.map((group, groupIndex) => {
+                if (group.type === "text") {
                   return (
                     <div
-                      key={i}
+                      key={groupIndex}
                       className={cn(
                         "max-w-[85%] rounded-lg px-3 py-2 text-sm",
                         message.role === "user"
@@ -938,10 +962,13 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                           : "bg-muted text-foreground"
                       )}
                     >
-                      <MarkdownMessage content={part.text} />
+                      <MarkdownMessage content={group.text} />
                     </div>
                   );
                 }
+
+                const part = group.part;
+                const i = group.index;
 
                 // Tool invocations with email preview
                 // AI SDK v6 uses "tool-{toolName}" as part.type, not "tool-invocation"
@@ -1102,7 +1129,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                 return null;
               })}
             </div>
-          ))}
+            );
+          })}
         </div>
         <div ref={messagesEndRef} />
       </div>
