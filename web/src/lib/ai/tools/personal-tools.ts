@@ -919,6 +919,48 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Rapportförhandsvisning (Preview → Generera) ──────
+
+  const createReport = tool({
+    description:
+      "Skapa en rapportförhandsvisning som användaren kan granska och redigera innan den genereras. " +
+      "Returnerar en preview-vy i chatten med titel, sammanfattning och sektioner. " +
+      "Användaren kan redigera, avbryta eller bekräfta generering. " +
+      "Använd detta istället för generateProjectReport när du vill ge användaren möjlighet att granska rapporten först. " +
+      "Sektioner kan vara text (markdown), table (med data[][]) eller list.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().optional().describe("Projektets ID (valfritt, utelämna för personlig rapport)"),
+      title: z.string().describe("Rapportens titel"),
+      summary: z.string().describe("Kort sammanfattning av rapporten (1-3 meningar)"),
+      sections: z.array(z.object({
+        title: z.string().describe("Sektionsrubrik"),
+        content: z.string().describe("Sektionsinnehåll (markdown stöds)"),
+        type: z.enum(["text", "table", "list"]).default("text").describe("Typ av sektion: text, table eller list"),
+        data: z.array(z.array(z.string())).optional().describe("Tabelldata om type=table (rader med kolumner, första raden = rubriker)"),
+      })).describe("Rapportens sektioner"),
+      format: z.enum(["pdf", "excel", "word"]).default("pdf").describe("Outputformat"),
+    })),
+    execute: async ({ projectId: pid, title, summary, sections, format }) => {
+      let projectName: string | undefined;
+      if (pid) {
+        const idCheck = validateDatabaseId(pid, "projectId");
+        if (!idCheck.valid) return { error: idCheck.error };
+        const project = await requireProject(tenantId, pid, userId);
+        projectName = project.name;
+      }
+
+      return {
+        __reportPreview: true as const,
+        title,
+        summary,
+        sections,
+        projectId: pid,
+        projectName,
+        format,
+      };
+    },
+  });
+
   // ─── Filer (Files) ────────────────────────────────────
 
   const listFiles = tool({
@@ -3033,6 +3075,56 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Offert (Quote Preview) ──────────────────────────────
+
+  const createQuote = tool({
+    description:
+      "Skapa en offert/prisförslag för en kund. Returnerar en interaktiv förhandsgranskning i chatten. Användaren kan granska rader, summor och moms innan PDF genereras. Ange kundnamn, titel, radposter med beskrivning/antal/enhet/pris, och valfritt giltighetsdatum och anteckningar.",
+    inputSchema: toolInputSchema(
+      z.object({
+        projectId: z.string().optional().describe("Projekt-ID om offerten tillhör ett projekt"),
+        clientName: z.string().describe("Kundens namn"),
+        clientEmail: z.string().optional().describe("Kundens e-postadress"),
+        title: z.string().describe("Offertens titel, t.ex. 'Badrumsrenovering'"),
+        items: z
+          .array(
+            z.object({
+              description: z.string().describe("Beskrivning av raden"),
+              quantity: z.number().describe("Antal"),
+              unit: z.string().describe("Enhet: st, tim, m, m2, etc."),
+              unitPrice: z.number().describe("Styckpris exkl. moms i SEK"),
+              vatRate: z.number().optional().describe("Momssats, default 0.25 (25%)"),
+            })
+          )
+          .describe("Radposter i offerten"),
+        validUntil: z.string().optional().describe("Giltig till datum (ISO-format YYYY-MM-DD)"),
+        notes: z.string().optional().describe("Fritext/villkor som visas på offerten"),
+        includeRot: z.boolean().optional().describe("Om ROT-avdrag ska tillämpas"),
+      })
+    ),
+    execute: async ({ projectId: pid, clientName, clientEmail, title, items, validUntil, notes, includeRot }) => {
+      let projectName: string | undefined;
+      if (pid) {
+        const project = await requireProject(tenantId, pid, userId);
+        projectName = project.name;
+      }
+
+      return {
+        __quotePreview: true,
+        projectId: pid,
+        projectName,
+        clientName,
+        clientEmail,
+        title,
+        items,
+        validUntil,
+        notes,
+        includeRot,
+        message: `Offert "${title}" förberedd för ${clientName}. Användaren måste klicka "Generera Offert (PDF)" för att skapa PDF.`,
+      };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -3062,6 +3154,7 @@ Returnera ENBART JSON i följande format:
     getProjectTimeSummary,
     getMyTimeEntries,
     generateProjectReport,
+    createReport,
     // Filgenerering
     generatePdf,
     generateExcel,
@@ -3146,6 +3239,8 @@ Returnera ENBART JSON i följande format:
     searchMyEmails,
     getConversationContext,
     getMyRecentEmails,
+    // Offert
+    createQuote,
     // Chatthistorik
     searchConversations: searchConversationsTool,
   };

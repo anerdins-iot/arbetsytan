@@ -37,6 +37,7 @@ import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-togg
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
 import { FileCreatedCard, type FileCreatedData } from "@/components/ai/file-created-card";
+import { ReportPreviewCard, type ReportPreviewData } from "@/components/ai/report-preview-card";
 import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
 import { getProjects } from "@/actions/projects";
 import { getDailyBriefing } from "@/actions/briefing";
@@ -47,6 +48,7 @@ import type { ProjectContextResult } from "@/actions/project-context";
 import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import { DeleteConfirmationCard, type DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
+import { QuotePreviewCard, type QuotePreviewData } from "@/components/ai/quote-preview-card";
 import { deleteFile } from "@/actions/files";
 import { deleteTask } from "@/actions/tasks";
 import { deleteComment } from "@/actions/comments";
@@ -55,6 +57,7 @@ import { deletePersonalNote, deletePersonalFile } from "@/actions/personal";
 import { deleteTimeEntry } from "@/actions/time-entries";
 import { deleteAutomation } from "@/actions/automations";
 import { deleteNoteCategory } from "@/actions/note-categories";
+import { generateQuotePdf } from "@/actions/quotes";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
@@ -1061,6 +1064,60 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     );
                   }
 
+                  if (result?.__reportPreview) {
+                    const reportData = result as unknown as ReportPreviewData & {
+                      __reportPreview: true;
+                    };
+
+                    const handleReportGenerate = async (finalData: ReportPreviewData) => {
+                      // Build content from sections
+                      const contentParts: string[] = [];
+                      for (const section of finalData.sections) {
+                        contentParts.push(`## ${section.title}\n`);
+                        if (section.type === "table" && section.data && section.data.length > 0) {
+                          // Build markdown table
+                          const headers = section.data[0];
+                          if (headers) {
+                            contentParts.push(`| ${headers.join(" | ")} |`);
+                            contentParts.push(`| ${headers.map(() => "---").join(" | ")} |`);
+                            for (const row of section.data.slice(1)) {
+                              contentParts.push(`| ${row.join(" | ")} |`);
+                            }
+                          }
+                          contentParts.push("");
+                        } else {
+                          contentParts.push(section.content);
+                          contentParts.push("");
+                        }
+                      }
+                      const fullContent = contentParts.join("\n");
+
+                      // Send a message to the AI to generate the document
+                      sendMessage({
+                        text: `Generera rapporten "${finalData.title}" som ${finalData.format.toUpperCase()}. ` +
+                          `${finalData.projectId ? `Projekt-ID: ${finalData.projectId}. ` : ""}` +
+                          `Innehåll:\n\n${finalData.summary}\n\n${fullContent}`,
+                      });
+
+                      return { success: true };
+                    };
+
+                    return (
+                      <ReportPreviewCard
+                        key={i}
+                        data={{
+                          title: reportData.title,
+                          summary: reportData.summary,
+                          sections: reportData.sections,
+                          projectId: reportData.projectId,
+                          projectName: reportData.projectName,
+                          format: reportData.format,
+                        }}
+                        onGenerate={handleReportGenerate}
+                      />
+                    );
+                  }
+
                   if (result?.__deleteConfirmation) {
                     const deleteData = result as DeleteConfirmationData & {
                       __deleteConfirmation: true;
@@ -1127,6 +1184,44 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                           actionParams: deleteData.actionParams,
                         }}
                         onConfirm={handleDeleteConfirm}
+                      />
+                    );
+                  }
+
+                  if (result?.__quotePreview) {
+                    const quoteData = result as unknown as QuotePreviewData & {
+                      __quotePreview: true;
+                    };
+
+                    const handleGenerate = async () => {
+                      return generateQuotePdf({
+                        projectId: quoteData.projectId,
+                        projectName: quoteData.projectName,
+                        clientName: quoteData.clientName,
+                        clientEmail: quoteData.clientEmail,
+                        title: quoteData.title,
+                        items: quoteData.items,
+                        validUntil: quoteData.validUntil,
+                        notes: quoteData.notes,
+                        includeRot: quoteData.includeRot,
+                      });
+                    };
+
+                    return (
+                      <QuotePreviewCard
+                        key={i}
+                        data={{
+                          projectId: quoteData.projectId,
+                          projectName: quoteData.projectName,
+                          clientName: quoteData.clientName,
+                          clientEmail: quoteData.clientEmail,
+                          title: quoteData.title,
+                          items: quoteData.items,
+                          validUntil: quoteData.validUntil,
+                          notes: quoteData.notes,
+                          includeRot: quoteData.includeRot,
+                        }}
+                        onGenerate={handleGenerate}
                       />
                     );
                   }
