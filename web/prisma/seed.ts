@@ -1,6 +1,7 @@
 import "dotenv/config";
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import bcrypt from "bcrypt";
 import { prisma } from "../src/lib/db";
 import { processPersonalFileOcr } from "../src/lib/ai/ocr";
@@ -19,6 +20,7 @@ async function main() {
       name: "Anerdins El",
       orgNumber: "556677-8899",
       stripeCustomerId: "cus_seed_test_001",
+      inboxCode: crypto.randomBytes(4).toString("hex"),
     },
   });
 
