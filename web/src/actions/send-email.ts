@@ -284,7 +284,8 @@ export async function sendExternalEmail(
   let lastMessageId: string | undefined;
 
   // Determine from address (always use RESEND_FROM for verified domain)
-  const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
+  // Fallback to Resend onboarding domain if not configured
+  const fromAddress = process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
 
   for (const recipient of result.data.recipients) {
     const emailResult = await sendEmail({
@@ -395,7 +396,8 @@ export async function sendToTeamMember(
   });
 
   // Always use RESEND_FROM for verified domain, sender email as reply-to
-  const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
+  // Fallback to Resend onboarding domain if not configured
+  const fromAddress = process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
 
   const emailResult = await sendEmail({
     to: membership.user.email,
@@ -468,7 +470,8 @@ export async function sendToTeamMembers(
 
   const errors: string[] = [];
   // Always use RESEND_FROM for verified domain, sender email as reply-to
-  const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
+  // Fallback to Resend onboarding domain if not configured
+  const fromAddress = process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
