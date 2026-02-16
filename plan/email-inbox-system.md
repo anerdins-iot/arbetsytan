@@ -159,6 +159,7 @@ Nytt verktyg `searchMyConversations`:
 - [x] Fas 4: Inkorgsgränssnitt
 - [x] Fas 5: AI-integration
 - [x] Fas 6: Notifikationer
+- [x] Block 7.1: Playwright-test
 
 ---
 
@@ -269,15 +270,15 @@ Nytt verktyg `searchMyConversations`:
 **Input:** Fas 3 klar
 **Output:** Inkorgsvy med lista
 
-- [ ] Uppdatera `/[locale]/(dashboard)/email/page.tsx`:
+- [x] Uppdatera `/[locale]/(dashboard)/email/page.tsx`:
   - Lägg till Tabs: "Inkorg", "Skickat", "Skriv"
   - Standard-tab är "Inkorg"
-- [ ] Skapa `src/components/email/conversation-list.tsx`:
+- [x] Skapa `src/components/email/conversation-list.tsx`:
   - Lista med ConversationCard för varje konversation
   - Visar: avsändare, ämne, förhandsgranskning, datum, oläst-badge
   - Klick öppnar Sheet
   - Tom state med ikon och beskrivning
-- [ ] Skapa `src/components/email/conversation-card.tsx`:
+- [x] Skapa `src/components/email/conversation-card.tsx`:
   - Kompakt rad med info
   - Oläst markeras med prick eller fet text
   - Projektkoppling visas som liten badge
@@ -288,14 +289,14 @@ Nytt verktyg `searchMyConversations`:
 **Input:** Block 4.1 klart
 **Output:** Sheet för att läsa och svara
 
-- [ ] Skapa `src/components/email/conversation-sheet.tsx`:
+- [x] Skapa `src/components/email/conversation-sheet.tsx`:
   - Sheet från höger (som TaskDetailSheet)
   - Header med ämne, motpart, projektkoppling
   - Meddelandelista med bubblor (inkommande/utgående)
   - Svarsformulär längst ner
   - Arkivera-knapp
-- [ ] URL-stöd: `?conversationId=xxx` öppnar Sheet direkt
-- [ ] Markera som läst när Sheet öppnas
+- [x] URL-stöd: `?conversationId=xxx` öppnar Sheet direkt
+- [x] Markera som läst när Sheet öppnas
 
 **Verifiering:** Sheet öppnas och stängs, meddelanden visas, svar skickas, `npm run build` OK
 
@@ -303,11 +304,11 @@ Nytt verktyg `searchMyConversations`:
 **Input:** Block 4.1 klart
 **Output:** Formulär för nytt mail
 
-- [ ] Uppdatera befintlig `EmailComposer` eller skapa ny:
+- [x] Uppdatera befintlig `EmailComposer` eller skapa ny:
   - Fält: Till, Ämne, Meddelande
   - Valfri projektkoppling (dropdown)
   - Skicka skapar konversation
-- [ ] Efter skickat: navigera till konversationen eller visa bekräftelse
+- [x] Efter skickat: navigera till konversationen eller visa bekräftelse
 
 **Verifiering:** Nytt mail skapar konversation, `npm run build` OK
 
@@ -319,14 +320,14 @@ Nytt verktyg `searchMyConversations`:
 **Input:** Fas 3 klar
 **Output:** AI kan söka i konversationer
 
-- [ ] Uppdatera `searchMyEmails` i personal-tools.ts:
+- [x] Uppdatera `searchMyEmails` i personal-tools.ts:
   - Inkludera konversationskontext i resultaten
   - Returnera conversationId för djupare sökning
-- [ ] Lägg till verktyg `getConversationContext`:
+- [x] Lägg till verktyg `getConversationContext`:
   - Tar conversationId
   - Validerar att användaren äger konversationen
   - Returnerar alla meddelanden i tråden
-- [ ] Uppdatera AI system-prompt att nämna mailsökning
+- [x] Uppdatera AI system-prompt att nämna mailsökning
 
 **Verifiering:** AI kan hitta och citera mailinnehåll, `npm run build` OK
 
@@ -368,18 +369,20 @@ Nytt verktyg `searchMyConversations`:
 **Input:** Alla faser klara
 **Output:** Screenshots och verifiering
 
-- [ ] Starta server med `/workspace/web/scripts/start-server.sh`
-- [ ] Logga in som testanvändare
-- [ ] Navigera till /email
-- [ ] Ta screenshot av tom inkorg
-- [ ] Skapa ny konversation via UI
-- [ ] Ta screenshot av konversationslistan
-- [ ] Öppna konversation i Sheet
-- [ ] Ta screenshot av konversationsdetalj
-- [ ] Skicka svar
-- [ ] Ta screenshot av uppdaterad tråd
-- [ ] Spara alla screenshots i `screenshots/email-inbox/`
-- [ ] Stoppa server med `/workspace/web/scripts/stop-server.sh`
+- [x] Starta server med `/workspace/web/scripts/start-server.sh`
+- [x] Logga in som testanvändare
+- [x] Navigera till /email
+- [x] Ta screenshot av tom inkorg
+- [x] Skapa ny konversation via UI
+- [x] Ta screenshot av konversationslistan
+- [x] Öppna konversation i Sheet
+- [x] Ta screenshot av konversationsdetalj
+- [x] Skicka svar
+- [x] Ta screenshot av uppdaterad tråd
+- [x] Spara alla screenshots i `screenshots/email-inbox/`
+- [x] Stoppa server med `/workspace/web/scripts/stop-server.sh`
+
+**Genomfört:** 2026-02-16. Tre parallella Haiku-agenter körde testerna. Screenshots sparade lokalt (ej committade pga gitignore).
 
 **Verifiering:** Alla screenshots sparade, inga konsolfel
 
