@@ -206,23 +206,16 @@
       "selectProject": "Select project"
     },
     "voice": {
-      "voiceMode": "Voice mode",
-      "voiceSettings": "Voice settings",
-      "on": "On",
-      "off": "Off",
-      "ttsProvider": "Voice provider",
       "startRecording": "Start recording",
       "stopRecording": "Stop recording",
       "stopSpeaking": "Stop speaking",
       "transcribing": "Transcribing…",
-      "microphoneError": "Could not access microphone",
-      "pushToTalk": "Push to talk",
-      "conversationMode": "Conversation",
-      "microphoneHelp": "Microphone modes",
-      "microphoneHelpDetails": "Hold, click or double-click",
-      "holdToTalk": "Hold = talk, release = send",
-      "clickOnce": "Click 1x = record, auto-send",
-      "clickTwice": "Click 2x = conversation mode"
+      "clickToRecord": "Click to record",
+      "clickToCycle": "Click to cycle mode",
+      "modeOff": "Voice off",
+      "modeTtsOnly": "Read aloud",
+      "modeConversationAuto": "Conversation (auto-send)",
+      "modeConversationManual": "Conversation (manual)"
     },
     "briefing": {
       "greetingMorning": "Good morning!",
@@ -1194,6 +1187,8 @@
     "profile": "Profile",
     "openMenu": "Open menu",
     "aiChat": "Personal AI assistant",
+    "talkToAi": "Talk",
+    "talkToAiTooltip": "Start voice conversation with AI",
     "notificationPanel": {
       "title": "Notifications",
       "empty": "No notifications yet",

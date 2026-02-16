@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo, useEffect } from "react"
+import { useState, useCallback, useMemo, useEffect, useRef } from "react"
 import { useTranslations } from "next-intl"
 import { usePathname } from "next/navigation"
 import { Sidebar } from "./sidebar"
@@ -48,6 +48,10 @@ export function DashboardShell({
     }
   }, [aiChatOpen])
 
+  // Voice chat: when true, PersonalAiChat opens with conversation-auto voice mode
+  const [startWithVoice, setStartWithVoice] = useState(false)
+  const startWithVoiceRef = useRef(false)
+
   const isDesktop = useMediaQuery("(min-width: 1280px)")
   const t = useTranslations("sidebar")
   const pathname = usePathname()
@@ -68,6 +72,16 @@ export function DashboardShell({
 
   const handleAiChatOpenChange = useCallback((open: boolean) => {
     setAiChatOpen(open)
+    if (!open) {
+      setStartWithVoice(false)
+      startWithVoiceRef.current = false
+    }
+  }, [])
+
+  const handleStartVoiceChat = useCallback(() => {
+    setStartWithVoice(true)
+    startWithVoiceRef.current = true
+    setAiChatOpen(true)
   }, [])
 
   return (
@@ -94,6 +108,7 @@ export function DashboardShell({
             initialUnreadCount={initialUnreadCount}
             initialUnreadAiCount={initialUnreadAiCount}
             onAiChatToggle={() => setAiChatOpen((prev) => !prev)}
+            onStartVoiceChat={handleStartVoiceChat}
           />
           <main className="flex-1 overflow-y-auto p-6">
             {children}
@@ -107,6 +122,7 @@ export function DashboardShell({
             onOpenChange={handleAiChatOpenChange}
             initialProjectId={urlProjectId}
             mode="docked"
+            initialVoiceMode={startWithVoice ? "conversation-auto" : undefined}
           />
         ) : (
           <PersonalAiChat
@@ -114,6 +130,7 @@ export function DashboardShell({
             onOpenChange={handleAiChatOpenChange}
             initialProjectId={urlProjectId}
             mode="sheet"
+            initialVoiceMode={startWithVoice ? "conversation-auto" : undefined}
           />
         )}
       </div>

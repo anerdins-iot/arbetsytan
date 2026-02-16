@@ -206,23 +206,16 @@
       "selectProject": "Välj projekt"
     },
     "voice": {
-      "voiceMode": "Röstläge",
-      "voiceSettings": "Röstinställningar",
-      "on": "På",
-      "off": "Av",
-      "ttsProvider": "Röstleverantör",
       "startRecording": "Börja spela in",
       "stopRecording": "Stoppa inspelning",
       "stopSpeaking": "Stoppa uppläsning",
       "transcribing": "Transkriberar…",
-      "microphoneError": "Kunde inte komma åt mikrofonen",
-      "pushToTalk": "Håll för att prata",
-      "conversationMode": "Konversation",
-      "microphoneHelp": "Mikrofon-lägen",
-      "microphoneHelpDetails": "Håll, klicka eller dubbelklicka",
-      "holdToTalk": "Håll in = prata, släpp = skicka",
-      "clickOnce": "Klicka 1x = spela in, auto-skicka",
-      "clickTwice": "Klicka 2x = konversationsläge"
+      "clickToRecord": "Klicka för att spela in",
+      "clickToCycle": "Klicka för att byta läge",
+      "modeOff": "Röst av",
+      "modeTtsOnly": "Uppläsning",
+      "modeConversationAuto": "Konversation (auto-skicka)",
+      "modeConversationManual": "Konversation (manuell)"
     },
     "briefing": {
       "greetingMorning": "God morgon!",
@@ -1205,6 +1198,8 @@
     "profile": "Profil",
     "openMenu": "Öppna meny",
     "aiChat": "Personlig AI-assistent",
+    "talkToAi": "Prata",
+    "talkToAiTooltip": "Starta röstkonversation med AI",
     "notificationPanel": {
       "title": "Notifikationer",
       "empty": "Inga notifikationer ännu",

@@ -33,7 +33,7 @@ import {
 import type { ConversationListItem } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
-import { VoiceModeToggle } from "@/components/ai/voice-mode-toggle";
+import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
 import { FileCreatedCard, type FileCreatedData } from "@/components/ai/file-created-card";
@@ -55,7 +55,6 @@ import { deletePersonalNote, deletePersonalFile } from "@/actions/personal";
 import { deleteTimeEntry } from "@/actions/time-entries";
 import { deleteAutomation } from "@/actions/automations";
 import { deleteNoteCategory } from "@/actions/note-categories";
-import type { TTSProvider } from "@/hooks/useSpeechSynthesis";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
@@ -118,6 +117,8 @@ type PersonalAiChatProps = {
   initialProjectId?: string | null;
   /** Renderingsläge: sheet (overlay) eller docked (fast sidebar) */
   mode?: "sheet" | "docked";
+  /** Initial voice mode when opening via voice CTA */
+  initialVoiceMode?: VoiceMode;
 };
 
 const PANEL_WIDTH_STORAGE_KEY = "ay-ai-chat-panel-width";
@@ -125,7 +126,7 @@ const DEFAULT_PANEL_WIDTH = 384; // 96 * 4 = w-96
 const MIN_PANEL_WIDTH = 320;
 const MAX_PANEL_WIDTH = 800;
 
-export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet" }: PersonalAiChatProps) {
+export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet", initialVoiceMode }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
@@ -251,10 +252,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   }, [initialProjectId]);
 
   // Voice mode state
-  const [voiceModeEnabled, setVoiceModeEnabled] = useState(false);
-  const [ttsProvider, setTtsProvider] = useState<TTSProvider>("openai");
-  const [isConversationMode, setIsConversationMode] = useState(false);
+  const [voiceMode, setVoiceMode] = useState<VoiceMode>("off");
   const [triggerConversationRecording, setTriggerConversationRecording] = useState(false);
+
+  // Apply initial voice mode when opening via voice CTA
+  useEffect(() => {
+    if (open && initialVoiceMode) {
+      setVoiceMode(initialVoiceMode);
+    }
+  }, [open, initialVoiceMode]);
   const speakRef = useRef<((text: string) => Promise<void>) | null>(null);
   const stopSpeakingRef = useRef<(() => void) | null>(null);
   const isSpeakingRef = useRef<boolean>(false);
@@ -291,9 +297,12 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   const isLoading = status === "streaming" || status === "submitted";
 
-  // Auto-speak assistant messages when voice mode is enabled
+  // Auto-speak assistant messages when voice mode includes TTS
+  const ttsEnabled = voiceMode !== "off";
+  const isConversationMode = voiceMode === "conversation-auto" || voiceMode === "conversation-manual";
+
   useEffect(() => {
-    if (!voiceModeEnabled || isLoading) return;
+    if (!ttsEnabled || isLoading) return;
 
     const lastMessage = messages[messages.length - 1];
     if (!lastMessage || lastMessage.role !== "assistant") return;
@@ -321,7 +330,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       }
     };
     speakAndTrigger();
-  }, [messages, voiceModeEnabled, isLoading, isConversationMode]);
+  }, [messages, ttsEnabled, isLoading, isConversationMode]);
 
   const handleInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -610,7 +619,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
   }, []);
 
-  // Handle voice input - send message directly
+  // Handle voice input - send message directly (auto-send mode)
   const handleVoiceInput = useCallback(
     (text: string) => {
       if (!text.trim() || isLoading) return;
@@ -619,6 +628,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       sendMessage({ text });
     },
     [isLoading, sendMessage]
+  );
+
+  // Handle voice input - put text in input field (manual mode)
+  const handleVoiceInputManual = useCallback(
+    (text: string) => {
+      if (!text.trim()) return;
+      setInputValue((prev) => (prev ? `${prev} ${text}` : text));
+    },
+    []
   );
 
   const handleSubmit = useCallback(
@@ -1122,17 +1140,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
             {/* Voice mode controls */}
             <VoiceModeToggle
+              voiceMode={voiceMode}
+              onVoiceModeChange={setVoiceMode}
               onVoiceInput={handleVoiceInput}
-              voiceModeEnabled={voiceModeEnabled}
-              onVoiceModeToggle={setVoiceModeEnabled}
-              disabled={isLoading}
-              ttsProvider={ttsProvider}
-              onTtsProviderChange={setTtsProvider}
+              onVoiceInputManual={handleVoiceInputManual}
               speakRef={speakRef}
               stopRef={stopSpeakingRef}
               isSpeakingRef={isSpeakingRef}
-              onConversationModeChange={setIsConversationMode}
               triggerConversationRecording={triggerConversationRecording}
+              disabled={isLoading}
             />
           </div>
 

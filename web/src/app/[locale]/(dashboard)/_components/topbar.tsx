@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, useState, useTransition } from "react"
 import { useLocale, useTranslations } from "next-intl"
-import { Bell, Bot, CheckCheck, FileText, Menu, Search, User } from "lucide-react"
+import { Bell, Bot, CheckCheck, FileText, Menu, Mic, Search, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Separator } from "@/components/ui/separator"
@@ -17,6 +17,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import {
   markAllNotificationsRead,
   markNotificationRead,
   type NotificationItem,
@@ -30,6 +36,7 @@ type TopbarProps = {
   initialUnreadCount: number
   initialUnreadAiCount: number
   onAiChatToggle: () => void
+  onStartVoiceChat?: () => void
 }
 
 export function Topbar({
@@ -38,6 +45,7 @@ export function Topbar({
   initialUnreadCount,
   initialUnreadAiCount,
   onAiChatToggle,
+  onStartVoiceChat,
 }: TopbarProps) {
   const t = useTranslations("topbar")
   const locale = useLocale()
@@ -328,6 +336,27 @@ export function Topbar({
       {/* Högersektion med AI-chatt, notifikationer och profil */}
       <div className="ml-auto flex items-center gap-1">
         <ModeToggle />
+
+        {/* Röstchatt CTA-knapp */}
+        {onStartVoiceChat && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="sm"
+                  className="gap-1.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-sm hover:from-primary/90 hover:to-primary/70"
+                  onClick={onStartVoiceChat}
+                >
+                  <Mic className="size-4" />
+                  <span className="hidden sm:inline">{t("talkToAi")}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom">
+                <p>{t("talkToAiTooltip")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
 
         {/* AI-chatt-knapp */}
         <Button
