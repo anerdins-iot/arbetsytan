@@ -56,7 +56,7 @@ async function fetchFileAttachments(
       // Verify user has access to file (personal via userDb, project via tenantDb)
       let file = null;
       if (attachment.source === "personal") {
-        file = await userDb(userId).file.findFirst({
+        file = await userDb(userId, {}).file.findFirst({
           where: { id: attachment.fileId },
           select: { id: true, name: true, type: true, bucket: true, key: true },
         });

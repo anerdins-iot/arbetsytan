@@ -94,7 +94,9 @@ export async function POST(req: NextRequest) {
     });
 
     // Spara i DB (skip auto-emit on create because we want to include OCR/URL later)
-    const db = tenantDb(tenantId, { actorUserId: userId, skipEmit: true });
+    const db = projectId
+      ? tenantDb(tenantId, { actorUserId: userId, skipEmit: true })
+      : userDb(userId, {});
     const created = await db.file.create({
       data: {
         name: fileName,
@@ -119,8 +121,9 @@ export async function POST(req: NextRequest) {
 
     // Skicka systemmeddelande till konversationen (använd userDb för personliga konversationer så att auto-emit triggas)
     if (conversationId) {
+      // Use the same db client to find conversation
       const existingConv = await db.conversation.findFirst({
-        where: { id: conversationId, userId },
+        where: { id: conversationId },
         select: { id: true, projectId: true },
       });
       if (existingConv) {

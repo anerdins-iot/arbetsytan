@@ -5,6 +5,7 @@ import {
   userRoom,
   tenantRoom,
 } from "./socket-events";
+import { publishSocketEvent } from "./redis-pubsub";
 import type { Server } from "socket.io";
 
 /** Models that should trigger auto-emit */
@@ -341,9 +342,6 @@ export function createEmitExtension(context: EmitContext) {
 
         // 3. Try to emit (fire-and-forget, never throws)
         try {
-          const io = getIO();
-          if (!io) return result; // No socket server (build time, tests)
-
           const record = result as Record<string, unknown>;
           const mappedOp: "created" | "updated" | "deleted" =
             operation === "upsert"
@@ -358,7 +356,17 @@ export function createEmitExtension(context: EmitContext) {
           if (!eventInfo) return result;
 
           const { eventName, room, payload } = eventInfo;
-          io.to(room).emit(eventName, payload);
+
+          const io = getIO();
+          if (io) {
+            // Same process as Socket.IO server — emit directly
+            io.to(room).emit(eventName, payload);
+          } else {
+            // Different process (server action, API route) — publish via Redis
+            publishSocketEvent({ room, eventName, payload }).catch(() => {
+              // Already logged inside publishSocketEvent
+            });
+          }
         } catch (emitError) {
           // Log but never fail the DB operation due to emit issues
           console.warn(

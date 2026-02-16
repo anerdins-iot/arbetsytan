@@ -14,7 +14,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const udb = userDb(session.user.id);
+    const udb = userDb(session.user.id, {});
 
     // Get files uploaded by this user that have no project (personal files)
     const files = await udb.file.findMany({

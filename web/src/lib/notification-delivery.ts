@@ -143,11 +143,13 @@ async function sendPushIfEnabled(args: {
   body: string;
   enabled: boolean;
 }) {
-  const db = tenantDb(args.tenantId);
+  const db = userDb(args.userId, { projectId: args.projectId });
   if (!args.enabled) return;
 
   // Web push (browser subscriptions)
-  const subscriptions = await db.pushSubscription.findMany({
+  // Use tenantDb for push subscriptions since they're tenant-scoped
+  const tenantDbClient = tenantDb(args.tenantId);
+  const subscriptions = await tenantDbClient.pushSubscription.findMany({
     where: { userId: args.userId },
     select: { endpoint: true, p256dhKey: true, authKey: true },
   });
@@ -159,7 +161,7 @@ async function sendPushIfEnabled(args: {
   });
 
   if (pushResult.invalidEndpoints.length > 0) {
-    await db.pushSubscription.deleteMany({
+    await tenantDbClient.pushSubscription.deleteMany({
       where: { endpoint: { in: pushResult.invalidEndpoints } },
     });
   }
@@ -210,7 +212,7 @@ async function sendEmailIfEnabled(args: {
   body: string;
 }) {
   if (!args.enabled) return;
-  const db = tenantDb(args.tenantId);
+  const db = userDb(args.userId, { projectId: args.projectId });
   const result = await sendEmail({
     to: args.to,
     subject: args.subject,

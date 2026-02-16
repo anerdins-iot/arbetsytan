@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requireProject } from "@/lib/auth";
 import { verifyAccessToken } from "@/lib/auth-mobile";
 import { SOCKET_EVENTS, projectRoom, tenantRoom, userRoom } from "@/lib/socket-events";
+import { subscribeSocketEvents } from "@/lib/redis-pubsub";
 
 type SocketAuthData = {
   tenantId: string;
@@ -169,6 +170,14 @@ function createSocketServer(): Server {
         }
       }
     );
+  });
+
+  // Subscribe to Redis pub/sub for cross-process event bridging.
+  // Server actions/API routes publish events to Redis when getIO() is null.
+  subscribeSocketEvents((room, eventName, payload) => {
+    io.to(room).emit(eventName, payload);
+  }).catch((err) => {
+    console.error("Failed to subscribe to Redis socket events:", err);
   });
 
   return io;

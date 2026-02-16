@@ -69,7 +69,7 @@ export async function getPersonalConversations(): Promise<
 > {
   const { userId } = await requireAuth();
 
-  const udb = userDb(userId);
+  const udb = userDb(userId, {});
   const conversations = await udb.conversation.findMany({
     where: { type: "PERSONAL" },
     orderBy: { updatedAt: "desc" },
@@ -97,7 +97,7 @@ export async function getPersonalConversations(): Promise<
  */
 export async function getUnreadAiMessageCount(): Promise<number> {
   const { userId } = await requireAuth();
-  const udb = userDb(userId);
+  const udb = userDb(userId, {});
   return udb.aIMessage.count({
     where: { direction: "PROJECT_TO_PERSONAL", read: false },
   });
@@ -123,7 +123,7 @@ export async function getConversationWithMessages(
   }
 
   const db = tenantDb(tenantId);
-  const udb = userDb(userId);
+  const udb = userDb(userId, {});
   const conversation = await (projectId != null
     ? db.conversation.findFirst({
         where: { id: conversationId, userId, projectId },

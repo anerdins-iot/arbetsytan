@@ -76,7 +76,7 @@ export async function getPersonalNotesCore(
   ctx: ServiceContext,
   options?: GetNotesOptions & PaginationOptions
 ): Promise<NoteListItem[]> {
-  const udb = userDb(ctx.userId);
+  const udb = userDb(ctx.userId, {});
 
   const where: Record<string, any> = {};
   if (options?.category) {

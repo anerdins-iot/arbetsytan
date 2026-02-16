@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     const { fileId, ocrText, userDescription } = parsed.data;
 
     // Försök hitta som personlig fil (userDb scopar till userId + projectId: null)
-    const udb = userDb(userId);
+    const udb = userDb(userId, {});
     let file = await udb.file.findFirst({
       where: { id: fileId },
     });

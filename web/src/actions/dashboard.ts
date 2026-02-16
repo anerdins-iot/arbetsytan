@@ -2,7 +2,7 @@
 
 import type { Prisma } from "../../generated/prisma/client";
 import { requireAuth } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 
 export type DashboardTask = {
   id: string;
@@ -225,13 +225,12 @@ export async function getMyNotifications(): Promise<{
 export async function markNotificationRead(
   notificationId: string
 ): Promise<{ success: boolean; error?: string }> {
-  const { userId, tenantId } = await requireAuth();
-  const db = tenantDb(tenantId);
+  const { userId } = await requireAuth();
+  const db = userDb(userId, {});
 
   await db.notification.updateMany({
     where: {
       id: notificationId,
-      userId,
     },
     data: { read: true },
   });
@@ -244,12 +243,11 @@ export async function markAllNotificationsRead(): Promise<{
   success: boolean;
   error?: string;
 }> {
-  const { userId, tenantId } = await requireAuth();
-  const db = tenantDb(tenantId);
+  const { userId } = await requireAuth();
+  const db = userDb(userId, {});
 
   await db.notification.updateMany({
     where: {
-      userId,
       read: false,
     },
     data: { read: true },

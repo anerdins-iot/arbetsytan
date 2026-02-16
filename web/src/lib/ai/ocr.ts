@@ -1,7 +1,7 @@
 import { Mistral } from "@mistralai/mistralai";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { minioClient, createPresignedDownloadUrl } from "@/lib/minio";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 import { logger } from "@/lib/logger";
 import { queueEmbeddingProcessing } from "@/lib/ai/embeddings";
 import {
@@ -466,18 +466,20 @@ export async function processPersonalFileOcr(params: {
 
     if (!text.trim()) {
       logger.info("No text extracted for personal file", { fileId });
-      const db = tenantDb(tenantId);
+      const db = userDb(userId, {});
       await db.file.update({
         where: { id: fileId },
         data: { ocrText: "" },
       });
-      await db.documentChunk.deleteMany({
+      // DocumentChunk is tenant-scoped, use tenantDb for cleanup
+      const tenantDbClient = tenantDb(tenantId);
+      await tenantDbClient.documentChunk.deleteMany({
         where: { fileId },
       });
       return { success: true, chunkCount: 0 };
     }
 
-    const db = tenantDb(tenantId);
+    const db = userDb(userId, {});
 
     await db.file.update({
       where: { id: fileId },
@@ -488,12 +490,14 @@ export async function processPersonalFileOcr(params: {
     const textChunks = chunkText(pages);
 
     if (textChunks.length > 0) {
-      await db.documentChunk.deleteMany({
+      // DocumentChunk is tenant-scoped, use tenantDb for cleanup
+      const tenantDbClient = tenantDb(tenantId);
+      await tenantDbClient.documentChunk.deleteMany({
         where: { fileId },
       });
 
       for (const chunk of textChunks) {
-        await db.documentChunk.create({
+        await tenantDbClient.documentChunk.create({
           data: {
             content: chunk.content,
             page: chunk.page,

@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requirePermission, requireProject } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 import { logActivity } from "@/lib/activity-log";
 import {
   ALLOWED_FILE_TYPES,
@@ -783,22 +783,25 @@ export async function saveEditedExcel(input: {
   }
 
   try {
-    const db = tenantDb(tenantId, { actorUserId: userId, projectId: projectId ?? undefined });
+    if (projectId) {
+      await requireProject(tenantId, projectId, userId);
+    }
+
+    // Use userDb for personal files (projectId = null), tenantDb for project files
+    const db = projectId
+      ? tenantDb(tenantId, { actorUserId: userId, projectId })
+      : userDb(userId, {});
 
     // Verify source file access
     const sourceFile = await db.file.findFirst({
       where: projectId
         ? { id: sourceFileId, projectId }
-        : { id: sourceFileId, projectId: null, uploadedById: userId },
+        : { id: sourceFileId },
       select: { id: true, name: true },
     });
 
     if (!sourceFile) {
       return { success: false, error: "FILE_NOT_FOUND" };
-    }
-
-    if (projectId) {
-      await requireProject(tenantId, projectId, userId);
     }
 
     // Build workbook from edited sheets

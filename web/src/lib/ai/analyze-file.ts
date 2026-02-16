@@ -111,7 +111,7 @@ async function runAnalysis(params: AnalyzeFileParams): Promise<void> {
 
           if (ocrResult.success) {
             chunkCount = ocrResult.chunkCount;
-            const db = tenantDb(tenantId);
+            const db = userDb(userId, {});
             const file = await db.file.findFirst({
               where: { id: fileId },
               select: { ocrText: true },

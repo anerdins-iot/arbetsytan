@@ -15,6 +15,7 @@ import {
   userRoom,
   projectRoom,
 } from "./src/lib/socket-events";
+import { subscribeSocketEvents } from "./src/lib/redis-pubsub";
 
 const dev = process.env.NODE_ENV !== "production";
 const port = parseInt(process.env.PORT || "3000", 10);
@@ -121,9 +122,10 @@ app.prepare().then(async () => {
 
       // Fall back to Auth.js session token
       // In production behind HTTPS proxy, Auth.js uses __Secure- prefix for cookies
-      const isSecure = process.env.NEXTAUTH_URL?.startsWith("https://") ||
-                       process.env.NODE_ENV === "production";
-      const cookieName = isSecure
+      // Try secure cookie first, fall back to non-secure (for dev/Docker without HTTPS)
+      const cookieHeader = socket.request.headers.cookie ?? "";
+      const hasSecureCookie = cookieHeader.includes("__Secure-authjs.session-token");
+      const cookieName = hasSecureCookie
         ? "__Secure-authjs.session-token"
         : "authjs.session-token";
 
@@ -188,6 +190,14 @@ app.prepare().then(async () => {
 
   // Store io instance globally for emit functions
   (globalThis as Record<string, unknown>).ioServer = io;
+
+  // Subscribe to Redis pub/sub channel for cross-process event bridging.
+  // Server actions publish events to Redis; this subscriber forwards them to Socket.IO clients.
+  subscribeSocketEvents((room, eventName, payload) => {
+    io.to(room).emit(eventName, payload);
+  }).catch((err) => {
+    console.error("Failed to subscribe to Redis socket events:", err);
+  });
 
   httpServer.listen(port, () => {
     console.log(`> Ready on http://0.0.0.0:${port}`);

@@ -63,7 +63,7 @@ export async function getDailyBriefing(): Promise<DailyBriefing> {
         orderBy: { updatedAt: "desc" },
       }),
       db.notification.count({ where: { userId, read: false } }),
-      userDb(userId).note.findMany({
+      userDb(userId, {}).note.findMany({
         select: { title: true, updatedAt: true },
         orderBy: { updatedAt: "desc" },
         take: 5,
@@ -108,7 +108,7 @@ export async function getDailyBriefing(): Promise<DailyBriefing> {
       take: 30,
     }),
     db.notification.count({ where: { userId, read: false } }),
-    userDb(userId).note.findMany({
+    userDb(userId, {}).note.findMany({
       select: { title: true, updatedAt: true },
       orderBy: { updatedAt: "desc" },
       take: 5,

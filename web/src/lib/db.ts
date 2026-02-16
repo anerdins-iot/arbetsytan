@@ -782,7 +782,9 @@ export function userDb(userId: string, emitContext?: Omit<EmitContext, "actorUse
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let client = basePrisma.$extends(createUserExtension(userId) as any);
 
-  if (emitContext && !emitContext.skipEmit) {
+  const shouldEmit = emitContext && !emitContext.skipEmit;
+
+  if (shouldEmit) {
     // For userDb, actorUserId is always the userId
     const ctx: EmitContext = { ...emitContext, actorUserId: userId };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

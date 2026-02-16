@@ -238,13 +238,29 @@ const executeCreateNote: ToolExecutor = async (params, ctx) => {
   }
 
   const projectId = (params.projectId as string) ?? ctx.projectId;
-  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId: projectId ?? undefined });
 
-  if (projectId) {
-    const project = await db.project.findUnique({ where: { id: projectId } });
-    if (!project) {
-      return { success: false, error: "Project not found" };
-    }
+  // Personal note (projectId null) - use userDb
+  if (!projectId) {
+    const db = userDb(ctx.userId, {});
+
+    const note = await db.note.create({
+      data: {
+        title: (params.title as string) ?? "",
+        content,
+        category: (params.category as string) ?? null,
+        createdById: ctx.userId,
+      },
+    });
+
+    return { success: true, data: { noteId: note.id } };
+  }
+
+  // Project note - use tenantDb
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId });
+
+  const project = await db.project.findUnique({ where: { id: projectId } });
+  if (!project) {
+    return { success: false, error: "Project not found" };
   }
 
   const note = await db.note.create({
@@ -252,17 +268,15 @@ const executeCreateNote: ToolExecutor = async (params, ctx) => {
       title: (params.title as string) ?? "",
       content,
       category: (params.category as string) ?? null,
-      ...(projectId ? { project: { connect: { id: projectId } } } : {}),
+      project: { connect: { id: projectId } },
       createdBy: { connect: { id: ctx.userId } },
     },
   });
 
-  if (projectId) {
-    await logActivity(ctx.tenantId, projectId, ctx.userId, "created", "note", note.id, {
-      title: note.title,
-      source: "automation",
-    });
-  }
+  await logActivity(ctx.tenantId, projectId, ctx.userId, "created", "note", note.id, {
+    title: note.title,
+    source: "automation",
+  });
 
   return { success: true, data: { noteId: note.id } };
 };
@@ -273,18 +287,26 @@ const executeCreatePersonalNote: ToolExecutor = async (params, ctx) => {
     return { success: false, error: "content required" };
   }
 
-  const db = userDb(ctx.userId, {});
+  console.log("[executeCreatePersonalNote] Starting with userId:", ctx.userId, "title:", params.title);
 
-  const note = await db.note.create({
-    data: {
-      title: (params.title as string) ?? "",
-      content,
-      category: (params.category as string) ?? null,
-      createdById: ctx.userId,
-    },
-  });
+  try {
+    const db = userDb(ctx.userId, {});
 
-  return { success: true, data: { noteId: note.id } };
+    const note = await db.note.create({
+      data: {
+        title: (params.title as string) ?? "",
+        content,
+        category: (params.category as string) ?? null,
+        createdById: ctx.userId,
+      },
+    });
+
+    console.log("[executeCreatePersonalNote] Created note:", note.id);
+    return { success: true, data: { noteId: note.id } };
+  } catch (error) {
+    console.error("[executeCreatePersonalNote] Error:", error);
+    return { success: false, error: "Failed to create note" };
+  }
 };
 
 const executeCreateComment: ToolExecutor = async (params, ctx) => {

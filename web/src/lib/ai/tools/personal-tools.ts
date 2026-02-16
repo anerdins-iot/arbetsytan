@@ -1089,7 +1089,7 @@ Returnera ENBART JSON i följande format:
 
       // If no results, provide helpful feedback
       if (searchResult.results.length === 0) {
-        const udb = userDb(userId);
+        const udb = userDb(userId, {});
         const [projectFileCount, personalFileCount] = await Promise.all([
           db.file.count({
             where: {
@@ -1142,7 +1142,7 @@ Returnera ENBART JSON i följande format:
       fileId: z.string().describe("ID för den personliga filen (från getPersonalFiles)"),
     })),
     execute: async ({ fileId }) => {
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const file = await udb.file.findFirst({
         where: { id: fileId },
         select: { id: true, name: true, ocrText: true },
@@ -1171,7 +1171,7 @@ Returnera ENBART JSON i följande format:
           select: { id: true, name: true, type: true, bucket: true, key: true, ocrText: true },
         });
       } else {
-        const udb = userDb(userId);
+        const udb = userDb(userId, {});
         file = await udb.file.findFirst({
           where: { id: fileId },
           select: { id: true, name: true, type: true, bucket: true, key: true, ocrText: true },
@@ -1255,7 +1255,7 @@ Returnera ENBART JSON i följande format:
 
       await requireProject(tenantId, pid, userId);
 
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const file = await udb.file.findFirst({
         where: { id: fileId },
         select: { id: true, name: true, type: true, size: true, bucket: true, key: true, ocrText: true },
@@ -1352,7 +1352,7 @@ Returnera ENBART JSON i följande format:
       const fileIdCheck = validateDatabaseId(fileId, "fileId");
       if (!fileIdCheck.valid) return { error: fileIdCheck.error };
 
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const file = await udb.file.findFirst({
         where: { id: fileId },
         select: { id: true, name: true },
@@ -1744,7 +1744,7 @@ Returnera ENBART JSON i följande format:
       noteId: z.string().describe("Anteckningens ID"),
     })),
     execute: async ({ noteId }) => {
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const note = await udb.note.findFirst({
         where: { id: noteId },
         select: { id: true, title: true, content: true },
@@ -1785,7 +1785,7 @@ Returnera ENBART JSON i följande format:
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ query, limit = 20 }) => {
-      const udb = userDb(userId);
+      const udb = userDb(userId, {});
       const notes = await udb.note.findMany({
         where: {
           OR: [

@@ -84,7 +84,7 @@ export async function getPersonalFilesCore(
   ctx: ServiceContext,
   options?: GetFilesOptions & PaginationOptions
 ): Promise<FileListItem[]> {
-  const udb = userDb(ctx.userId);
+  const udb = userDb(ctx.userId, {});
 
   const files = await udb.file.findMany({
     where: {
