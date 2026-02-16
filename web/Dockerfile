@@ -31,6 +31,7 @@ ENV S3_ACCESS_KEY="dummy"
 ENV S3_SECRET_KEY="dummy"
 ENV S3_BUCKET="dummy"
 ENV S3_REGION="us-east-1"
+ENV OPENAI_API_KEY="dummy-build-only"
 
 # Generate Prisma Client explicitly (postinstall skipped with --ignore-scripts)
 RUN npx prisma generate
@@ -59,6 +60,7 @@ COPY --from=builder /app/node_modules ./node_modules
 # Copy custom server and its runtime dependencies (tsx resolves imports at runtime)
 COPY --from=builder /app/server.ts ./server.ts
 COPY --from=builder /app/src/lib/socket-events.ts ./src/lib/socket-events.ts
+COPY --from=builder /app/src/lib/redis-pubsub.ts ./src/lib/redis-pubsub.ts
 
 # Copy public assets
 COPY --from=builder /app/public ./public
