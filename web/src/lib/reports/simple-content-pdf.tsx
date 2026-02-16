@@ -8,6 +8,7 @@ import {
 } from "@react-pdf/renderer";
 import {
   parseMarkdown,
+  parseInlineStyles,
   type MarkdownNode,
   type TextSegment,
 } from "./markdown-parser";
@@ -518,7 +519,7 @@ function renderMarkdownNode(node: MarkdownNode, index: number, styles: any) {
               <Text style={styles.listBullet || baseStyles.listBullet}>
                 {node.ordered ? `${i + 1}.` : "•"}
               </Text>
-              <Text>{item[0]}</Text>
+              <Text>{renderTextSegments(parseInlineStyles(item[0] || ""))}</Text>
             </View>
           ))}
         </View>
@@ -531,7 +532,7 @@ function renderMarkdownNode(node: MarkdownNode, index: number, styles: any) {
             <View style={styles.tableHeaderRow || baseStyles.tableHeaderRow}>
               {node.headers.map((header, i) => (
                 <View key={i} style={styles.tableCell || baseStyles.tableCell}>
-                  <Text>{header}</Text>
+                  <Text>{renderTextSegments(parseInlineStyles(header))}</Text>
                 </View>
               ))}
             </View>
@@ -540,7 +541,7 @@ function renderMarkdownNode(node: MarkdownNode, index: number, styles: any) {
             <View key={i} style={styles.tableRow || baseStyles.tableRow}>
               {row.map((cell, j) => (
                 <View key={j} style={styles.tableCell || baseStyles.tableCell}>
-                  <Text>{cell}</Text>
+                  <Text>{renderTextSegments(parseInlineStyles(cell))}</Text>
                 </View>
               ))}
             </View>

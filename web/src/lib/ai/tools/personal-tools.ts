@@ -875,7 +875,7 @@ Returnera ENBART JSON i följande format:
           model: anthropic("claude-opus-4-6"),
           prompt,
           maxOutputTokens: 2000,
-          timeout: 60_000, // 60 second timeout
+          timeout: 120_000, // 120 second timeout for large reports
         });
         summary = result.text;
       } catch (err) {

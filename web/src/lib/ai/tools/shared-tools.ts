@@ -217,7 +217,7 @@ ${projectData ? `\nProjektdata:\n${JSON.stringify(projectData, null, 2)}` : ""}
       system: systemPrompt,
       prompt: userPrompt,
       maxOutputTokens: 4096,
-      timeout: 60_000, // 60 seconds — prevents hanging on document generation
+      timeout: 120_000, // 120 seconds — prevents hanging on document generation
     });
     return result.text;
   } catch (err) {
@@ -312,6 +312,10 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
     });
     if (opusContent) {
       opusSheets = parseOpusExcelContent(opusContent);
+    }
+    // If Opus failed and no fallback data provided, return error
+    if (!opusContent && (!params.rows || params.rows.length === 0)) {
+      return { error: "Kunde inte generera Excel-innehåll. AI-tjänsten svarade inte i tid. Försök igen." };
     }
   }
 
@@ -477,7 +481,8 @@ export async function generatePdfDocument(params: GeneratePdfParams) {
     if (opusContent) {
       content = opusContent;
     } else if (!content) {
-      content = "Kunde inte generera innehåll automatiskt. Vänligen försök igen.";
+      // Return error instead of creating PDF with error message
+      return { error: "Kunde inte generera innehåll. AI-tjänsten svarade inte i tid. Försök igen." };
     }
   }
 
@@ -552,7 +557,8 @@ export async function generateWordDocument(params: GenerateWordParams) {
     if (opusContent) {
       content = opusContent;
     } else if (!content && (!paragraphs || paragraphs.length === 0)) {
-      content = "Kunde inte generera innehåll automatiskt. Vänligen försök igen.";
+      // Return error instead of creating document with error message
+      return { error: "Kunde inte generera innehåll. AI-tjänsten svarade inte i tid. Försök igen." };
     }
   }
 
@@ -971,6 +977,10 @@ export async function editExcelFileContent(params: EditExcelParams) {
       } catch {
         // Opus couldn't produce valid edits JSON — fall through with empty edits
       }
+    }
+    // If Opus failed or produced no valid edits, return error
+    if (!opusContent || edits.length === 0) {
+      return { error: "Kunde inte generera redigeringar. AI-tjänsten svarade inte i tid eller kunde inte tolka instruktionerna. Försök igen." };
     }
   }
 
