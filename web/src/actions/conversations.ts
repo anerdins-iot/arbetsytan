@@ -1,8 +1,13 @@
 "use server";
 
 import { requireAuth, requireProject } from "@/lib/auth";
-import { tenantDb, userDb } from "@/lib/db";
-import { RECENT_MESSAGES_AFTER_SUMMARY } from "@/lib/ai/conversation-config";
+import {
+  getAiConversationCore,
+  getAiConversationMessagesCore,
+  listAiConversationsCore,
+  type MessageCoreResult,
+} from "@/services/conversation-service";
+import { userDb } from "@/lib/db";
 
 export type ConversationListItem = {
   id: string;
@@ -15,7 +20,9 @@ export type ConversationWithMessagesResult =
   | {
       success: true;
       conversation: { id: string; title: string | null; summary: string | null };
-      messages: { id: string; role: "USER" | "ASSISTANT"; content: string; createdAt: Date }[];
+      messages: MessageCoreResult[];
+      nextCursor: string | null;
+      hasMore: boolean;
     }
   | { success: false; error: string };
 
@@ -34,21 +41,7 @@ export async function getProjectConversations(
     return { success: false, error: message };
   }
 
-  const db = tenantDb(tenantId);
-  const conversations = await db.conversation.findMany({
-    where: {
-      projectId,
-      userId,
-      type: "PROJECT",
-    },
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      updatedAt: true,
-      _count: { select: { messages: true } },
-    },
-  });
+  const conversations = await listAiConversationsCore({ tenantId, userId }, projectId);
 
   return {
     success: true,
@@ -56,7 +49,7 @@ export async function getProjectConversations(
       id: c.id,
       title: c.title,
       updatedAt: c.updatedAt,
-      messageCount: c._count.messages,
+      messageCount: c.messageCount ?? 0,
     })),
   };
 }
@@ -67,19 +60,9 @@ export async function getProjectConversations(
 export async function getPersonalConversations(): Promise<
   { success: true; conversations: ConversationListItem[] } | { success: false; error: string }
 > {
-  const { userId } = await requireAuth();
+  const { tenantId, userId } = await requireAuth();
 
-  const udb = userDb(userId, {});
-  const conversations = await udb.conversation.findMany({
-    where: { type: "PERSONAL" },
-    orderBy: { updatedAt: "desc" },
-    select: {
-      id: true,
-      title: true,
-      updatedAt: true,
-      _count: { select: { messages: true } },
-    },
-  });
+  const conversations = await listAiConversationsCore({ tenantId, userId });
 
   return {
     success: true,
@@ -87,7 +70,7 @@ export async function getPersonalConversations(): Promise<
       id: c.id,
       title: c.title,
       updatedAt: c.updatedAt,
-      messageCount: c._count.messages,
+      messageCount: c.messageCount ?? 0,
     })),
   };
 }
@@ -104,12 +87,14 @@ export async function getUnreadAiMessageCount(): Promise<number> {
 }
 
 /**
- * Get a single conversation with all messages (for loading into chat).
+ * Get a single conversation with paginated messages.
  * If projectId is provided, verifies the conversation belongs to that project.
  */
 export async function getConversationWithMessages(
   conversationId: string,
-  projectId?: string
+  projectId?: string,
+  cursor?: string,
+  limit: number = 20
 ): Promise<ConversationWithMessagesResult> {
   const { tenantId, userId } = await requireAuth();
 
@@ -122,38 +107,14 @@ export async function getConversationWithMessages(
     }
   }
 
-  const db = tenantDb(tenantId);
-  const udb = userDb(userId, {});
-  const conversation = await (projectId != null
-    ? db.conversation.findFirst({
-        where: { id: conversationId, userId, projectId },
-        include: {
-          messages: {
-            orderBy: { createdAt: "asc" },
-            select: { id: true, role: true, content: true, createdAt: true },
-          },
-        },
-      })
-    : udb.conversation.findFirst({
-        where: { id: conversationId },
-        include: {
-          messages: {
-            orderBy: { createdAt: "asc" },
-            select: { id: true, role: true, content: true, createdAt: true },
-          },
-        },
-      }));
+  const ctx = { tenantId, userId };
+  const [conversation, messagesResult] = await Promise.all([
+    getAiConversationCore(ctx, conversationId, projectId),
+    getAiConversationMessagesCore(ctx, conversationId, { cursor, limit }),
+  ]);
 
   if (!conversation) {
     return { success: false, error: "Conversation not found" };
-  }
-
-  let messages = conversation.messages;
-  if (
-    conversation.summary &&
-    messages.length > RECENT_MESSAGES_AFTER_SUMMARY
-  ) {
-    messages = messages.slice(-RECENT_MESSAGES_AFTER_SUMMARY);
   }
 
   return {
@@ -163,11 +124,8 @@ export async function getConversationWithMessages(
       title: conversation.title,
       summary: conversation.summary,
     },
-    messages: messages.map((m) => ({
-      id: m.id,
-      role: m.role,
-      content: m.content,
-      createdAt: m.createdAt,
-    })),
+    messages: messagesResult.messages,
+    nextCursor: messagesResult.nextCursor,
+    hasMore: messagesResult.hasMore,
   };
 }
