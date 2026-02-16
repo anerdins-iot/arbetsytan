@@ -30,7 +30,7 @@ import {
   getPersonalConversations,
   getConversationWithMessages,
 } from "@/actions/conversations";
-import type { ConversationListItem } from "@/actions/conversations";
+import type { ConversationListItem, ConversationWithMessagesResult } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
