@@ -47,23 +47,39 @@ export async function searchElektroskandia(
   limit: number = 10
 ): Promise<SearchResult> {
   try {
+    // Elektroskandia/Sonepar requires browser-like headers and may need cookies
+    // We use their search API with proper headers to mimic a browser request
     const response = await fetch("https://www.elektroskandia.se/sok/sokartiklar2", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
-        "User-Agent": "ArbetsYtan/1.0",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "sv-SE,sv;q=0.9,en;q=0.8",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Origin": "https://www.elektroskandia.se",
+        "Referer": "https://www.elektroskandia.se/s?s=" + encodeURIComponent(query),
       },
       body: JSON.stringify({
         soktext: query,
         antal: limit,
         startvarde: 0,
-        sortering: "popularitet",
+        sortering: "Relevans|Desc",
+        valdaFacetter: [],
+        isOnBelysningsPage: false,
+        onlyInStock: false,
       }),
     });
 
     if (!response.ok) {
+      // If API fails, return empty result (user can still search on website)
       console.error("[wholesaler] Elektroskandia search failed:", response.status);
+      return { products: [], totalFound: 0, supplier: "ELEKTROSKANDIA" };
+    }
+
+    // Check if response is JSON (not HTML error page)
+    const contentType = response.headers.get("content-type");
+    if (!contentType?.includes("application/json")) {
+      console.error("[wholesaler] Elektroskandia returned non-JSON response");
       return { products: [], totalFound: 0, supplier: "ELEKTROSKANDIA" };
     }
 
@@ -77,7 +93,7 @@ export async function searchElektroskandia(
       brand: item.Varumarke,
       price: item.Pristext ? parsePrice(item.Pristext) : undefined,
       unit: item.Enhet,
-      imageUrl: item.Bildurl,
+      imageUrl: item.Bildurl ? `https://www.elektroskandia.se${item.Bildurl}` : undefined,
       productUrl: `https://www.elektroskandia.se/artikel/${item.Artikelnr}`,
       inStock: item.Lagerstatus?.toLowerCase().includes("lager"),
     }));
@@ -95,26 +111,22 @@ export async function searchElektroskandia(
 
 // ─── Ahlsell Search ────────────────────────────────────────
 
-type AhlsellProduct = {
-  ArticleNumber?: string;
-  Name?: string;
-  Description?: string;
-  Brand?: string;
-  Price?: { Value?: number; FormattedValue?: string };
-  Unit?: string;
-  ImageUrl?: string;
-  Url?: string;
-  InStock?: boolean;
-  StockStatus?: string;
+type AhlsellProductCard = {
+  code?: string;
+  name?: string;
+  description?: string;
+  brand?: string;
+  firstVariationPageUrl?: string;
+  variantNumber?: string;
+  image?: {
+    url?: string;
+    description?: string;
+  };
 };
 
 type AhlsellResponse = {
-  Products?: AhlsellProduct[];
-  TotalCount?: number;
-  SearchResults?: {
-    Products?: AhlsellProduct[];
-    TotalCount?: number;
-  };
+  productCards?: AhlsellProductCard[];
+  productCount?: number;
 };
 
 export async function searchAhlsell(
@@ -125,14 +137,13 @@ export async function searchAhlsell(
     const params = new URLSearchParams({
       "parameters.SearchPhrase": query,
       "parameters.PageSize": String(limit),
-      "parameters.PageNumber": "1",
     });
 
     const response = await fetch(`https://www.ahlsell.se/api/search?${params}`, {
       method: "GET",
       headers: {
         "Accept": "application/json",
-        "User-Agent": "ArbetsYtan/1.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
     });
 
@@ -142,24 +153,26 @@ export async function searchAhlsell(
     }
 
     const data = (await response.json()) as AhlsellResponse;
-    const productList = data.Products ?? data.SearchResults?.Products ?? [];
+    const productList = data.productCards ?? [];
 
     const products: WholesalerProduct[] = productList.map((item) => ({
       supplier: "AHLSELL" as const,
-      articleNo: item.ArticleNumber ?? "",
-      name: item.Name ?? "",
-      description: item.Description,
-      brand: item.Brand,
-      price: item.Price?.Value,
-      unit: item.Unit,
-      imageUrl: item.ImageUrl ? `https://www.ahlsell.se${item.ImageUrl}` : undefined,
-      productUrl: item.Url ? `https://www.ahlsell.se${item.Url}` : `https://www.ahlsell.se/search?parameters.SearchPhrase=${encodeURIComponent(query)}`,
-      inStock: item.InStock ?? item.StockStatus?.toLowerCase().includes("lager"),
+      articleNo: item.variantNumber ?? item.code ?? "",
+      name: item.name ?? "",
+      description: item.description,
+      brand: item.brand,
+      price: undefined, // Price requires login
+      unit: undefined,
+      imageUrl: item.image?.url ? `https://www.ahlsell.se${item.image.url}` : undefined,
+      productUrl: item.firstVariationPageUrl
+        ? `https://www.ahlsell.se${item.firstVariationPageUrl}`
+        : `https://www.ahlsell.se/search?parameters.SearchPhrase=${encodeURIComponent(query)}`,
+      inStock: undefined, // Stock requires login
     }));
 
     return {
       products,
-      totalFound: data.TotalCount ?? data.SearchResults?.TotalCount ?? products.length,
+      totalFound: data.productCount ?? products.length,
       supplier: "AHLSELL",
     };
   } catch (error) {
