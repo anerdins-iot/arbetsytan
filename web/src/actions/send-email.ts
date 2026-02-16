@@ -5,6 +5,8 @@ import { requirePermission } from "@/lib/auth";
 import { tenantDb, userDb, prisma } from "@/lib/db";
 import { sendEmail, type EmailAttachment as ResendAttachment } from "@/lib/email";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { logOutboundEmail } from "@/lib/email-log";
+import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
 
 // ─── S3/MinIO Client ────────────────────────────────────
 
@@ -279,6 +281,9 @@ export async function sendExternalEmail(
   const errors: string[] = [];
   let lastMessageId: string | undefined;
 
+  // Determine from address (brand name + email)
+  const fromAddress = sender?.email ?? process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
+
   for (const recipient of result.data.recipients) {
     const emailResult = await sendEmail({
       to: recipient,
@@ -292,6 +297,36 @@ export async function sendExternalEmail(
       errors.push(`${recipient}: ${emailResult.error}`);
     } else {
       lastMessageId = emailResult.messageId;
+
+      // Log email to database
+      try {
+        const emailLogId = await logOutboundEmail({
+          tenantId,
+          userId,
+          projectId: undefined, // external emails don't have project
+          from: fromAddress,
+          to: [recipient],
+          subject: `[${brand.tenantName}] ${subject}`,
+          body: body,
+          htmlBody: html,
+          resendMessageId: emailResult.messageId,
+          attachments: fileAttachments.map((a) => ({
+            filename: a.filename,
+            contentType: a.contentType || "application/octet-stream",
+            size: a.content.length,
+            // Note: We don't have bucket/key for attachments from the resend format
+            // This is a limitation - we would need to refetch from file table
+            bucket: "",
+            key: "",
+          })),
+        });
+
+        // Queue embedding processing
+        queueEmailEmbeddingProcessing(emailLogId, tenantId);
+      } catch (logError) {
+        // Log error but don't fail the email send
+        console.error("Failed to log email:", logError);
+      }
     }
   }
 
@@ -368,6 +403,28 @@ export async function sendToTeamMember(
     return { success: false, error: emailResult.error };
   }
 
+  // Log email to database
+  try {
+    const fromAddress = sender?.email ?? process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
+    const emailLogId = await logOutboundEmail({
+      tenantId,
+      userId,
+      projectId: undefined, // team member emails don't have project context
+      from: fromAddress,
+      to: [membership.user.email],
+      subject: `[${brand.tenantName}] ${subject}`,
+      body: body,
+      htmlBody: html,
+      resendMessageId: emailResult.messageId,
+    });
+
+    // Queue embedding processing
+    queueEmailEmbeddingProcessing(emailLogId, tenantId);
+  } catch (logError) {
+    // Log error but don't fail the email send
+    console.error("Failed to log email:", logError);
+  }
+
   return { success: true, messageId: emailResult.messageId };
 }
 
@@ -405,6 +462,7 @@ export async function sendToTeamMembers(
   ]);
 
   const errors: string[] = [];
+  const fromAddress = sender?.email ?? process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
@@ -426,6 +484,36 @@ export async function sendToTeamMembers(
 
     if (!emailResult.success) {
       errors.push(`${membership.user.email}: ${emailResult.error}`);
+    } else {
+      // Log email to database
+      try {
+        const emailLogId = await logOutboundEmail({
+          tenantId,
+          userId,
+          projectId: undefined, // team member emails don't have project context
+          from: fromAddress,
+          to: [membership.user.email],
+          subject: `[${brand.tenantName}] ${subject}`,
+          body: body,
+          htmlBody: html,
+          resendMessageId: emailResult.messageId,
+          attachments: fileAttachments.map((a) => ({
+            filename: a.filename,
+            contentType: a.contentType || "application/octet-stream",
+            size: a.content.length,
+            // Note: We don't have bucket/key for attachments from the resend format
+            // This is a limitation - we would need to refetch from file table
+            bucket: "",
+            key: "",
+          })),
+        });
+
+        // Queue embedding processing
+        queueEmailEmbeddingProcessing(emailLogId, tenantId);
+      } catch (logError) {
+        // Log error but don't fail the email send
+        console.error("Failed to log email:", logError);
+      }
     }
   }
 

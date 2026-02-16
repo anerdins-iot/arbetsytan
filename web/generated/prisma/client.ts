@@ -185,3 +185,18 @@ export type NoteCategory = Prisma.NoteCategoryModel
  * 
  */
 export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model EmailLog
+ * 
+ */
+export type EmailLog = Prisma.EmailLogModel
+/**
+ * Model EmailAttachment
+ * 
+ */
+export type EmailAttachment = Prisma.EmailAttachmentModel
+/**
+ * Model EmailChunk
+ * 
+ */
+export type EmailChunk = Prisma.EmailChunkModel

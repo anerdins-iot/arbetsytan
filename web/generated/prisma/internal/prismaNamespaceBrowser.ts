@@ -79,7 +79,10 @@ export const ModelName = {
   Automation: 'Automation',
   AutomationLog: 'AutomationLog',
   NoteCategory: 'NoteCategory',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  EmailLog: 'EmailLog',
+  EmailAttachment: 'EmailAttachment',
+  EmailChunk: 'EmailChunk'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -524,6 +527,60 @@ export const SubscriptionScalarFieldEnum = {
 } as const
 
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const EmailLogScalarFieldEnum = {
+  id: 'id',
+  direction: 'direction',
+  status: 'status',
+  from: 'from',
+  to: 'to',
+  cc: 'cc',
+  bcc: 'bcc',
+  subject: 'subject',
+  body: 'body',
+  htmlBody: 'htmlBody',
+  resendMessageId: 'resendMessageId',
+  resendError: 'resendError',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  bouncedAt: 'bouncedAt',
+  failedAt: 'failedAt'
+} as const
+
+export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
+
+
+export const EmailAttachmentScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  contentType: 'contentType',
+  size: 'size',
+  bucket: 'bucket',
+  key: 'key',
+  emailLogId: 'emailLogId',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailAttachmentScalarFieldEnum = (typeof EmailAttachmentScalarFieldEnum)[keyof typeof EmailAttachmentScalarFieldEnum]
+
+
+export const EmailChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  chunkIndex: 'chunkIndex',
+  createdAt: 'createdAt',
+  emailLogId: 'emailLogId',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId'
+} as const
+
+export type EmailChunkScalarFieldEnum = (typeof EmailChunkScalarFieldEnum)[keyof typeof EmailChunkScalarFieldEnum]
 
 
 export const SortOrder = {

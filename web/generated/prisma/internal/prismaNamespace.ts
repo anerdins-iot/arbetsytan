@@ -412,7 +412,10 @@ export const ModelName = {
   Automation: 'Automation',
   AutomationLog: 'AutomationLog',
   NoteCategory: 'NoteCategory',
-  Subscription: 'Subscription'
+  Subscription: 'Subscription',
+  EmailLog: 'EmailLog',
+  EmailAttachment: 'EmailAttachment',
+  EmailChunk: 'EmailChunk'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -428,7 +431,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "fileAnalysis" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription"
+    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "fileAnalysis" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription" | "emailLog" | "emailAttachment" | "emailChunk"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2578,6 +2581,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EmailLog: {
+      payload: Prisma.$EmailLogPayload<ExtArgs>
+      fields: Prisma.EmailLogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmailLogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmailLogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>
+        }
+        findFirst: {
+          args: Prisma.EmailLogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmailLogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>
+        }
+        findMany: {
+          args: Prisma.EmailLogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>[]
+        }
+        create: {
+          args: Prisma.EmailLogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>
+        }
+        createMany: {
+          args: Prisma.EmailLogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmailLogCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>[]
+        }
+        delete: {
+          args: Prisma.EmailLogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>
+        }
+        update: {
+          args: Prisma.EmailLogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmailLogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmailLogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmailLogUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmailLogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailLogPayload>
+        }
+        aggregate: {
+          args: Prisma.EmailLogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmailLog>
+        }
+        groupBy: {
+          args: Prisma.EmailLogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailLogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmailLogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailLogCountAggregateOutputType> | number
+        }
+      }
+    }
+    EmailAttachment: {
+      payload: Prisma.$EmailAttachmentPayload<ExtArgs>
+      fields: Prisma.EmailAttachmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmailAttachmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmailAttachmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>
+        }
+        findFirst: {
+          args: Prisma.EmailAttachmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmailAttachmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>
+        }
+        findMany: {
+          args: Prisma.EmailAttachmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>[]
+        }
+        create: {
+          args: Prisma.EmailAttachmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>
+        }
+        createMany: {
+          args: Prisma.EmailAttachmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmailAttachmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>[]
+        }
+        delete: {
+          args: Prisma.EmailAttachmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>
+        }
+        update: {
+          args: Prisma.EmailAttachmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmailAttachmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmailAttachmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmailAttachmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmailAttachmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailAttachmentPayload>
+        }
+        aggregate: {
+          args: Prisma.EmailAttachmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmailAttachment>
+        }
+        groupBy: {
+          args: Prisma.EmailAttachmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailAttachmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmailAttachmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailAttachmentCountAggregateOutputType> | number
+        }
+      }
+    }
+    EmailChunk: {
+      payload: Prisma.$EmailChunkPayload<ExtArgs>
+      fields: Prisma.EmailChunkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EmailChunkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EmailChunkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>
+        }
+        findFirst: {
+          args: Prisma.EmailChunkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EmailChunkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>
+        }
+        findMany: {
+          args: Prisma.EmailChunkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>[]
+        }
+        create: {
+          args: Prisma.EmailChunkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>
+        }
+        createMany: {
+          args: Prisma.EmailChunkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EmailChunkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>[]
+        }
+        delete: {
+          args: Prisma.EmailChunkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>
+        }
+        update: {
+          args: Prisma.EmailChunkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>
+        }
+        deleteMany: {
+          args: Prisma.EmailChunkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EmailChunkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EmailChunkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>[]
+        }
+        upsert: {
+          args: Prisma.EmailChunkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EmailChunkPayload>
+        }
+        aggregate: {
+          args: Prisma.EmailChunkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEmailChunk>
+        }
+        groupBy: {
+          args: Prisma.EmailChunkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailChunkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EmailChunkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EmailChunkCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -3045,6 +3270,60 @@ export const SubscriptionScalarFieldEnum = {
 export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
 
 
+export const EmailLogScalarFieldEnum = {
+  id: 'id',
+  direction: 'direction',
+  status: 'status',
+  from: 'from',
+  to: 'to',
+  cc: 'cc',
+  bcc: 'bcc',
+  subject: 'subject',
+  body: 'body',
+  htmlBody: 'htmlBody',
+  resendMessageId: 'resendMessageId',
+  resendError: 'resendError',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  bouncedAt: 'bouncedAt',
+  failedAt: 'failedAt'
+} as const
+
+export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
+
+
+export const EmailAttachmentScalarFieldEnum = {
+  id: 'id',
+  filename: 'filename',
+  contentType: 'contentType',
+  size: 'size',
+  bucket: 'bucket',
+  key: 'key',
+  emailLogId: 'emailLogId',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailAttachmentScalarFieldEnum = (typeof EmailAttachmentScalarFieldEnum)[keyof typeof EmailAttachmentScalarFieldEnum]
+
+
+export const EmailChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  chunkIndex: 'chunkIndex',
+  createdAt: 'createdAt',
+  emailLogId: 'emailLogId',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId'
+} as const
+
+export type EmailChunkScalarFieldEnum = (typeof EmailChunkScalarFieldEnum)[keyof typeof EmailChunkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -3387,6 +3666,34 @@ export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'EmailDirection'
+ */
+export type EnumEmailDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailDirection'>
+    
+
+
+/**
+ * Reference to a field of type 'EmailDirection[]'
+ */
+export type ListEnumEmailDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailDirection[]'>
+    
+
+
+/**
+ * Reference to a field of type 'EmailStatus'
+ */
+export type EnumEmailStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'EmailStatus[]'
+ */
+export type ListEnumEmailStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -3523,6 +3830,9 @@ export type GlobalOmitConfig = {
   automationLog?: Prisma.AutomationLogOmit
   noteCategory?: Prisma.NoteCategoryOmit
   subscription?: Prisma.SubscriptionOmit
+  emailLog?: Prisma.EmailLogOmit
+  emailAttachment?: Prisma.EmailAttachmentOmit
+  emailChunk?: Prisma.EmailChunkOmit
 }
 
 /* Types for Logging */

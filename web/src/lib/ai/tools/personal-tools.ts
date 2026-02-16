@@ -39,6 +39,8 @@ import {
 } from "@/lib/ai/tools/shared-tools";
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
+import { searchEmails } from "@/lib/ai/email-embeddings";
+import { getEmailsForUser } from "@/lib/email-log";
 import {
   createAutomation as createAutomationAction,
   listAutomations as listAutomationsAction,
@@ -2710,6 +2712,85 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── E-postsökning ────────────────────────────────────
+
+  const searchMyEmails = tool({
+    description: "Sök i mina e-postmeddelanden med semantisk sökning. Använd för att hitta specifika emails baserat på innehåll, ämne eller avsändare.",
+    inputSchema: toolInputSchema(z.object({
+      query: z.string().describe("Sökfråga - vad du letar efter i emails"),
+      projectId: z.string().optional().describe("Filtrera på specifikt projekt (valfritt)"),
+      limit: z.number().optional().default(10).describe("Max antal resultat"),
+    })),
+    execute: async ({ query, projectId: pid, limit }) => {
+      // Validera projectId om det anges
+      if (pid) {
+        const projectIdCheck = validateDatabaseId(pid, "projectId");
+        if (!projectIdCheck.valid) return { error: projectIdCheck.error };
+        await requireProject(tenantId, pid, userId);
+      }
+
+      const results = await searchEmails(tenantId, query, {
+        limit,
+        projectId: pid,
+        userId,
+      });
+
+      return {
+        emails: results.map(email => ({
+          id: email.id,
+          subject: email.subject,
+          from: email.from,
+          to: email.to,
+          bodyPreview: email.bodyPreview,
+          createdAt: email.createdAt.toISOString(),
+          direction: email.direction,
+          similarity: email.similarity,
+        })),
+        totalFound: results.length,
+      };
+    },
+  });
+
+  const getMyRecentEmails = tool({
+    description: "Hämta mina senaste e-postmeddelanden. Använd för att se e-posthistorik.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().optional().describe("Filtrera på specifikt projekt (valfritt)"),
+      limit: z.number().optional().default(10).describe("Max antal emails"),
+      direction: z.enum(["INBOUND", "OUTBOUND"]).optional().describe("Filtrera på riktning (valfritt)"),
+    })),
+    execute: async ({ projectId: pid, limit, direction }) => {
+      // Validera projectId om det anges
+      if (pid) {
+        const projectIdCheck = validateDatabaseId(pid, "projectId");
+        if (!projectIdCheck.valid) return { error: projectIdCheck.error };
+        await requireProject(tenantId, pid, userId);
+      }
+
+      const emails = await getEmailsForUser(tenantId, userId, {
+        projectId: pid,
+        limit,
+        direction,
+      });
+
+      return {
+        emails: emails.map(email => ({
+          id: email.id,
+          subject: email.subject,
+          from: email.from,
+          to: email.to,
+          bodyPreview: email.bodyPreview,
+          createdAt: email.createdAt.toISOString(),
+          sentAt: email.sentAt?.toISOString() ?? null,
+          direction: email.direction,
+          status: email.status,
+          attachmentCount: email._count.attachments,
+          projectId: email.projectId,
+        })),
+        totalFound: emails.length,
+      };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -2816,5 +2897,8 @@ Returnera ENBART JSON i följande format:
     createNoteCategory,
     updateNoteCategory,
     deleteNoteCategory,
+    // E-postsökning
+    searchMyEmails,
+    getMyRecentEmails,
   };
 }

@@ -220,6 +220,8 @@ export type ProjectWhereInput = {
   automations?: Prisma.AutomationListRelationFilter
   messages?: Prisma.MessageListRelationFilter
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  emailLogs?: Prisma.EmailLogListRelationFilter
+  emailChunks?: Prisma.EmailChunkListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -245,6 +247,8 @@ export type ProjectOrderByWithRelationInput = {
   automations?: Prisma.AutomationOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
   fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
+  emailLogs?: Prisma.EmailLogOrderByRelationAggregateInput
+  emailChunks?: Prisma.EmailChunkOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -273,6 +277,8 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   automations?: Prisma.AutomationListRelationFilter
   messages?: Prisma.MessageListRelationFilter
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  emailLogs?: Prisma.EmailLogListRelationFilter
+  emailChunks?: Prisma.EmailChunkListRelationFilter
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -325,6 +331,8 @@ export type ProjectCreateInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -349,6 +357,8 @@ export type ProjectUncheckedCreateInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -373,6 +383,8 @@ export type ProjectUpdateInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -397,6 +409,8 @@ export type ProjectUncheckedUpdateInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -730,6 +744,38 @@ export type ProjectUpdateOneWithoutAutomationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutAutomationsInput, Prisma.ProjectUpdateWithoutAutomationsInput>, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
 }
 
+export type ProjectCreateNestedOneWithoutEmailLogsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailLogsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutEmailLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailLogsInput
+  upsert?: Prisma.ProjectUpsertWithoutEmailLogsInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailLogsInput, Prisma.ProjectUpdateWithoutEmailLogsInput>, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+}
+
+export type ProjectCreateNestedOneWithoutEmailChunksInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailChunksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutEmailChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailChunksInput
+  upsert?: Prisma.ProjectUpsertWithoutEmailChunksInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailChunksInput, Prisma.ProjectUpdateWithoutEmailChunksInput>, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+}
+
 export type ProjectCreateWithoutTenantInput = {
   id?: string
   name: string
@@ -751,6 +797,8 @@ export type ProjectCreateWithoutTenantInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTenantInput = {
@@ -774,6 +822,8 @@ export type ProjectUncheckedCreateWithoutTenantInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTenantInput = {
@@ -837,6 +887,8 @@ export type ProjectCreateWithoutProjectMembersInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutProjectMembersInput = {
@@ -860,6 +912,8 @@ export type ProjectUncheckedCreateWithoutProjectMembersInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutProjectMembersInput = {
@@ -899,6 +953,8 @@ export type ProjectUpdateWithoutProjectMembersInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
@@ -922,6 +978,8 @@ export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTasksInput = {
@@ -945,6 +1003,8 @@ export type ProjectCreateWithoutTasksInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -968,6 +1028,8 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -1007,6 +1069,8 @@ export type ProjectUpdateWithoutTasksInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -1030,6 +1094,8 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFilesInput = {
@@ -1053,6 +1119,8 @@ export type ProjectCreateWithoutFilesInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFilesInput = {
@@ -1076,6 +1144,8 @@ export type ProjectUncheckedCreateWithoutFilesInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFilesInput = {
@@ -1115,6 +1185,8 @@ export type ProjectUpdateWithoutFilesInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFilesInput = {
@@ -1138,6 +1210,8 @@ export type ProjectUncheckedUpdateWithoutFilesInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutFileAnalysesInput = {
@@ -1161,6 +1235,8 @@ export type ProjectCreateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutFileAnalysesInput = {
@@ -1184,6 +1260,8 @@ export type ProjectUncheckedCreateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutFileAnalysesInput = {
@@ -1223,6 +1301,8 @@ export type ProjectUpdateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutFileAnalysesInput = {
@@ -1246,6 +1326,8 @@ export type ProjectUncheckedUpdateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutChunksInput = {
@@ -1269,6 +1351,8 @@ export type ProjectCreateWithoutChunksInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutChunksInput = {
@@ -1292,6 +1376,8 @@ export type ProjectUncheckedCreateWithoutChunksInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutChunksInput = {
@@ -1331,6 +1417,8 @@ export type ProjectUpdateWithoutChunksInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutChunksInput = {
@@ -1354,6 +1442,8 @@ export type ProjectUncheckedUpdateWithoutChunksInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutConversationsInput = {
@@ -1377,6 +1467,8 @@ export type ProjectCreateWithoutConversationsInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutConversationsInput = {
@@ -1400,6 +1492,8 @@ export type ProjectUncheckedCreateWithoutConversationsInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutConversationsInput = {
@@ -1439,6 +1533,8 @@ export type ProjectUpdateWithoutConversationsInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutConversationsInput = {
@@ -1462,6 +1558,8 @@ export type ProjectUncheckedUpdateWithoutConversationsInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutMessagesInput = {
@@ -1485,6 +1583,8 @@ export type ProjectCreateWithoutMessagesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutMessagesInput = {
@@ -1508,6 +1608,8 @@ export type ProjectUncheckedCreateWithoutMessagesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutMessagesInput = {
@@ -1547,6 +1649,8 @@ export type ProjectUpdateWithoutMessagesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutMessagesInput = {
@@ -1570,6 +1674,8 @@ export type ProjectUncheckedUpdateWithoutMessagesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutAiMessagesInput = {
@@ -1593,6 +1699,8 @@ export type ProjectCreateWithoutAiMessagesInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutAiMessagesInput = {
@@ -1616,6 +1724,8 @@ export type ProjectUncheckedCreateWithoutAiMessagesInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutAiMessagesInput = {
@@ -1655,6 +1765,8 @@ export type ProjectUpdateWithoutAiMessagesInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutAiMessagesInput = {
@@ -1678,6 +1790,8 @@ export type ProjectUncheckedUpdateWithoutAiMessagesInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNotificationsInput = {
@@ -1701,6 +1815,8 @@ export type ProjectCreateWithoutNotificationsInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNotificationsInput = {
@@ -1724,6 +1840,8 @@ export type ProjectUncheckedCreateWithoutNotificationsInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNotificationsInput = {
@@ -1763,6 +1881,8 @@ export type ProjectUpdateWithoutNotificationsInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNotificationsInput = {
@@ -1786,6 +1906,8 @@ export type ProjectUncheckedUpdateWithoutNotificationsInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutActivityLogsInput = {
@@ -1809,6 +1931,8 @@ export type ProjectCreateWithoutActivityLogsInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutActivityLogsInput = {
@@ -1832,6 +1956,8 @@ export type ProjectUncheckedCreateWithoutActivityLogsInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutActivityLogsInput = {
@@ -1871,6 +1997,8 @@ export type ProjectUpdateWithoutActivityLogsInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
@@ -1894,6 +2022,8 @@ export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTimeEntriesInput = {
@@ -1917,6 +2047,8 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
@@ -1940,6 +2072,8 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTimeEntriesInput = {
@@ -1979,6 +2113,8 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
@@ -2002,6 +2138,8 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutNotesInput = {
@@ -2025,6 +2163,8 @@ export type ProjectCreateWithoutNotesInput = {
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutNotesInput = {
@@ -2048,6 +2188,8 @@ export type ProjectUncheckedCreateWithoutNotesInput = {
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutNotesInput = {
@@ -2087,6 +2229,8 @@ export type ProjectUpdateWithoutNotesInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutNotesInput = {
@@ -2110,6 +2254,8 @@ export type ProjectUncheckedUpdateWithoutNotesInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutAutomationsInput = {
@@ -2133,6 +2279,8 @@ export type ProjectCreateWithoutAutomationsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutAutomationsInput = {
@@ -2156,6 +2304,8 @@ export type ProjectUncheckedCreateWithoutAutomationsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutAutomationsInput = {
@@ -2195,6 +2345,8 @@ export type ProjectUpdateWithoutAutomationsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutAutomationsInput = {
@@ -2218,6 +2370,240 @@ export type ProjectUncheckedUpdateWithoutAutomationsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutEmailLogsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutEmailLogsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutEmailLogsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+}
+
+export type ProjectUpsertWithoutEmailLogsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailLogsInput, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutEmailLogsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailLogsInput, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+}
+
+export type ProjectUpdateWithoutEmailLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutEmailLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutEmailChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutEmailChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutEmailChunksInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+}
+
+export type ProjectUpsertWithoutEmailChunksInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailChunksInput, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutEmailChunksInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailChunksInput, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+}
+
+export type ProjectUpdateWithoutEmailChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutEmailChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyTenantInput = {
@@ -2251,6 +2637,8 @@ export type ProjectUpdateWithoutTenantInput = {
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTenantInput = {
@@ -2274,6 +2662,8 @@ export type ProjectUncheckedUpdateWithoutTenantInput = {
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutTenantInput = {
@@ -2305,6 +2695,8 @@ export type ProjectCountOutputType = {
   automations: number
   messages: number
   fileAnalyses: number
+  emailLogs: number
+  emailChunks: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2321,6 +2713,8 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   automations?: boolean | ProjectCountOutputTypeCountAutomationsArgs
   messages?: boolean | ProjectCountOutputTypeCountMessagesArgs
   fileAnalyses?: boolean | ProjectCountOutputTypeCountFileAnalysesArgs
+  emailLogs?: boolean | ProjectCountOutputTypeCountEmailLogsArgs
+  emailChunks?: boolean | ProjectCountOutputTypeCountEmailChunksArgs
 }
 
 /**
@@ -2424,6 +2818,20 @@ export type ProjectCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.
   where?: Prisma.FileAnalysisWhereInput
 }
 
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountEmailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailLogWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountEmailChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailChunkWhereInput
+}
+
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2448,6 +2856,8 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
   messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
   fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
+  emailLogs?: boolean | Prisma.Project$emailLogsArgs<ExtArgs>
+  emailChunks?: boolean | Prisma.Project$emailChunksArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -2502,6 +2912,8 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
   messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
   fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
+  emailLogs?: boolean | Prisma.Project$emailLogsArgs<ExtArgs>
+  emailChunks?: boolean | Prisma.Project$emailChunksArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2528,6 +2940,8 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     automations: Prisma.$AutomationPayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
     fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
+    emailLogs: Prisma.$EmailLogPayload<ExtArgs>[]
+    emailChunks: Prisma.$EmailChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2946,6 +3360,8 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   automations<T extends Prisma.Project$automationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$automationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.Project$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fileAnalyses<T extends Prisma.Project$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailLogs<T extends Prisma.Project$emailLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailChunks<T extends Prisma.Project$emailChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3688,6 +4104,54 @@ export type Project$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
+}
+
+/**
+ * Project.emailLogs
+ */
+export type Project$emailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailLog
+   */
+  select?: Prisma.EmailLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailLog
+   */
+  omit?: Prisma.EmailLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailLogInclude<ExtArgs> | null
+  where?: Prisma.EmailLogWhereInput
+  orderBy?: Prisma.EmailLogOrderByWithRelationInput | Prisma.EmailLogOrderByWithRelationInput[]
+  cursor?: Prisma.EmailLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailLogScalarFieldEnum | Prisma.EmailLogScalarFieldEnum[]
+}
+
+/**
+ * Project.emailChunks
+ */
+export type Project$emailChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailChunk
+   */
+  select?: Prisma.EmailChunkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailChunk
+   */
+  omit?: Prisma.EmailChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailChunkInclude<ExtArgs> | null
+  where?: Prisma.EmailChunkWhereInput
+  orderBy?: Prisma.EmailChunkOrderByWithRelationInput | Prisma.EmailChunkOrderByWithRelationInput[]
+  cursor?: Prisma.EmailChunkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailChunkScalarFieldEnum | Prisma.EmailChunkScalarFieldEnum[]
 }
 
 /**

@@ -293,6 +293,8 @@ export type UserWhereInput = {
   files?: Prisma.FileListRelationFilter
   documentChunks?: Prisma.DocumentChunkListRelationFilter
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  emailLogs?: Prisma.EmailLogListRelationFilter
+  emailChunks?: Prisma.EmailChunkListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -322,6 +324,8 @@ export type UserOrderByWithRelationInput = {
   files?: Prisma.FileOrderByRelationAggregateInput
   documentChunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
   fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
+  emailLogs?: Prisma.EmailLogOrderByRelationAggregateInput
+  emailChunks?: Prisma.EmailChunkOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -354,6 +358,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   files?: Prisma.FileListRelationFilter
   documentChunks?: Prisma.DocumentChunkListRelationFilter
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  emailLogs?: Prisma.EmailLogListRelationFilter
+  emailChunks?: Prisma.EmailChunkListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -423,6 +429,8 @@ export type UserCreateInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -452,6 +460,8 @@ export type UserUncheckedCreateInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -481,6 +491,8 @@ export type UserUpdateInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -510,6 +522,8 @@ export type UserUncheckedUpdateInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -828,6 +842,34 @@ export type UserUpdateOneRequiredWithoutNotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotesInput, Prisma.UserUpdateWithoutNotesInput>, Prisma.UserUncheckedUpdateWithoutNotesInput>
 }
 
+export type UserCreateNestedOneWithoutEmailLogsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailLogsInput, Prisma.UserUncheckedCreateWithoutEmailLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailLogsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEmailLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailLogsInput, Prisma.UserUncheckedCreateWithoutEmailLogsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailLogsInput
+  upsert?: Prisma.UserUpsertWithoutEmailLogsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmailLogsInput, Prisma.UserUpdateWithoutEmailLogsInput>, Prisma.UserUncheckedUpdateWithoutEmailLogsInput>
+}
+
+export type UserCreateNestedOneWithoutEmailChunksInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailChunksInput, Prisma.UserUncheckedCreateWithoutEmailChunksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailChunksInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEmailChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailChunksInput, Prisma.UserUncheckedCreateWithoutEmailChunksInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailChunksInput
+  upsert?: Prisma.UserUpsertWithoutEmailChunksInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmailChunksInput, Prisma.UserUpdateWithoutEmailChunksInput>, Prisma.UserUncheckedUpdateWithoutEmailChunksInput>
+}
+
 export type UserCreateWithoutMembershipsInput = {
   id?: string
   name?: string | null
@@ -854,6 +896,8 @@ export type UserCreateWithoutMembershipsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -882,6 +926,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -926,6 +972,8 @@ export type UserUpdateWithoutMembershipsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -954,6 +1002,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -982,6 +1032,8 @@ export type UserCreateWithoutAccountsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1010,6 +1062,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1054,6 +1108,8 @@ export type UserUpdateWithoutAccountsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1082,6 +1138,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1110,6 +1168,8 @@ export type UserCreateWithoutSessionsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1138,6 +1198,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1182,6 +1244,8 @@ export type UserUpdateWithoutSessionsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1210,6 +1274,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFilesInput = {
@@ -1238,6 +1304,8 @@ export type UserCreateWithoutFilesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFilesInput = {
@@ -1266,6 +1334,8 @@ export type UserUncheckedCreateWithoutFilesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFilesInput = {
@@ -1310,6 +1380,8 @@ export type UserUpdateWithoutFilesInput = {
   notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFilesInput = {
@@ -1338,6 +1410,8 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFileAnalysesInput = {
@@ -1366,6 +1440,8 @@ export type UserCreateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFileAnalysesInput = {
@@ -1394,6 +1470,8 @@ export type UserUncheckedCreateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFileAnalysesInput = {
@@ -1438,6 +1516,8 @@ export type UserUpdateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFileAnalysesInput = {
@@ -1466,6 +1546,8 @@ export type UserUncheckedUpdateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDocumentChunksInput = {
@@ -1494,6 +1576,8 @@ export type UserCreateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDocumentChunksInput = {
@@ -1522,6 +1606,8 @@ export type UserUncheckedCreateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDocumentChunksInput = {
@@ -1566,6 +1652,8 @@ export type UserUpdateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDocumentChunksInput = {
@@ -1594,6 +1682,8 @@ export type UserUncheckedUpdateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutConversationsInput = {
@@ -1622,6 +1712,8 @@ export type UserCreateWithoutConversationsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutConversationsInput = {
@@ -1650,6 +1742,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConversationsInput = {
@@ -1694,6 +1788,8 @@ export type UserUpdateWithoutConversationsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -1722,6 +1818,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAiMessagesInput = {
@@ -1750,6 +1848,8 @@ export type UserCreateWithoutAiMessagesInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAiMessagesInput = {
@@ -1778,6 +1878,8 @@ export type UserUncheckedCreateWithoutAiMessagesInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAiMessagesInput = {
@@ -1822,6 +1924,8 @@ export type UserUpdateWithoutAiMessagesInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAiMessagesInput = {
@@ -1850,6 +1954,8 @@ export type UserUncheckedUpdateWithoutAiMessagesInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1878,6 +1984,8 @@ export type UserCreateWithoutNotificationsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1906,6 +2014,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -1950,6 +2060,8 @@ export type UserUpdateWithoutNotificationsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -1978,6 +2090,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationPreferencesInput = {
@@ -2006,6 +2120,8 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -2034,6 +2150,8 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -2078,6 +2196,8 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -2106,6 +2226,8 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -2134,6 +2256,8 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -2162,6 +2286,8 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -2206,6 +2332,8 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -2234,6 +2362,8 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutActivityLogsInput = {
@@ -2262,6 +2392,8 @@ export type UserCreateWithoutActivityLogsInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutActivityLogsInput = {
@@ -2290,6 +2422,8 @@ export type UserUncheckedCreateWithoutActivityLogsInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutActivityLogsInput = {
@@ -2334,6 +2468,8 @@ export type UserUpdateWithoutActivityLogsInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivityLogsInput = {
@@ -2362,6 +2498,8 @@ export type UserUncheckedUpdateWithoutActivityLogsInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotesInput = {
@@ -2390,6 +2528,8 @@ export type UserCreateWithoutNotesInput = {
   files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotesInput = {
@@ -2418,6 +2558,8 @@ export type UserUncheckedCreateWithoutNotesInput = {
   files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotesInput = {
@@ -2462,6 +2604,8 @@ export type UserUpdateWithoutNotesInput = {
   files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotesInput = {
@@ -2490,6 +2634,280 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutEmailLogsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
+  files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutEmailLogsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutEmailLogsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailLogsInput, Prisma.UserUncheckedCreateWithoutEmailLogsInput>
+}
+
+export type UserUpsertWithoutEmailLogsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmailLogsInput, Prisma.UserUncheckedUpdateWithoutEmailLogsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailLogsInput, Prisma.UserUncheckedCreateWithoutEmailLogsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEmailLogsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmailLogsInput, Prisma.UserUncheckedUpdateWithoutEmailLogsInput>
+}
+
+export type UserUpdateWithoutEmailLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  aiMessages?: Prisma.AIMessageUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
+  files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEmailLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutEmailChunksInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
+  files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutEmailChunksInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutEmailChunksInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailChunksInput, Prisma.UserUncheckedCreateWithoutEmailChunksInput>
+}
+
+export type UserUpsertWithoutEmailChunksInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmailChunksInput, Prisma.UserUncheckedUpdateWithoutEmailChunksInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailChunksInput, Prisma.UserUncheckedCreateWithoutEmailChunksInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEmailChunksInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmailChunksInput, Prisma.UserUncheckedUpdateWithoutEmailChunksInput>
+}
+
+export type UserUpdateWithoutEmailChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  aiMessages?: Prisma.AIMessageUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
+  files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEmailChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -2511,6 +2929,8 @@ export type UserCountOutputType = {
   files: number
   documentChunks: number
   fileAnalyses: number
+  emailLogs: number
+  emailChunks: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2527,6 +2947,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   files?: boolean | UserCountOutputTypeCountFilesArgs
   documentChunks?: boolean | UserCountOutputTypeCountDocumentChunksArgs
   fileAnalyses?: boolean | UserCountOutputTypeCountFileAnalysesArgs
+  emailLogs?: boolean | UserCountOutputTypeCountEmailLogsArgs
+  emailChunks?: boolean | UserCountOutputTypeCountEmailChunksArgs
 }
 
 /**
@@ -2630,6 +3052,20 @@ export type UserCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.Typ
   where?: Prisma.FileAnalysisWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailLogWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmailChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailChunkWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2658,6 +3094,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   documentChunks?: boolean | Prisma.User$documentChunksArgs<ExtArgs>
   fileAnalyses?: boolean | Prisma.User$fileAnalysesArgs<ExtArgs>
+  emailLogs?: boolean | Prisma.User$emailLogsArgs<ExtArgs>
+  emailChunks?: boolean | Prisma.User$emailChunksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2724,6 +3162,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   documentChunks?: boolean | Prisma.User$documentChunksArgs<ExtArgs>
   fileAnalyses?: boolean | Prisma.User$fileAnalysesArgs<ExtArgs>
+  emailLogs?: boolean | Prisma.User$emailLogsArgs<ExtArgs>
+  emailChunks?: boolean | Prisma.User$emailChunksArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2745,6 +3185,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     files: Prisma.$FilePayload<ExtArgs>[]
     documentChunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
     fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
+    emailLogs: Prisma.$EmailLogPayload<ExtArgs>[]
+    emailChunks: Prisma.$EmailChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3167,6 +3609,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   files<T extends Prisma.User$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documentChunks<T extends Prisma.User$documentChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$documentChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fileAnalyses<T extends Prisma.User$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailLogs<T extends Prisma.User$emailLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailChunks<T extends Prisma.User$emailChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3906,6 +4350,54 @@ export type User$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
+}
+
+/**
+ * User.emailLogs
+ */
+export type User$emailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailLog
+   */
+  select?: Prisma.EmailLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailLog
+   */
+  omit?: Prisma.EmailLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailLogInclude<ExtArgs> | null
+  where?: Prisma.EmailLogWhereInput
+  orderBy?: Prisma.EmailLogOrderByWithRelationInput | Prisma.EmailLogOrderByWithRelationInput[]
+  cursor?: Prisma.EmailLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailLogScalarFieldEnum | Prisma.EmailLogScalarFieldEnum[]
+}
+
+/**
+ * User.emailChunks
+ */
+export type User$emailChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailChunk
+   */
+  select?: Prisma.EmailChunkSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailChunk
+   */
+  omit?: Prisma.EmailChunkOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailChunkInclude<ExtArgs> | null
+  where?: Prisma.EmailChunkWhereInput
+  orderBy?: Prisma.EmailChunkOrderByWithRelationInput | Prisma.EmailChunkOrderByWithRelationInput[]
+  cursor?: Prisma.EmailChunkWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailChunkScalarFieldEnum | Prisma.EmailChunkScalarFieldEnum[]
 }
 
 /**
