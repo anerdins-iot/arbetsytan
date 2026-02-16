@@ -30,6 +30,7 @@ model Tenant {
   documentChunks DocumentChunk[]
   noteCategories NoteCategory[]
   fileAnalyses   FileAnalysis[]
+  timeEntries    TimeEntry[]
 }
 
 model User {
@@ -541,9 +542,23 @@ model TimeEntry {
 
   taskId    String?
   task      Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  projectId String
-  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId    String
+
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  entryType TimeEntryType @default(WORK)
+}
+
+enum TimeEntryType {
+  WORK       // Vanligt arbete
+  VACATION   // Semester
+  SICK       // Sjukdom
+  VAB        // Vård av barn
+  PARENTAL   // Föräldraledighet
+  EDUCATION  // Utbildning
+  OTHER      // Övrigt
 }
 
 // ─────────────────────────────────────────

@@ -720,11 +720,22 @@
     },
     "fields": {
       "task": "Uppgift",
+      "noTask": "Ingen specifik uppgift",
+      "type": "Typ av tid",
       "amount": "Antal",
       "unit": "Enhet",
       "date": "Datum",
       "description": "Beskrivning",
-      "descriptionPlaceholder": "Valfri kommentar (max 500 tecken)"
+      "descriptionPlaceholder": "Valfri kommentar (max 500 tecken)",
+      "types": {
+        "WORK": "Arbete",
+        "VACATION": "Semester",
+        "SICK": "Sjukdom",
+        "VAB": "Vård av barn (VAB)",
+        "PARENTAL": "Föräldraledighet",
+        "EDUCATION": "Utbildning",
+        "OTHER": "Övrigt"
+      }
     },
     "units": {
       "minutes": "Minuter",

@@ -320,7 +320,7 @@ const executeCreateComment: ToolExecutor = async (params, ctx) => {
 
 const executeCreateTimeEntry: ToolExecutor = async (params, ctx) => {
   const projectId = (params.projectId as string) ?? ctx.projectId;
-  if (!projectId) return { success: false, error: "projectId required" };
+  const entryType = (params.entryType as string) ?? "WORK";
 
   const taskId = params.taskId as string;
   const minutes = params.minutes
@@ -334,14 +334,16 @@ const executeCreateTimeEntry: ToolExecutor = async (params, ctx) => {
   }
 
   const date = params.date ? new Date(params.date as string) : new Date();
-  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId });
+  const db = tenantDb(ctx.tenantId, { actorUserId: ctx.userId, projectId: projectId ?? undefined });
 
-  const project = await db.project.findUnique({ where: { id: projectId } });
-  if (!project) return { success: false, error: "Project not found" };
+  if (projectId) {
+    const project = await db.project.findUnique({ where: { id: projectId } });
+    if (!project) return { success: false, error: "Project not found" };
 
-  if (taskId) {
-    const task = await db.task.findFirst({ where: { id: taskId, projectId } });
-    if (!task) return { success: false, error: "Task not found" };
+    if (taskId) {
+      const task = await db.task.findFirst({ where: { id: taskId, projectId } });
+      if (!task) return { success: false, error: "Task not found" };
+    }
   }
 
   const timeEntry = await db.timeEntry.create({
@@ -349,17 +351,21 @@ const executeCreateTimeEntry: ToolExecutor = async (params, ctx) => {
       description: (params.description as string) ?? null,
       minutes,
       date,
-      project: { connect: { id: projectId } },
+      ...(projectId ? { project: { connect: { id: projectId } } } : {}),
       ...(taskId ? { task: { connect: { id: taskId } } } : {}),
       userId: ctx.userId,
-    },
+      tenantId: ctx.tenantId,
+      entryType: entryType as any,
+    } as any,
   });
 
-  await logActivity(ctx.tenantId, projectId, ctx.userId, "created", "timeEntry", timeEntry.id, {
-    minutes,
-    taskId,
-    source: "automation",
-  });
+  if (projectId) {
+    await logActivity(ctx.tenantId, projectId, ctx.userId, "created", "timeEntry", timeEntry.id, {
+      minutes,
+      taskId,
+      source: "automation",
+    });
+  }
 
   return { success: true, data: { timeEntryId: timeEntry.id } };
 };

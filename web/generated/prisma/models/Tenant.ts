@@ -208,6 +208,7 @@ export type TenantWhereInput = {
   documentChunks?: Prisma.DocumentChunkListRelationFilter
   noteCategories?: Prisma.NoteCategoryListRelationFilter
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  timeEntries?: Prisma.TimeEntryListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
@@ -228,6 +229,7 @@ export type TenantOrderByWithRelationInput = {
   documentChunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
   noteCategories?: Prisma.NoteCategoryOrderByRelationAggregateInput
   fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
+  timeEntries?: Prisma.TimeEntryOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
@@ -251,6 +253,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   documentChunks?: Prisma.DocumentChunkListRelationFilter
   noteCategories?: Prisma.NoteCategoryListRelationFilter
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  timeEntries?: Prisma.TimeEntryListRelationFilter
 }, "id" | "stripeCustomerId">
 
 export type TenantOrderByWithAggregationInput = {
@@ -297,6 +300,7 @@ export type TenantCreateInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
@@ -317,6 +321,7 @@ export type TenantUncheckedCreateInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
@@ -337,6 +342,7 @@ export type TenantUpdateInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
@@ -357,6 +363,7 @@ export type TenantUncheckedUpdateInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
@@ -548,6 +555,20 @@ export type TenantUpdateOneRequiredWithoutPushSubscriptionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutPushSubscriptionsInput, Prisma.TenantUpdateWithoutPushSubscriptionsInput>, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionsInput>
 }
 
+export type TenantCreateNestedOneWithoutTimeEntriesInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTimeEntriesInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutTimeEntriesNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTimeEntriesInput
+  upsert?: Prisma.TenantUpsertWithoutTimeEntriesInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutTimeEntriesInput, Prisma.TenantUpdateWithoutTimeEntriesInput>, Prisma.TenantUncheckedUpdateWithoutTimeEntriesInput>
+}
+
 export type TenantCreateNestedOneWithoutNoteCategoriesInput = {
   create?: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoriesInput, Prisma.TenantUncheckedCreateWithoutNoteCategoriesInput>
   connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNoteCategoriesInput
@@ -593,6 +614,7 @@ export type TenantCreateWithoutMembershipsInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutMembershipsInput = {
@@ -612,6 +634,7 @@ export type TenantUncheckedCreateWithoutMembershipsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutMembershipsInput = {
@@ -647,6 +670,7 @@ export type TenantUpdateWithoutMembershipsInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutMembershipsInput = {
@@ -666,6 +690,7 @@ export type TenantUncheckedUpdateWithoutMembershipsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutInvitationsInput = {
@@ -685,6 +710,7 @@ export type TenantCreateWithoutInvitationsInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutInvitationsInput = {
@@ -704,6 +730,7 @@ export type TenantUncheckedCreateWithoutInvitationsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutInvitationsInput = {
@@ -739,6 +766,7 @@ export type TenantUpdateWithoutInvitationsInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutInvitationsInput = {
@@ -758,6 +786,7 @@ export type TenantUncheckedUpdateWithoutInvitationsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutProjectsInput = {
@@ -777,6 +806,7 @@ export type TenantCreateWithoutProjectsInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutProjectsInput = {
@@ -796,6 +826,7 @@ export type TenantUncheckedCreateWithoutProjectsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutProjectsInput = {
@@ -831,6 +862,7 @@ export type TenantUpdateWithoutProjectsInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutProjectsInput = {
@@ -850,6 +882,7 @@ export type TenantUncheckedUpdateWithoutProjectsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutFileAnalysesInput = {
@@ -869,6 +902,7 @@ export type TenantCreateWithoutFileAnalysesInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutFileAnalysesInput = {
@@ -888,6 +922,7 @@ export type TenantUncheckedCreateWithoutFileAnalysesInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutFileAnalysesInput = {
@@ -923,6 +958,7 @@ export type TenantUpdateWithoutFileAnalysesInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutFileAnalysesInput = {
@@ -942,6 +978,7 @@ export type TenantUncheckedUpdateWithoutFileAnalysesInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutDocumentChunksInput = {
@@ -961,6 +998,7 @@ export type TenantCreateWithoutDocumentChunksInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutDocumentChunksInput = {
@@ -980,6 +1018,7 @@ export type TenantUncheckedCreateWithoutDocumentChunksInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutDocumentChunksInput = {
@@ -1015,6 +1054,7 @@ export type TenantUpdateWithoutDocumentChunksInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutDocumentChunksInput = {
@@ -1034,6 +1074,7 @@ export type TenantUncheckedUpdateWithoutDocumentChunksInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutNotificationPreferencesInput = {
@@ -1053,6 +1094,7 @@ export type TenantCreateWithoutNotificationPreferencesInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -1072,6 +1114,7 @@ export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -1107,6 +1150,7 @@ export type TenantUpdateWithoutNotificationPreferencesInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -1126,6 +1170,7 @@ export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutEmailTemplatesInput = {
@@ -1145,6 +1190,7 @@ export type TenantCreateWithoutEmailTemplatesInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutEmailTemplatesInput = {
@@ -1164,6 +1210,7 @@ export type TenantUncheckedCreateWithoutEmailTemplatesInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutEmailTemplatesInput = {
@@ -1199,6 +1246,7 @@ export type TenantUpdateWithoutEmailTemplatesInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutEmailTemplatesInput = {
@@ -1218,6 +1266,7 @@ export type TenantUncheckedUpdateWithoutEmailTemplatesInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutPushSubscriptionsInput = {
@@ -1237,6 +1286,7 @@ export type TenantCreateWithoutPushSubscriptionsInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -1256,6 +1306,7 @@ export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -1291,6 +1342,7 @@ export type TenantUpdateWithoutPushSubscriptionsInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -1306,6 +1358,103 @@ export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
   invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
   subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutTimeEntriesInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  address?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutTimeEntriesInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  address?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutTimeEntriesInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
+}
+
+export type TenantUpsertWithoutTimeEntriesInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutTimeEntriesInput, Prisma.TenantUncheckedUpdateWithoutTimeEntriesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutTimeEntriesInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutTimeEntriesInput, Prisma.TenantUncheckedUpdateWithoutTimeEntriesInput>
+}
+
+export type TenantUpdateWithoutTimeEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutTimeEntriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
@@ -1329,6 +1478,7 @@ export type TenantCreateWithoutNoteCategoriesInput = {
   emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutNoteCategoriesInput = {
@@ -1348,6 +1498,7 @@ export type TenantUncheckedCreateWithoutNoteCategoriesInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutNoteCategoriesInput = {
@@ -1383,6 +1534,7 @@ export type TenantUpdateWithoutNoteCategoriesInput = {
   emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutNoteCategoriesInput = {
@@ -1402,6 +1554,7 @@ export type TenantUncheckedUpdateWithoutNoteCategoriesInput = {
   emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutSubscriptionInput = {
@@ -1421,6 +1574,7 @@ export type TenantCreateWithoutSubscriptionInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutSubscriptionInput = {
@@ -1440,6 +1594,7 @@ export type TenantUncheckedCreateWithoutSubscriptionInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutSubscriptionInput = {
@@ -1475,6 +1630,7 @@ export type TenantUpdateWithoutSubscriptionInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutSubscriptionInput = {
@@ -1494,6 +1650,7 @@ export type TenantUncheckedUpdateWithoutSubscriptionInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 
@@ -1511,6 +1668,7 @@ export type TenantCountOutputType = {
   documentChunks: number
   noteCategories: number
   fileAnalyses: number
+  timeEntries: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1523,6 +1681,7 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   documentChunks?: boolean | TenantCountOutputTypeCountDocumentChunksArgs
   noteCategories?: boolean | TenantCountOutputTypeCountNoteCategoriesArgs
   fileAnalyses?: boolean | TenantCountOutputTypeCountFileAnalysesArgs
+  timeEntries?: boolean | TenantCountOutputTypeCountTimeEntriesArgs
 }
 
 /**
@@ -1598,6 +1757,13 @@ export type TenantCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.T
   where?: Prisma.FileAnalysisWhereInput
 }
 
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountTimeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TimeEntryWhereInput
+}
+
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1617,6 +1783,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   documentChunks?: boolean | Prisma.Tenant$documentChunksArgs<ExtArgs>
   noteCategories?: boolean | Prisma.Tenant$noteCategoriesArgs<ExtArgs>
   fileAnalyses?: boolean | Prisma.Tenant$fileAnalysesArgs<ExtArgs>
+  timeEntries?: boolean | Prisma.Tenant$timeEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
@@ -1662,6 +1829,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   documentChunks?: boolean | Prisma.Tenant$documentChunksArgs<ExtArgs>
   noteCategories?: boolean | Prisma.Tenant$noteCategoriesArgs<ExtArgs>
   fileAnalyses?: boolean | Prisma.Tenant$fileAnalysesArgs<ExtArgs>
+  timeEntries?: boolean | Prisma.Tenant$timeEntriesArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1680,6 +1848,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     documentChunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
     noteCategories: Prisma.$NoteCategoryPayload<ExtArgs>[]
     fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
+    timeEntries: Prisma.$TimeEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2093,6 +2262,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   documentChunks<T extends Prisma.Tenant$documentChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$documentChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   noteCategories<T extends Prisma.Tenant$noteCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$noteCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NoteCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   fileAnalyses<T extends Prisma.Tenant$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  timeEntries<T extends Prisma.Tenant$timeEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$timeEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimeEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2749,6 +2919,30 @@ export type Tenant$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
+}
+
+/**
+ * Tenant.timeEntries
+ */
+export type Tenant$timeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TimeEntry
+   */
+  select?: Prisma.TimeEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TimeEntry
+   */
+  omit?: Prisma.TimeEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TimeEntryInclude<ExtArgs> | null
+  where?: Prisma.TimeEntryWhereInput
+  orderBy?: Prisma.TimeEntryOrderByWithRelationInput | Prisma.TimeEntryOrderByWithRelationInput[]
+  cursor?: Prisma.TimeEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TimeEntryScalarFieldEnum | Prisma.TimeEntryScalarFieldEnum[]
 }
 
 /**

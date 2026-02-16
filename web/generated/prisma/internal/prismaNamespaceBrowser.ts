@@ -436,7 +436,9 @@ export const TimeEntryScalarFieldEnum = {
   updatedAt: 'updatedAt',
   taskId: 'taskId',
   projectId: 'projectId',
-  userId: 'userId'
+  userId: 'userId',
+  tenantId: 'tenantId',
+  entryType: 'entryType'
 } as const
 
 export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]

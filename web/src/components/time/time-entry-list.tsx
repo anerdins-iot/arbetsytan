@@ -35,9 +35,11 @@ type TimeEntryListProps = {
 type EditState = {
   id: string;
   taskId: string;
+  projectId: string | null;
   minutes: string;
   date: string;
   description: string;
+  entryType: string;
 };
 
 export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
@@ -51,16 +53,14 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
 
   function startEdit(entry: GroupedTimeEntries["entries"][number]) {
     setError(null);
-    const fallbackTaskId =
-      entry.taskId && tasks.some((task) => task.id === entry.taskId)
-        ? entry.taskId
-        : tasks[0]?.id ?? "__none__";
     setEditState({
       id: entry.id,
-      taskId: fallbackTaskId,
+      taskId: entry.taskId ?? "none",
+      projectId: entry.projectId,
       minutes: String(entry.minutes),
       date: toInputDate(entry.date),
       description: entry.description ?? "",
+      entryType: entry.entryType,
     });
   }
 
@@ -69,8 +69,6 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
     setError(null);
     const parsedMinutes = Number(editState.minutes);
     if (
-      !editState.taskId ||
-      editState.taskId === "__none__" ||
       !Number.isFinite(parsedMinutes) ||
       parsedMinutes <= 0
     ) {
@@ -80,10 +78,12 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
 
     startTransition(async () => {
       const result = await updateTimeEntry(editState.id, {
-        taskId: editState.taskId,
+        taskId: editState.taskId === "none" ? null : editState.taskId,
+        projectId: editState.projectId ?? undefined,
         minutes: Math.round(parsedMinutes),
         date: editState.date,
         description: editState.description,
+        entryType: editState.entryType as any,
       });
 
       if (!result.success) {
@@ -95,6 +95,8 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
       router.refresh();
     });
   }
+
+  const timeTypes = ["WORK", "VACATION", "SICK", "VAB", "PARENTAL", "EDUCATION", "OTHER"];
 
   function removeEntry(id: string) {
     const confirmed = window.confirm(t("list.deleteConfirm"));
@@ -147,7 +149,7 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
                             value={editState.taskId}
                             onValueChange={(value) =>
                               setEditState((current) =>
-                                current ? { ...current, taskId: value } : current
+                                current ? { ...current, taskId: value, entryType: value !== "none" ? "WORK" : current.entryType } : current
                               )
                             }
                           >
@@ -155,15 +157,12 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {tasks.length === 0 ? (
-                                <SelectItem value="__none__">{t("create.noTasks")}</SelectItem>
-                              ) : (
-                                tasks.map((task) => (
-                                  <SelectItem key={task.id} value={task.id}>
-                                    {task.title}
-                                  </SelectItem>
-                                ))
-                              )}
+                              <SelectItem value="none">{t("fields.noTask")}</SelectItem>
+                              {tasks.map((task) => (
+                                <SelectItem key={task.id} value={task.id}>
+                                  {task.title}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
@@ -183,6 +182,32 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
                           />
                         </div>
                       </div>
+
+                      {editState.taskId === "none" && (
+                        <div className="space-y-2">
+                          <Label>{t("fields.type")}</Label>
+                          <Select
+                            value={editState.entryType}
+                            onValueChange={(value) =>
+                              setEditState((current) =>
+                                current ? { ...current, entryType: value } : current
+                              )
+                            }
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {timeTypes.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {t(`fields.types.${type}`)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
                       <div className="space-y-2">
                         <Label>{t("fields.date")}</Label>
                         <Input
@@ -228,6 +253,11 @@ export function TimeEntryList({ groupedEntries, tasks }: TimeEntryListProps) {
                       <div className="space-y-1">
                         <p className="font-medium text-foreground">
                           {entry.taskTitle ?? t("list.noTask")}
+                          {entry.entryType !== "WORK" && (
+                            <span className="ml-2 text-xs font-normal text-muted-foreground italic">
+                              ({t(`fields.types.${entry.entryType}`)})
+                            </span>
+                          )}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {formatMinutes(entry.minutes, labels)}

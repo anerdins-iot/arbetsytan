@@ -10,14 +10,16 @@ export type TimeEntryListItem = {
   updatedAt: Date;
   taskId: string | null;
   taskTitle: string | null;
-  projectId: string;
-  projectName: string;
+  projectId: string | null;
+  projectName: string | null;
   userId: string;
   userName: string;
+  entryType: string;
 };
 
 export type TimeSummaryData = {
   totalMinutes: number;
+  byType: Array<{ type: string; totalMinutes: number }>;
   byTask: Array<{ taskId: string; taskTitle: string; totalMinutes: number }>;
   byPerson: Array<{ userId: string; userName: string; totalMinutes: number }>;
   byDay: Array<{ date: string; totalMinutes: number }>;
@@ -81,14 +83,15 @@ export async function getTimeEntriesCore(
     taskId: e.taskId,
     taskTitle: e.task?.title ?? null,
     projectId: e.projectId,
-    projectName: e.project.name,
+    projectName: e.project?.name ?? null,
     userId: e.userId,
     userName: userMap.get(e.userId) ?? e.userId,
+    entryType: (e as any).entryType,
   }));
 }
 
 /**
- * Hamta anvandarens egna tidsposter (cross-project).
+ * Hamta anvandarens egna tidsposter (cross-project + personal).
  */
 export async function getMyTimeEntriesCore(
   ctx: ServiceContext,
@@ -124,23 +127,24 @@ export async function getMyTimeEntriesCore(
     taskId: e.taskId,
     taskTitle: e.task?.title ?? null,
     projectId: e.projectId,
-    projectName: e.project.name,
+    projectName: e.project?.name ?? null,
     userId: e.userId,
     userName,
+    entryType: (e as any).entryType,
   }));
 }
 
 /**
- * Hamta sammanfattning av tid for ett projekt.
+ * Hamta sammanfattning av tid for ett projekt eller personliga tidposter.
  */
 export async function getTimeSummaryCore(
   ctx: ServiceContext,
-  projectId: string
+  projectId?: string
 ): Promise<TimeSummaryData> {
   const db = tenantDb(ctx.tenantId);
 
   const entries = await db.timeEntry.findMany({
-    where: { projectId },
+    where: projectId ? { projectId } : { userId: ctx.userId },
     include: {
       task: { select: { id: true, title: true } },
     },
@@ -153,6 +157,7 @@ export async function getTimeSummaryCore(
   const personTotals = new Map<string, number>();
   const dayTotals = new Map<string, number>();
   const weekTotals = new Map<string, number>();
+  const typeTotals = new Map<string, number>();
 
   for (const entry of entries) {
     if (entry.task) {
@@ -175,6 +180,9 @@ export async function getTimeSummaryCore(
 
     const weekKey = toDateKey(getWeekStart(entry.date));
     weekTotals.set(weekKey, (weekTotals.get(weekKey) ?? 0) + entry.minutes);
+
+    const entryType = (entry as any).entryType;
+    typeTotals.set(entryType, (typeTotals.get(entryType) ?? 0) + entry.minutes);
   }
 
   // Hamta user-info for person-sammanfattning
@@ -187,6 +195,9 @@ export async function getTimeSummaryCore(
 
   return {
     totalMinutes,
+    byType: Array.from(typeTotals.entries())
+      .map(([type, minutes]) => ({ type, totalMinutes: minutes }))
+      .sort((a, b) => b.totalMinutes - a.totalMinutes),
     byTask: Array.from(taskTotals.values()).sort((a, b) => b.totalMinutes - a.totalMinutes),
     byPerson: Array.from(personTotals.entries())
       .map(([userId, minutes]) => ({

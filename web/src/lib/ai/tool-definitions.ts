@@ -150,9 +150,9 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
   {
     name: "createTimeEntry",
     category: "time",
-    description: "Create a time entry for a task.",
+    description: "Create a time entry. Provide projectId (required for project time), taskId (optional), minutes or hours, date, optional description and optional entryType (WORK, VACATION, SICK, VAB, PARENTAL, EDUCATION, OTHER).",
     availableIn: ["project", "personal"],
-    requiresProjectId: true,
+    requiresProjectId: false, // Now optional
     schedulable: true,
     parameters: [
       { name: "projectId", type: "string", required: false, description: "Project ID" },
@@ -161,6 +161,19 @@ export const TOOL_DEFINITIONS: ToolDefinition[] = [
       { name: "hours", type: "number", required: false, description: "Duration in hours" },
       { name: "date", type: "date", required: true, description: "Date YYYY-MM-DD" },
       { name: "description", type: "string", required: false, description: "Description" },
+      { name: "entryType", type: "enum", required: false, description: "Type of time entry", enumValues: ["WORK", "VACATION", "SICK", "VAB", "PARENTAL", "EDUCATION", "OTHER"] },
+    ],
+  },
+  {
+    name: "smartLogTime",
+    category: "time",
+    description: "Smart time logging based on natural text. Extracts duration, date and description, and searches for matching tasks in the project. Use this for a better user experience when logging work.",
+    availableIn: ["personal", "project"],
+    requiresProjectId: true,
+    schedulable: false,
+    parameters: [
+      { name: "projectId", type: "string", required: false, description: "Project ID" },
+      { name: "text", type: "string", required: true, description: "Natural language description, e.g. 'worked 3 hours on wiring today'" },
     ],
   },
   {

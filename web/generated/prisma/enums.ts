@@ -107,6 +107,19 @@ export const NotificationEventType = {
 export type NotificationEventType = (typeof NotificationEventType)[keyof typeof NotificationEventType]
 
 
+export const TimeEntryType = {
+  WORK: 'WORK',
+  VACATION: 'VACATION',
+  SICK: 'SICK',
+  VAB: 'VAB',
+  PARENTAL: 'PARENTAL',
+  EDUCATION: 'EDUCATION',
+  OTHER: 'OTHER'
+} as const
+
+export type TimeEntryType = (typeof TimeEntryType)[keyof typeof TimeEntryType]
+
+
 export const AutomationStatus = {
   PENDING: 'PENDING',
   ACTIVE: 'ACTIVE',

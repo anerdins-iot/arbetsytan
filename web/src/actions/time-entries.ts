@@ -14,25 +14,31 @@ const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
 const createTimeEntrySchema = z.object({
-  taskId: idSchema,
+  taskId: idSchema.optional(),
+  projectId: idSchema.optional(),
   minutes: z.number().int().positive(),
   date: dateStringSchema,
   description: z.string().max(500).optional(),
+  entryType: z.enum(["WORK", "VACATION", "SICK", "VAB", "PARENTAL", "EDUCATION", "OTHER"]).default("WORK"),
 });
 
 const updateTimeEntrySchema = z
   .object({
-    taskId: idSchema.optional(),
+    taskId: idSchema.nullable().optional(),
+    projectId: idSchema.optional(),
     minutes: z.number().int().positive().optional(),
     date: dateStringSchema.optional(),
     description: z.string().max(500).optional(),
+    entryType: z.enum(["WORK", "VACATION", "SICK", "VAB", "PARENTAL", "EDUCATION", "OTHER"]).optional(),
   })
   .refine(
     (data) =>
       data.taskId !== undefined ||
+      data.projectId !== undefined ||
       data.minutes !== undefined ||
       data.date !== undefined ||
-      data.description !== undefined,
+      data.description !== undefined ||
+      data.entryType !== undefined,
     {
       message: "NO_FIELDS_TO_UPDATE",
     }
@@ -47,10 +53,11 @@ export type TimeEntryItem = {
   updatedAt: string;
   taskId: string | null;
   taskTitle: string | null;
-  projectId: string;
-  projectName: string;
+  projectId: string | null;
+  projectName: string | null;
   userId: string;
   isMine: boolean;
+  entryType: string;
 };
 
 export type GroupedTimeEntries = {
@@ -61,6 +68,7 @@ export type GroupedTimeEntries = {
 
 export type ProjectTimeSummary = {
   totalMinutes: number;
+  byType: Array<{ type: string; totalMinutes: number }>;
   byTask: Array<{ taskId: string; taskTitle: string; totalMinutes: number }>;
   byPerson: Array<{ userId: string; userName: string; totalMinutes: number }>;
   byDay: Array<{ date: string; totalMinutes: number }>;
@@ -93,9 +101,10 @@ function mapEntry(
     updatedAt: Date;
     taskId: string | null;
     userId: string;
-    projectId: string;
-    project: { name: string };
+    projectId: string | null;
+    project: { name: string } | null;
     task: { title: string } | null;
+    entryType: string;
   },
   currentUserId: string
 ): TimeEntryItem {
@@ -109,9 +118,10 @@ function mapEntry(
     taskId: entry.taskId,
     taskTitle: entry.task?.title ?? null,
     projectId: entry.projectId,
-    projectName: entry.project.name,
+    projectName: entry.project?.name ?? null,
     userId: entry.userId,
     isMine: entry.userId === currentUserId,
+    entryType: entry.entryType,
   };
 }
 
@@ -137,10 +147,12 @@ function groupEntriesByDay(entries: TimeEntryItem[]): GroupedTimeEntries[] {
 }
 
 export async function createTimeEntry(input: {
-  taskId: string;
+  taskId?: string;
+  projectId?: string;
   minutes: number;
   date: string;
   description?: string;
+  entryType?: "WORK" | "VACATION" | "SICK" | "VAB" | "PARENTAL" | "EDUCATION" | "OTHER";
 }): Promise<ActionResult<TimeEntryItem>> {
   const { tenantId, userId } = await requireAuth();
   const parsed = createTimeEntrySchema.safeParse(input);
@@ -148,38 +160,56 @@ export async function createTimeEntry(input: {
     return { success: false, error: "VALIDATION_ERROR" };
   }
 
-  const db = tenantDb(tenantId);
-  const task = await db.task.findUnique({
-    where: { id: parsed.data.taskId },
-    include: {
-      project: { select: { id: true, name: true } },
-    },
-  });
+  const { taskId, projectId, minutes, date, description, entryType } = parsed.data;
 
-  if (!task) {
-    return { success: false, error: "TASK_NOT_FOUND" };
+  const db = tenantDb(tenantId);
+  let resolvedProjectId = projectId;
+  let resolvedTaskId = taskId;
+
+  if (taskId) {
+    const task = await db.task.findUnique({
+      where: { id: taskId },
+      include: {
+        project: { select: { id: true, name: true } },
+      },
+    });
+
+    if (!task) {
+      return { success: false, error: "TASK_NOT_FOUND" };
+    }
+    resolvedProjectId = task.project.id;
   }
 
-  await requireProject(tenantId, task.project.id, userId);
+  if (resolvedProjectId) {
+    await requireProject(tenantId, resolvedProjectId, userId);
+  }
 
-  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: task.project.id });
+  const dbWithEmit = tenantDb(tenantId, { 
+    actorUserId: userId, 
+    projectId: resolvedProjectId || undefined 
+  });
+
   const created = await dbWithEmit.timeEntry.create({
     data: {
-      taskId: task.id,
-      projectId: task.project.id,
+      taskId: resolvedTaskId || null,
+      projectId: resolvedProjectId || null,
       userId,
-      minutes: parsed.data.minutes,
-      date: new Date(parsed.data.date),
-      description: parsed.data.description?.trim() || null,
+      tenantId, // Explicitly pass tenantId
+      minutes,
+      date: new Date(date),
+      description: description?.trim() || null,
+      entryType: entryType as any,
     },
     include: {
       project: { select: { name: true } },
       task: { select: { title: true } },
     },
-  });
+  }) as any;
 
-  revalidatePath("/[locale]/projects/[projectId]", "page");
-  revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  if (resolvedProjectId) {
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+    revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  }
   revalidatePath("/[locale]/time", "page");
 
   return { success: true, data: mapEntry(created, userId) };
@@ -203,9 +233,10 @@ export async function getTimeEntriesByProject(
     taskId: entry.taskId,
     taskTitle: entry.taskTitle,
     projectId: entry.projectId,
-    projectName: entry.projectName,
+    projectName: entry.projectName ?? "Okänt projekt",
     userId: entry.userId,
     isMine: entry.userId === userId,
+    entryType: entry.entryType,
   }));
   return { success: true, data: groupEntriesByDay(mapped) };
 }
@@ -227,9 +258,10 @@ export async function getMyTimeEntries(): Promise<ActionResult<TimeEntryItem[]>>
       taskId: entry.taskId,
       taskTitle: entry.taskTitle,
       projectId: entry.projectId,
-      projectName: entry.projectName,
+      projectName: entry.projectName ?? "Personlig",
       userId: entry.userId,
       isMine: true,
+      entryType: entry.entryType,
     })),
   };
 }
@@ -237,10 +269,12 @@ export async function getMyTimeEntries(): Promise<ActionResult<TimeEntryItem[]>>
 export async function updateTimeEntry(
   id: string,
   data: {
-    taskId?: string;
+    taskId?: string | null;
+    projectId?: string;
     minutes?: number;
     date?: string;
     description?: string;
+    entryType?: "WORK" | "VACATION" | "SICK" | "VAB" | "PARENTAL" | "EDUCATION" | "OTHER";
   }
 ): Promise<ActionResult<TimeEntryItem>> {
   const { tenantId, userId } = await requireAuth();
@@ -260,8 +294,8 @@ export async function updateTimeEntry(
     return { success: false, error: "TIME_ENTRY_NOT_FOUND" };
   }
 
-  let targetTaskId = existing.taskId;
-  let targetProjectId = existing.projectId;
+  let targetTaskId = parsedData.data.taskId !== undefined ? parsedData.data.taskId : (existing as any).taskId;
+  let targetProjectId = parsedData.data.projectId !== undefined ? parsedData.data.projectId : (existing as any).projectId;
 
   if (parsedData.data.taskId) {
     const task = await db.task.findUnique({
@@ -275,9 +309,15 @@ export async function updateTimeEntry(
     targetProjectId = task.projectId;
   }
 
-  await requireProject(tenantId, targetProjectId, userId);
+  if (targetProjectId) {
+    await requireProject(tenantId, targetProjectId, userId);
+  }
 
-  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: targetProjectId });
+  const dbWithEmit = tenantDb(tenantId, { 
+    actorUserId: userId, 
+    projectId: targetProjectId || undefined 
+  });
+
   const updated = await dbWithEmit.timeEntry.update({
     where: { id: existing.id },
     data: {
@@ -289,15 +329,22 @@ export async function updateTimeEntry(
         parsedData.data.description !== undefined
           ? parsedData.data.description.trim() || null
           : existing.description,
+      entryType: parsedData.data.entryType ?? (existing as any).entryType,
     },
     include: {
       task: { select: { title: true } },
       project: { select: { name: true } },
     },
-  });
+  }) as any;
 
-  revalidatePath("/[locale]/projects/[projectId]", "page");
-  revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  if ((existing as any).projectId) {
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+    revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  }
+  if (targetProjectId && targetProjectId !== (existing as any).projectId) {
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+    revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  }
   revalidatePath("/[locale]/time", "page");
 
   return { success: true, data: mapEntry(updated, userId) };
@@ -311,21 +358,25 @@ export async function deleteTimeEntry(id: string): Promise<ActionResult> {
   }
 
   const db = tenantDb(tenantId);
-  const existing = await db.timeEntry.findFirst({
+  const existing = (await db.timeEntry.findFirst({
     where: { id: parsedId.data, userId },
-  });
+  })) as any;
 
   if (!existing) {
     return { success: false, error: "TIME_ENTRY_NOT_FOUND" };
   }
 
-  await requireProject(tenantId, existing.projectId, userId);
+  if (existing.projectId) {
+    await requireProject(tenantId, existing.projectId, userId);
+  }
 
-  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: existing.projectId });
+  const dbWithEmit = tenantDb(tenantId, { actorUserId: userId, projectId: existing.projectId || undefined });
   await dbWithEmit.timeEntry.delete({ where: { id: existing.id } });
 
-  revalidatePath("/[locale]/projects/[projectId]", "page");
-  revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  if (existing.projectId) {
+    revalidatePath("/[locale]/projects/[projectId]", "page");
+    revalidatePath("/[locale]/projects/[projectId]/time", "page");
+  }
   revalidatePath("/[locale]/time", "page");
 
   return { success: true, data: undefined };

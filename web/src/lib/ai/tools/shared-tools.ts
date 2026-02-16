@@ -217,14 +217,19 @@ ${projectData ? `\nProjektdata:\n${JSON.stringify(projectData, null, 2)}` : ""}
       system: systemPrompt,
       prompt: userPrompt,
       maxOutputTokens: 4096,
+      timeout: 60_000, // 60 seconds — prevents hanging on document generation
     });
     return result.text;
   } catch (err) {
-    logger.error("Opus sub-agent failed", {
-      error: err instanceof Error ? err.message : String(err),
-      contentType,
-      title,
-    });
+    if (err instanceof Error && err.name === "AbortError") {
+      logger.error("Opus sub-agent timed out after 60 seconds", { contentType, title });
+    } else {
+      logger.error("Opus sub-agent failed", {
+        error: err instanceof Error ? err.message : String(err),
+        contentType,
+        title,
+      });
+    }
     return null;
   }
 }

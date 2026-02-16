@@ -4,7 +4,7 @@
  */
 import { tool, generateText } from "ai";
 import { z } from "zod";
-import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject, requirePermission } from "@/lib/auth";
 import { userDb, tenantDb, prisma, type TenantScopedClient } from "@/lib/db";
@@ -543,47 +543,131 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     },
   });
 
-  const createTimeEntry = tool({
+  const smartLogTime = tool({
     description:
-      "Skapa en ny tidsrapport för en uppgift i ett projekt. Ange minuter eller timmar, datum och valfri beskrivning.",
+      "Registrera tid smart baserat på naturlig text. Extraherar tid, datum och beskrivning, samt söker efter matchande uppgifter i projektet. Om ingen uppgift matchar perfekt föreslås en ny BRED uppgift (t.ex. 'Kabeldragning' istället för 'Kabel till fläkt').",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
-      taskId: z.string().describe("Uppgiftens ID"),
+      text: z.string().describe("Naturlig beskrivning, t.ex. 'idag har jag dragit kabel i källaren till fläktaggregatet, 5 timmar'"),
+    })),
+    execute: async ({ projectId: pid, text }) => {
+      await requireProject(tenantId, pid, userId);
+
+      const now = new Date();
+      const today = now.toISOString().split("T")[0];
+
+      // 1. Extrahera data från texten med en snabb AI-modell
+      const extractionPrompt = `Du är en expert på tidrapportering. Extrahera duration (minuter), datum och en ren beskrivning från följande text.
+Text: "${text}"
+Dagens datum är: ${today}
+
+Returnera ENBART JSON i följande format:
+{
+  "minutes": number,
+  "date": "YYYY-MM-DD",
+  "description": "ren beskrivning av vad som gjorts",
+  "category": "bred arbetskategori (t.ex. Kabeldragning, Rörarbete, Målning, Montering, Elinstallation, Snickeri, Annat)"
+}`;
+
+      let extracted;
+      try {
+        const { text: resultText } = await generateText({
+          model: anthropic("claude-3-5-sonnet-latest"),
+          prompt: extractionPrompt,
+        });
+        const cleaned = resultText.replace(/^```(?:json)?\s*/m, "").replace(/```\s*$/m, "").trim();
+        extracted = JSON.parse(cleaned);
+      } catch (err) {
+        return { error: "Kunde inte tolka texten. Försök att vara mer specifik med tid och vad du gjort." };
+      }
+
+      // 2. Sök efter matchande uppgifter i projektet
+      const tasks = await getProjectTasksCore({ tenantId, userId }, pid, { limit: 100 });
+      
+      const matches = tasks.map(t => {
+        // Enkel matchning: kolla om titeln finns i beskrivningen eller vice versa
+        const score = (
+          (extracted.description.toLowerCase().includes(t.title.toLowerCase()) ? 0.5 : 0) +
+          (t.title.toLowerCase().includes(extracted.category.toLowerCase()) ? 0.3 : 0)
+        );
+        return { id: t.id, title: t.title, score };
+      })
+      .filter(m => m.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3);
+
+      return {
+        extracted: {
+          minutes: extracted.minutes,
+          hours: Math.floor(extracted.minutes / 60),
+          remainingMinutes: extracted.minutes % 60,
+          date: extracted.date,
+          description: extracted.description,
+          category: extracted.category
+        },
+        suggestions: {
+          existingTasks: matches,
+          newBroadTask: extracted.category,
+          noTask: true
+        },
+        message: `Jag har tolkat din rapport: ${extracted.minutes} minuter den ${extracted.date}. Vill du koppla den till en befintlig uppgift, skapa en ny generell uppgift "${extracted.category}", eller registrera den utan specifik uppgift?`
+      };
+    },
+  });
+
+  const createTimeEntry = tool({
+    description:
+      "Skapa en ny tidsrapport. Kan kopplas till ett projekt och/eller en uppgift. Ange minuter eller timmar, datum, entryType (WORK, VACATION, etc.) och valfri beskrivning.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().optional().describe("Projektets ID (valfritt för personlig tid)"),
+      taskId: z.string().optional().describe("Uppgiftens ID (valfritt)"),
       minutes: z.number().int().positive().optional().describe("Antal minuter"),
       hours: z.number().positive().optional().describe("Antal timmar (konverteras till minuter)"),
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).describe("Datum YYYY-MM-DD"),
       description: z.string().max(500).optional().describe("Beskrivning av arbetet"),
+      entryType: z.enum(["WORK", "VACATION", "SICK", "VAB", "PARENTAL", "EDUCATION", "OTHER"]).optional().default("WORK").describe("Typ av tidrapport"),
     })),
-    execute: async ({ projectId: pid, taskId, minutes, hours, date, description }) => {
-      const idCheck = validateDatabaseId(pid, "projectId");
-      if (!idCheck.valid) return { error: idCheck.error };
-      const taskIdCheck = validateDatabaseId(taskId, "taskId");
-      if (!taskIdCheck.valid) return { error: taskIdCheck.error };
+    execute: async ({ projectId: pid, taskId, minutes, hours, date, description, entryType }) => {
+      if (pid) {
+        const idCheck = validateDatabaseId(pid, "projectId");
+        if (!idCheck.valid) return { error: idCheck.error };
+      }
+      if (taskId) {
+        const taskIdCheck = validateDatabaseId(taskId, "taskId");
+        if (!taskIdCheck.valid) return { error: taskIdCheck.error };
+      }
 
       const totalMinutes = minutes ?? Math.round((hours ?? 0) * 60);
       if (totalMinutes <= 0) return { error: "Tid måste vara större än 0." };
 
       const result = await createTimeEntryAction({
         taskId,
+        projectId: pid,
         minutes: totalMinutes,
         date,
         description: description?.trim() || undefined,
+        entryType: entryType as any,
       });
 
       if (!result.success) return { error: result.error || "Kunde inte skapa tidsrapport." };
 
       const data = result.data!;
+      const projectLabel = data.projectName ? ` i projekt "${data.projectName}"` : "";
+      const taskLabel = data.taskTitle ? ` på uppgiften "${data.taskTitle}"` : "";
+      
       return {
         id: data.id,
         taskId: data.taskId,
         taskTitle: data.taskTitle,
+        projectId: data.projectId,
         projectName: data.projectName,
         minutes: data.minutes,
         hours: Math.floor(data.minutes / 60),
         remainingMinutes: data.minutes % 60,
         date: data.date,
         description: data.description,
-        message: `Tidsrapport på ${totalMinutes} min loggad i projekt "${data.projectName}".`,
+        entryType: data.entryType,
+        message: `Tidsrapport (${data.entryType}) på ${totalMinutes} min loggad${projectLabel}${taskLabel}.`,
       };
     },
   });
@@ -788,9 +872,10 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
       let summary: string;
       try {
         const result = await generateText({
-          model: openai("gpt-4o"),
+          model: anthropic("claude-opus-4-6"),
           prompt,
           maxOutputTokens: 2000,
+          timeout: 60_000, // 60 second timeout
         });
         summary = result.text;
       } catch (err) {
@@ -798,6 +883,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         return { error: `Kunde inte generera rapporttext: ${msg}` };
       }
 
+      console.log("[generateProjectReport] Generating PDF");
       const periodLabel = `${fromDate.toISOString().split("T")[0]}-${toDate.toISOString().split("T")[0]}`;
       const fileName = `projektrapport-${reportType}-${periodLabel}.pdf`;
       const pdfResult = await generatePdfDocument({
@@ -2647,6 +2733,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     // Tidrapportering
     getProjectTimeEntries,
     createTimeEntry,
+    smartLogTime,
     updateTimeEntry,
     deleteTimeEntry,
     getProjectTimeSummary,

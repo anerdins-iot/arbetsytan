@@ -688,10 +688,12 @@ export type ProjectCreateNestedOneWithoutTimeEntriesInput = {
   connect?: Prisma.ProjectWhereUniqueInput
 }
 
-export type ProjectUpdateOneRequiredWithoutTimeEntriesNestedInput = {
+export type ProjectUpdateOneWithoutTimeEntriesNestedInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutTimeEntriesInput, Prisma.ProjectUncheckedCreateWithoutTimeEntriesInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTimeEntriesInput
   upsert?: Prisma.ProjectUpsertWithoutTimeEntriesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
   connect?: Prisma.ProjectWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutTimeEntriesInput, Prisma.ProjectUpdateWithoutTimeEntriesInput>, Prisma.ProjectUncheckedUpdateWithoutTimeEntriesInput>
 }

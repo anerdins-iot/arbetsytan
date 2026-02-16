@@ -67,11 +67,12 @@ export default async function MyTimePage({ params, searchParams }: Props) {
 
   const projectTotals = new Map<string, { projectId: string; projectName: string; totalMinutes: number }>();
   for (const entry of filteredEntries) {
-    const current = projectTotals.get(entry.projectId);
+    const pid = entry.projectId ?? "personal";
+    const current = projectTotals.get(pid);
     if (!current) {
-      projectTotals.set(entry.projectId, {
-        projectId: entry.projectId,
-        projectName: entry.projectName,
+      projectTotals.set(pid, {
+        projectId: pid,
+        projectName: entry.projectName ?? t("fields.noTask"),
         totalMinutes: entry.minutes,
       });
     } else {

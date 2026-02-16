@@ -2955,7 +2955,9 @@ export const TimeEntryScalarFieldEnum = {
   updatedAt: 'updatedAt',
   taskId: 'taskId',
   projectId: 'projectId',
-  userId: 'userId'
+  userId: 'userId',
+  tenantId: 'tenantId',
+  entryType: 'entryType'
 } as const
 
 export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]
@@ -3311,6 +3313,20 @@ export type EnumNotificationEventTypeFieldRefInput<$PrismaModel> = FieldRefInput
  * Reference to a field of type 'NotificationEventType[]'
  */
 export type ListEnumNotificationEventTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'NotificationEventType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TimeEntryType'
+ */
+export type EnumTimeEntryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TimeEntryType'>
+    
+
+
+/**
+ * Reference to a field of type 'TimeEntryType[]'
+ */
+export type ListEnumTimeEntryTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TimeEntryType[]'>
     
 
 

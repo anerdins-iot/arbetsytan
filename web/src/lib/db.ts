@@ -33,13 +33,13 @@ const DIRECT_TENANT_MODELS = [
   "emailTemplate",
   "documentChunk",
   "noteCategory",
+  "timeEntry",
 ] as const;
 
 /** Models scoped via direct project relation (ALWAYS have projectId). */
 const PROJECT_SCOPED_MODELS = [
   "task",
   "activityLog",
-  "timeEntry",
 ] as const;
 
 /** Models that can be personal (projectId null) or project-scoped. */
