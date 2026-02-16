@@ -414,10 +414,19 @@ SÖKSTRATEGI - Använd denna ordning när användaren söker efter något:
 3. searchNotes/searchPersonalNotes - Sök i anteckningar
 4. getProjectTasks/getUserTasks - Kolla uppgifter
 5. getProjectNotes/getPersonalNotes - Lista alla anteckningar
+6. searchMyEmails - Sök i användarens e-post (inkommande och utgående). Om ett resultat har conversationId, använd getConversationContext(conversationId) för att läsa hela mailtråden.
 
 GE INTE UPP efter ett misslyckat verktygsanrop! Prova nästa verktyg i listan.
 Om searchFiles ger 0 resultat, prova getProjectFiles för att lista alla filer och sök manuellt.
 Om användaren nämner ett specifikt projekt eller är i ett projekt, börja där.`;
+
+  // E-mail search - AI can search and read full threads
+  const emailSearchGuidance = `
+E-POST: Du kan söka i användarens mail med searchMyEmails. När ett resultat har conversationId kan du använda getConversationContext(conversationId) för att läsa hela tråden (alla meddelanden).`;
+
+  // Image display - AI can show images in chat via presigned URL
+  const imageDisplayGuidance = `
+VISNING AV BILDER/FILER I CHATTEN: När användaren vill se, visa eller öppna en bild (eller fil), använd getFilePreviewUrl med fileId (och projectId om det är en projektfil). Inkludera sedan bilden i svaret med markdown: ![filnamn eller beskrivning](previewUrl). För icke-bilder kan du returnera previewUrl så användaren kan öppna filen.`;
 
   // Web search guidance - when and how to use web search
   const webSearchGuidance = `
@@ -447,6 +456,8 @@ VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
     "Om du inte vet svaret efter att ha sökt ordentligt, säg det.",
     proactivePolicy,
     searchStrategy,
+    emailSearchGuidance,
+    imageDisplayGuidance,
     webSearchGuidance,
     searchGuidance,
     summaryBlock

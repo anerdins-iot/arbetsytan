@@ -40,6 +40,7 @@ import {
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 import { searchEmails } from "@/lib/ai/email-embeddings";
+import { getConversationCore } from "@/services/email-conversations";
 import { getEmailsForUser } from "@/lib/email-log";
 import {
   createAutomation as createAutomationAction,
@@ -49,7 +50,9 @@ import {
   copyObjectInMinio,
   projectObjectKey,
   ensureTenantBucket,
+  createPresignedDownloadUrl,
 } from "@/lib/minio";
+import { getFilePreviewData } from "@/actions/files";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
 import { randomUUID } from "node:crypto";
@@ -913,7 +916,7 @@ Returnera ENBART JSON i följande format:
   // ─── Filer (Files) ────────────────────────────────────
 
   const listFiles = tool({
-    description: "Lista filer i ett projekt (id, namn, typ, storlek, datum, analyser).",
+    description: "Lista filer i ett projekt (id, namn, typ, storlek, datum, analyser). Bildfiler får previewUrl för visning i chatten.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets unika ID (från listProjects, t.ex. 'cmlmey73b00071fo435f077if'). INTE filnamn!"),
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
@@ -929,21 +932,39 @@ Returnera ENBART JSON i följande format:
         { includeAnalyses: true, analysesLimit: 5, limit }
       );
 
-      return files.map((f) => ({
-        id: f.id,
-        name: f.name,
-        type: f.type,
-        size: f.size,
-        createdAt: f.createdAt.toISOString(),
-        label: f.label,
-        userDescription: f.userDescription,
-        ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
-        analyses: f.analyses.map((a) => ({
-          prompt: a.prompt,
-          content: a.content,
-          createdAt: a.createdAt.toISOString(),
-        })),
-      }));
+      const isImage = (t: string) => t.startsWith("image/");
+      const withPreview = await Promise.all(
+        files.map(async (f) => {
+          const base = {
+            id: f.id,
+            name: f.name,
+            type: f.type,
+            size: f.size,
+            createdAt: f.createdAt.toISOString(),
+            label: f.label,
+            userDescription: f.userDescription,
+            ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
+            analyses: f.analyses.map((a) => ({
+              prompt: a.prompt,
+              content: a.content,
+              createdAt: a.createdAt.toISOString(),
+            })),
+          };
+          if (isImage(f.type)) {
+            try {
+              const previewUrl = await createPresignedDownloadUrl({
+                bucket: f.bucket,
+                key: f.objectKey,
+              });
+              return { ...base, previewUrl };
+            } catch {
+              return base;
+            }
+          }
+          return base;
+        })
+      );
+      return withPreview;
     },
   });
 
@@ -974,7 +995,7 @@ Returnera ENBART JSON i följande format:
 
   const getPersonalFiles = tool({
     description:
-      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar filens ID (för movePersonalFileToProject), namn, typ, storlek, datum och analyser. ANROPA DETTA FÖRST för att få fileId innan du flyttar filer.",
+      "Hämta användarens personliga filer (filer uppladdade i chatten utan projektkontext). Returnerar filens ID (för movePersonalFileToProject), namn, typ, storlek, datum och analyser. Bildfiler får previewUrl. ANROPA DETTA FÖRST för att få fileId innan du flyttar filer.",
     inputSchema: toolInputSchema(z.object({
       limit: z.number().min(1).max(100).optional().default(50).describe("Max antal filer"),
     })),
@@ -984,22 +1005,68 @@ Returnera ENBART JSON i följande format:
         { includeAnalyses: true, analysesLimit: 5, limit }
       );
 
-      return files.map((f) => ({
-        id: f.id,
-        name: f.name,
-        type: f.type,
-        size: f.size,
-        createdAt: f.createdAt.toISOString(),
-        label: f.label,
-        userDescription: f.userDescription,
-        hasOcrText: !!f.ocrText,
-        ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
-        analyses: f.analyses.map((a) => ({
-          prompt: a.prompt,
-          content: a.content,
-          createdAt: a.createdAt.toISOString(),
-        })),
-      }));
+      const isImage = (t: string) => t.startsWith("image/");
+      const withPreview = await Promise.all(
+        files.map(async (f) => {
+          const base = {
+            id: f.id,
+            name: f.name,
+            type: f.type,
+            size: f.size,
+            createdAt: f.createdAt.toISOString(),
+            label: f.label,
+            userDescription: f.userDescription,
+            hasOcrText: !!f.ocrText,
+            ocrPreview: f.ocrText ? f.ocrText.slice(0, 300) + (f.ocrText.length > 300 ? "…" : "") : null,
+            analyses: f.analyses.map((a) => ({
+              prompt: a.prompt,
+              content: a.content,
+              createdAt: a.createdAt.toISOString(),
+            })),
+          };
+          if (isImage(f.type)) {
+            try {
+              const previewUrl = await createPresignedDownloadUrl({
+                bucket: f.bucket,
+                key: f.objectKey,
+              });
+              return { ...base, previewUrl };
+            } catch {
+              return base;
+            }
+          }
+          return base;
+        })
+      );
+      return withPreview;
+    },
+  });
+
+  const getFilePreviewUrl = tool({
+    description:
+      "Hämta en förhandsgransknings-URL för en fil. Använd detta för att visa bilder i chatten med markdown: ![beskrivning](url). Returnerar presigned URL som är giltig i 30 minuter.",
+    inputSchema: toolInputSchema(z.object({
+      fileId: z.string().describe("Filens unika ID"),
+      projectId: z.string().optional().describe("Projekt-ID om det är en projektfil (utelämna för personlig fil)"),
+    })),
+    execute: async ({ fileId, projectId: pid }) => {
+      const fileIdCheck = validateDatabaseId(fileId, "fileId");
+      if (!fileIdCheck.valid) return { error: fileIdCheck.error };
+      if (pid) {
+        const projectIdCheck = validateDatabaseId(pid, "projectId");
+        if (!projectIdCheck.valid) return { error: projectIdCheck.error };
+      }
+
+      const result = await getFilePreviewData({ fileId, projectId: pid });
+      if (!result.success) return { error: result.error };
+      const file = result.file;
+      const isImage = file.type.startsWith("image/");
+      return {
+        previewUrl: file.downloadUrl,
+        fileName: file.name,
+        fileType: file.type,
+        isImage,
+      };
     },
   });
 
@@ -2745,9 +2812,49 @@ Returnera ENBART JSON i följande format:
           createdAt: email.createdAt.toISOString(),
           direction: email.direction,
           similarity: email.similarity,
+          conversationId: email.conversationId ?? undefined,
         })),
         totalFound: results.length,
       };
+    },
+  });
+
+  const getConversationContext = tool({
+    description:
+      "Hämta hela en e-postkonversation (alla meddelanden i tråden). Använd när användaren frågar om innehållet i en specifik mailtråd eller när searchMyEmails returnerar conversationId och du behöver mer kontext.",
+    inputSchema: toolInputSchema(z.object({
+      conversationId: z.string().describe("Konversationens ID (finns i searchMyEmails-resultat när mailet tillhör en tråd)"),
+    })),
+    execute: async ({ conversationId: cid }) => {
+      const conversationIdCheck = validateDatabaseId(cid, "conversationId");
+      if (!conversationIdCheck.valid) return { error: conversationIdCheck.error };
+
+      try {
+        const conv = await getConversationCore(tenantId, userId, cid);
+        return {
+          subject: conv.subject,
+          externalEmail: conv.externalEmail,
+          externalName: conv.externalName,
+          projectName: conv.projectName,
+          messages: conv.messages.map((m) => ({
+            from: m.fromEmail,
+            fromName: m.fromName,
+            to: m.toEmail,
+            subject: m.subject,
+            body: m.bodyText ?? (m.bodyHtml ? "(HTML)" : null),
+            direction: m.direction,
+            sentAt: m.sentAt?.toISOString() ?? null,
+            receivedAt: m.receivedAt?.toISOString() ?? null,
+            createdAt: m.createdAt.toISOString(),
+          })),
+        };
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (msg === "CONVERSATION_NOT_FOUND") {
+          return { error: "Konversationen hittades inte eller du har inte åtkomst." };
+        }
+        return { error: msg };
+      }
     },
   });
 
@@ -2836,6 +2943,7 @@ Returnera ENBART JSON i följande format:
     getProjectFiles: listFiles,
     deleteFile,
     getPersonalFiles,
+    getFilePreviewUrl,
     searchFiles,
     analyzeDocument,
     analyzePersonalFile,
@@ -2899,6 +3007,7 @@ Returnera ENBART JSON i följande format:
     deleteNoteCategory,
     // E-postsökning
     searchMyEmails,
+    getConversationContext,
     getMyRecentEmails,
   };
 }
