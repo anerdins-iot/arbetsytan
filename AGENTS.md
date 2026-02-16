@@ -73,9 +73,26 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 | `npm start` | Starta produktionsserver |
 | `/workspace/web/scripts/start-server.sh` | Starta server för tester (dödar befintlig process automatiskt) |
 | `/workspace/web/scripts/stop-server.sh` | Stoppa server efter tester |
-| `npx prisma migrate dev` | Kör migrations |
+| `npx prisma migrate dev --name namn` | Skapa migration vid schema-ändringar (nya tabeller/kolumner) |
+| `npx prisma migrate deploy` | Applicera migrationer i produktion |
 | `npx prisma studio` | Öppna DB-gui |
 | `npx prisma db seed` | Seed testdata |
+
+## Prisma: Migrationer är obligatoriska
+
+**Nya tabeller eller kolumner i `schema.prisma` MÅSTE följas av en migration.** Annars finns inte ändringarna i databasen och appen kraschar i produktion med fel som `column does not exist` eller `relation does not exist`.
+
+### Arbetsflöde vid schema-ändringar
+
+1. Redigera `web/prisma/schema.prisma` (lägg till modell, kolumn, index)
+2. Kör `npx prisma migrate dev --name beskrivande_namn` (t.ex. `add_email_conversations`)
+3. Verifiera att migrationsfilen skapades i `web/prisma/migrations/`
+4. Committa schema + migrationsfilen
+
+### Vanliga misstag
+
+- Bara uppdatera schema utan att skapa migration → produktion kraschar
+- Glömma att committa migrationsfilen → andra får inte tabellerna
 
 ## Arkitektur
 
@@ -221,7 +238,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 
 ### Checklista vid ny funktionalitet
 
-1. **Prisma-modell** — Skapa/uppdatera schema, kör migration
+1. **Prisma-modell** — Skapa/uppdatera schema, **skapa migration** (`npx prisma migrate dev --name ...`). Utan migration finns inte tabeller/kolumner i databasen → appen kraschar.
 2. **Service Layer** — Skapa `src/services/{entity}-service.ts` med `get{Entity}Core` funktioner
 3. **Server Actions** — CRUD-funktioner i `web/src/actions/` som anropar services för läsning
 4. **UI-komponenter** — Dialoger, formulär, listor i `web/src/components/`
@@ -276,6 +293,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - **Duplicerad DB-logik** — `findMany` för samma data får INTE finnas i både Actions och AI-verktyg. Använd Service Layer.
 - **`validateDatabaseId` utanför services** — funktionen finns ENBART i `src/services/types.ts`
 - **AI-verktyg med egen DB-skrivlogik** — skrivoperationer ska anropa Actions, inte köra egen `create/update/delete`
+- **Schema-ändringar utan migration** — Nya tabeller eller kolumner i `schema.prisma` MÅSTE följas av `npx prisma migrate dev --name ...`. Utan migration finns inte ändringarna i databasen → appen kraschar i produktion.
 
 ## Viktiga filer
 
