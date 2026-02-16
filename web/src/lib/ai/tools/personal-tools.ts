@@ -2628,9 +2628,9 @@ Returnera ENBART JSON i följande format:
   // ─── Generiska filgenereringsverktyg ──────────────────────
   const generatePdf = tool({
     description:
-      "Generera en PDF-fil och spara den i ett projekts fillista. Ange projektets ID, filnamn (.pdf), titel och innehåll (markdown eller vanlig text; stycken separeras med dubbla radbrytningar, rubriker med #). Valfritt: template för layout – projektrapport (header, sektioner, footer med datum), offert (villkorstext i footer), protokoll (deltagarlista-format med beslutspunkter), eller null för fritt format. TIP: Om du anger instructions istället för content kommer en avancerad AI (Opus) att generera professionellt innehåll baserat på instruktionerna.",
+      "Generera en PDF-fil och spara i ett projekts fillista eller i personliga filer. Ange filnamn (.pdf), titel och innehåll. Valfritt projectId: om angivet sparas filen i projektet, annars i personliga filer. Valfritt: template (projektrapport, offert, protokoll) eller instructions så att Opus genererar innehåll.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID – utelämna för att spara i personliga filer"),
       fileName: z.string().describe("Filnamn t.ex. rapport.pdf"),
       title: z.string().describe("Dokumentets titel"),
       content: z.string().optional().describe("Brödtext i markdown eller vanlig text (valfritt om instructions anges)"),
@@ -2640,7 +2640,7 @@ Returnera ENBART JSON i följande format:
         .describe("Instruktioner till AI för att generera innehållet, t.ex. 'Skapa en offert för elinstallation i villa'"),
     })),
     execute: async ({ projectId: pid, fileName, title, content, template, instructions }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return generatePdfDocument({
         db, tenantId, projectId: pid, userId,
         fileName, title, content: content ?? "", template: template ?? null, instructions,
@@ -2650,9 +2650,9 @@ Returnera ENBART JSON i följande format:
 
   const generateExcel = tool({
     description:
-      "Generera en Excel-fil (.xlsx) med ett eller flera blad och spara i ett projekts fillista. Ange projektets ID, filnamn (.xlsx), valfri titel och sheets (array av { name, headers, rows }). Valfritt: template 'materiallista' för formaterad tabell med fet rubrikrad, anpassade kolumnbredder och automatisk summeringsrad för numeriska kolumner. TIP: Om du anger instructions istället för sheets kommer en avancerad AI (Opus) att generera data baserat på instruktionerna.",
+      "Generera en Excel-fil (.xlsx) och spara i ett projekt eller i personliga filer. Valfritt projectId: om angivet sparas i projektet, annars i personliga filer. Ange filnamn (.xlsx), valfri titel och sheets eller instructions så att Opus genererar data. Valfritt template 'materiallista' för formaterad tabell.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID – utelämna för att spara i personliga filer"),
       fileName: z.string().describe("Filnamn t.ex. materiallista.xlsx"),
       title: z.string().optional().describe("Dokumenttitel"),
       sheets: z.array(z.object({
@@ -2666,7 +2666,7 @@ Returnera ENBART JSON i följande format:
         .describe("Instruktioner till AI för att generera data, t.ex. 'Skapa en materiallista för badrumsrenovering'"),
     })),
     execute: async ({ projectId: pid, fileName, title, sheets, template, instructions }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return generateExcelDocument({
         db, tenantId, projectId: pid, userId,
         fileName, title, sheets, template: template ?? null, instructions,
@@ -2676,9 +2676,9 @@ Returnera ENBART JSON i följande format:
 
   const generateWord = tool({
     description:
-      "Generera ett Word-dokument (.docx) och spara i ett projekts fillista. Ange projektets ID, filnamn (.docx), titel och innehåll (markdown eller text; stycken separeras med dubbla radbrytningar). Valfritt: template för layout – projektrapport (professionell header, sektionsrubriker, footer), offert (villkorstext i footer), protokoll (beslutspunkter, deltagarlista), eller null för fritt format. TIP: Om du anger instructions istället för content kommer en avancerad AI (Opus) att generera professionellt innehåll baserat på instruktionerna.",
+      "Generera ett Word-dokument (.docx) och spara i ett projekt eller i personliga filer. Valfritt projectId: om angivet sparas i projektet, annars i personliga filer. Ange filnamn (.docx), titel och innehåll eller instructions så att Opus genererar innehåll. Valfritt template: projektrapport, offert, protokoll.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID – utelämna för att spara i personliga filer"),
       fileName: z.string().describe("Filnamn t.ex. offert.docx"),
       title: z.string().describe("Dokumentets titel"),
       content: z.string().optional().describe("Brödtext, stycken separeras med dubbla radbrytningar (valfritt om instructions anges)"),
@@ -2688,7 +2688,7 @@ Returnera ENBART JSON i följande format:
         .describe("Instruktioner till AI för att generera innehållet, t.ex. 'Skriv ett mötesprotokoll'"),
     })),
     execute: async ({ projectId: pid, fileName, title, content, template, instructions }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return generateWordDocument({
         db, tenantId, projectId: pid, userId,
         fileName, title, content, template: template ?? null, instructions,
@@ -2700,22 +2700,22 @@ Returnera ENBART JSON i följande format:
 
   const readExcelFile = tool({
     description:
-      "Läs innehållet från en Excel-fil i ett projekt. Returnerar alla ark med rubrikrader och datarader. Användbart för att läsa mallfiler eller befintliga Excel-dokument. Ange projektets ID och filens ID.",
+      "Läs innehållet från en Excel-fil i ett projekt eller bland personliga filer. Ange filens ID. Valfritt projectId: om angivet verifieras projekttillgång; utelämna för personliga filer.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID om filen tillhör ett projekt – utelämna för personlig fil"),
       fileId: z.string().describe("Filens ID från fillistan"),
     })),
     execute: async ({ projectId: pid, fileId }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return readExcelFileContent({ db, tenantId, fileId });
     },
   });
 
   const editExcelFile = tool({
     description:
-      "Redigera en Excel-fil och spara som ny fil. Ange projektets ID, källfilens ID (t.ex. en mallfil), nytt filnamn och en lista med ändringar. Varje ändring anger ark (valfritt, default första arket), cell (t.ex. 'A1', 'B5') och värde. Användbart för att fylla i mallar med projektdata, t.ex. gruppförteckning, mätprotokoll eller installationsintyg. TIP: Om du anger instructions istället för edits kommer en avancerad AI (Opus) att bestämma vilka ändringar som ska göras.",
+      "Redigera en Excel-fil och spara som ny fil. Ange källfilens ID, nytt filnamn och ändringar (eller instructions). Valfritt projectId: om angivet sparas den nya filen i projektet, annars i personliga filer.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID – utelämna för att spara i personliga filer"),
       sourceFileId: z.string().describe("ID för original-filen (mallen)"),
       newFileName: z.string().describe("Namn på den nya filen (måste sluta med .xlsx)"),
       edits: z.array(z.object({
@@ -2727,7 +2727,7 @@ Returnera ENBART JSON i följande format:
         .describe("Instruktioner till AI för att bestämma ändringar, t.ex. 'Fyll i projektdata för Kund AB'"),
     })),
     execute: async ({ projectId: pid, sourceFileId, newFileName, edits, instructions }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return editExcelFileContent({
         db, tenantId, userId, projectId: pid, sourceFileId, newFileName, edits: edits ?? [], instructions,
       });
@@ -2736,13 +2736,13 @@ Returnera ENBART JSON i följande format:
 
   const readWordFile = tool({
     description:
-      "Läs textinnehållet från en Word-fil (.docx eller .doc) i ett projekt. Returnerar textinnehållet som sträng. Användbart för att läsa mallar eller befintliga Word-dokument. Ange projektets ID och filens ID.",
+      "Läs textinnehållet från en Word-fil (.docx eller .doc) i ett projekt eller bland personliga filer. Ange filens ID. Valfritt projectId: om angivet verifieras projekttillgång; utelämna för personliga filer.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID om filen tillhör ett projekt – utelämna för personlig fil"),
       fileId: z.string().describe("Filens ID från fillistan"),
     })),
     execute: async ({ projectId: pid, fileId }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return readWordFileContent({ db, tenantId, fileId });
     },
   });
@@ -2751,28 +2751,28 @@ Returnera ENBART JSON i följande format:
 
   const analyzeDocumentTemplate = tool({
     description:
-      "Analysera en dokumentmall (.docx eller .pptx) och extrahera alla platshållare. Mallen använder {variabel}-syntax för enkla variabler och {#loop}...{/loop} för upprepade sektioner. Returnerar en lista med variabler och loopar som behöver fyllas i. Använd detta INNAN fillDocumentTemplate för att förstå vilka data mallen behöver. Ange projektets ID och filens ID.",
+      "Analysera en dokumentmall (.docx eller .pptx) och extrahera alla platshållare. Mallen använder {variabel}-syntax och {#loop}...{/loop}. Ange filens ID. Valfritt projectId om filen tillhör ett projekt.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID om mallfilen tillhör ett projekt – utelämna för personlig fil"),
       fileId: z.string().describe("Filens ID (mallfilen) från fillistan"),
     })),
     execute: async ({ projectId: pid, fileId }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return analyzeDocxTemplate({ db, tenantId, fileId });
     },
   });
 
   const fillDocumentTemplate = tool({
     description:
-      "Fyll i en dokumentmall (.docx eller .pptx) med data och spara som ny fil i projektet. Mallen innehåller platshållare som {kundnamn}, {projektadress} och loopar som {#rader}{beskrivning} - {pris}{/rader}. Analysera mallen med analyzeDocumentTemplate först för att se vilka variabler som behövs. Data skickas som JSON-objekt där nycklar matchar variabelnamnen. Loopar skickas som arrayer av objekt. Ange projektets ID, mallfilens ID, nytt filnamn och data.",
+      "Fyll i en dokumentmall (.docx eller .pptx) med data och spara som ny fil. Ange mallfilens ID, nytt filnamn och data (JSON). Valfritt projectId: om angivet sparas filen i projektet, annars i personliga filer. Använd analyzeDocumentTemplate först för att se vilka variabler som behövs.",
     inputSchema: toolInputSchema(z.object({
-      projectId: z.string().describe("Projektets ID"),
+      projectId: z.string().optional().describe("Projektets ID – utelämna för att spara i personliga filer"),
       sourceFileId: z.string().describe("ID för mallfilen"),
       newFileName: z.string().describe("Namn på den nya filen (samma filändelse som mallen, t.ex. offert-kund-abc.docx)"),
       data: z.record(z.string(), z.unknown()).describe("JSON-objekt med data att fylla i. Nycklar matchar mallens platshållare. Loopar = arrayer av objekt, t.ex. { kundnamn: 'AB Bygg', rader: [{ beskrivning: 'Kabel', pris: 500 }] }"),
     })),
     execute: async ({ projectId: pid, sourceFileId, newFileName, data }) => {
-      await requireProject(tenantId, pid, userId);
+      if (pid) await requireProject(tenantId, pid, userId);
       return fillDocxTemplate({
         db, tenantId, projectId: pid, userId, sourceFileId, data, newFileName,
       });

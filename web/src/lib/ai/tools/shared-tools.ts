@@ -12,7 +12,7 @@ import Docxtemplater from "docxtemplater";
 const InspectModule = require("docxtemplater/js/inspect-module.js");
 import PizZip from "pizzip";
 import { searchDocuments, searchDocumentsGlobal } from "@/lib/ai/embeddings";
-import { saveGeneratedDocumentToProject } from "@/lib/ai/save-generated-document";
+import { saveGeneratedDocumentToProject, saveGeneratedDocumentToPersonal } from "@/lib/ai/save-generated-document";
 import { createPresignedDownloadUrl } from "@/lib/minio";
 import { buildSimplePdf, type PdfTemplate } from "@/lib/reports/simple-content-pdf";
 import { buildSimpleDocx, type DocxTemplate } from "@/lib/reports/simple-content-docx";
@@ -275,7 +275,7 @@ type ExcelSheet = {
 type GenerateExcelParams = {
   db: TenantScopedClient;
   tenantId: string;
-  projectId: string;
+  projectId?: string;
   userId: string;
   fileName: string;
   title?: string;
@@ -414,16 +414,18 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
   }
   const textContent = textParts.join('\n');
 
-  const saved = await saveGeneratedDocumentToProject({
+  const saveParams = {
     db,
     tenantId,
-    projectId,
     userId,
     fileName,
-    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" as const,
     buffer: new Uint8Array(buffer),
     content: textContent,
-  });
+  };
+  const saved = projectId
+    ? await saveGeneratedDocumentToProject({ ...saveParams, projectId })
+    : await saveGeneratedDocumentToPersonal(saveParams);
 
   if ("error" in saved) {
     return { error: saved.error };
@@ -450,7 +452,7 @@ export async function generateExcelDocument(params: GenerateExcelParams) {
 type GeneratePdfParams = {
   db: TenantScopedClient;
   tenantId: string;
-  projectId: string;
+  projectId?: string;
   userId: string;
   fileName: string;
   title: string;
@@ -487,16 +489,18 @@ export async function generatePdfDocument(params: GeneratePdfParams) {
   }
 
   const buffer = await buildSimplePdf(title, content, template ?? undefined);
-  const saved = await saveGeneratedDocumentToProject({
+  const pdfSaveBase = {
     db,
     tenantId,
-    projectId,
     userId,
     fileName,
-    contentType: "application/pdf",
+    contentType: "application/pdf" as const,
     buffer,
     content: `${title}\n\n${content}`,
-  });
+  };
+  const saved = projectId
+    ? await saveGeneratedDocumentToProject({ ...pdfSaveBase, projectId })
+    : await saveGeneratedDocumentToPersonal(pdfSaveBase);
 
   if ("error" in saved) {
     return { error: saved.error };
@@ -524,7 +528,7 @@ export async function generatePdfDocument(params: GeneratePdfParams) {
 type GenerateWordParams = {
   db: TenantScopedClient;
   tenantId: string;
-  projectId: string;
+  projectId?: string;
   userId: string;
   fileName: string;
   title: string;
@@ -571,16 +575,18 @@ export async function generateWordDocument(params: GenerateWordParams) {
     ? `${title}\n\n${contentOrParagraphs}`
     : `${title}\n\n${contentOrParagraphs.join('\n\n')}`;
 
-  const saved = await saveGeneratedDocumentToProject({
+  const wordSaveBase = {
     db,
     tenantId,
-    projectId,
     userId,
     fileName,
-    contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    contentType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" as const,
     buffer,
     content: textContent,
-  });
+  };
+  const saved = projectId
+    ? await saveGeneratedDocumentToProject({ ...wordSaveBase, projectId })
+    : await saveGeneratedDocumentToPersonal(wordSaveBase);
 
   if ("error" in saved) {
     return { error: saved.error };
@@ -933,7 +939,7 @@ type EditExcelParams = {
   db: TenantScopedClient;
   tenantId: string;
   userId: string;
-  projectId: string;
+  projectId?: string;
   sourceFileId: string;
   newFileName: string;
   edits: Array<{
@@ -1037,18 +1043,19 @@ export async function editExcelFileContent(params: EditExcelParams) {
     }
     const textContent = textParts.join('\n');
 
-    // Save as new file (new version linked to source)
-    const saved = await saveGeneratedDocumentToProject({
+    const editSaveBase = {
       db,
       tenantId,
-      projectId,
       userId,
       fileName: newFileName,
-      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" as const,
       buffer: new Uint8Array(outputBuffer),
       content: textContent,
       parentFileId: sourceFileId,
-    });
+    };
+    const saved = projectId
+      ? await saveGeneratedDocumentToProject({ ...editSaveBase, projectId })
+      : await saveGeneratedDocumentToPersonal(editSaveBase);
 
     if ("error" in saved) {
       return { error: saved.error };
@@ -1226,7 +1233,7 @@ export async function analyzeDocxTemplate(params: AnalyzeTemplateParams): Promis
 type FillTemplateParams = {
   db: TenantScopedClient;
   tenantId: string;
-  projectId: string;
+  projectId?: string;
   userId: string;
   sourceFileId: string;
   data: Record<string, unknown>;
@@ -1321,17 +1328,19 @@ export async function fillDocxTemplate(params: FillTemplateParams) {
       ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
       : "application/vnd.openxmlformats-officedocument.presentationml.presentation";
 
-    const saved = await saveGeneratedDocumentToProject({
+    const fillSaveBase = {
       db,
       tenantId,
-      projectId,
       userId,
       fileName: newFileName,
       contentType,
       buffer: new Uint8Array(outputBuffer),
       content: textContent,
       parentFileId: sourceFileId,
-    });
+    };
+    const saved = projectId
+      ? await saveGeneratedDocumentToProject({ ...fillSaveBase, projectId })
+      : await saveGeneratedDocumentToPersonal(fillSaveBase);
 
     if ("error" in saved) {
       return { error: saved.error };
