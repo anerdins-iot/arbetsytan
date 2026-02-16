@@ -242,11 +242,13 @@ export async function sendExternalEmail(
       .filter((e) => e.length > 0);
   }
 
+  const replyToRaw = formData.get("replyTo");
   const raw = {
     recipients,
     subject: formData.get("subject"),
     body: formData.get("body"),
-    replyTo: formData.get("replyTo") || undefined,
+    // Convert empty string to undefined so Zod doesn't validate it as invalid email
+    replyTo: typeof replyToRaw === "string" && replyToRaw.trim() ? replyToRaw.trim() : undefined,
   };
 
   const result = sendEmailSchema.safeParse(raw);
