@@ -30,10 +30,15 @@ export function generateTrackingCode(): string {
 
 /**
  * Builds the reply-to address for a conversation with tenant isolation.
- * Returns inbox+{tenantCode}_{trackingCode}@{RESEND_RECEIVING_DOMAIN}.
+ * Returns format Resend accepts: "Name <inbox+tenant_tracking@domain>".
+ * Resend requires 'email@example.com' or 'Name <email@example.com>' format.
  */
 export function buildReplyToAddress(tenantCode: string, trackingCode: string): string {
-  return `inbox+${tenantCode}_${trackingCode}@${RECEIVING_DOMAIN}`;
+  const domain = (RECEIVING_DOMAIN || "mail.lowly.se").trim().replace(/^https?:\/\//, "").split("/")[0];
+  const safeTenant = String(tenantCode).replace(/[^a-zA-Z0-9_-]/g, "");
+  const safeTracking = String(trackingCode).replace(/[^a-zA-Z0-9_-]/g, "");
+  const email = `inbox+${safeTenant}_${safeTracking}@${domain}`;
+  return `ArbetsYtan <${email}>`;
 }
 
 /**
