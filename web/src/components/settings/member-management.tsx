@@ -138,6 +138,14 @@ export function MemberManagement({
                   {member.name ?? member.email}
                 </p>
                 <p className="truncate text-xs text-muted-foreground">{member.email}</p>
+                {member.phone ? (
+                  <p className="truncate text-xs text-muted-foreground">
+                    {t("phone")}: {member.phone}
+                  </p>
+                ) : null}
+                {member.bio ? (
+                  <p className="line-clamp-2 text-xs text-muted-foreground">{member.bio}</p>
+                ) : null}
               </div>
 
               <div className="flex items-center gap-2">

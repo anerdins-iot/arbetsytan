@@ -40,6 +40,8 @@ export type UserMinAggregateOutputType = {
   email: string | null
   emailVerified: Date | null
   image: string | null
+  phone: string | null
+  bio: string | null
   password: string | null
   isSuperAdmin: boolean | null
   locale: string | null
@@ -56,6 +58,8 @@ export type UserMaxAggregateOutputType = {
   email: string | null
   emailVerified: Date | null
   image: string | null
+  phone: string | null
+  bio: string | null
   password: string | null
   isSuperAdmin: boolean | null
   locale: string | null
@@ -72,6 +76,8 @@ export type UserCountAggregateOutputType = {
   email: number
   emailVerified: number
   image: number
+  phone: number
+  bio: number
   password: number
   isSuperAdmin: number
   locale: number
@@ -98,6 +104,8 @@ export type UserMinAggregateInputType = {
   email?: true
   emailVerified?: true
   image?: true
+  phone?: true
+  bio?: true
   password?: true
   isSuperAdmin?: true
   locale?: true
@@ -114,6 +122,8 @@ export type UserMaxAggregateInputType = {
   email?: true
   emailVerified?: true
   image?: true
+  phone?: true
+  bio?: true
   password?: true
   isSuperAdmin?: true
   locale?: true
@@ -130,6 +140,8 @@ export type UserCountAggregateInputType = {
   email?: true
   emailVerified?: true
   image?: true
+  phone?: true
+  bio?: true
   password?: true
   isSuperAdmin?: true
   locale?: true
@@ -233,6 +245,8 @@ export type UserGroupByOutputType = {
   email: string
   emailVerified: Date | null
   image: string | null
+  phone: string | null
+  bio: string | null
   password: string | null
   isSuperAdmin: boolean
   locale: string
@@ -272,6 +286,8 @@ export type UserWhereInput = {
   email?: Prisma.StringFilter<"User"> | string
   emailVerified?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableFilter<"User"> | string | null
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
   password?: Prisma.StringNullableFilter<"User"> | string | null
   isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
   locale?: Prisma.StringFilter<"User"> | string
@@ -295,6 +311,7 @@ export type UserWhereInput = {
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
   emailLogs?: Prisma.EmailLogListRelationFilter
   emailChunks?: Prisma.EmailChunkListRelationFilter
+  emailConversations?: Prisma.EmailConversationListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -303,6 +320,8 @@ export type UserOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
@@ -326,6 +345,7 @@ export type UserOrderByWithRelationInput = {
   fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
   emailLogs?: Prisma.EmailLogOrderByRelationAggregateInput
   emailChunks?: Prisma.EmailChunkOrderByRelationAggregateInput
+  emailConversations?: Prisma.EmailConversationOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -337,6 +357,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringNullableFilter<"User"> | string | null
   emailVerified?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableFilter<"User"> | string | null
+  phone?: Prisma.StringNullableFilter<"User"> | string | null
+  bio?: Prisma.StringNullableFilter<"User"> | string | null
   password?: Prisma.StringNullableFilter<"User"> | string | null
   isSuperAdmin?: Prisma.BoolFilter<"User"> | boolean
   locale?: Prisma.StringFilter<"User"> | string
@@ -360,6 +382,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   fileAnalyses?: Prisma.FileAnalysisListRelationFilter
   emailLogs?: Prisma.EmailLogListRelationFilter
   emailChunks?: Prisma.EmailChunkListRelationFilter
+  emailConversations?: Prisma.EmailConversationListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -368,6 +391,8 @@ export type UserOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
+  phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  bio?: Prisma.SortOrderInput | Prisma.SortOrder
   password?: Prisma.SortOrderInput | Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
@@ -392,6 +417,8 @@ export type UserScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
   emailVerified?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   image?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  phone?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  bio?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   password?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   isSuperAdmin?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   locale?: Prisma.StringWithAggregatesFilter<"User"> | string
@@ -408,6 +435,8 @@ export type UserCreateInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -431,6 +460,7 @@ export type UserCreateInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -439,6 +469,8 @@ export type UserUncheckedCreateInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -462,6 +494,7 @@ export type UserUncheckedCreateInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -470,6 +503,8 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -493,6 +528,7 @@ export type UserUpdateInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -501,6 +537,8 @@ export type UserUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -524,6 +562,7 @@ export type UserUncheckedUpdateInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -532,6 +571,8 @@ export type UserCreateManyInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -548,6 +589,8 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -564,6 +607,8 @@ export type UserUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -580,6 +625,8 @@ export type UserCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   password?: Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
@@ -600,6 +647,8 @@ export type UserMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   password?: Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
@@ -616,6 +665,8 @@ export type UserMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   emailVerified?: Prisma.SortOrder
   image?: Prisma.SortOrder
+  phone?: Prisma.SortOrder
+  bio?: Prisma.SortOrder
   password?: Prisma.SortOrder
   isSuperAdmin?: Prisma.SortOrder
   locale?: Prisma.SortOrder
@@ -842,6 +893,20 @@ export type UserUpdateOneRequiredWithoutNotesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutNotesInput, Prisma.UserUpdateWithoutNotesInput>, Prisma.UserUncheckedUpdateWithoutNotesInput>
 }
 
+export type UserCreateNestedOneWithoutEmailConversationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailConversationsInput, Prisma.UserUncheckedCreateWithoutEmailConversationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailConversationsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutEmailConversationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutEmailConversationsInput, Prisma.UserUncheckedCreateWithoutEmailConversationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailConversationsInput
+  upsert?: Prisma.UserUpsertWithoutEmailConversationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutEmailConversationsInput, Prisma.UserUpdateWithoutEmailConversationsInput>, Prisma.UserUncheckedUpdateWithoutEmailConversationsInput>
+}
+
 export type UserCreateNestedOneWithoutEmailLogsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutEmailLogsInput, Prisma.UserUncheckedCreateWithoutEmailLogsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutEmailLogsInput
@@ -876,6 +941,8 @@ export type UserCreateWithoutMembershipsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -898,6 +965,7 @@ export type UserCreateWithoutMembershipsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -906,6 +974,8 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -928,6 +998,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -952,6 +1023,8 @@ export type UserUpdateWithoutMembershipsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -974,6 +1047,7 @@ export type UserUpdateWithoutMembershipsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -982,6 +1056,8 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1004,6 +1080,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -1012,6 +1089,8 @@ export type UserCreateWithoutAccountsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1034,6 +1113,7 @@ export type UserCreateWithoutAccountsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1042,6 +1122,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1064,6 +1146,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1088,6 +1171,8 @@ export type UserUpdateWithoutAccountsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1110,6 +1195,7 @@ export type UserUpdateWithoutAccountsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1118,6 +1204,8 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1140,6 +1228,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1148,6 +1237,8 @@ export type UserCreateWithoutSessionsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1170,6 +1261,7 @@ export type UserCreateWithoutSessionsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1178,6 +1270,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1200,6 +1294,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1224,6 +1319,8 @@ export type UserUpdateWithoutSessionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1246,6 +1343,7 @@ export type UserUpdateWithoutSessionsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1254,6 +1352,8 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1276,6 +1376,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFilesInput = {
@@ -1284,6 +1385,8 @@ export type UserCreateWithoutFilesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1306,6 +1409,7 @@ export type UserCreateWithoutFilesInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFilesInput = {
@@ -1314,6 +1418,8 @@ export type UserUncheckedCreateWithoutFilesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1336,6 +1442,7 @@ export type UserUncheckedCreateWithoutFilesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFilesInput = {
@@ -1360,6 +1467,8 @@ export type UserUpdateWithoutFilesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1382,6 +1491,7 @@ export type UserUpdateWithoutFilesInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFilesInput = {
@@ -1390,6 +1500,8 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1412,6 +1524,7 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFileAnalysesInput = {
@@ -1420,6 +1533,8 @@ export type UserCreateWithoutFileAnalysesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1442,6 +1557,7 @@ export type UserCreateWithoutFileAnalysesInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFileAnalysesInput = {
@@ -1450,6 +1566,8 @@ export type UserUncheckedCreateWithoutFileAnalysesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1472,6 +1590,7 @@ export type UserUncheckedCreateWithoutFileAnalysesInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFileAnalysesInput = {
@@ -1496,6 +1615,8 @@ export type UserUpdateWithoutFileAnalysesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1518,6 +1639,7 @@ export type UserUpdateWithoutFileAnalysesInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFileAnalysesInput = {
@@ -1526,6 +1648,8 @@ export type UserUncheckedUpdateWithoutFileAnalysesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1548,6 +1672,7 @@ export type UserUncheckedUpdateWithoutFileAnalysesInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDocumentChunksInput = {
@@ -1556,6 +1681,8 @@ export type UserCreateWithoutDocumentChunksInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1578,6 +1705,7 @@ export type UserCreateWithoutDocumentChunksInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDocumentChunksInput = {
@@ -1586,6 +1714,8 @@ export type UserUncheckedCreateWithoutDocumentChunksInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1608,6 +1738,7 @@ export type UserUncheckedCreateWithoutDocumentChunksInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDocumentChunksInput = {
@@ -1632,6 +1763,8 @@ export type UserUpdateWithoutDocumentChunksInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1654,6 +1787,7 @@ export type UserUpdateWithoutDocumentChunksInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDocumentChunksInput = {
@@ -1662,6 +1796,8 @@ export type UserUncheckedUpdateWithoutDocumentChunksInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1684,6 +1820,7 @@ export type UserUncheckedUpdateWithoutDocumentChunksInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutConversationsInput = {
@@ -1692,6 +1829,8 @@ export type UserCreateWithoutConversationsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1714,6 +1853,7 @@ export type UserCreateWithoutConversationsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutConversationsInput = {
@@ -1722,6 +1862,8 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1744,6 +1886,7 @@ export type UserUncheckedCreateWithoutConversationsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConversationsInput = {
@@ -1768,6 +1911,8 @@ export type UserUpdateWithoutConversationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1790,6 +1935,7 @@ export type UserUpdateWithoutConversationsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversationsInput = {
@@ -1798,6 +1944,8 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1820,6 +1968,7 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAiMessagesInput = {
@@ -1828,6 +1977,8 @@ export type UserCreateWithoutAiMessagesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1850,6 +2001,7 @@ export type UserCreateWithoutAiMessagesInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAiMessagesInput = {
@@ -1858,6 +2010,8 @@ export type UserUncheckedCreateWithoutAiMessagesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1880,6 +2034,7 @@ export type UserUncheckedCreateWithoutAiMessagesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAiMessagesInput = {
@@ -1904,6 +2059,8 @@ export type UserUpdateWithoutAiMessagesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1926,6 +2083,7 @@ export type UserUpdateWithoutAiMessagesInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAiMessagesInput = {
@@ -1934,6 +2092,8 @@ export type UserUncheckedUpdateWithoutAiMessagesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1956,6 +2116,7 @@ export type UserUncheckedUpdateWithoutAiMessagesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -1964,6 +2125,8 @@ export type UserCreateWithoutNotificationsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -1986,6 +2149,7 @@ export type UserCreateWithoutNotificationsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -1994,6 +2158,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2016,6 +2182,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2040,6 +2207,8 @@ export type UserUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2062,6 +2231,7 @@ export type UserUpdateWithoutNotificationsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2070,6 +2240,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2092,6 +2264,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationPreferencesInput = {
@@ -2100,6 +2273,8 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2122,6 +2297,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -2130,6 +2306,8 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2152,6 +2330,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -2176,6 +2355,8 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2198,6 +2379,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -2206,6 +2388,8 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2228,6 +2412,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -2236,6 +2421,8 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2258,6 +2445,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -2266,6 +2454,8 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2288,6 +2478,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -2312,6 +2503,8 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2334,6 +2527,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -2342,6 +2536,8 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2364,6 +2560,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutActivityLogsInput = {
@@ -2372,6 +2569,8 @@ export type UserCreateWithoutActivityLogsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2394,6 +2593,7 @@ export type UserCreateWithoutActivityLogsInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutActivityLogsInput = {
@@ -2402,6 +2602,8 @@ export type UserUncheckedCreateWithoutActivityLogsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2424,6 +2626,7 @@ export type UserUncheckedCreateWithoutActivityLogsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutActivityLogsInput = {
@@ -2448,6 +2651,8 @@ export type UserUpdateWithoutActivityLogsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2470,6 +2675,7 @@ export type UserUpdateWithoutActivityLogsInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivityLogsInput = {
@@ -2478,6 +2684,8 @@ export type UserUncheckedUpdateWithoutActivityLogsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2500,6 +2708,7 @@ export type UserUncheckedUpdateWithoutActivityLogsInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotesInput = {
@@ -2508,6 +2717,8 @@ export type UserCreateWithoutNotesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2530,6 +2741,7 @@ export type UserCreateWithoutNotesInput = {
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotesInput = {
@@ -2538,6 +2750,8 @@ export type UserUncheckedCreateWithoutNotesInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2560,6 +2774,7 @@ export type UserUncheckedCreateWithoutNotesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotesInput = {
@@ -2584,6 +2799,8 @@ export type UserUpdateWithoutNotesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2606,6 +2823,7 @@ export type UserUpdateWithoutNotesInput = {
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotesInput = {
@@ -2614,6 +2832,8 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2636,6 +2856,155 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutEmailConversationsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  phone?: string | null
+  bio?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
+  files?: Prisma.FileCreateNestedManyWithoutUploadedByInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutEmailConversationsInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  phone?: string | null
+  bio?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  lockedAt?: Date | string | null
+  failedLoginAttempts?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutUploadedByInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutEmailConversationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailConversationsInput, Prisma.UserUncheckedCreateWithoutEmailConversationsInput>
+}
+
+export type UserUpsertWithoutEmailConversationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutEmailConversationsInput, Prisma.UserUncheckedUpdateWithoutEmailConversationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutEmailConversationsInput, Prisma.UserUncheckedCreateWithoutEmailConversationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutEmailConversationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutEmailConversationsInput, Prisma.UserUncheckedUpdateWithoutEmailConversationsInput>
+}
+
+export type UserUpdateWithoutEmailConversationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  aiMessages?: Prisma.AIMessageUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
+  files?: Prisma.FileUpdateManyWithoutUploadedByNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutEmailConversationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutUploadedByNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEmailLogsInput = {
@@ -2644,6 +3013,8 @@ export type UserCreateWithoutEmailLogsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2666,6 +3037,7 @@ export type UserCreateWithoutEmailLogsInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailLogsInput = {
@@ -2674,6 +3046,8 @@ export type UserUncheckedCreateWithoutEmailLogsInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2696,6 +3070,7 @@ export type UserUncheckedCreateWithoutEmailLogsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailLogsInput = {
@@ -2720,6 +3095,8 @@ export type UserUpdateWithoutEmailLogsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2742,6 +3119,7 @@ export type UserUpdateWithoutEmailLogsInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailLogsInput = {
@@ -2750,6 +3128,8 @@ export type UserUncheckedUpdateWithoutEmailLogsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2772,6 +3152,7 @@ export type UserUncheckedUpdateWithoutEmailLogsInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutEmailChunksInput = {
@@ -2780,6 +3161,8 @@ export type UserCreateWithoutEmailChunksInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2802,6 +3185,7 @@ export type UserCreateWithoutEmailChunksInput = {
   documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutEmailChunksInput = {
@@ -2810,6 +3194,8 @@ export type UserUncheckedCreateWithoutEmailChunksInput = {
   email: string
   emailVerified?: Date | string | null
   image?: string | null
+  phone?: string | null
+  bio?: string | null
   password?: string | null
   isSuperAdmin?: boolean
   locale?: string
@@ -2832,6 +3218,7 @@ export type UserUncheckedCreateWithoutEmailChunksInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
   emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutEmailChunksInput = {
@@ -2856,6 +3243,8 @@ export type UserUpdateWithoutEmailChunksInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2878,6 +3267,7 @@ export type UserUpdateWithoutEmailChunksInput = {
   documentChunks?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailChunksInput = {
@@ -2886,6 +3276,8 @@ export type UserUncheckedUpdateWithoutEmailChunksInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
   locale?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2908,6 +3300,7 @@ export type UserUncheckedUpdateWithoutEmailChunksInput = {
   documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
   fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -2931,6 +3324,7 @@ export type UserCountOutputType = {
   fileAnalyses: number
   emailLogs: number
   emailChunks: number
+  emailConversations: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2949,6 +3343,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   fileAnalyses?: boolean | UserCountOutputTypeCountFileAnalysesArgs
   emailLogs?: boolean | UserCountOutputTypeCountEmailLogsArgs
   emailChunks?: boolean | UserCountOutputTypeCountEmailChunksArgs
+  emailConversations?: boolean | UserCountOutputTypeCountEmailConversationsArgs
 }
 
 /**
@@ -3066,6 +3461,13 @@ export type UserCountOutputTypeCountEmailChunksArgs<ExtArgs extends runtime.Type
   where?: Prisma.EmailChunkWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountEmailConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailConversationWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3073,6 +3475,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  phone?: boolean
+  bio?: boolean
   password?: boolean
   isSuperAdmin?: boolean
   locale?: boolean
@@ -3096,6 +3500,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   fileAnalyses?: boolean | Prisma.User$fileAnalysesArgs<ExtArgs>
   emailLogs?: boolean | Prisma.User$emailLogsArgs<ExtArgs>
   emailChunks?: boolean | Prisma.User$emailChunksArgs<ExtArgs>
+  emailConversations?: boolean | Prisma.User$emailConversationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -3105,6 +3510,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  phone?: boolean
+  bio?: boolean
   password?: boolean
   isSuperAdmin?: boolean
   locale?: boolean
@@ -3121,6 +3528,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  phone?: boolean
+  bio?: boolean
   password?: boolean
   isSuperAdmin?: boolean
   locale?: boolean
@@ -3137,6 +3546,8 @@ export type UserSelectScalar = {
   email?: boolean
   emailVerified?: boolean
   image?: boolean
+  phone?: boolean
+  bio?: boolean
   password?: boolean
   isSuperAdmin?: boolean
   locale?: boolean
@@ -3147,7 +3558,7 @@ export type UserSelectScalar = {
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "password" | "isSuperAdmin" | "locale" | "pushToken" | "lockedAt" | "failedLoginAttempts" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "phone" | "bio" | "password" | "isSuperAdmin" | "locale" | "pushToken" | "lockedAt" | "failedLoginAttempts" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   memberships?: boolean | Prisma.User$membershipsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -3164,6 +3575,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   fileAnalyses?: boolean | Prisma.User$fileAnalysesArgs<ExtArgs>
   emailLogs?: boolean | Prisma.User$emailLogsArgs<ExtArgs>
   emailChunks?: boolean | Prisma.User$emailChunksArgs<ExtArgs>
+  emailConversations?: boolean | Prisma.User$emailConversationsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -3187,6 +3599,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
     emailLogs: Prisma.$EmailLogPayload<ExtArgs>[]
     emailChunks: Prisma.$EmailChunkPayload<ExtArgs>[]
+    emailConversations: Prisma.$EmailConversationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3194,6 +3607,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     email: string
     emailVerified: Date | null
     image: string | null
+    phone: string | null
+    bio: string | null
     password: string | null
     isSuperAdmin: boolean
     locale: string
@@ -3611,6 +4026,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   fileAnalyses<T extends Prisma.User$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emailLogs<T extends Prisma.User$emailLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   emailChunks<T extends Prisma.User$emailChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailConversations<T extends Prisma.User$emailConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$emailConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3645,6 +4061,8 @@ export interface UserFieldRefs {
   readonly email: Prisma.FieldRef<"User", 'String'>
   readonly emailVerified: Prisma.FieldRef<"User", 'DateTime'>
   readonly image: Prisma.FieldRef<"User", 'String'>
+  readonly phone: Prisma.FieldRef<"User", 'String'>
+  readonly bio: Prisma.FieldRef<"User", 'String'>
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly isSuperAdmin: Prisma.FieldRef<"User", 'Boolean'>
   readonly locale: Prisma.FieldRef<"User", 'String'>
@@ -4398,6 +4816,30 @@ export type User$emailChunksArgs<ExtArgs extends runtime.Types.Extensions.Intern
   take?: number
   skip?: number
   distinct?: Prisma.EmailChunkScalarFieldEnum | Prisma.EmailChunkScalarFieldEnum[]
+}
+
+/**
+ * User.emailConversations
+ */
+export type User$emailConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailConversation
+   */
+  select?: Prisma.EmailConversationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailConversation
+   */
+  omit?: Prisma.EmailConversationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailConversationInclude<ExtArgs> | null
+  where?: Prisma.EmailConversationWhereInput
+  orderBy?: Prisma.EmailConversationOrderByWithRelationInput | Prisma.EmailConversationOrderByWithRelationInput[]
+  cursor?: Prisma.EmailConversationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailConversationScalarFieldEnum | Prisma.EmailConversationScalarFieldEnum[]
 }
 
 /**

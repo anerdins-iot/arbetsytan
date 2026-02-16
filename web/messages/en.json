@@ -57,6 +57,25 @@
   "email": {
     "title": "Email",
     "description": "Send emails to team members or external recipients",
+    "inbox": {
+      "tabInbox": "Inbox",
+      "tabSent": "Sent",
+      "tabCompose": "Compose",
+      "loading": "Loading...",
+      "emptyInbox": "No conversations",
+      "emptyInboxDescription": "Send a new message from the Compose tab.",
+      "emptySent": "No sent messages",
+      "emptySentDescription": "Conversations you sent will appear here.",
+      "noSubject": "(no subject)",
+      "unread": "unread",
+      "replyPlaceholder": "Write your reply...",
+      "sendReply": "Send reply",
+      "archive": "Archive",
+      "to": "To",
+      "toPlaceholder": "recipient@example.com",
+      "linkToProject": "Link to project",
+      "noProject": "No project"
+    },
     "recipients": "Recipients",
     "selectRecipients": "Choose who will receive your message",
     "recipientType": "Recipient type",
@@ -89,7 +108,8 @@
     "success": "Email has been sent!",
     "errors": {
       "noRecipients": "You must select at least one recipient",
-      "sendFailed": "Could not send email"
+      "sendFailed": "Could not send email",
+      "userEmailRequired": "Your account has no email address. Add one in your profile."
     }
   },
   "automations": {
@@ -809,6 +829,8 @@
     "users": {
       "title": "Users",
       "description": "Manage roles and memberships in the company.",
+      "phone": "Phone",
+      "bio": "About me",
       "roleAdmin": "Admin",
       "roleProjectManager": "Project Manager",
       "roleWorker": "Worker",
@@ -962,6 +984,10 @@
         "description": "Update your account details.",
         "name": "Name",
         "email": "Email",
+        "phone": "Phone",
+        "phonePlaceholder": "e.g. +1 234 567 890",
+        "bio": "About me",
+        "bioPlaceholder": "A short description about you...",
         "save": "Save profile",
         "saving": "Saving...",
         "saved": "Profile has been updated.",

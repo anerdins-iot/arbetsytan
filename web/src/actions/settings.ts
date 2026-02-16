@@ -52,6 +52,8 @@ export type TenantMember = {
   role: Role;
   name: string | null;
   email: string;
+  phone: string | null;
+  bio: string | null;
 };
 
 export type RolePermissions = {
@@ -134,6 +136,8 @@ export async function getTenantMembers(): Promise<TenantMember[]> {
           id: true,
           name: true,
           email: true,
+          phone: true,
+          bio: true,
         },
       },
     },
@@ -146,6 +150,8 @@ export async function getTenantMembers(): Promise<TenantMember[]> {
     role: membership.role,
     name: membership.user.name,
     email: membership.user.email,
+    phone: membership.user.phone ?? null,
+    bio: membership.user.bio ?? null,
   }));
 }
 

@@ -20,6 +20,8 @@ const PROFILE_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const updateProfileSchema = z.object({
   name: z.string().trim().min(2).max(100),
   email: z.string().trim().email().max(255),
+  phone: z.string().trim().max(50).optional().or(z.literal("")),
+  bio: z.string().trim().max(500).optional().or(z.literal("")),
 });
 
 const changePasswordSchema = z
@@ -61,6 +63,8 @@ export type ProfileData = {
   email: string;
   imageUrl: string | null;
   locale: "sv" | "en";
+  phone: string | null;
+  bio: string | null;
 };
 
 function normalizeFileName(fileName: string): string {
@@ -128,6 +132,8 @@ export async function getCurrentUserProfile(): Promise<ProfileData> {
       email: true,
       image: true,
       locale: true,
+      phone: true,
+      bio: true,
     },
   });
 
@@ -140,6 +146,8 @@ export async function getCurrentUserProfile(): Promise<ProfileData> {
     email: user.email,
     imageUrl: await resolveImageUrl(user.image),
     locale: user.locale === "en" ? "en" : "sv",
+    phone: user.phone ?? null,
+    bio: user.bio ?? null,
   };
 }
 
@@ -148,6 +156,8 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
   const parsed = updateProfileSchema.safeParse({
     name: formData.get("name"),
     email: formData.get("email"),
+    phone: formData.get("phone"),
+    bio: formData.get("bio"),
   });
 
   if (!parsed.success) {
@@ -163,11 +173,16 @@ export async function updateProfile(formData: FormData): Promise<ActionResult> {
     return { success: false, error: "EMAIL_IN_USE" };
   }
 
+  const phone = parsed.data.phone?.trim() || null;
+  const bio = parsed.data.bio?.trim() || null;
+
   await prisma.user.update({
     where: { id: userId },
     data: {
       name: parsed.data.name,
       email,
+      phone,
+      bio,
     },
   });
 

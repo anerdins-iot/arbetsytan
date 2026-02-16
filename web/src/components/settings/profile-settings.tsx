@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -52,6 +53,8 @@ export function ProfileSettings({ initialProfile, initialNotificationPreferences
 
   const [profileName, setProfileName] = useState(initialProfile.name);
   const [profileEmail, setProfileEmail] = useState(initialProfile.email);
+  const [profilePhone, setProfilePhone] = useState(initialProfile.phone ?? "");
+  const [profileBio, setProfileBio] = useState(initialProfile.bio ?? "");
   const [profileMessage, setProfileMessage] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
 
@@ -101,6 +104,8 @@ export function ProfileSettings({ initialProfile, initialNotificationPreferences
   async function handleProfileSubmit(formData: FormData) {
     setProfileError(null);
     setProfileMessage(null);
+    formData.set("phone", profilePhone);
+    formData.set("bio", profileBio);
     startProfileTransition(async () => {
       const result = await updateProfile(formData);
       if (!result.success) {
@@ -281,6 +286,32 @@ export function ProfileSettings({ initialProfile, initialNotificationPreferences
                 value={profileEmail}
                 onChange={(event) => setProfileEmail(event.target.value)}
                 required
+                disabled={isProfilePending}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="profile-phone">{t("profile.phone")}</Label>
+              <Input
+                id="profile-phone"
+                name="phone"
+                type="tel"
+                value={profilePhone}
+                onChange={(event) => setProfilePhone(event.target.value)}
+                placeholder={t("profile.phonePlaceholder")}
+                maxLength={50}
+                disabled={isProfilePending}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="profile-bio">{t("profile.bio")}</Label>
+              <Textarea
+                id="profile-bio"
+                name="bio"
+                value={profileBio}
+                onChange={(event) => setProfileBio(event.target.value)}
+                placeholder={t("profile.bioPlaceholder")}
+                maxLength={500}
+                rows={3}
                 disabled={isProfilePending}
               />
             </div>

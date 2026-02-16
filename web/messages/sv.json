@@ -57,6 +57,25 @@
   "email": {
     "title": "E-post",
     "description": "Skicka e-post till teammedlemmar eller externa mottagare",
+    "inbox": {
+      "tabInbox": "Inkorg",
+      "tabSent": "Skickat",
+      "tabCompose": "Skriv",
+      "loading": "Laddar...",
+      "emptyInbox": "Inga konversationer",
+      "emptyInboxDescription": "Skicka ett nytt meddelande via fliken Skriv.",
+      "emptySent": "Inga skickade meddelanden",
+      "emptySentDescription": "Konversationer du skickat visas här.",
+      "noSubject": "(inget ämne)",
+      "unread": "oläst",
+      "replyPlaceholder": "Skriv ditt svar...",
+      "sendReply": "Skicka svar",
+      "archive": "Arkivera",
+      "to": "Till",
+      "toPlaceholder": "mottagare@exempel.se",
+      "linkToProject": "Koppla till projekt",
+      "noProject": "Inget projekt"
+    },
     "recipients": "Mottagare",
     "selectRecipients": "Välj vem som ska ta emot ditt meddelande",
     "recipientType": "Typ av mottagare",
@@ -89,7 +108,8 @@
     "success": "E-postmeddelandet har skickats!",
     "errors": {
       "noRecipients": "Du måste välja minst en mottagare",
-      "sendFailed": "Kunde inte skicka e-postmeddelandet"
+      "sendFailed": "Kunde inte skicka e-postmeddelandet",
+      "userEmailRequired": "Din användare har ingen e-postadress. Lägg till en i profilen."
     }
   },
   "automations": {
@@ -820,6 +840,8 @@
     "users": {
       "title": "Användare",
       "description": "Hantera roller och medlemskap i företaget.",
+      "phone": "Telefon",
+      "bio": "Om mig",
       "roleAdmin": "Admin",
       "roleProjectManager": "Projektledare",
       "roleWorker": "Montör",
@@ -973,6 +995,10 @@
         "description": "Uppdatera dina kontouppgifter.",
         "name": "Namn",
         "email": "E-post",
+        "phone": "Telefon",
+        "phonePlaceholder": "T.ex. 070-123 45 67",
+        "bio": "Om mig",
+        "bioPlaceholder": "Kort beskrivning om dig...",
         "save": "Spara profil",
         "saving": "Sparar...",
         "saved": "Profilen har uppdaterats.",

@@ -33,6 +33,7 @@ model Tenant {
   timeEntries    TimeEntry[]
   emailLogs      EmailLog[]
   emailChunks    EmailChunk[]
+  emailConversations  EmailConversation[]
 }
 
 model User {
@@ -41,6 +42,8 @@ model User {
   email                String    @unique
   emailVerified        DateTime?
   image                String?
+  phone                String?
+  bio                  String?
   password             String?
   isSuperAdmin         Boolean   @default(false)
   locale               String    @default("sv")
@@ -63,8 +66,9 @@ model User {
   files            File[]
   documentChunks   DocumentChunk[]
   fileAnalyses     FileAnalysis[]
-  emailLogs        EmailLog[]
-  emailChunks      EmailChunk[]
+  emailLogs           EmailLog[]
+  emailChunks         EmailChunk[]
+  emailConversations  EmailConversation[]
 }
 
 model Membership {
@@ -188,6 +192,7 @@ model Project {
   fileAnalyses   FileAnalysis[]
   emailLogs      EmailLog[]
   emailChunks    EmailChunk[]
+  emailConversations  EmailConversation[]
 }
 
 model ProjectMember {
@@ -448,6 +453,7 @@ enum NotificationEventType {
   TASK_ASSIGNED
   DEADLINE_SOON
   PROJECT_STATUS_CHANGED
+  EMAIL_RECEIVED
 }
 
 model NotificationPreference {
@@ -719,6 +725,62 @@ enum SubscriptionStatus {
 }
 
 // ─────────────────────────────────────────
+// Email Conversations (Inbox)
+// ─────────────────────────────────────────
+
+model EmailConversation {
+  id       String   @id @default(cuid())
+  tenantId String
+  tenant   Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  externalEmail String
+  externalName  String?
+
+  trackingCode String @unique
+
+  subject        String
+  lastMessageAt  DateTime @default(now())
+  unreadCount    Int      @default(0)
+  isArchived     Boolean  @default(false)
+
+  messages EmailMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tenantId, userId])
+  @@index([trackingCode])
+}
+
+model EmailMessage {
+  id             String   @id @default(cuid())
+  conversationId String
+  conversation   EmailConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  emailLogId     String?  @unique
+  emailLog       EmailLog? @relation(fields: [emailLogId], references: [id])
+
+  direction  EmailDirection
+  fromEmail   String
+  fromName    String?
+  toEmail     String
+
+  subject   String
+  bodyText  String?  @db.Text
+  bodyHtml  String?  @db.Text
+
+  isRead      Boolean   @default(false)
+  sentAt      DateTime?
+  receivedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([conversationId])
+}
+
+// ─────────────────────────────────────────
 // Email Logging
 // ─────────────────────────────────────────
 
@@ -760,6 +822,7 @@ model EmailLog {
   // Relations
   attachments     EmailAttachment[]
   chunks          EmailChunk[]
+  emailMessage    EmailMessage?
 
   @@index([tenantId, createdAt])
   @@index([tenantId, userId])
