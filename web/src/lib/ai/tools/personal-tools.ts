@@ -781,7 +781,7 @@ Returnera ENBART JSON i följande format:
 
   const generateProjectReport = tool({
     description:
-      "Generera en projektrapport (PDF) för ett projekt. Hämtar uppgifter, tidsrapporter och medlemmar, skapar en AI-sammanfattning och sparar som PDF i projektets fillista. Kräver OPENAI_API_KEY.",
+      "AVANCERAT: Generera en automatisk projektrapport (PDF) baserat på projektdata. Använd hellre createReport för att ge användaren förhandsvisning och redigeringsmöjlighet. Denna tool hämtar uppgifter, tidsrapporter och medlemmar automatiskt, skapar en AI-sammanfattning och sparar som PDF direkt utan förhandsvisning. Kräver OPENAI_API_KEY.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       reportType: z.enum(["weekly", "monthly", "custom"]).describe("Typ av rapport: weekly (senaste 7 dagar), monthly (senaste 30 dagar), custom (använd dateRange)"),
@@ -923,10 +923,9 @@ Returnera ENBART JSON i följande format:
 
   const createReport = tool({
     description:
-      "Skapa en rapportförhandsvisning som användaren kan granska och redigera innan den genereras. " +
-      "Returnerar en preview-vy i chatten med titel, sammanfattning och sektioner. " +
-      "Användaren kan redigera, avbryta eller bekräfta generering. " +
-      "Använd detta istället för generateProjectReport när du vill ge användaren möjlighet att granska rapporten först. " +
+      "PRIMÄRT RAPPORTVERKTYG: Skapa en rapportförhandsvisning som användaren kan granska och redigera innan den genereras. " +
+      "Användaren ser en preview i chatten med titel, sammanfattning och sektioner, och kan redigera innan PDF/Word/Excel skapas. " +
+      "Använd ALLTID detta verktyg när användaren ber om en rapport, sammanfattning eller dokumentation av projekt eller arbete. " +
       "Sektioner kan vara text (markdown), table (med data[][]) eller list.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().optional().describe("Projektets ID (valfritt, utelämna för personlig rapport)"),
@@ -3079,7 +3078,7 @@ Returnera ENBART JSON i följande format:
 
   const createQuote = tool({
     description:
-      "Skapa en offert/prisförslag för en kund. Returnerar en interaktiv förhandsgranskning i chatten. Användaren kan granska rader, summor och moms innan PDF genereras. Ange kundnamn, titel, radposter med beskrivning/antal/enhet/pris, och valfritt giltighetsdatum och anteckningar.",
+      "PRIMÄRT OFFERTVERKTYG: Skapa en offert/prisförslag för en kund. Använd ALLTID detta när användaren vill ha en offert, prisförslag eller kostnadsberäkning. Returnerar en interaktiv förhandsgranskning i chatten där användaren kan granska rader, summor och moms (25%) innan PDF genereras. Ange kundnamn, titel, radposter med beskrivning/antal/enhet/pris.",
     inputSchema: toolInputSchema(
       z.object({
         projectId: z.string().optional().describe("Projekt-ID om offerten tillhör ett projekt"),
