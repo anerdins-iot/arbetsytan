@@ -14,6 +14,7 @@ import { searchDocuments } from "@/lib/ai/embeddings";
 import { createPersonalTools } from "@/lib/ai/tools/personal-tools";
 import { summarizeConversationIfNeeded } from "@/lib/ai/summarize-conversation";
 import { MESSAGE_SUMMARY_THRESHOLD } from "@/lib/ai/conversation-config";
+import { queueMessageEmbeddingProcessing } from "@/lib/ai/message-embeddings";
 import { logger } from "@/lib/logger";
 
 export type RagSource = {
@@ -129,14 +130,22 @@ export async function POST(req: NextRequest) {
   // Save the latest user message to DB (personal AI: use userDb for auto-emit)
   const lastUserMessage = messages[messages.length - 1];
   if (lastUserMessage && lastUserMessage.role === "user") {
-    await udb.message.create({
+    const userMsg = await udb.message.create({
       data: {
         role: "USER",
         content: extractTextFromParts(lastUserMessage),
         conversationId: activeConversationId,
         projectId: projectId ?? null,
       },
+      select: { id: true },
     });
+    queueMessageEmbeddingProcessing(
+      userMsg.id,
+      activeConversationId,
+      tenantId,
+      userId,
+      projectId ?? null
+    );
   }
 
   // RAG: for project chats, fetch relevant document chunks and build context
@@ -273,14 +282,22 @@ export async function POST(req: NextRequest) {
     onFinish: async ({ text }) => {
       // Save assistant response to DB (personal AI: use userDb for auto-emit)
       if (text && activeConversationId) {
-        await udb.message.create({
+        const assistantMsg = await udb.message.create({
           data: {
             role: "ASSISTANT",
             content: text,
             conversationId: activeConversationId,
             projectId: projectId ?? null,
           },
+          select: { id: true },
         });
+        queueMessageEmbeddingProcessing(
+          assistantMsg.id,
+          activeConversationId,
+          tenantId,
+          userId,
+          projectId ?? null
+        );
         const count = await udb.message.count({
           where: { conversationId: activeConversationId },
         });

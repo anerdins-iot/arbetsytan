@@ -40,6 +40,7 @@ import {
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 import { searchEmails } from "@/lib/ai/email-embeddings";
+import { searchConversations } from "@/lib/ai/message-embeddings";
 import { getConversationCore } from "@/services/email-conversations";
 import { getEmailsForUser } from "@/lib/email-log";
 import {
@@ -2819,6 +2820,32 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  const searchConversationsTool = tool({
+    description:
+      "Sök i användarens chattkonversationer (AI-chatthistorik) med semantisk sökning. Använd för att hitta tidigare diskussioner, beslut eller information från chatten.",
+    inputSchema: toolInputSchema(
+      z.object({
+        query: z.string().describe("Sökfråga - vad du letar efter i chatthistoriken"),
+        limit: z.number().optional().default(10).describe("Max antal resultat"),
+      })
+    ),
+    execute: async ({ query, limit }) => {
+      const results = await searchConversations(tenantId, userId, query, {
+        limit,
+      });
+      return {
+        results: results.map((r) => ({
+          conversationId: r.conversationId,
+          messageId: r.messageId,
+          snippet: r.snippet,
+          similarity: r.similarity,
+          createdAt: r.createdAt.toISOString(),
+        })),
+        totalFound: results.length,
+      };
+    },
+  });
+
   const getConversationContext = tool({
     description:
       "Hämta hela en e-postkonversation (alla meddelanden i tråden). Använd när användaren frågar om innehållet i en specifik mailtråd eller när searchMyEmails returnerar conversationId och du behöver mer kontext.",
@@ -3009,5 +3036,7 @@ Returnera ENBART JSON i följande format:
     searchMyEmails,
     getConversationContext,
     getMyRecentEmails,
+    // Chatthistorik
+    searchConversations: searchConversationsTool,
   };
 }
