@@ -246,10 +246,11 @@ export async function createConversationCore(
   userId: string,
   data: CreateConversationData,
   fromEmail: string,
-  fromName: string | null
+  fromName: string | null,
+  trackingCode?: string
 ): Promise<ConversationWithMessages> {
   const db = tenantDb(tenantId);
-  const trackingCode = generateTrackingCode();
+  const code = trackingCode ?? generateTrackingCode();
   const now = new Date();
 
   const conv = await db.emailConversation.create({
@@ -259,7 +260,7 @@ export async function createConversationCore(
       projectId: data.projectId ?? null,
       externalEmail: data.externalEmail,
       externalName: data.externalName ?? null,
-      trackingCode,
+      trackingCode: code,
       subject: data.subject,
       lastMessageAt: now,
       unreadCount: 0,

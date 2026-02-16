@@ -281,8 +281,8 @@ export async function sendExternalEmail(
   const errors: string[] = [];
   let lastMessageId: string | undefined;
 
-  // Determine from address (brand name + email)
-  const fromAddress = sender?.email ?? process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
+  // Determine from address (always use RESEND_FROM for verified domain)
+  const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
 
   for (const recipient of result.data.recipients) {
     const emailResult = await sendEmail({
@@ -392,10 +392,14 @@ export async function sendToTeamMember(
     locale,
   });
 
+  // Always use RESEND_FROM for verified domain, sender email as reply-to
+  const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
+
   const emailResult = await sendEmail({
     to: membership.user.email,
     subject: `[${brand.tenantName}] ${subject}`,
     html,
+    from: fromAddress,
     replyTo: sender?.email,
   });
 
@@ -405,7 +409,6 @@ export async function sendToTeamMember(
 
   // Log email to database
   try {
-    const fromAddress = sender?.email ?? process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
     const emailLogId = await logOutboundEmail({
       tenantId,
       userId,
@@ -462,7 +465,8 @@ export async function sendToTeamMembers(
   ]);
 
   const errors: string[] = [];
-  const fromAddress = sender?.email ?? process.env.RESEND_FROM_EMAIL ?? "noreply@example.com";
+  // Always use RESEND_FROM for verified domain, sender email as reply-to
+  const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
@@ -478,6 +482,7 @@ export async function sendToTeamMembers(
       to: membership.user.email,
       subject: `[${brand.tenantName}] ${subject}`,
       html,
+      from: fromAddress,
       replyTo: sender?.email,
       attachments: fileAttachments,
     });

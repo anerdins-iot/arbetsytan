@@ -4,7 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
-import { buildReplyToAddress, buildTrackingHtml } from "@/lib/email-tracking";
+import { buildReplyToAddress, buildTrackingHtml, generateTrackingCode } from "@/lib/email-tracking";
 import { prisma } from "@/lib/db";
 import {
   getConversationsCore,
@@ -130,13 +130,8 @@ export async function createConversation(
   }
 
   try {
-    const conversation = await createConversationCore(
-      tenantId,
-      userId,
-      { ...rest, projectId } as CreateConversationData,
-      fromEmail,
-      fromName
-    );
+    // Generate tracking code and prepare email data BEFORE creating anything in DB
+    const trackingCode = generateTrackingCode();
 
     // Get tenant inboxCode for reply-to address
     const tenant = await prisma.tenant.findUnique({
@@ -145,23 +140,34 @@ export async function createConversation(
     });
     const inboxCode = tenant?.inboxCode ?? tenantId;
 
-    const html =
-      rest.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
-    const fromDisplay = fromName
-      ? `${fromName} <${fromEmail}>`
-      : fromEmail;
+    const html = rest.bodyHtml + "\n" + buildTrackingHtml(trackingCode);
+
+    // Always use RESEND_FROM for verified domain
+    const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
+
+    // Send email FIRST - before creating anything in the database
     const sent = await sendEmail({
       to: rest.externalEmail,
       subject: rest.subject,
       html,
-      from: fromDisplay,
-      replyTo: buildReplyToAddress(inboxCode, conversation.trackingCode),
+      from: fromAddress,
+      replyTo: buildReplyToAddress(inboxCode, trackingCode),
     });
 
     if (!sent.success) {
       console.error("[email-conversations] createConversation sendEmail failed", sent.error);
       return { success: false, error: sent.error ?? "SEND_FAILED" };
     }
+
+    // Only create conversation in DB if email was sent successfully
+    const conversation = await createConversationCore(
+      tenantId,
+      userId,
+      { ...rest, projectId } as CreateConversationData,
+      fromEmail,
+      fromName,
+      trackingCode
+    );
 
     revalidatePath("/[locale]/email", "page");
     return { success: true, conversation };
@@ -211,12 +217,15 @@ export async function replyToConversation(
     const inboxCode = tenant?.inboxCode ?? tenantId;
 
     const html = parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
-    const fromDisplay = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
+
+    // Always use RESEND_FROM for verified domain
+    const fromAddress = process.env.RESEND_FROM ?? "Arbetsytan <noreply@example.com>";
+
     const sent = await sendEmail({
       to: conversation.externalEmail,
       subject: conversation.subject,
       html,
-      from: fromDisplay,
+      from: fromAddress,
       replyTo: buildReplyToAddress(inboxCode, conversation.trackingCode),
     });
 

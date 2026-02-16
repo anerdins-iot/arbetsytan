@@ -35,6 +35,23 @@ Namn: mail
 Värde: v=spf1 include:resend.com ~all
 ```
 
+**DMARC-post (rekommenderas starkt):**
+
+DMARC förbättrar leveransbarheten och skyddar mot spoofing. Lägg till denna TXT-post:
+
+```
+Typ: TXT
+Namn: _dmarc.mail (eller _dmarc för rotdomän)
+Värde: v=DMARC1; p=none; rua=mailto:dmarc-reports@din-domän.se
+```
+
+Policy-alternativ:
+- `p=none` - Bara rapportering, ingen blockering (börja här)
+- `p=quarantine` - Misstänkta mail hamnar i skräppost
+- `p=reject` - Misstänkta mail blockeras helt
+
+**Tips:** Börja med `p=none` och övervaka rapporterna. När du är säker på att allt fungerar, byt till `quarantine` eller `reject`.
+
 ### 1.3 Verifiera domänen
 
 Tillbaka i Resend Dashboard:
