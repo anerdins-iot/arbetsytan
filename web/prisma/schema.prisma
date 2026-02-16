@@ -31,6 +31,8 @@ model Tenant {
   noteCategories NoteCategory[]
   fileAnalyses   FileAnalysis[]
   timeEntries    TimeEntry[]
+  emailLogs      EmailLog[]
+  emailChunks    EmailChunk[]
 }
 
 model User {
@@ -61,6 +63,8 @@ model User {
   files            File[]
   documentChunks   DocumentChunk[]
   fileAnalyses     FileAnalysis[]
+  emailLogs        EmailLog[]
+  emailChunks      EmailChunk[]
 }
 
 model Membership {
@@ -182,6 +186,8 @@ model Project {
   automations     Automation[]
   messages       Message[]
   fileAnalyses   FileAnalysis[]
+  emailLogs      EmailLog[]
+  emailChunks    EmailChunk[]
 }
 
 model ProjectMember {
@@ -710,4 +716,108 @@ enum SubscriptionStatus {
   PAST_DUE
   CANCELED
   TRIALING
+}
+
+// ─────────────────────────────────────────
+// Email Logging
+// ─────────────────────────────────────────
+
+model EmailLog {
+  id        String           @id @default(cuid())
+  direction EmailDirection
+  status    EmailStatus      @default(QUEUED)
+
+  // Email metadata
+  from           String
+  to             Json         // Array of email addresses
+  cc             Json?
+  bcc            Json?
+  subject        String
+  body           String       @db.Text
+  htmlBody       String?      @db.Text
+
+  // Resend integration
+  resendMessageId String?     @unique
+  resendError     String?
+
+  // Relations
+  tenantId        String
+  tenant          Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  userId          String
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId       String?
+  project         Project?    @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  // Timestamps
+  createdAt       DateTime    @default(now())
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  bouncedAt       DateTime?
+  failedAt        DateTime?
+
+  // Relations
+  attachments     EmailAttachment[]
+  chunks          EmailChunk[]
+
+  @@index([tenantId, createdAt])
+  @@index([tenantId, userId])
+  @@index([tenantId, projectId])
+  @@index([status])
+  @@index([resendMessageId])
+}
+
+enum EmailDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum EmailStatus {
+  QUEUED
+  SENT
+  DELIVERED
+  BOUNCED
+  FAILED
+}
+
+model EmailAttachment {
+  id          String    @id @default(cuid())
+  filename    String
+  contentType String
+  size        Int
+  bucket      String
+  key         String
+
+  emailLogId  String
+  emailLog    EmailLog  @relation(fields: [emailLogId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+
+  @@index([emailLogId])
+}
+
+model EmailChunk {
+  id         String                       @id @default(cuid())
+  content    String                       @db.Text
+  embedding  Unsupported("vector(1536)")?
+  chunkIndex Int
+  createdAt  DateTime                     @default(now())
+
+  emailLogId String
+  emailLog   EmailLog @relation(fields: [emailLogId], references: [id], onDelete: Cascade)
+
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  projectId  String?
+  project    Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([emailLogId])
+  @@index([tenantId])
+  @@index([projectId])
+  @@index([userId])
 }
