@@ -14,7 +14,10 @@ import { searchDocuments } from "@/lib/ai/embeddings";
 import { createPersonalTools } from "@/lib/ai/tools/personal-tools";
 import { summarizeConversationIfNeeded } from "@/lib/ai/summarize-conversation";
 import { MESSAGE_SUMMARY_THRESHOLD } from "@/lib/ai/conversation-config";
-import { queueMessageEmbeddingProcessing } from "@/lib/ai/message-embeddings";
+import {
+  type MessageEmbeddingsDb,
+  queueMessageEmbeddingProcessing,
+} from "@/lib/ai/message-embeddings";
 import { logger } from "@/lib/logger";
 
 export type RagSource = {
@@ -140,6 +143,7 @@ export async function POST(req: NextRequest) {
       select: { id: true },
     });
     queueMessageEmbeddingProcessing(
+      udb as unknown as MessageEmbeddingsDb,
       userMsg.id,
       activeConversationId,
       tenantId,
@@ -185,7 +189,7 @@ export async function POST(req: NextRequest) {
   const model = getModel(providerKey);
 
   // Always use personal tools (they accept projectId per call when user works in a project)
-  const personalTools = createPersonalTools({ db, tenantId, userId });
+  const personalTools = createPersonalTools({ db, tenantId, userId, udb });
 
   // Add web search tool
   const webSearchTool = anthropic.tools.webSearch_20250305({
@@ -292,6 +296,7 @@ export async function POST(req: NextRequest) {
           select: { id: true },
         });
         queueMessageEmbeddingProcessing(
+          udb as unknown as MessageEmbeddingsDb,
           assistantMsg.id,
           activeConversationId,
           tenantId,

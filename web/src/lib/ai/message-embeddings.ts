@@ -1,11 +1,15 @@
 /**
  * Message (chat) embedding processing and search.
  * Uses pgvector for semantic search on conversation content via MessageChunk.
+ * Caller supplies db (e.g. userDb for personal chat) so tenant/user scope is enforced.
  */
 
-import { prisma } from "@/lib/db";
+import type { PrismaClient } from "../../../generated/prisma/client";
 import { logger } from "@/lib/logger";
 import { generateEmbedding, generateEmbeddings } from "./embeddings";
+
+/** Client used for message embeddings: ORM for Message + raw SQL for MessageChunk. */
+export type MessageEmbeddingsDb = Pick<PrismaClient, "message" | "$queryRawUnsafe">;
 
 const CHUNK_SIZE = 1500;
 const CHUNK_OVERLAP = 200;
@@ -34,8 +38,10 @@ export function chunkMessageContent(content: string): string[] {
 /**
  * Process embeddings for a chat message.
  * Creates MessageChunk records and generates + stores embedding vectors.
+ * Uses the provided db client (e.g. userDb for personal conversations).
  */
 export async function processMessageEmbeddings(
+  db: MessageEmbeddingsDb,
   messageId: string,
   conversationId: string,
   tenantId: string,
@@ -48,7 +54,7 @@ export async function processMessageEmbeddings(
     tenantId,
   });
 
-  const message = await prisma.message.findFirst({
+  const message = await db.message.findFirst({
     where: { id: messageId, conversationId },
     select: { id: true, content: true },
   });
@@ -67,14 +73,14 @@ export async function processMessageEmbeddings(
     return;
   }
 
-  const existingChunks = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+  const existingChunks = await db.$queryRawUnsafe<Array<{ id: string }>>(
     `SELECT "id" FROM "MessageChunk" WHERE "messageId" = $1 AND "tenantId" = $2`,
     messageId,
     tenantId
   );
 
   if (existingChunks.length > 0) {
-    const chunksWithoutEmbedding = await prisma.$queryRawUnsafe<
+    const chunksWithoutEmbedding = await db.$queryRawUnsafe<
       Array<{ id: string; content: string }>
     >(
       `SELECT "id", "content" FROM "MessageChunk"
@@ -94,7 +100,7 @@ export async function processMessageEmbeddings(
     const embeddings = await generateEmbeddings(texts);
     for (let i = 0; i < chunksWithoutEmbedding.length; i++) {
       const vectorStr = `[${embeddings[i].join(",")}]`;
-      await prisma.$queryRawUnsafe(
+      await db.$queryRawUnsafe(
         `UPDATE "MessageChunk" SET "embedding" = $1::vector WHERE "id" = $2 AND "tenantId" = $3`,
         vectorStr,
         chunksWithoutEmbedding[i].id,
@@ -109,7 +115,7 @@ export async function processMessageEmbeddings(
   }
 
   for (let i = 0; i < textChunks.length; i++) {
-    await prisma.$queryRawUnsafe(
+    await db.$queryRawUnsafe(
       `INSERT INTO "MessageChunk" ("id", "content", "chunkIndex", "createdAt", "messageId", "conversationId", "tenantId", "userId", "projectId")
        VALUES (gen_random_uuid()::text, $1, $2, NOW(), $3, $4, $5, $6, $7)`,
       textChunks[i],
@@ -129,7 +135,7 @@ export async function processMessageEmbeddings(
     );
   }
 
-  const newChunks = await prisma.$queryRawUnsafe<Array<{ id: string }>>(
+  const newChunks = await db.$queryRawUnsafe<Array<{ id: string }>>(
     `SELECT "id" FROM "MessageChunk"
      WHERE "messageId" = $1 AND "tenantId" = $2
      ORDER BY "chunkIndex" ASC`,
@@ -139,7 +145,7 @@ export async function processMessageEmbeddings(
 
   for (let i = 0; i < newChunks.length; i++) {
     const vectorStr = `[${embeddings[i].join(",")}]`;
-    await prisma.$queryRawUnsafe(
+    await db.$queryRawUnsafe(
       `UPDATE "MessageChunk" SET "embedding" = $1::vector WHERE "id" = $2 AND "tenantId" = $3`,
       vectorStr,
       newChunks[i].id,
@@ -156,8 +162,10 @@ export async function processMessageEmbeddings(
 /**
  * Queue embedding processing for a message (async, non-blocking).
  * Errors are logged but not thrown.
+ * Caller supplies db (e.g. userDb for personal chat).
  */
 export function queueMessageEmbeddingProcessing(
+  db: MessageEmbeddingsDb,
   messageId: string,
   conversationId: string,
   tenantId: string,
@@ -172,6 +180,7 @@ export function queueMessageEmbeddingProcessing(
 
   setImmediate(() => {
     processMessageEmbeddings(
+      db,
       messageId,
       conversationId,
       tenantId,
@@ -209,8 +218,10 @@ export type SearchConversationsResult = {
 
 /**
  * Search chat conversations using vector similarity + fulltext fallback.
+ * Caller supplies db (e.g. userDb for personal chat search).
  */
 export async function searchConversations(
+  db: MessageEmbeddingsDb,
   tenantId: string,
   userId: string,
   queryText: string,
@@ -244,7 +255,7 @@ export async function searchConversations(
         params.push(limit);
         const limitParam = nextParam++;
 
-        const results = await prisma.$queryRawUnsafe<
+        const results = await db.$queryRawUnsafe<
           Array<{
             conversationId: string;
             messageId: string;
@@ -301,7 +312,7 @@ export async function searchConversations(
       params.push(limit);
       const limitParam = nextParam++;
 
-      const results = await prisma.$queryRawUnsafe<
+      const results = await db.$queryRawUnsafe<
         Array<{
           conversationId: string;
           messageId: string;

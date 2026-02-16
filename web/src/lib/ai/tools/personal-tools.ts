@@ -7,7 +7,7 @@ import { z } from "zod";
 import { anthropic } from "@ai-sdk/anthropic";
 import { toolInputSchema } from "@/lib/ai/tools/schema-helper";
 import { requireProject, requirePermission } from "@/lib/auth";
-import { userDb, tenantDb, prisma, type TenantScopedClient } from "@/lib/db";
+import { userDb, tenantDb, prisma, type TenantScopedClient, type UserScopedClient } from "@/lib/db";
 import { validateDatabaseId } from "@/services/types";
 import { getProjectsCore, getProjectDetailCore } from "@/services/project-service";
 import { getProjectTasksCore, getUserTasksCore } from "@/services/task-service";
@@ -40,7 +40,10 @@ import {
 import { getOcrTextForFile, fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { analyzeImageWithVision } from "@/lib/ai/file-processors";
 import { searchEmails } from "@/lib/ai/email-embeddings";
-import { searchConversations } from "@/lib/ai/message-embeddings";
+import {
+  type MessageEmbeddingsDb,
+  searchConversations,
+} from "@/lib/ai/message-embeddings";
 import { getConversationCore } from "@/services/email-conversations";
 import { getEmailsForUser } from "@/lib/email-log";
 import {
@@ -126,10 +129,12 @@ export type PersonalToolsContext = {
   db: TenantScopedClient;
   tenantId: string;
   userId: string;
+  /** User-scoped client for personal data (conversations, message embeddings). Pass userDb(userId) from chat route. */
+  udb?: UserScopedClient;
 };
 
 export function createPersonalTools(ctx: PersonalToolsContext) {
-  const { db, tenantId, userId } = ctx;
+  const { db, tenantId, userId, udb } = ctx;
 
   // ─── Projektlista och översikt ────────────────────────
 
@@ -2830,9 +2835,24 @@ Returnera ENBART JSON i följande format:
       })
     ),
     execute: async ({ query, limit }) => {
-      const results = await searchConversations(tenantId, userId, query, {
-        limit,
-      });
+      const dbForSearch = udb
+        ? (udb as unknown as MessageEmbeddingsDb)
+        : undefined;
+      if (!dbForSearch) {
+        return {
+          error:
+            "Chattsökning är inte tillgänglig (saknar användar-klient). Kontakta support.",
+          results: [],
+          totalFound: 0,
+        };
+      }
+      const results = await searchConversations(
+        dbForSearch,
+        tenantId,
+        userId,
+        query,
+        { limit }
+      );
       return {
         results: results.map((r) => ({
           conversationId: r.conversationId,
