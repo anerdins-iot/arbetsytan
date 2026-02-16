@@ -52,8 +52,21 @@ export const SOCKET_EVENTS = {
   projectMemberCreated: "projectMember:created",
   projectMemberDeleted: "projectMember:deleted",
 
+  // Personal AI: message (routed to user room)
+  messageCreated: "message:created",
+  messageUpdated: "message:updated",
+  messageDeleted: "message:deleted",
+
+  // Personal AI: conversation (routed to user room)
+  conversationCreated: "conversation:created",
+  conversationUpdated: "conversation:updated",
+  conversationDeleted: "conversation:deleted",
+
   // Rooms
   projectJoin: "project:join",
+
+  // Email inbox
+  emailNew: "email:new",
 } as const;
 
 export type RealtimeNotification = {

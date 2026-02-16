@@ -1,11 +1,12 @@
 /**
  * POST /api/mobile/ai — Personal AI chat.
  * Verifies JWT, scopes conversation to userId.
+ * Uses userDb with emitContext for auto-emit to user room.
  * Stub implementation — returns echo if AI keys are not configured.
  */
 import { NextRequest, NextResponse } from "next/server";
 import { verifyBearerToken } from "@/lib/auth-mobile";
-import { tenantDb } from "@/lib/db";
+import { userDb } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   const payload = verifyBearerToken(req.headers.get("authorization"));
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { tenantId, userId } = payload;
+  const { userId } = payload;
 
   let body: { message: string; conversationId?: string };
   try {
@@ -26,12 +27,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Message is required" }, { status: 400 });
   }
 
-  const db = tenantDb(tenantId);
+  const udb = userDb(userId, {});
 
   // Get or create conversation
   let conversationId = body.conversationId;
   if (!conversationId) {
-    const conversation = await db.conversation.create({
+    const conversation = await udb.conversation.create({
       data: {
         type: "PERSONAL",
         title: body.message.slice(0, 100),
@@ -41,8 +42,8 @@ export async function POST(req: NextRequest) {
     conversationId = conversation.id;
   } else {
     // Verify conversation belongs to user
-    const existing = await db.conversation.findFirst({
-      where: { id: conversationId, userId, type: "PERSONAL" },
+    const existing = await udb.conversation.findFirst({
+      where: { id: conversationId, type: "PERSONAL" },
     });
     if (!existing) {
       return NextResponse.json({ error: "Conversation not found" }, { status: 404 });
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Save user message
-  await db.message.create({
+  await udb.message.create({
     data: {
       role: "USER",
       content: body.message,
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
   const aiResponse =
     "AI-funktionen kopplas upp med konfigurerade API-nycklar. Ditt meddelande mottogs.";
 
-  await db.message.create({
+  await udb.message.create({
     data: {
       role: "ASSISTANT",
       content: aiResponse,

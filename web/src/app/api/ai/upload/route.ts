@@ -117,14 +117,18 @@ export async function POST(req: NextRequest) {
       userId,
     });
 
-    // Skicka systemmeddelande till konversationen
+    // Skicka systemmeddelande till konversationen (använd userDb för personliga konversationer så att auto-emit triggas)
     if (conversationId) {
       const existingConv = await db.conversation.findFirst({
         where: { id: conversationId, userId },
-        select: { id: true },
+        select: { id: true, projectId: true },
       });
       if (existingConv) {
-        await db.message.create({
+        const messageDb =
+          existingConv.projectId == null
+            ? userDb(userId, {})
+            : tenantDb(tenantId, { actorUserId: userId, projectId: existingConv.projectId });
+        await messageDb.message.create({
           data: {
             role: "USER",
             content: `[Fil uppladdad: ${fileName} (${formatFileSize(fileSize)}, ${fileType})]`,

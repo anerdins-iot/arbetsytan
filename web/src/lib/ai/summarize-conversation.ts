@@ -1,17 +1,17 @@
 /**
  * Summarize long conversations and store in Conversation.summary.
  * Called when message count exceeds MESSAGE_SUMMARY_THRESHOLD.
- * Uses tenantDb(tenantId) — caller must pass valid tenant context.
+ * Caller may pass tenantDb(tenantId) or userDb(userId, {}) for personal AI.
  */
 import { generateText } from "ai";
 import { getModel } from "@/lib/ai/providers";
-import type { TenantScopedClient } from "@/lib/db";
+import type { TenantScopedClient, UserScopedClient } from "@/lib/db";
 import { MESSAGE_SUMMARY_THRESHOLD } from "@/lib/ai/conversation-config";
 
 const KEEP_RECENT = 10;
 
 export type SummarizeOptions = {
-  db: TenantScopedClient;
+  db: TenantScopedClient | UserScopedClient;
   conversationId: string;
 };
 

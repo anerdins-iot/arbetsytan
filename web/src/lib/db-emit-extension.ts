@@ -20,6 +20,8 @@ const EMIT_MODELS = new Set([
   "invitation",
   "membership",
   "projectMember",
+  "message",
+  "conversation",
 ]);
 
 /** Operations to intercept */
@@ -260,6 +262,37 @@ function getEventInfo(
         payload: {
           projectId: pid,
           membershipId: record.membershipId as string,
+          actorUserId: context.actorUserId,
+        },
+      };
+    }
+
+    case "message": {
+      // Personal AI: route to user room (userDb sets actorUserId to conversation owner)
+      const uid = context.actorUserId;
+      if (!uid) return null;
+      return {
+        eventName,
+        room: userRoom(uid),
+        payload: {
+          messageId: record.id as string,
+          conversationId: record.conversationId as string,
+          role: record.role as string,
+          actorUserId: context.actorUserId,
+        },
+      };
+    }
+
+    case "conversation": {
+      // Personal AI: route to conversation owner's user room
+      const uid = (record.userId as string) ?? context.actorUserId;
+      if (!uid) return null;
+      return {
+        eventName,
+        room: userRoom(uid),
+        payload: {
+          conversationId: record.id as string,
+          title: (record.title as string) ?? null,
           actorUserId: context.actorUserId,
         },
       };

@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
   const { user, tenantId, role } = session;
   const userId = user.id;
   const db = tenantDb(tenantId);
+  const udb = userDb(userId, {});
 
   let body: ChatRequestBody;
   try {
@@ -94,7 +95,6 @@ export async function POST(req: NextRequest) {
   let activeConversationId = conversationId;
   let conversationSummary: string | null = null;
 
-  const udb = userDb(userId);
   if (!activeConversationId) {
     const lastUserMsg = messages.filter((m) => m.role === "user").pop();
     const title = lastUserMsg
@@ -126,10 +126,10 @@ export async function POST(req: NextRequest) {
     conversationSummary = existing.summary;
   }
 
-  // Save the latest user message to DB (with projectId when provided)
+  // Save the latest user message to DB (personal AI: use userDb for auto-emit)
   const lastUserMessage = messages[messages.length - 1];
   if (lastUserMessage && lastUserMessage.role === "user") {
-    await db.message.create({
+    await udb.message.create({
       data: {
         role: "USER",
         content: extractTextFromParts(lastUserMessage),
@@ -271,9 +271,9 @@ export async function POST(req: NextRequest) {
       });
     },
     onFinish: async ({ text }) => {
-      // Save assistant response to DB (with same projectId as request)
+      // Save assistant response to DB (personal AI: use userDb for auto-emit)
       if (text && activeConversationId) {
-        await db.message.create({
+        await udb.message.create({
           data: {
             role: "ASSISTANT",
             content: text,
@@ -281,11 +281,11 @@ export async function POST(req: NextRequest) {
             projectId: projectId ?? null,
           },
         });
-        const count = await db.message.count({
+        const count = await udb.message.count({
           where: { conversationId: activeConversationId },
         });
         if (count >= MESSAGE_SUMMARY_THRESHOLD) {
-          summarizeConversationIfNeeded({ db, conversationId: activeConversationId }).catch(
+          summarizeConversationIfNeeded({ db: udb, conversationId: activeConversationId }).catch(
             (err) =>
               logger.warn("Conversation summarization failed", {
                 conversationId: activeConversationId,

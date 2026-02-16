@@ -34,6 +34,7 @@ const DIRECT_TENANT_MODELS = [
   "documentChunk",
   "noteCategory",
   "timeEntry",
+  "emailConversation",
 ] as const;
 
 /** Models scoped via direct project relation (ALWAYS have projectId). */
@@ -81,6 +82,22 @@ const FILE_TENANT_FILTER = (tenantId: string) => ({
 const NOTE_TENANT_FILTER = (tenantId: string) => ({
   project: { tenantId },
 });
+
+/** EmailMessage is scoped via conversation.tenantId. */
+const EMAIL_MESSAGE_TENANT_FILTER = (tenantId: string) => ({
+  conversation: { tenantId },
+});
+
+function mergeWhereEmailMessageTenant<T extends { where?: unknown }>(
+  args: T,
+  tenantId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: { AND: [existing, EMAIL_MESSAGE_TENANT_FILTER(tenantId)] },
+  } as T;
+}
 
 /** Build nested where key from dot path, e.g. "task.project" -> { task: { project: { tenantId } } }. */
 function nestedTenantFilter(relationPath: string, tenantId: string): Record<string, unknown> {
@@ -406,6 +423,29 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereMessageTenant(args as { where?: unknown }, tenantId)),
   };
 
+  // 6b. EmailMessage: scoped via conversation.tenantId
+  query.emailMessage = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    create: ({ args, query: run }) => run(args),
+    update: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+  };
+
   // 7. Notification: scoped via project or user membership
   query.notification = {
     findMany: ({ args, query: run }) =>
@@ -457,6 +497,8 @@ export type TenantScopedClient = Omit<
   | "emailTemplate"
   | "automationLog"
   | "noteCategory"
+  | "emailConversation"
+  | "emailMessage"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -479,6 +521,8 @@ export type TenantScopedClient = Omit<
   emailTemplate: PrismaClient["emailTemplate"];
   automationLog: PrismaClient["automationLog"];
   noteCategory: PrismaClient["noteCategory"];
+  emailConversation: PrismaClient["emailConversation"];
+  emailMessage: PrismaClient["emailMessage"];
 };
 
 /**
@@ -545,6 +589,21 @@ function mergeWherePersonal<T extends { where?: unknown }>(
   return {
     ...args,
     where: mergedWhere,
+  } as T;
+}
+
+/** Message: scoped to conversations where userId = userId and projectId = null (personal AI). */
+function mergeWhereMessagePersonal<T extends { where?: unknown }>(
+  args: T,
+  userId: string
+): T {
+  const existing = typeof args.where === "object" && args.where !== null ? args.where : {};
+  return {
+    ...args,
+    where: {
+      ...(existing as object),
+      conversation: { userId, projectId: null },
+    },
   } as T;
 }
 
@@ -680,12 +739,35 @@ function createUserExtension(userId: string) {
       run(mergeWhereUserId(args as { where?: unknown }, userId)),
   };
 
+  // 6. Message: scoped via conversation (personal: conversation.userId = userId, projectId = null)
+  query.message = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    findUnique: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    findUniqueOrThrow: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    create: ({ args, query: run }) => run(args),
+    update: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    delete: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    deleteMany: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+    count: ({ args, query: run }) =>
+      run(mergeWhereMessagePersonal(args as { where?: unknown }, userId)),
+  };
+
   return { query };
 }
 
 export type UserScopedClient = Pick<
   PrismaClient,
-  "file" | "note" | "conversation" | "notification" | "aIMessage"
+  "file" | "note" | "conversation" | "message" | "notification" | "aIMessage"
 >;
 
 /**

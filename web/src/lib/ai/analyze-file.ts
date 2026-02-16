@@ -2,9 +2,9 @@
  * Asynkron filanalys efter uppladdning via AI-chatten.
  * Kör OCR + bildanalys + embeddings i bakgrunden.
  * Sparar resultat i File.ocrText och skapar DocumentChunks (om projektkontext finns).
- * Skickar systemmeddelande till konversationen när klart.
+ * Skickar systemmeddelande till konversationen när klart (userDb/tenantDb med emitContext för auto-emit).
  */
-import { tenantDb } from "@/lib/db";
+import { tenantDb, userDb } from "@/lib/db";
 import { processFileOcr, processPersonalFileOcr } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
 
@@ -139,16 +139,20 @@ async function runAnalysis(params: AnalyzeFileParams): Promise<void> {
     analysisResult = `Filen "${fileName}" har laddats upp. Filtypen ${fileType} stöder inte automatisk textextrahering.`;
   }
 
-  // Skicka analysresultat som meddelande i konversationen
+  // Skicka analysresultat som meddelande i konversationen (med auto-emit)
   if (conversationId && analysisResult) {
     try {
-      const db = tenantDb(tenantId);
-      const conv = await db.conversation.findFirst({
+      const readDb = tenantDb(tenantId);
+      const conv = await readDb.conversation.findFirst({
         where: { id: conversationId, userId },
-        select: { id: true },
+        select: { id: true, projectId: true },
       });
       if (conv) {
-        await db.message.create({
+        const messageDb =
+          conv.projectId == null
+            ? userDb(userId, {})
+            : tenantDb(tenantId, { actorUserId: userId, projectId: conv.projectId });
+        await messageDb.message.create({
           data: {
             role: "ASSISTANT",
             content: `Filanalys klar for "${fileName}":\n\n${analysisResult}`,
