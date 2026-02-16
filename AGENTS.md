@@ -33,6 +33,30 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | Embeddings | OpenAI + pgvector | se `AI.md` |
 | i18n | next-intl | — |
 
+## E-postsystem (Tvåvägskommunikation)
+
+Systemet hanterar både utgående och inkommande e-post via Resend, med automatisk trådning och AI-sökning.
+
+### Databasmodeller
+- **`EmailConversation`**: Samlar meddelanden mellan en användare och en extern e-postadress. Ägs av en specifik `userId` och `tenantId` (privat).
+- **`EmailMessage`**: Enskilda meddelanden (INBOUND/OUTBOUND) i en konversation.
+- **`EmailLog`**: Teknisk logg för alla skickade/mottagna mail, kopplat till embeddings för AI-sökning.
+
+### Spårning och Inkommande mail
+- **Tracking Codes**: Varje konversation har en unik hex-kod (t.ex. `abc123...`).
+- **Tenant Inbox Code**: Varje tenant har en unik `inboxCode` för att identifiera företaget.
+- **Reply-To**: Utgående mail använder `inbox+{tenantCode}_{trackingCode}@mail.lowly.se`.
+- **Webhook**: `/api/webhooks/resend` tar emot `email.received` och mappar till rätt konversation via tracking code.
+- **"Övrigt"-inkorg**: Mail utan trackingCode men med giltig tenantCode skapas som `isUnassigned=true` och tilldelas tenant-admin.
+
+### AI-verktyg för E-post
+- **`searchMyEmails`**: Söker i användarens alla e-postloggar med vektor-sökning (embeddings).
+- **`getConversationContext`**: Hämtar hela meddelandehistoriken för en specifik konversation.
+
+### Realtid och Notifikationer
+- **Socket.IO**: Eventet `email:new` skickas till `user:{userId}` vid inkommande mail.
+- **Notifikationer**: Systemet skapar en `Notification` (typ `EMAIL_RECEIVED`) och skickar ett aviseringsmail till användarens privata adress.
+
 ## WebSocket Auto-Emit
 
 Systemet använder en Prisma extension (`createEmitExtension`) för att automatiskt emitta WebSocket-events vid CRUD-operationer.
@@ -192,6 +216,8 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 | Filer | Ladda upp, läs, radera | `uploadFile`, `listFiles`, `deleteFile` |
 | Anteckningar | Skapa, läs, uppdatera, radera | `createNote`, `listNotes`, `updateNote`, `deleteNote` |
 | Projektmedlemmar | Lägg till, ta bort, lista | `addMember`, `removeMember`, `listMembers` |
+| E-post | Läsa, svara, arkivera | `searchMyEmails`, `getConversationContext` |
+| Rapport | — | `generateProjectReport` |
 
 ### Checklista vid ny funktionalitet
 
@@ -217,11 +243,13 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Filer: list, search, delete
 - Anteckningar: create, list, update, delete
 - Medlemmar: list, add, remove
+- E-post: searchMyEmails, getConversationContext
 - Rapport: generateProjectReport
 
 **Personlig AI** (användarens alla projekt):
 - Alla ovanstående verktyg med `projectId` som parameter
 - Översikt: listProjects, searchAcrossProjects
+- E-post: searchMyEmails (global), getConversationContext
 - Personliga anteckningar: create, list, update, delete (utan projektkontext)
 
 ## Förbjudet

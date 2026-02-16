@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { buildReplyToAddress, buildTrackingHtml } from "@/lib/email-tracking";
+import { prisma } from "@/lib/db";
 import {
   getConversationsCore,
   getConversationCore,
@@ -137,6 +138,13 @@ export async function createConversation(
       fromName
     );
 
+    // Get tenant inboxCode for reply-to address
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { inboxCode: true },
+    });
+    const inboxCode = tenant?.inboxCode ?? tenantId;
+
     const html =
       rest.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
     const fromDisplay = fromName
@@ -147,7 +155,7 @@ export async function createConversation(
       subject: rest.subject,
       html,
       from: fromDisplay,
-      replyTo: buildReplyToAddress(conversation.trackingCode),
+      replyTo: buildReplyToAddress(inboxCode, conversation.trackingCode),
     });
 
     if (!sent.success) {
@@ -195,6 +203,13 @@ export async function replyToConversation(
       fromName
     );
 
+    // Get tenant inboxCode for reply-to address
+    const tenant = await prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { inboxCode: true },
+    });
+    const inboxCode = tenant?.inboxCode ?? tenantId;
+
     const html = parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
     const fromDisplay = fromName ? `${fromName} <${fromEmail}>` : fromEmail;
     const sent = await sendEmail({
@@ -202,7 +217,7 @@ export async function replyToConversation(
       subject: conversation.subject,
       html,
       from: fromDisplay,
-      replyTo: buildReplyToAddress(conversation.trackingCode),
+      replyTo: buildReplyToAddress(inboxCode, conversation.trackingCode),
     });
 
     if (!sent.success) {

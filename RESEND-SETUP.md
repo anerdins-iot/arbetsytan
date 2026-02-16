@@ -79,20 +79,34 @@ RESEND_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 ## Steg 4: Testa
 
-### 4.1 Skicka testmail från systemet
+### 4.1 Generera inbox-koder för tenants
+
+Innan du testar, kör scriptet för att generera inbox-koder för befintliga tenants:
+
+```bash
+cd web && npx tsx scripts/generate-inbox-codes.ts
+```
+
+### 4.2 Skicka testmail från systemet
 
 1. Logga in i Arbetsytan
 2. Gå till E-post och fliken "Skriv"
 3. Skicka ett mail till din egen e-postadress
-4. Kontrollera att mailet har en reply-to adress som `inbox+abc123@mail.lowly.se`
+4. Kontrollera att mailet har en reply-to adress som `inbox+{tenantCode}_{trackingCode}@mail.lowly.se`
 
-### 4.2 Svara på mailet
+### 4.3 Svara på mailet
 
 1. Svara på mailet från din vanliga e-postklient
 2. Kontrollera i Arbetsytan att svaret dyker upp i konversationen
 3. Du bör också få en notifikation
 
-### 4.3 Felsökning
+### 4.4 Testa "Övrigt"-inkorg
+
+1. Skicka ett mail direkt till `inbox+{tenantCode}@mail.lowly.se` (utan trackingCode)
+2. Mailet ska hamna i admin-användarens inkorg som "Övrigt"
+3. Konversationen har `isUnassigned=true`
+
+### 4.5 Felsökning
 
 Om svar inte kommer fram:
 - Kontrollera webhook-loggen i Resend Dashboard
@@ -104,11 +118,21 @@ Om svar inte kommer fram:
 - Webhook-endpoint validerar Resend-signaturen med HMAC
 - Alla mail filtreras på tenant och användare
 - Spårningskoder är unika per konversation
-- Mail utan giltig spårningskod ignoreras (loggas men skapar inte ny konversation)
+- Mail utan giltig tenant-kod ignoreras (loggas men skapar inte konversation)
+- Mail utan tracking-kod men med giltig tenant-kod hamnar i admin-inkorg som "Övrigt"
+
+## Adressformat
+
+Systemet använder följande format för e-postadresser:
+
+| Typ | Format | Beskrivning |
+|-----|--------|-------------|
+| Befintlig konversation | `inbox+{tenantCode}_{trackingCode}@domain` | Svar på befintligt mail |
+| Ny kontakt | `inbox+{tenantCode}@domain` | Nytt mail till företaget |
 
 ## Framtida förbättringar
 
 Funktioner som kan läggas till senare:
-- Skapa ny konversation från okänd avsändare (kräver spam-skydd)
 - Hantering av bilagor på inkommande mail
 - E-postmallar för snabbsvar
+- Tilldela "Övrigt"-mail till specifik användare

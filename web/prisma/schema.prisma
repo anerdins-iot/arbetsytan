@@ -14,6 +14,7 @@ generator client {
 model Tenant {
   id               String         @id @default(cuid())
   name             String
+  inboxCode        String?        @unique
   orgNumber        String?
   address          String?
   stripeCustomerId String?        @unique
@@ -746,6 +747,7 @@ model EmailConversation {
   lastMessageAt  DateTime @default(now())
   unreadCount    Int      @default(0)
   isArchived     Boolean  @default(false)
+  isUnassigned   Boolean  @default(false)
 
   messages EmailMessage[]
 

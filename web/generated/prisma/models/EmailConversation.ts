@@ -46,6 +46,7 @@ export type EmailConversationMinAggregateOutputType = {
   lastMessageAt: Date | null
   unreadCount: number | null
   isArchived: boolean | null
+  isUnassigned: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +63,7 @@ export type EmailConversationMaxAggregateOutputType = {
   lastMessageAt: Date | null
   unreadCount: number | null
   isArchived: boolean | null
+  isUnassigned: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -78,6 +80,7 @@ export type EmailConversationCountAggregateOutputType = {
   lastMessageAt: number
   unreadCount: number
   isArchived: number
+  isUnassigned: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -104,6 +107,7 @@ export type EmailConversationMinAggregateInputType = {
   lastMessageAt?: true
   unreadCount?: true
   isArchived?: true
+  isUnassigned?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -120,6 +124,7 @@ export type EmailConversationMaxAggregateInputType = {
   lastMessageAt?: true
   unreadCount?: true
   isArchived?: true
+  isUnassigned?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -136,6 +141,7 @@ export type EmailConversationCountAggregateInputType = {
   lastMessageAt?: true
   unreadCount?: true
   isArchived?: true
+  isUnassigned?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -239,6 +245,7 @@ export type EmailConversationGroupByOutputType = {
   lastMessageAt: Date
   unreadCount: number
   isArchived: boolean
+  isUnassigned: boolean
   createdAt: Date
   updatedAt: Date
   _count: EmailConversationCountAggregateOutputType | null
@@ -278,6 +285,7 @@ export type EmailConversationWhereInput = {
   lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
+  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
@@ -298,6 +306,7 @@ export type EmailConversationOrderByWithRelationInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
@@ -321,6 +330,7 @@ export type EmailConversationWhereUniqueInput = Prisma.AtLeast<{
   lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
+  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
@@ -341,6 +351,7 @@ export type EmailConversationOrderByWithAggregationInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.EmailConversationCountOrderByAggregateInput
@@ -365,6 +376,7 @@ export type EmailConversationScalarWhereWithAggregatesInput = {
   lastMessageAt?: Prisma.DateTimeWithAggregatesFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntWithAggregatesFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolWithAggregatesFilter<"EmailConversation"> | boolean
+  isUnassigned?: Prisma.BoolWithAggregatesFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"EmailConversation"> | Date | string
 }
@@ -378,6 +390,7 @@ export type EmailConversationCreateInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
@@ -398,6 +411,7 @@ export type EmailConversationUncheckedCreateInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -412,6 +426,7 @@ export type EmailConversationUpdateInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
@@ -432,6 +447,7 @@ export type EmailConversationUncheckedUpdateInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -449,6 +465,7 @@ export type EmailConversationCreateManyInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -462,6 +479,7 @@ export type EmailConversationUpdateManyMutationInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -478,6 +496,7 @@ export type EmailConversationUncheckedUpdateManyInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -504,6 +523,7 @@ export type EmailConversationCountOrderByAggregateInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -524,6 +544,7 @@ export type EmailConversationMaxOrderByAggregateInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -540,6 +561,7 @@ export type EmailConversationMinOrderByAggregateInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -702,6 +724,7 @@ export type EmailConversationCreateWithoutTenantInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutEmailConversationsInput
@@ -720,6 +743,7 @@ export type EmailConversationUncheckedCreateWithoutTenantInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -766,6 +790,7 @@ export type EmailConversationScalarWhereInput = {
   lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
+  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
 }
@@ -779,6 +804,7 @@ export type EmailConversationCreateWithoutUserInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
@@ -797,6 +823,7 @@ export type EmailConversationUncheckedCreateWithoutUserInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -837,6 +864,7 @@ export type EmailConversationCreateWithoutProjectInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
@@ -855,6 +883,7 @@ export type EmailConversationUncheckedCreateWithoutProjectInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
@@ -895,6 +924,7 @@ export type EmailConversationCreateWithoutMessagesInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
@@ -914,6 +944,7 @@ export type EmailConversationUncheckedCreateWithoutMessagesInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -943,6 +974,7 @@ export type EmailConversationUpdateWithoutMessagesInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
@@ -962,6 +994,7 @@ export type EmailConversationUncheckedUpdateWithoutMessagesInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -977,6 +1010,7 @@ export type EmailConversationCreateManyTenantInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -990,6 +1024,7 @@ export type EmailConversationUpdateWithoutTenantInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationsNestedInput
@@ -1008,6 +1043,7 @@ export type EmailConversationUncheckedUpdateWithoutTenantInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -1024,6 +1060,7 @@ export type EmailConversationUncheckedUpdateManyWithoutTenantInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1039,6 +1076,7 @@ export type EmailConversationCreateManyUserInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1052,6 +1090,7 @@ export type EmailConversationUpdateWithoutUserInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
@@ -1070,6 +1109,7 @@ export type EmailConversationUncheckedUpdateWithoutUserInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -1086,6 +1126,7 @@ export type EmailConversationUncheckedUpdateManyWithoutUserInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1101,6 +1142,7 @@ export type EmailConversationCreateManyProjectInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1114,6 +1156,7 @@ export type EmailConversationUpdateWithoutProjectInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
@@ -1132,6 +1175,7 @@ export type EmailConversationUncheckedUpdateWithoutProjectInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
@@ -1148,6 +1192,7 @@ export type EmailConversationUncheckedUpdateManyWithoutProjectInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1195,6 +1240,7 @@ export type EmailConversationSelect<ExtArgs extends runtime.Types.Extensions.Int
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
@@ -1216,6 +1262,7 @@ export type EmailConversationSelectCreateManyAndReturn<ExtArgs extends runtime.T
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
@@ -1235,6 +1282,7 @@ export type EmailConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
@@ -1254,11 +1302,12 @@ export type EmailConversationSelectScalar = {
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
+  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type EmailConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "userId" | "projectId" | "externalEmail" | "externalName" | "trackingCode" | "subject" | "lastMessageAt" | "unreadCount" | "isArchived" | "createdAt" | "updatedAt", ExtArgs["result"]["emailConversation"]>
+export type EmailConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "userId" | "projectId" | "externalEmail" | "externalName" | "trackingCode" | "subject" | "lastMessageAt" | "unreadCount" | "isArchived" | "isUnassigned" | "createdAt" | "updatedAt", ExtArgs["result"]["emailConversation"]>
 export type EmailConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -1297,6 +1346,7 @@ export type $EmailConversationPayload<ExtArgs extends runtime.Types.Extensions.I
     lastMessageAt: Date
     unreadCount: number
     isArchived: boolean
+    isUnassigned: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["emailConversation"]>
@@ -1737,6 +1787,7 @@ export interface EmailConversationFieldRefs {
   readonly lastMessageAt: Prisma.FieldRef<"EmailConversation", 'DateTime'>
   readonly unreadCount: Prisma.FieldRef<"EmailConversation", 'Int'>
   readonly isArchived: Prisma.FieldRef<"EmailConversation", 'Boolean'>
+  readonly isUnassigned: Prisma.FieldRef<"EmailConversation", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"EmailConversation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"EmailConversation", 'DateTime'>
 }

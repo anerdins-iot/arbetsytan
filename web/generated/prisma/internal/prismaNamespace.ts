@@ -2995,6 +2995,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const TenantScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  inboxCode: 'inboxCode',
   orgNumber: 'orgNumber',
   address: 'address',
   stripeCustomerId: 'stripeCustomerId',
@@ -3434,6 +3435,7 @@ export const EmailConversationScalarFieldEnum = {
   lastMessageAt: 'lastMessageAt',
   unreadCount: 'unreadCount',
   isArchived: 'isArchived',
+  isUnassigned: 'isUnassigned',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

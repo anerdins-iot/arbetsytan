@@ -11,8 +11,11 @@ const RECEIVING_DOMAIN =
 const TRACKING_COMMENT_PREFIX = "<!-- lowly-tracking:";
 const TRACKING_COMMENT_SUFFIX = " -->";
 
-/** Regex to extract code from address like inbox+CODE@domain */
+/** Regex to extract tenant+tracking from address like inbox+TENANT_TRACKING@domain */
 const REPLY_TO_CODE_REGEX = /^inbox\+([^@]+)@/i;
+
+/** Regex to extract tenant-only from address like inbox+TENANT@domain (no underscore) */
+const REPLY_TO_TENANT_REGEX = /^inbox\+([^_@]+)@/i;
 
 /** Regex to extract code from HTML comment lowly-tracking:CODE (code is hex) */
 const HTML_TRACKING_REGEX = /<!--\s*lowly-tracking:([a-f0-9]+)\s*-->/i;
@@ -26,11 +29,11 @@ export function generateTrackingCode(): string {
 }
 
 /**
- * Builds the reply-to address for a conversation.
- * Returns inbox+{trackingCode}@{RESEND_RECEIVING_DOMAIN}.
+ * Builds the reply-to address for a conversation with tenant isolation.
+ * Returns inbox+{tenantCode}_{trackingCode}@{RESEND_RECEIVING_DOMAIN}.
  */
-export function buildReplyToAddress(trackingCode: string): string {
-  return `inbox+${trackingCode}@${RECEIVING_DOMAIN}`;
+export function buildReplyToAddress(tenantCode: string, trackingCode: string): string {
+  return `inbox+${tenantCode}_${trackingCode}@${RECEIVING_DOMAIN}`;
 }
 
 /**
@@ -42,22 +45,37 @@ export function buildTrackingHtml(trackingCode: string): string {
 }
 
 /**
- * Extracts tracking code from incoming email.
- * 1. Tries to match inbox+{code}@ in toAddress.
- * 2. If not found, searches for lowly-tracking:{code} in htmlBody.
- * Returns the code or null if not found.
+ * Extracts tenant code and tracking code from incoming email.
+ * 1. Tries to match inbox+{tenantCode}_{trackingCode}@ in toAddress.
+ * 2. If no underscore, tries inbox+{tenantCode}@ (tenant-only).
+ * 3. If not found, searches for lowly-tracking:{code} in htmlBody (legacy).
+ * Returns { tenantCode, trackingCode } or null if not found.
  */
 export function parseTrackingCode(
   toAddress: string,
   htmlBody: string | null | undefined
-): string | null {
+): { tenantCode: string; trackingCode: string | null } | null {
   if (toAddress) {
     const match = toAddress.match(REPLY_TO_CODE_REGEX);
-    if (match?.[1]) return match[1];
+    if (match?.[1]) {
+      const fullCode = match[1];
+      // Check if it contains underscore (tenant_tracking format)
+      if (fullCode.includes('_')) {
+        const [tenantCode, trackingCode] = fullCode.split('_', 2);
+        return { tenantCode, trackingCode };
+      } else {
+        // Tenant-only format (no tracking code)
+        return { tenantCode: fullCode, trackingCode: null };
+      }
+    }
   }
+  // Legacy: search in HTML body for tracking code only (no tenant)
   if (htmlBody) {
     const match = htmlBody.match(HTML_TRACKING_REGEX);
-    if (match?.[1]) return match[1];
+    if (match?.[1]) {
+      // Legacy format without tenant code - return null to indicate no tenant found
+      return null;
+    }
   }
   return null;
 }

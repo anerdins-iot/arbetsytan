@@ -5,7 +5,7 @@
  */
 
 import { prisma, tenantDb, userDb } from "@/lib/db";
-import { parseTrackingCode } from "@/lib/email-tracking";
+import { parseTrackingCode, generateTrackingCode } from "@/lib/email-tracking";
 import { logger } from "@/lib/logger";
 import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
 import { getSocketServer } from "@/lib/socket";
@@ -53,9 +53,10 @@ function stripHtml(html: string): string {
 
 /**
  * Process an inbound email (email.received event).
- * 1. Parse trackingCode from to-address or HTML body.
- * 2. If found: find conversation, create INBOUND EmailMessage, update lastMessageAt and unreadCount.
- * 3. If not found: log as unknown (no conversation created).
+ * 1. Parse tenantCode and trackingCode from to-address.
+ * 2. If trackingCode found: find conversation and create INBOUND EmailMessage.
+ * 3. If only tenantCode (no trackingCode): create "Övrigt" conversation assigned to admin.
+ * 4. If neither: log as unknown (no conversation created).
  */
 export async function processInboundEmail(
   payload: ResendEmailReceivedPayload
@@ -63,33 +64,106 @@ export async function processInboundEmail(
   const data = payload.data;
   const toAddress = Array.isArray(data.to) ? data.to[0] : String(data.to ?? "");
   const htmlBody = data.html ?? null;
-  const trackingCode = parseTrackingCode(toAddress, htmlBody);
+  const parsed = parseTrackingCode(toAddress, htmlBody);
 
   logger.info("processInboundEmail: received", {
     email_id: data.email_id,
     from: data.from,
     to: data.to,
     subject: data.subject,
-    trackingCode: trackingCode ?? null,
+    parsed: parsed ?? null,
   });
 
-  if (!trackingCode) {
-    logger.info("processInboundEmail: no tracking code, skipping conversation", {
+  if (!parsed) {
+    logger.info("processInboundEmail: no tenant/tracking code, skipping", {
       email_id: data.email_id,
     });
     return;
   }
 
-  const conversation = await prisma.emailConversation.findUnique({
-    where: { trackingCode },
+  const { tenantCode, trackingCode } = parsed;
+
+  // Find tenant via inboxCode
+  const tenant = await prisma.tenant.findUnique({
+    where: { inboxCode: tenantCode },
   });
 
-  if (!conversation) {
-    logger.info("processInboundEmail: conversation not found for tracking code", {
-      trackingCode,
+  if (!tenant) {
+    logger.info("processInboundEmail: tenant not found for inboxCode", {
+      tenantCode,
       email_id: data.email_id,
     });
     return;
+  }
+
+  let conversation: any;
+
+  if (trackingCode) {
+    // Existing conversation with tracking code
+    conversation = await prisma.emailConversation.findUnique({
+      where: { trackingCode },
+    });
+
+    if (!conversation) {
+      logger.info("processInboundEmail: conversation not found for tracking code", {
+        trackingCode,
+        email_id: data.email_id,
+      });
+      return;
+    }
+
+    // Verify tenant matches
+    if (conversation.tenantId !== tenant.id) {
+      logger.warn("processInboundEmail: tenant mismatch", {
+        conversationTenantId: conversation.tenantId,
+        tenantId: tenant.id,
+        trackingCode,
+      });
+      return;
+    }
+  } else {
+    // No tracking code - create "Övrigt" conversation for admin
+    const { email: fromEmail, name: fromName } = parseFromAddress(data.from);
+
+    // Find first admin user in tenant
+    const adminMembership = await prisma.membership.findFirst({
+      where: {
+        tenantId: tenant.id,
+        role: "ADMIN",
+      },
+      orderBy: { createdAt: "asc" },
+    });
+
+    if (!adminMembership) {
+      logger.warn("processInboundEmail: no admin found for tenant", {
+        tenantId: tenant.id,
+        email_id: data.email_id,
+      });
+      return;
+    }
+
+    // Generate new tracking code for this conversation
+    const newTrackingCode = generateTrackingCode();
+
+    const db = tenantDb(tenant.id);
+    conversation = await db.emailConversation.create({
+      data: {
+        tenantId: tenant.id,
+        userId: adminMembership.userId,
+        externalEmail: fromEmail,
+        externalName: fromName ?? undefined,
+        trackingCode: newTrackingCode,
+        subject: data.subject || "(Inget ämne)",
+        isUnassigned: true,
+      },
+    });
+
+    logger.info("processInboundEmail: created Övrigt conversation", {
+      conversationId: conversation.id,
+      tenantId: tenant.id,
+      userId: adminMembership.userId,
+      trackingCode: newTrackingCode,
+    });
   }
 
   const { email: fromEmail, name: fromName } = parseFromAddress(data.from);

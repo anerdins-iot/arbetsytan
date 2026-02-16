@@ -430,6 +430,29 @@ RESEND_WEBHOOK_SECRET=whsec_xxx
 
 ---
 
+## Fas 7: Tenant-baserad mottagning
+
+### Block 7.1: Tenant-kod och "Övrigt"-inkorg
+**Input:** Fas 2 klar (webhook fungerar)
+**Output:** Mail utan spårningskod hamnar i admin-inkorg
+
+- [x] Lägg till `inboxCode` på Tenant-modellen (String? @unique)
+- [x] Lägg till `isUnassigned` på EmailConversation (Boolean @default(false))
+- [x] Uppdatera `parseTrackingCode()` att returnera { tenantCode, trackingCode }
+- [x] Uppdatera `buildReplyToAddress()` till format: inbox+{tenantCode}_{trackingCode}@domain
+- [x] Uppdatera `processInboundEmail()`:
+  - Hitta tenant via inboxCode
+  - Om trackingCode saknas: skapa konversation med isUnassigned=true
+  - Tilldela till första admin i tenant
+- [x] Uppdatera actions att inkludera tenantCode i reply-to
+- [x] Script för att generera inboxCode för befintliga tenants
+
+**Verifiering:** `npm run build` OK, granskning godkänd
+
+**Genomfört:** 2026-02-16.
+
+---
+
 ## Framtida utbyggnad
 
 - **Bilagor:** Spara inkommande bilagor i S3, visa i UI
