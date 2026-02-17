@@ -2,9 +2,11 @@
  * Text-to-Speech API route.
  * Supports two providers: OpenAI TTS and ElevenLabs.
  * Returns audio stream for the given text.
+ * Requires authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { getSession } from "@/lib/auth";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -21,6 +23,15 @@ type OpenAIVoice = "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer";
 
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { text, provider = "openai", voice } = body as {
       text: string;

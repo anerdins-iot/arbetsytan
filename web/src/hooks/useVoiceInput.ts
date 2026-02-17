@@ -17,6 +17,8 @@ type UseVoiceInputOptions = {
   language?: string;
   /** Callback when transcription is complete */
   onTranscript?: (text: string) => void;
+  /** Callback for interim (partial) transcription while recording */
+  onInterimTranscript?: (text: string) => void;
   /** Callback on error */
   onError?: (error: string) => void;
   /** Silence detection threshold in dB (default: -45) */
@@ -52,12 +54,15 @@ type UseVoiceInputReturn = {
   duration: number;
   /** Current audio level (0-100) for visualization */
   audioLevel: number;
+  /** Current interim (partial) transcript from Web Speech API */
+  interimTranscript: string;
 };
 
 export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInputReturn {
   const {
     language = "sv",
     onTranscript,
+    onInterimTranscript,
     onError,
     silenceThreshold = -45,
     silenceDuration = 1500,
@@ -68,6 +73,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
   const [error, setError] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
   const [audioLevel, setAudioLevel] = useState(0);
+  const [interimTranscript, setInterimTranscript] = useState("");
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -79,6 +85,9 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
   const silenceStartRef = useRef<number | null>(null);
   const animationFrameRef = useRef<number | null>(null);
   const currentModeRef = useRef<RecordingMode>("single");
+  const speechRecognitionRef = useRef<any>(null); // Web Speech API - type dynamically from window
+  const onInterimTranscriptRef = useRef(onInterimTranscript);
+  onInterimTranscriptRef.current = onInterimTranscript;
 
   // Keep mode ref in sync
   useEffect(() => {
@@ -94,6 +103,10 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     }
+    if (speechRecognitionRef.current) {
+      try { speechRecognitionRef.current.abort(); } catch { /* ignore */ }
+      speechRecognitionRef.current = null;
+    }
     if (streamRef.current) {
       streamRef.current.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
@@ -107,6 +120,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
     audioChunksRef.current = [];
     silenceStartRef.current = null;
     setAudioLevel(0);
+    setInterimTranscript("");
   }, []);
 
   const transcribeAudio = useCallback(async (audioBlob: Blob, mimeType: string): Promise<string | null> => {
@@ -158,6 +172,10 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
           cancelAnimationFrame(animationFrameRef.current);
           animationFrameRef.current = null;
         }
+        if (speechRecognitionRef.current) {
+          try { speechRecognitionRef.current.abort(); } catch { /* ignore */ }
+          speechRecognitionRef.current = null;
+        }
         if (streamRef.current) {
           streamRef.current.getTracks().forEach((track) => track.stop());
           streamRef.current = null;
@@ -171,6 +189,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
         audioChunksRef.current = [];
         silenceStartRef.current = null;
         setAudioLevel(0);
+        setInterimTranscript("");
 
         const transcript = await transcribeAudio(audioBlob, mimeType);
 
@@ -285,6 +304,59 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
       // Start monitoring audio levels
       monitorAudioLevel();
 
+      // Start Web Speech API for interim transcription (parallel with MediaRecorder)
+      const SpeechRecognitionAPI =
+        typeof window !== "undefined"
+          ? (window.SpeechRecognition ?? window.webkitSpeechRecognition)
+          : undefined;
+
+      if (SpeechRecognitionAPI) {
+        try {
+          const recognition = new SpeechRecognitionAPI();
+          recognition.continuous = true;
+          recognition.interimResults = true;
+          recognition.lang = language === "sv" ? "sv-SE" : language;
+          recognition.maxAlternatives = 1;
+
+          let finalizedText = "";
+
+          recognition.onresult = (event: SpeechRecognitionEvent) => {
+            let interim = "";
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              const result = event.results[i];
+              if (result.isFinal) {
+                finalizedText += result[0].transcript + " ";
+              } else {
+                interim += result[0].transcript;
+              }
+            }
+            const fullText = (finalizedText + interim).trim();
+            setInterimTranscript(fullText);
+            onInterimTranscriptRef.current?.(fullText);
+          };
+
+          recognition.onerror = () => {
+            // Silently ignore — SpeechRecognition is best-effort
+          };
+
+          recognition.onend = () => {
+            // Restart if still recording (SpeechRecognition may auto-stop)
+            if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
+              try {
+                recognition.start();
+              } catch {
+                // ignore — may fail if already started
+              }
+            }
+          };
+
+          recognition.start();
+          speechRecognitionRef.current = recognition;
+        } catch {
+          // SpeechRecognition not available — fallback to Whisper-only
+        }
+      }
+
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Failed to access microphone";
       setError(errorMsg);
@@ -326,6 +398,7 @@ export function useVoiceInput(options: UseVoiceInputOptions = {}): UseVoiceInput
     error,
     duration,
     audioLevel,
+    interimTranscript,
   };
 }
 

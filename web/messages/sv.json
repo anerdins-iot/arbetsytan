@@ -213,6 +213,7 @@
     "history": "Konversationshistorik",
     "noConversations": "Inga konversationer ännu.",
     "loading": "Laddar…",
+    "loadMore": "Ladda tidigare meddelanden",
     "error": "Något gick fel. Försök igen.",
     "messageCount": "{count} medd.",
     "attachFile": "Bifoga fil",
@@ -235,7 +236,9 @@
       "modeOff": "Röst av",
       "modeTtsOnly": "Uppläsning",
       "modeConversationAuto": "Konversation (auto-skicka)",
-      "modeConversationManual": "Konversation (manuell)"
+      "modeConversationManual": "Konversation (manuell)",
+      "pushToTalk": "Spela in röstmeddelande",
+      "pushToTalkHint": "Håll ner för att tala, släpp för att skicka"
     },
     "briefing": {
       "greetingMorning": "God morgon!",

@@ -213,6 +213,7 @@
     "history": "Conversation history",
     "noConversations": "No conversations yet.",
     "loading": "Loading…",
+    "loadMore": "Load earlier messages",
     "error": "Something went wrong. Try again.",
     "messageCount": "{count} msgs",
     "attachFile": "Attach file",
@@ -235,7 +236,9 @@
       "modeOff": "Voice off",
       "modeTtsOnly": "Read aloud",
       "modeConversationAuto": "Conversation (auto-send)",
-      "modeConversationManual": "Conversation (manual)"
+      "modeConversationManual": "Conversation (manual)",
+      "pushToTalk": "Record voice message",
+      "pushToTalkHint": "Hold to speak, release to send"
     },
     "briefing": {
       "greetingMorning": "Good morning!",

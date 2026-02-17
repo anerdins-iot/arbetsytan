@@ -265,6 +265,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   // Voice mode state
   const [voiceMode, setVoiceMode] = useState<VoiceMode>("off");
   const [triggerConversationRecording, setTriggerConversationRecording] = useState(false);
+  const [interimTranscript, setInterimTranscript] = useState("");
 
   // Apply initial voice mode when opening via voice CTA
   useEffect(() => {
@@ -689,6 +690,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
   }, []);
 
+  // Handle interim transcript updates from Web Speech API
+  const handleInterimTranscript = useCallback((text: string) => {
+    setInterimTranscript(text);
+  }, []);
+
   // Handle voice input - send message directly (auto-send mode)
   const handleVoiceInput = useCallback(
     (text: string) => {
@@ -696,6 +702,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       // Stop any current speech before sending new message
       stopSpeakingRef.current?.();
       sendMessage({ text });
+      setInterimTranscript("");
     },
     [isLoading, sendMessage]
   );
@@ -705,8 +712,27 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     (text: string) => {
       if (!text.trim()) return;
       setInputValue((prev) => (prev ? `${prev} ${text}` : text));
+      setInterimTranscript("");
     },
     []
+  );
+
+  // Handle push-to-talk one-off recording result
+  const handlePushToTalkResult = useCallback(
+    (text: string) => {
+      if (!text.trim()) return;
+      if (voiceMode === "conversation-auto") {
+        // Auto-send mode: send directly
+        if (!isLoading) {
+          stopSpeakingRef.current?.();
+          sendMessage({ text });
+        }
+      } else {
+        // All other modes: put text in input field
+        setInputValue((prev) => (prev ? `${prev} ${text}` : text));
+      }
+    },
+    [voiceMode, isLoading, sendMessage]
   );
 
   const handleSubmit = useCallback(
@@ -1297,6 +1323,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         </div>
       )}
 
+      {/* Live interim transcript display */}
+      {interimTranscript && (
+        <div className="border-t border-border bg-muted/30 px-4 py-2">
+          <p className="text-xs text-muted-foreground italic line-clamp-2">
+            {interimTranscript}
+          </p>
+        </div>
+      )}
+
       {/* Inmatningsfält */}
       <form
         onSubmit={handleSubmit}
@@ -1353,6 +1388,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               onVoiceModeChange={setVoiceMode}
               onVoiceInput={handleVoiceInput}
               onVoiceInputManual={handleVoiceInputManual}
+              onPushToTalkResult={handlePushToTalkResult}
+              onInterimTranscript={handleInterimTranscript}
               speakRef={speakRef}
               stopRef={stopSpeakingRef}
               isSpeakingRef={isSpeakingRef}

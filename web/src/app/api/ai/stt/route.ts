@@ -2,9 +2,11 @@
  * Speech-to-Text API route using OpenAI Whisper.
  * Accepts audio file and returns transcribed text.
  * Optimized for Swedish language.
+ * Requires authentication.
  */
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
+import { getSession } from "@/lib/auth";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -27,6 +29,15 @@ const SUPPORTED_FORMATS = [
 
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json(
+        { error: "Authentication required" },
+        { status: 401 }
+      );
+    }
+
     if (!process.env.OPENAI_API_KEY) {
       return NextResponse.json(
         { error: "OpenAI API key not configured" },
