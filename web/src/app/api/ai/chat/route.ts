@@ -420,8 +420,9 @@ export async function POST(req: NextRequest) {
         hasOpenaiKey: !!process.env.OPENAI_API_KEY,
       });
     },
-    onFinish: async ({ text }) => {
-      logger.info("onFinish: triggered", { activeConversationId, textLength: text?.length ?? 0 });
+    onFinish: async ({ text, response }) => {
+      const actualModelId = response?.modelId;
+      logger.info("onFinish: triggered", { activeConversationId, textLength: text?.length ?? 0, actualModelId });
       // Save assistant response to DB (personal AI: use userDb for auto-emit)
       if (text && activeConversationId) {
         const assistantMsg = await udb.message.create({
