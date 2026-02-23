@@ -38,7 +38,7 @@ import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { ModelSelector } from "@/components/ai/model-selector";
-import { type ProviderKey } from "@/lib/ai/providers";
+import { type ProviderKey, MODEL_OPTIONS } from "@/lib/ai/providers";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
 import { FileCreatedCard, type FileCreatedData } from "@/components/ai/file-created-card";
 import { ReportPreviewCard, type ReportPreviewData } from "@/components/ai/report-preview-card";
@@ -151,6 +151,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [messageDebugContext, setMessageDebugContext] = useState<Map<string, DebugContext>>(new Map());
   const [debugModalMessageId, setDebugModalMessageId] = useState<string | null>(null);
   const pendingDebugContextRef = useRef<DebugContext | null>(null);
+  const [messageModels, setMessageModels] = useState<Map<string, string>>(new Map());
+  const pendingModelKeyRef = useRef<string | null>(null);
   // Track which messages have attached images (messageIndex -> fileIds)
   const [chatImageMap, setChatImageMap] = useState<Map<number, string[]>>(new Map());
   // Pending image file IDs to be sent with the next message
@@ -340,6 +342,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           }
         }
 
+        // Capture model key for the upcoming assistant message
+        const modelKey = res.headers.get("X-Model-Key");
+        if (modelKey) pendingModelKeyRef.current = modelKey;
+
         return res;
       },
     }),
@@ -359,6 +365,17 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         next.set(lastMsg.id, ctx);
         return next;
       });
+    }
+  }, [isLoading, messages]);
+
+  // Associate pending model key with assistant message once streaming finishes
+  useEffect(() => {
+    if (isLoading || !pendingModelKeyRef.current) return;
+    const lastMsg = [...messages].reverse().find(m => m.role === "assistant");
+    if (lastMsg) {
+      const key = pendingModelKeyRef.current;
+      pendingModelKeyRef.current = null;
+      setMessageModels(prev => new Map(prev).set(lastMsg.id, key));
     }
   }, [isLoading, messages]);
 
@@ -472,6 +489,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setHistoryOpen(false);
     setUploadedFiles([]);
     setMessageDebugContext(new Map());
+    setMessageModels(new Map());
     lastSpokenMessageIdRef.current = null;
   }, [setMessages]);
 
@@ -1369,16 +1387,29 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   ))}
                 </div>
               )}
-              {/* RAG debug button for assistant messages */}
-              {message.role === "assistant" && messageDebugContext.has(message.id) && (
-                <button
-                  type="button"
-                  onClick={() => setDebugModalMessageId(message.id)}
-                  className="self-end rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-                  title="Visa RAG-debug"
-                >
-                  <Info className="size-3.5" />
-                </button>
+              {/* RAG debug button and model badge for assistant messages */}
+              {message.role === "assistant" && (messageDebugContext.has(message.id) || messageModels.has(message.id)) && (
+                <div className="flex items-center gap-1.5">
+                  {messageModels.get(message.id) && (() => {
+                    const mk = messageModels.get(message.id)!;
+                    const option = MODEL_OPTIONS.find(m => m.key === mk);
+                    return (
+                      <span className="text-[10px] text-muted-foreground/60 font-mono">
+                        {option?.label ?? mk}
+                      </span>
+                    );
+                  })()}
+                  {messageDebugContext.has(message.id) && (
+                    <button
+                      type="button"
+                      onClick={() => setDebugModalMessageId(message.id)}
+                      className="rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                      title="Visa RAG-debug"
+                    >
+                      <Info className="size-3.5" />
+                    </button>
+                  )}
+                </div>
               )}
             </div>
             );

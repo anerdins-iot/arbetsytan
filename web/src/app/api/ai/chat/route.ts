@@ -476,9 +476,10 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  // Headers: conversation ID and optional RAG sources for client
+  // Headers: conversation ID, model key and optional RAG sources for client
   const responseHeaders: Record<string, string> = {
     "X-Conversation-Id": activeConversationId,
+    "X-Model-Key": providerKey,
   };
   if (ragSources.length > 0) {
     // Base64 encode to avoid ByteString errors with Unicode characters in excerpts
