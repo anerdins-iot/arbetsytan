@@ -75,6 +75,8 @@ export const ModelName = {
   Message: 'Message',
   MessageChunk: 'MessageChunk',
   Note: 'Note',
+  ShoppingList: 'ShoppingList',
+  ShoppingListItem: 'ShoppingListItem',
   NoteCategory: 'NoteCategory',
   Notification: 'Notification',
   NotificationPreference: 'NotificationPreference',
@@ -488,6 +490,43 @@ export const NoteScalarFieldEnum = {
 } as const
 
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const ShoppingListScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  projectId: 'projectId',
+  tenantId: 'tenantId',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isArchived: 'isArchived'
+} as const
+
+export type ShoppingListScalarFieldEnum = (typeof ShoppingListScalarFieldEnum)[keyof typeof ShoppingListScalarFieldEnum]
+
+
+export const ShoppingListItemScalarFieldEnum = {
+  id: 'id',
+  listId: 'listId',
+  name: 'name',
+  articleNo: 'articleNo',
+  brand: 'brand',
+  supplier: 'supplier',
+  quantity: 'quantity',
+  unit: 'unit',
+  price: 'price',
+  imageUrl: 'imageUrl',
+  productUrl: 'productUrl',
+  notes: 'notes',
+  isChecked: 'isChecked',
+  checkedAt: 'checkedAt',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShoppingListItemScalarFieldEnum = (typeof ShoppingListItemScalarFieldEnum)[keyof typeof ShoppingListItemScalarFieldEnum]
 
 
 export const NoteCategoryScalarFieldEnum = {

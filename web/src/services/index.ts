@@ -10,3 +10,4 @@ export * from "./note-service";
 export * from "./file-version-service";
 export * from "./email-conversations";
 export * from "./conversation-service";
+export * from "./shopping-list-service";

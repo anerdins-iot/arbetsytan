@@ -10,6 +10,8 @@
     "email": "Email",
     "personal": "My Space",
     "myTimes": "My time",
+    "supplierSearch": "Search materials",
+    "shoppingLists": "Shopping lists",
     "settings": "Settings"
   },
   "deleteConfirmation": {
@@ -1507,6 +1509,36 @@
       "terms": "Terms of Service",
       "cookies": "Cookies",
       "copyright": "© {year} ArbetsYtan. All rights reserved."
+    }
+  },
+  "shoppingList": {
+    "title": "Shopping Lists",
+    "newList": "New shopping list",
+    "createList": "Create list",
+    "listTitle": "List name",
+    "emptyState": "No shopping lists yet — create your first",
+    "emptyListState": "List is empty — add items",
+    "addItem": "Add",
+    "addItemPlaceholder": "Item name...",
+    "totalPrice": "Total price",
+    "checkedItems": "checked",
+    "archiveList": "Archive list",
+    "deleteList": "Delete list",
+    "deleteItem": "Delete item",
+    "quantity": "Quantity",
+    "progress": "{checked} of {total} done"
+  },
+  "supplierSearch": {
+    "title": "Search materials",
+    "subtitle": "Search Elektroskandia and Ahlsell product catalogs",
+    "searchPlaceholder": "Search by article, brand...",
+    "addToList": "Add to list",
+    "articleNo": "Art.no",
+    "noResults": "No products found for \"{query}\"",
+    "loading": "Searching...",
+    "supplier": {
+      "elektroskandia": "Elektroskandia",
+      "ahlsell": "Ahlsell"
     }
   }
 }

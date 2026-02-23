@@ -138,6 +138,16 @@ export type MessageChunk = Prisma.MessageChunkModel
  */
 export type Note = Prisma.NoteModel
 /**
+ * Model ShoppingList
+ * 
+ */
+export type ShoppingList = Prisma.ShoppingListModel
+/**
+ * Model ShoppingListItem
+ * 
+ */
+export type ShoppingListItem = Prisma.ShoppingListItemModel
+/**
  * Model NoteCategory
  * 
  */

@@ -10,6 +10,8 @@
     "email": "E-post",
     "personal": "Mitt utrymme",
     "myTimes": "Mina tider",
+    "supplierSearch": "Sök material",
+    "shoppingLists": "Inköpslistor",
     "settings": "Inställningar"
   },
   "deleteConfirmation": {
@@ -1518,6 +1520,36 @@
       "terms": "Användarvillkor",
       "cookies": "Cookies",
       "copyright": "© {year} ArbetsYtan. Alla rättigheter förbehållna."
+    }
+  },
+  "shoppingList": {
+    "title": "Inköpslistor",
+    "newList": "Ny inköpslista",
+    "createList": "Skapa lista",
+    "listTitle": "Listnamn",
+    "emptyState": "Inga inköpslistor ännu — skapa din första",
+    "emptyListState": "Listan är tom — lägg till artiklar",
+    "addItem": "Lägg till",
+    "addItemPlaceholder": "Artikelnamn...",
+    "totalPrice": "Totalt pris",
+    "checkedItems": "bockade",
+    "archiveList": "Arkivera lista",
+    "deleteList": "Ta bort lista",
+    "deleteItem": "Ta bort artikel",
+    "quantity": "Antal",
+    "progress": "{checked} av {total} klara"
+  },
+  "supplierSearch": {
+    "title": "Sök material",
+    "subtitle": "Sök bland Elektroskandia och Ahlsell sortiment",
+    "searchPlaceholder": "Sök på artikel, varumärke...",
+    "addToList": "Lägg till",
+    "articleNo": "Artnr",
+    "noResults": "Inga produkter hittades för \"{query}\"",
+    "loading": "Söker...",
+    "supplier": {
+      "elektroskandia": "Elektroskandia",
+      "ahlsell": "Ahlsell"
     }
   }
 }

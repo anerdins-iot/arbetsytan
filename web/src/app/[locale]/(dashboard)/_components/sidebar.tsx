@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { usePathname } from "@/i18n/routing"
 import { Link } from "@/i18n/routing"
-import { Hammer, LayoutDashboard, User, FolderOpen, Clock3, Settings, PanelLeftClose, PanelLeft, Zap, Mail } from "lucide-react"
+import { Hammer, LayoutDashboard, User, FolderOpen, Clock3, Settings, PanelLeftClose, PanelLeft, Zap, Mail, Package, ClipboardList } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -26,6 +26,8 @@ const navItems = [
   { href: "/automations", icon: Zap, labelKey: "automations" as const },
   { href: "/email", icon: Mail, labelKey: "email" as const },
   { href: "/time", icon: Clock3, labelKey: "myTimes" as const },
+  { href: "/supplier-search", icon: Package, labelKey: "supplierSearch" as const },
+  { href: "/shopping-lists", icon: ClipboardList, labelKey: "shoppingLists" as const },
 ] as const
 
 const bottomItems = [

@@ -84,6 +84,15 @@ import {
   type WholesalerSearchResult,
 } from "@/lib/wholesaler-search";
 import {
+  getShoppingListsCore,
+  getShoppingListCore,
+} from "@/services/shopping-list-service";
+import {
+  createShoppingList as createShoppingListAction,
+  addShoppingListItem as addShoppingListItemAction,
+  toggleShoppingListItem as toggleShoppingListItemAction,
+} from "@/actions/shopping-list";
+import {
   getNotificationPreferences,
   updateNotificationPreferences,
 } from "@/actions/notification-preferences";
@@ -3190,6 +3199,156 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Inköpslistor ───────────────────────────────────────
+
+  const getShoppingLists = tool({
+    description:
+      "Hämta användarens inköpslistor. Kan filtreras på projekt.",
+    inputSchema: toolInputSchema(
+      z.object({
+        projectId: z.string().optional().describe("Filtrera på projekt-ID"),
+        includeArchived: z.boolean().optional().describe("Inkludera arkiverade listor"),
+      })
+    ),
+    execute: async ({ projectId, includeArchived }) => {
+      const lists = await getShoppingListsCore(
+        { tenantId, userId },
+        { projectId, includeArchived }
+      );
+      return { lists: lists.map((l) => ({
+        id: l.id,
+        title: l.title,
+        projectId: l.projectId,
+        isArchived: l.isArchived,
+        itemCount: l.itemCount,
+        checkedCount: l.checkedCount,
+        createdAt: l.createdAt.toISOString(),
+      })), count: lists.length };
+    },
+  });
+
+  const createShoppingList = tool({
+    description:
+      "Skapa en ny inköpslista. Kan kopplas till ett projekt.",
+    inputSchema: toolInputSchema(
+      z.object({
+        title: z.string().describe("Namn på inköpslistan"),
+        projectId: z.string().optional().describe("Projekt-ID om listan ska kopplas till ett projekt"),
+      })
+    ),
+    execute: async ({ title, projectId }) => {
+      const result = await createShoppingListAction({ title, projectId });
+      if (!result.success) return { error: result.error };
+      return { message: `Inköpslista "${title}" skapad.`, listId: result.listId };
+    },
+  });
+
+  const addToShoppingList = tool({
+    description:
+      "Lägg till en produkt/artikel i en befintlig inköpslista.",
+    inputSchema: toolInputSchema(
+      z.object({
+        listId: z.string().describe("ID för inköpslistan"),
+        name: z.string().describe("Produktnamn"),
+        articleNo: z.string().optional().describe("Artikelnummer"),
+        brand: z.string().optional().describe("Varumärke"),
+        supplier: z.string().optional().describe("Leverantör (t.ex. ELEKTROSKANDIA, AHLSELL)"),
+        quantity: z.number().optional().describe("Antal (default 1)"),
+        unit: z.string().optional().describe("Enhet (t.ex. st, m, kg)"),
+        price: z.number().optional().describe("Pris per enhet"),
+        imageUrl: z.string().optional().describe("Bild-URL"),
+        productUrl: z.string().optional().describe("Länk till produktsida"),
+        notes: z.string().optional().describe("Anteckningar"),
+      })
+    ),
+    execute: async ({ listId, ...item }) => {
+      const result = await addShoppingListItemAction(listId, item);
+      if (!result.success) return { error: result.error };
+      return { message: `"${item.name}" tillagd i listan.`, itemId: result.itemId };
+    },
+  });
+
+  const toggleShoppingItem = tool({
+    description:
+      "Bocka av eller av-bocka en artikel i en inköpslista.",
+    inputSchema: toolInputSchema(
+      z.object({
+        itemId: z.string().describe("ID för artikeln att bocka av/på"),
+      })
+    ),
+    execute: async ({ itemId }) => {
+      const result = await toggleShoppingListItemAction(itemId);
+      if (!result.success) return { error: result.error };
+      return { message: result.isChecked ? "Artikel bockad." : "Artikel avbockad.", isChecked: result.isChecked };
+    },
+  });
+
+  const searchAndAddToShoppingList = tool({
+    description:
+      "Sök hos grossister (Elektroskandia/Ahlsell) och lägg till första matchande produkten direkt i en inköpslista. " +
+      "Kombination av sökning och tillägg i ett steg.",
+    inputSchema: toolInputSchema(
+      z.object({
+        query: z.string().describe("Sökfras, t.ex. 'jordfelsbrytare 16A'"),
+        listId: z.string().describe("ID för inköpslistan att lägga till i"),
+        quantity: z.number().optional().describe("Antal (default 1)"),
+        supplier: z
+          .enum(["ELEKTROSKANDIA", "AHLSELL", "ALL"])
+          .optional()
+          .default("ALL")
+          .describe("Välj grossist"),
+      })
+    ),
+    execute: async ({ query, listId, quantity, supplier = "ALL" }) => {
+      const suppliers: ("ELEKTROSKANDIA" | "AHLSELL")[] =
+        supplier === "ALL" ? ["ELEKTROSKANDIA", "AHLSELL"] : [supplier];
+
+      const { elektroskandia, ahlsell } = await searchWholesalers(query, {
+        suppliers,
+        limit: 5,
+      });
+
+      const allProducts = [
+        ...(elektroskandia?.products ?? []),
+        ...(ahlsell?.products ?? []),
+      ];
+
+      if (allProducts.length === 0) {
+        return { error: `Inga produkter hittades för "${query}".` };
+      }
+
+      const product = allProducts[0];
+      const result = await addShoppingListItemAction(listId, {
+        name: product.name,
+        articleNo: product.articleNo,
+        brand: product.brand,
+        supplier: product.supplier,
+        quantity: quantity ?? 1,
+        price: product.price ?? undefined,
+        imageUrl: product.imageUrl ?? undefined,
+        productUrl: product.productUrl ?? undefined,
+      });
+
+      if (!result.success) return { error: result.error };
+
+      return {
+        message: `"${product.name}" (${product.supplier}) tillagd i listan.`,
+        product: {
+          name: product.name,
+          articleNo: product.articleNo,
+          supplier: product.supplier,
+          price: product.price,
+        },
+        itemId: result.itemId,
+        otherResults: allProducts.slice(1, 4).map((p) => ({
+          name: p.name,
+          articleNo: p.articleNo,
+          supplier: p.supplier,
+        })),
+      };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -3308,6 +3467,12 @@ Returnera ENBART JSON i följande format:
     createQuote,
     // Grossistsökning
     searchSupplierProducts,
+    // Inköpslistor
+    getShoppingLists,
+    createShoppingList,
+    addToShoppingList,
+    toggleShoppingItem,
+    searchAndAddToShoppingList,
     // Chatthistorik
     searchConversations: searchConversationsTool,
   };
