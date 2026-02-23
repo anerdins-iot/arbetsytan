@@ -35,6 +35,7 @@ const DIRECT_TENANT_MODELS = [
   "noteCategory",
   "timeEntry",
   "emailConversation",
+  "knowledgeEntity",
 ] as const;
 
 /** Models scoped via direct project relation (ALWAYS have projectId). */
@@ -499,6 +500,7 @@ export type TenantScopedClient = Omit<
   | "noteCategory"
   | "emailConversation"
   | "emailMessage"
+  | "knowledgeEntity"
 > & {
   project: PrismaClient["project"];
   membership: PrismaClient["membership"];
@@ -523,6 +525,7 @@ export type TenantScopedClient = Omit<
   noteCategory: PrismaClient["noteCategory"];
   emailConversation: PrismaClient["emailConversation"];
   emailMessage: PrismaClient["emailMessage"];
+  knowledgeEntity: PrismaClient["knowledgeEntity"];
 };
 
 /**
