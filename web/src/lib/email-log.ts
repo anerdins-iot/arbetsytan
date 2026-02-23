@@ -111,6 +111,11 @@ export async function updateEmailStatus(
       status,
     });
   } catch (err) {
+    // P2025 = record not found — email was sent without an EmailLog entry, ignore silently
+    if ((err as { code?: string })?.code === "P2025") {
+      logger.info("updateEmailStatus: no EmailLog found, skipping", { resendMessageId, status });
+      return;
+    }
     logger.error("updateEmailStatus: failed", {
       resendMessageId,
       status,

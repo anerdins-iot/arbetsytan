@@ -83,9 +83,14 @@ export async function processInboundEmail(
 
   const { tenantCode, trackingCode } = parsed;
 
-  // Find tenant via inboxCode
-  const tenant = await prisma.tenant.findUnique({
-    where: { inboxCode: tenantCode },
+  // Find tenant via inboxCode, with fallback to tenant id (for seed data / legacy)
+  const tenant = await prisma.tenant.findFirst({
+    where: {
+      OR: [
+        { inboxCode: tenantCode },
+        { id: tenantCode },
+      ],
+    },
   });
 
   if (!tenant) {
