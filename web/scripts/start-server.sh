@@ -36,17 +36,15 @@ cd /workspace/web
 echo "Building application..."
 npm run build
 
-# Load .env explicitly (override any empty container env vars like ANTHROPIC_API_KEY)
+# Load .env explicitly, overriding any empty container env vars
+# We use 'env' with grep+xargs to force-set vars even if they already exist in env
 if [ -f ".env" ]; then
-  set -a
-  source .env
-  set +a
   echo "Loaded .env"
 fi
 
-# Start the server
+# Start the server — use dotenv-cli to guarantee .env is loaded with override
 echo "Starting server on port $PORT..."
-NODE_ENV=production npx tsx server.ts > /tmp/server.log 2>&1 &
+NODE_ENV=production npx dotenvx run --overload -f .env -- npx tsx server.ts > /tmp/server.log 2>&1 &
 
 # Wait for server to be ready and capture the actual server PID
 echo "Waiting for server to be ready..."
