@@ -9,22 +9,28 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-/** Default from address. Set RESEND_FROM or use Resend onboarding domain.
- * Coolify may strip angle brackets or quotes from env vars with spaces.
- * We accept either full format "Name <email>" or just "email@domain.com"
- * and normalise to a valid Resend from address.
+/** Default from address.
+ * Preferred: set RESEND_FROM_NAME and RESEND_FROM_EMAIL separately in Coolify
+ * to avoid issues with spaces and angle brackets in a single env var.
+ * Fallback: RESEND_FROM as full "Name <email>" string (legacy).
  */
-function buildFromAddress(raw: string | undefined): string {
-  const val = raw?.trim().replace(/^["']|["']$/g, "") ?? "";
-  if (!val) return "ArbetsYtan <onboarding@resend.dev>";
-  // Already has display name format: "Name <email>"
-  if (val.includes("<") && val.includes(">")) return val;
-  // Plain email address — wrap with display name
-  if (val.includes("@")) return `ArbetsYtan <${val}>`;
-  // Fallback
+function buildFromAddress(): string {
+  const name = process.env.RESEND_FROM_NAME?.trim();
+  const email = process.env.RESEND_FROM_EMAIL?.trim();
+
+  // Preferred: two separate vars
+  if (name && email) return `${name} <${email}>`;
+  if (email) return `ArbetsYtan <${email}>`;
+
+  // Legacy: single RESEND_FROM var (may have Coolify escaping issues)
+  const legacy = process.env.RESEND_FROM?.trim().replace(/^["']|["']$/g, "");
+  if (legacy?.includes("<") && legacy.includes(">")) return legacy;
+  if (legacy?.includes("@")) return `ArbetsYtan <${legacy}>`;
+
+  // Final fallback
   return "ArbetsYtan <onboarding@resend.dev>";
 }
-const DEFAULT_FROM = buildFromAddress(process.env.RESEND_FROM);
+const DEFAULT_FROM = buildFromAddress();
 
 export type EmailAttachment = {
   filename: string;
