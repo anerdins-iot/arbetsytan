@@ -19,7 +19,7 @@
 - [x] Relevansranking av entiteter fungerar (sorterat på lastSeen, top 15)
 - [x] Token-begränsningshantering implementerad (max 15 entiteter, kompakt format)
 - [x] Integration med AI-chatt-rutt fullständig (buildSystemPrompt tar knowledgeContext-parameter)
-- [ ] Kontext visas korrekt i AI-anrop (verifieras via Playwright-test)
+- [x] Kontext visas korrekt i AI-anrop (verifierat via Playwright E2E-test 2026-02-23)
 
 ## Fas 4: Underhåll och Optimering
 - [x] TTL-mekanism för kunskapsentiteter implementerad (`cleanupOldKnowledge` raderar >90 dagar)
@@ -29,7 +29,7 @@
 - [ ] Kunskapsbas-storlek stabiliseras över tid (täcks av TTL-mekanismen)
 
 ## Fas 5: Testning och Validering
-- [ ] Alla användarflöden testade och fungerande (Playwright-test pågår)
+- [x] Alla användarflöden testade och fungerande (Playwright E2E godkänt 2026-02-23)
 - [ ] Multi-tenant-isolering verifierad med tester
 - [ ] Prestandabenchmarks inom krav (<100ms kontexthämtning)
 - [ ] Säkerhetsgranskning genomförd
