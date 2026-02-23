@@ -232,6 +232,32 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Knowledge base: fetch relevant entities for this user (tenantId + userId in metadata), max 15, lastSeen desc
+  let knowledgeContext = "";
+  try {
+    const entities = await db.knowledgeEntity.findMany({
+      where: {
+        tenantId,
+        metadata: { path: ["userId"], equals: userId },
+      },
+      orderBy: { lastSeen: "desc" },
+      take: 15,
+      select: { entityType: true, entityId: true, metadata: true },
+    });
+    if (entities.length > 0) {
+      knowledgeContext = entities
+        .map(
+          (e) =>
+            `- ${e.entityType} ${e.entityId}: ${JSON.stringify(e.metadata)}`
+        )
+        .join("\n");
+    }
+  } catch (knowledgeErr) {
+    logger.warn("Knowledge base fetch failed, continuing without context", {
+      error: knowledgeErr instanceof Error ? knowledgeErr.message : String(knowledgeErr),
+    });
+  }
+
   const isFirstTurn = messages.filter((m) => m.role === "user").length <= 1;
   const systemPrompt = buildSystemPrompt({
     userName: user.name ?? undefined,
@@ -239,6 +265,7 @@ export async function POST(req: NextRequest) {
     projectId: projectId ?? undefined,
     projectContext,
     ragContext,
+    knowledgeContext,
     checkUnreadOnStart: isFirstTurn,
     conversationSummary,
   });
@@ -379,10 +406,16 @@ function buildSystemPrompt(opts: {
     memberCount: number;
   };
   ragContext?: string;
+  knowledgeContext?: string;
   checkUnreadOnStart?: boolean;
   conversationSummary?: string | null;
 }): string {
-  const { userName, userRole, projectId, projectContext, ragContext, checkUnreadOnStart, conversationSummary } = opts;
+  const { userName, userRole, projectId, projectContext, ragContext, knowledgeContext, checkUnreadOnStart, conversationSummary } = opts;
+
+  const knowledgeBlock =
+    knowledgeContext && knowledgeContext.trim()
+      ? `\n\nKunskapsbas (relevant kontext för användaren):\n${knowledgeContext}`
+      : "";
 
   const summaryBlock =
     conversationSummary && conversationSummary.trim()
@@ -483,6 +516,7 @@ VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
     imageDisplayGuidance,
     webSearchGuidance,
     searchGuidance,
+    knowledgeBlock,
     summaryBlock
   );
 
