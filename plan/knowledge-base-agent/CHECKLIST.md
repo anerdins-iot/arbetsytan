@@ -40,6 +40,6 @@
 - [ ] Feature flag implementerad för enkel aktivering/inaktivering
 
 ## Dokumentation
-- [ ] AGENTS.md uppdaterad med ny kunskapsbas-funktionalitet
-- [ ] AI.md uppdaterad med beskrivning av kontextinjicering
+- [x] AGENTS.md uppdaterad med ny kunskapsbas-funktionalitet (KnowledgeEntity RAG, nya viktiga filer)
+- [x] AI.md uppdaterad med beskrivning av kontextinjicering (Pre-retrieval RAG, kunskapsextraktion, debug modal)
 - [x] DEVLOG.md innehåller lärdomar från implementeringen (Prisma 7 + schema-fix + container env dokumenterat)

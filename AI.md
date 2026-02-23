@@ -225,6 +225,58 @@ Webben använder cookies som vanligt via Auth.js. Mobilappen använder JWT Beare
 
 Auth.js konfigureras med dubbla strategier — session-baserad för webb och JWT för mobil. API-routes kontrollerar först Authorization-headern (mobil) och faller tillbaka på session-cookies (webb). En gemensam hjälpfunktion abstraherar detta så att resten av koden inte behöver bry sig om vilken klient som anropar.
 
+## Kunskapsbas och Proaktiv Kontextinjicering (RAG)
+
+AI-assistenterna är utrustade med ett automatiskt kunskapsbasystem som bygger en personlig minnesbas för varje användare och injicerar relevant kontext i varje svar — utan att AI:n behöver "fråga".
+
+### Pre-retrieval RAG
+
+Varje meddelande som skickas till AI:n triggar automatiskt en semantisk sökning *innan* `streamText` anropas. AI:n får alltid relevant kontext utan att behöva bestämma sig för att söka.
+
+Flöde per request:
+1. De tre senaste användarmeddelandena konkateneras till en sökfråga (täcker uppföljningsfrågor som "Och kontaktpersonen?")
+2. En enda embedding genereras för frågan
+3. Tre pgvector-sökkällor genomsöks parallellt med 500ms timeout:
+   - **KnowledgeEntity** — entiteter extraherade från konversationer (projekt, uppgifter, preferenser, kontakter)
+   - **MessageChunk** — semantiska bitar av tidigare konversationer
+   - **DocumentChunk** — filinnehåll (ritningar, PDF:er, dokument)
+4. Resultaten rankas efter cosine similarity och injiceras i systempromptens kunskapsblock
+5. Om sökningen överskrider 500ms → fallback till tidsbaserad hämtning
+
+Implementerat i `web/src/lib/ai/unified-search.ts` (`searchAllSources`) och integrerat i `web/src/app/api/ai/chat/route.ts`.
+
+### Kunskapsextraktion
+
+Efter varje konversation (i `onFinish`, fire-and-forget) analyserar en LLM konversationstransskriptet och extraherar strukturerade entiteter:
+
+- **Entitetstyper:** `project`, `task`, `user`, `preference`, `common_question`
+- **Konfidensfiltrering:** Endast entiteter med confidence ≥ 0.7 sparas
+- **Embedding per entitet:** Varje entitet får en pgvector-embedding för semantisk sökning
+- **TTL:** Entiteter som inte setts på 90 dagar rensas automatiskt (1% sannolikhet per request)
+
+Implementerat i `web/src/lib/ai/knowledge-extractor.ts`.
+
+### Datamodell
+
+Ny tabell `KnowledgeEntity`:
+- `tenantId` — multi-tenant isolering
+- `entityType` — typ av entitet
+- `entityId` — kort identifierare (t.ex. "Bergström Bygg")
+- `metadata` — JSON med detaljer (inkl. `userId` för per-användare isolering)
+- `embedding vector` — pgvector-kolumn för semantisk sökning
+- `confidence` — extraktionssäkerhet (0–1)
+- `lastSeen` — används för TTL-rensning
+
+### RAG Debug Modal
+
+För felsökning och insyn: varje AI-svar har en info-ikon (ⓘ) som öppnar en modal med vad sökningen hittade — källtyp, text och similarity-poäng. Aktiverat via `X-Debug-Context`-header (base64-kodad JSON).
+
+### Multi-tenant-isolering
+
+- `KnowledgeEntity` filtreras på `tenantId` + `metadata->>'userId'` — ingen användare ser en annan användares kunskapsbas
+- `MessageChunk` filtreras på `tenantId` + `userId`
+- `DocumentChunk` filtreras på `tenantId` + `projectId` (accessibla projekt för användaren)
+
 ## Embeddings och semantisk sökning
 
 AI-assistenterna behöver kunna söka i dokument, ritningar och projekthistorik baserat på betydelse — inte bara exakta ord. Detta löses med embeddings och vektorsökning.
@@ -246,10 +298,11 @@ När AI-assistenten behöver hitta information — t.ex. "vad står det om elins
 - Filinnehåll efter OCR-extraktion (ritningar, PDF:er, dokument)
 - Uppgiftsbeskrivningar och kommentarer
 - Konversationssammanfattningar (så att personliga AI:n kan hitta relevant historik)
+- Kunskapsentiteter (KnowledgeEntity) extraherade från konversationshistorik
 
 ### Lagring — pgvector
 
-Vektorer lagras i PostgreSQL via pgvector-extensionen. Ingen separat vektordatabas behövs. En DocumentChunk-modell i schemat kopplar varje chunk till sin fil och sitt projekt. Chunken innehåller den extraherade texten, vektorn, metadata (sidnummer, position) och en referens till källfilen.
+Vektorer lagras i PostgreSQL via pgvector-extensionen. Ingen separat vektordatabas behövs. En DocumentChunk-modell i schemat kopplar varje chunk till sin fil och sitt projekt. Chunken innehåller den extraherade texten, vektorn, metadata (sidnummer, position) och en referens till källfilen. KnowledgeEntity-tabellen har också en pgvector-embedding-kolumn.
 
 ### Multi-tenant-isolering
 

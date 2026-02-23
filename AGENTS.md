@@ -31,6 +31,7 @@ Läs ALLTID relevant docs-fil innan du arbetar med en komponent. Docs är single
 | AI | Claude, OpenAI, Mistral | se `AI.md` |
 | OCR | Mistral OCR | `mistral-api.md` |
 | Embeddings | OpenAI + pgvector | se `AI.md` |
+| Kunskapsbas | KnowledgeEntity + pgvector RAG | se `AI.md` |
 | i18n | next-intl | — |
 
 ## E-postsystem (Tvåvägskommunikation)
@@ -301,7 +302,10 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `web/src/lib/auth.ts` — Auth.js-konfiguration
 - `web/src/lib/db.ts` — Prisma-klient
 - `web/src/lib/ai/` — AI-klientkonfiguration (Claude, OpenAI, Mistral)
-- `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation)
+- `web/src/lib/ai/unified-search.ts` — Unified semantic search (KnowledgeEntity + MessageChunk + DocumentChunk)
+- `web/src/lib/ai/knowledge-extractor.ts` — Kunskapsextraktion från konversationer (fire-and-forget)
+- `web/src/components/ai/rag-debug-modal.tsx` — Debug-modal för RAG-sökresultat
+- `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation, RAG)
 - `mistral-api.md` — Mistral API och OCR-referens
 - `openai-api.md` — OpenAI bildgenerering och embeddings-referens
 - `vercel-ai-sdk.md` — Vercel AI SDK-referens
