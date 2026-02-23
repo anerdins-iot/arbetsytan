@@ -14,7 +14,8 @@ export type ProviderKey =
   | "CLAUDE_HAIKU"
   | "CLAUDE_SONNET"
   | "OPENAI"
-  | "MISTRAL"
+  | "MISTRAL_LARGE"
+  | "MISTRAL_SMALL"
   | "GROK_FAST"
   | "GEMINI_PRO"
   | "GEMINI_FLASH";
@@ -48,15 +49,27 @@ export const MODEL_OPTIONS: ModelOption[] = [
   },
   {
     key: "GEMINI_PRO",
-    label: "Gemini 2.5 Pro",
-    description: "Google – avancerad analys",
+    label: "Gemini 3.1 Pro",
+    description: "Google – avancerad analys och resonemang",
     provider: "google",
   },
   {
     key: "GEMINI_FLASH",
-    label: "Gemini 2.0 Flash",
-    description: "Google – snabb respons",
+    label: "Gemini 3 Flash",
+    description: "Google – frontier-klass, snabb respons",
     provider: "google",
+  },
+  {
+    key: "MISTRAL_LARGE",
+    label: "Mistral Large 3",
+    description: "Mistral – mest kapabel",
+    provider: "mistral",
+  },
+  {
+    key: "MISTRAL_SMALL",
+    label: "Mistral Small 3.2",
+    description: "Mistral – snabb och effektiv",
+    provider: "mistral",
   },
 ];
 
@@ -65,10 +78,11 @@ const MODEL_IDS: Record<ProviderKey, string> = {
   CLAUDE_HAIKU: "claude-haiku-4-5-20251001",
   CLAUDE_SONNET: "claude-sonnet-4-5-20250929",
   OPENAI: "gpt-4o",
-  MISTRAL: "mistral-large-latest",
+  MISTRAL_LARGE: "mistral-large-2512",
+  MISTRAL_SMALL: "mistral-small-2506",
   GROK_FAST: "grok-4-0709",
-  GEMINI_PRO: "gemini-2.5-pro",
-  GEMINI_FLASH: "gemini-2.0-flash",
+  GEMINI_PRO: "gemini-3.1-pro-preview",
+  GEMINI_FLASH: "gemini-3-flash-preview",
 };
 
 /** Returns a Vercel AI SDK LanguageModel for the given provider. */
@@ -80,8 +94,10 @@ export function getModel(provider: ProviderKey = "CLAUDE_HAIKU"): LanguageModel 
       return anthropic(MODEL_IDS.CLAUDE_SONNET);
     case "OPENAI":
       return openai(MODEL_IDS.OPENAI);
-    case "MISTRAL":
-      return mistral(MODEL_IDS.MISTRAL);
+    case "MISTRAL_LARGE":
+      return mistral(MODEL_IDS.MISTRAL_LARGE);
+    case "MISTRAL_SMALL":
+      return mistral(MODEL_IDS.MISTRAL_SMALL);
     case "GROK_FAST":
       return xai(MODEL_IDS.GROK_FAST);
     case "GEMINI_PRO":

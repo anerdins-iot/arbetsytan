@@ -527,7 +527,8 @@ function getRequiredEnvKeyForProvider(provider: ProviderKey): string | null {
       return "ANTHROPIC_API_KEY";
     case "OPENAI":
       return "OPENAI_API_KEY";
-    case "MISTRAL":
+    case "MISTRAL_LARGE":
+    case "MISTRAL_SMALL":
       return "MISTRAL_API_KEY";
     case "GROK_FAST":
       return "XAI_API_KEY";
