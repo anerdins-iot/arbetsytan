@@ -239,6 +239,7 @@ export async function POST(req: NextRequest) {
 
   // Unified semantic search: search knowledge, conversations, and documents (with 500ms timeout)
   let knowledgeContext = "";
+  let searchResults: UnifiedSearchResult[] = [];
   try {
     // Use last 3 user messages as query to handle follow-up questions like "Och kontaktpersonen?"
     const recentUserMsgs = [...messages].filter(m => m.role === "user").slice(-3);
@@ -257,7 +258,7 @@ export async function POST(req: NextRequest) {
         const timeoutPromise = new Promise<UnifiedSearchResult[]>((resolve) =>
           setTimeout(() => resolve([]), 500)
         );
-        const searchResults = await Promise.race([searchPromise, timeoutPromise]);
+        searchResults = await Promise.race([searchPromise, timeoutPromise]);
 
         if (searchResults.length > 0) {
           const knowledge = searchResults.filter(r => r.source === "knowledge").slice(0, 10);
@@ -425,6 +426,23 @@ export async function POST(req: NextRequest) {
   if (ragSources.length > 0) {
     // Base64 encode to avoid ByteString errors with Unicode characters in excerpts
     responseHeaders["X-Sources"] = Buffer.from(JSON.stringify(ragSources), "utf-8").toString("base64");
+  }
+
+  // Debug context: send unified search results to frontend for RAG debug modal
+  if (searchResults.length > 0) {
+    const recentUserMsgsForDebug = [...messages].filter(m => m.role === "user").slice(-3);
+    const debugQueryText = recentUserMsgsForDebug.map(extractTextFromParts).join(" ");
+    const knowledge = searchResults.filter(r => r.source === "knowledge").slice(0, 10);
+    const conversations = searchResults.filter(r => r.source === "conversation").slice(0, 10);
+    const documents = searchResults.filter(r => r.source === "document").slice(0, 10);
+    const debugContext = {
+      knowledge: knowledge.map(r => ({ text: r.text, similarity: r.similarity })),
+      conversations: conversations.map(r => ({ text: r.text, similarity: r.similarity })),
+      documents: documents.map(r => ({ text: r.text, similarity: r.similarity, metadata: r.metadata })),
+      totalResults: searchResults.length,
+      queryText: debugQueryText,
+    };
+    responseHeaders["X-Debug-Context"] = Buffer.from(JSON.stringify(debugContext), "utf-8").toString("base64");
   }
 
   return result.toUIMessageStreamResponse({

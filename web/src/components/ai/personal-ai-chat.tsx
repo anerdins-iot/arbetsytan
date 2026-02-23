@@ -17,6 +17,7 @@ import {
   PanelRightClose,
   Maximize2,
   Minimize2,
+  Info,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -61,6 +62,7 @@ import { generateQuotePdf } from "@/actions/quotes";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
+import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
 
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
@@ -142,6 +144,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [projectContext, setProjectContext] = useState<ProjectContextResult | null>(null);
   const [isLoadingContext, setIsLoadingContext] = useState(false);
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
+  const [messageDebugContext, setMessageDebugContext] = useState<Map<string, DebugContext>>(new Map());
+  const [debugModalMessageId, setDebugModalMessageId] = useState<string | null>(null);
+  const pendingDebugContextRef = useRef<DebugContext | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -302,12 +307,39 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         const res = await fetch(input, init);
         const convId = res.headers.get("X-Conversation-Id");
         if (convId) setConversationId(convId);
+
+        // Capture RAG debug context for the upcoming assistant message
+        const debugCtx = res.headers.get("X-Debug-Context");
+        if (debugCtx) {
+          try {
+            const parsed: DebugContext = JSON.parse(atob(debugCtx));
+            pendingDebugContextRef.current = parsed;
+          } catch {
+            // Ignore parse errors
+          }
+        }
+
         return res;
       },
     }),
   });
 
   const isLoading = status === "streaming" || status === "submitted";
+
+  // Associate pending debug context with assistant message once streaming finishes
+  useEffect(() => {
+    if (isLoading || !pendingDebugContextRef.current) return;
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.role === "assistant") {
+      const ctx = pendingDebugContextRef.current;
+      pendingDebugContextRef.current = null;
+      setMessageDebugContext(prev => {
+        const next = new Map(prev);
+        next.set(lastMsg.id, ctx);
+        return next;
+      });
+    }
+  }, [isLoading, messages]);
 
   // Auto-speak assistant messages when voice mode includes TTS
   const ttsEnabled = voiceMode !== "off";
@@ -418,6 +450,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setHasMore(false);
     setHistoryOpen(false);
     setUploadedFiles([]);
+    setMessageDebugContext(new Map());
     lastSpokenMessageIdRef.current = null;
   }, [setMessages]);
 
@@ -1255,6 +1288,17 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                 return null;
               })}
+              {/* RAG debug button for assistant messages */}
+              {message.role === "assistant" && messageDebugContext.has(message.id) && (
+                <button
+                  type="button"
+                  onClick={() => setDebugModalMessageId(message.id)}
+                  className="self-end rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                  title="Visa RAG-debug"
+                >
+                  <Info className="size-3.5" />
+                </button>
+              )}
             </div>
             );
           })}
@@ -1428,6 +1472,16 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     </div>
   );
 
+  // RAG debug modal
+  const debugModalContext = debugModalMessageId ? messageDebugContext.get(debugModalMessageId) : undefined;
+  const ragDebugUI = debugModalContext ? (
+    <RagDebugModal
+      open={!!debugModalMessageId}
+      onClose={() => setDebugModalMessageId(null)}
+      context={debugModalContext}
+    />
+  ) : null;
+
   // OCR review dialog - simple review + save, analysis runs in background
   const fileAnalysisUI = analysisFile ? (
     <OcrReviewDialog
@@ -1451,6 +1505,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             </div>
           </div>
           {fileAnalysisUI}
+          {ragDebugUI}
         </>
       );
     }
@@ -1474,6 +1529,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           {chatBody}
         </div>
         {fileAnalysisUI}
+        {ragDebugUI}
       </>
     );
   }
@@ -1510,6 +1566,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       )}
 
       {fileAnalysisUI}
+      {ragDebugUI}
     </>
   );
 }
