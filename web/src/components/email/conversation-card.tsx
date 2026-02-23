@@ -4,13 +4,13 @@ import { useTranslations } from "next-intl";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { ConversationListItem } from "@/services/email-conversations";
+import { getPreviewText } from "./email-body-utils";
 
 type ConversationCardProps = {
   conversation: ConversationListItem;
   onClick: () => void;
+  isSelected?: boolean;
 };
-
-const PREVIEW_MAX_LEN = 80;
 
 function formatDate(d: Date): string {
   const now = new Date();
@@ -31,19 +31,20 @@ function formatDate(d: Date): string {
   });
 }
 
-function preview(text: string | null): string {
-  if (!text || !text.trim()) return "";
-  const plain = text.replace(/\s+/g, " ").trim();
-  return plain.length <= PREVIEW_MAX_LEN
-    ? plain
-    : plain.slice(0, PREVIEW_MAX_LEN) + "…";
-}
-
-export function ConversationCard({ conversation, onClick }: ConversationCardProps) {
+export function ConversationCard({
+  conversation,
+  onClick,
+  isSelected = false,
+}: ConversationCardProps) {
   const t = useTranslations("email.inbox");
+  const tList = useTranslations("email.list");
   const sender =
     conversation.externalName?.trim() || conversation.externalEmail;
-  const previewText = preview(conversation.latestMessage?.bodyText ?? null);
+  const previewText = getPreviewText(
+    conversation.latestMessage?.bodyText,
+    conversation.latestMessage?.bodyHtml,
+    80
+  ) || tList("noContent");
   const isUnread = (conversation.unreadCount ?? 0) > 0;
 
   return (
@@ -51,52 +52,62 @@ export function ConversationCard({ conversation, onClick }: ConversationCardProp
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full text-left rounded-lg border border-border p-3 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        isUnread && "bg-muted/30"
+        "w-full text-left px-4 py-3 transition-colors border-b border-border/50",
+        "hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+        isSelected && "bg-primary/5 border-l-2 border-l-primary",
+        !isSelected && isUnread && "bg-muted/30"
       )}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 flex-wrap">
-            <span
-              className={cn(
-                "truncate font-medium text-foreground",
-                isUnread && "font-semibold"
-              )}
-            >
-              {sender}
-            </span>
-            {conversation.projectId && conversation.projectName && (
-              <Badge variant="secondary" className="text-xs shrink-0">
-                {conversation.projectName}
-              </Badge>
-            )}
-          </div>
-          <p
-            className={cn(
-              "text-sm truncate mt-0.5",
-              isUnread ? "text-foreground font-medium" : "text-muted-foreground"
-            )}
-          >
-            {conversation.subject || t("noSubject")}
-          </p>
-          {previewText && (
-            <p className="text-xs text-muted-foreground truncate mt-0.5">
-              {previewText}
-            </p>
-          )}
-        </div>
-        <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex items-start gap-3">
+        {/* Unread indicator */}
+        <div className="pt-1.5 shrink-0 w-2">
           {isUnread && (
             <span
-              className="size-2 rounded-full bg-primary"
+              className="block size-2 rounded-full bg-accent"
               title={t("unread")}
               aria-hidden
             />
           )}
-          <span className="text-xs text-muted-foreground whitespace-nowrap">
-            {formatDate(conversation.lastMessageAt)}
-          </span>
+        </div>
+
+        {/* Content */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className={cn(
+                "text-sm truncate",
+                isUnread ? "font-semibold text-foreground" : "font-medium text-foreground"
+              )}
+            >
+              {sender}
+            </span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0">
+              {formatDate(conversation.lastMessageAt)}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 mt-0.5">
+            <p
+              className={cn(
+                "text-sm truncate",
+                isUnread ? "text-foreground font-medium" : "text-muted-foreground"
+              )}
+            >
+              {conversation.subject || t("noSubject")}
+            </p>
+            {conversation.projectId && conversation.projectName && (
+              <Badge
+                variant="secondary"
+                className="text-[10px] shrink-0 px-1.5 py-0 h-4"
+              >
+                {conversation.projectName}
+              </Badge>
+            )}
+          </div>
+
+          <p className="text-xs text-muted-foreground truncate mt-0.5">
+            {previewText}
+          </p>
         </div>
       </div>
     </button>

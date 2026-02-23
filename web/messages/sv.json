@@ -78,6 +78,25 @@
       "linkToProject": "Koppla till projekt",
       "noProject": "Inget projekt"
     },
+    "sidebar": {
+      "inbox": "Inkorg",
+      "sent": "Skickat",
+      "compose": "Skriv nytt",
+      "search": "Sök konversationer..."
+    },
+    "list": {
+      "searchPlaceholder": "Sök konversationer...",
+      "today": "Idag",
+      "noContent": "(Inget innehåll)"
+    },
+    "conversation": {
+      "selectConversation": "Välj en konversation",
+      "selectConversationDescription": "Välj en konversation i listan för att läsa den.",
+      "noContent": "(Inget innehåll)",
+      "dateSeparator": "{date}",
+      "you": "Du",
+      "back": "Tillbaka"
+    },
     "recipients": "Mottagare",
     "selectRecipients": "Välj vem som ska ta emot ditt meddelande",
     "recipientType": "Typ av mottagare",
