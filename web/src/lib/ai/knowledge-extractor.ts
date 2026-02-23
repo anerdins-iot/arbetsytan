@@ -28,7 +28,9 @@ type ExtractedEntity = {
 
 function parseExtractionResult(text: string): ExtractedEntity[] {
   try {
-    const parsed = JSON.parse(text) as { entities?: unknown[] };
+    // Strip markdown code fences if present (e.g. ```json\n...\n```)
+    const stripped = text.replace(/^```(?:json)?\n?/m, "").replace(/\n?```$/m, "").trim();
+    const parsed = JSON.parse(stripped) as { entities?: unknown[] };
     if (!Array.isArray(parsed?.entities)) return [];
     return parsed.entities
       .filter(
@@ -91,16 +93,21 @@ export async function extractAndSaveKnowledge(
     // Try Claude first, fall back to OpenAI if overloaded
     let text: string;
     try {
+      logger.info("extractAndSaveKnowledge: calling Claude for extraction");
       const result = await generateText({ model: getModel("CLAUDE"), system, prompt });
       text = result.text;
+      logger.info("extractAndSaveKnowledge: Claude responded", { textLength: text?.length ?? 0 });
     } catch (primaryErr) {
       const errMsg = primaryErr instanceof Error ? primaryErr.message : String(primaryErr);
       logger.warn("extractAndSaveKnowledge: Claude failed, trying OpenAI fallback", { error: errMsg });
       const result = await generateText({ model: getModel("OPENAI"), system, prompt });
       text = result.text;
+      logger.info("extractAndSaveKnowledge: OpenAI responded", { textLength: text?.length ?? 0 });
     }
 
+    logger.info("extractAndSaveKnowledge: parsing result", { rawText: text?.slice(0, 200) });
     const entities = parseExtractionResult(text ?? "{}");
+    logger.info("extractAndSaveKnowledge: entities found", { count: entities.length, aboveThreshold: entities.filter(e => e.confidence >= CONFIDENCE_THRESHOLD).length });
     const toSave = entities.filter((e) => e.confidence >= CONFIDENCE_THRESHOLD);
     if (toSave.length === 0) return { extracted: 0 };
 
