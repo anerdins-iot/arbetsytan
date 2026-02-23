@@ -323,7 +323,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         const debugCtx = res.headers.get("X-Debug-Context");
         if (debugCtx) {
           try {
-            const parsed: DebugContext = JSON.parse(atob(debugCtx));
+            // Decode UTF-8 base64: atob() returns Latin-1, need TextDecoder for multibyte chars (å, ä, ö)
+            const bytes = Uint8Array.from(atob(debugCtx), (c) => c.charCodeAt(0));
+            const parsed: DebugContext = JSON.parse(new TextDecoder().decode(bytes));
             pendingDebugContextRef.current = parsed;
           } catch {
             // Ignore parse errors
