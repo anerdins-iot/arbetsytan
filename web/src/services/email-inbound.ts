@@ -11,7 +11,7 @@ import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
 import { getSocketServer } from "@/lib/socket";
 import { userRoom } from "@/lib/socket-events";
 import { renderEmailTemplate, getAppBaseUrl } from "@/lib/email-templates";
-import { sendEmail } from "@/lib/email";
+import { sendEmail, DEFAULT_FROM } from "@/lib/email";
 
 export type ResendEmailReceivedPayload = {
   type: "email.received";
@@ -268,8 +268,7 @@ export async function processInboundEmail(
           conversationUrl,
         },
       });
-      const fromAddress =
-        process.env.RESEND_FROM?.trim() || "ArbetsYtan <noreply@arbetsytan.anerd.in>";
+      const fromAddress = DEFAULT_FROM;
       await sendEmail({
         from: fromAddress,
         to: user.email,

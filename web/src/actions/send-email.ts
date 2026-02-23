@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { requirePermission } from "@/lib/auth";
 import { tenantDb, userDb, prisma } from "@/lib/db";
-import { sendEmail, type EmailAttachment as ResendAttachment } from "@/lib/email";
+import { sendEmail, DEFAULT_FROM, type EmailAttachment as ResendAttachment } from "@/lib/email";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { logOutboundEmail } from "@/lib/email-log";
 import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
@@ -285,7 +285,7 @@ export async function sendExternalEmail(
 
   // Determine from address (always use RESEND_FROM for verified domain)
   // Fallback to Resend onboarding domain if not configured
-  const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
+  const fromAddress = DEFAULT_FROM;
 
   for (const recipient of result.data.recipients) {
     const emailResult = await sendEmail({
@@ -397,7 +397,7 @@ export async function sendToTeamMember(
 
   // Always use RESEND_FROM for verified domain, sender email as reply-to
   // Fallback to Resend onboarding domain if not configured
-  const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
+  const fromAddress = DEFAULT_FROM;
 
   const emailResult = await sendEmail({
     to: membership.user.email,
@@ -471,7 +471,7 @@ export async function sendToTeamMembers(
   const errors: string[] = [];
   // Always use RESEND_FROM for verified domain, sender email as reply-to
   // Fallback to Resend onboarding domain if not configured
-  const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
+  const fromAddress = DEFAULT_FROM;
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";

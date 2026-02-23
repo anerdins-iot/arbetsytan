@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
-import { sendEmail } from "@/lib/email";
+import { sendEmail, DEFAULT_FROM } from "@/lib/email";
 import { buildReplyToAddress, buildTrackingHtml, generateTrackingCode } from "@/lib/email-tracking";
 import { prisma } from "@/lib/db";
 import {
@@ -144,7 +144,7 @@ export async function createConversation(
 
     // Always use RESEND_FROM for verified domain
     // Fallback to Resend onboarding domain if not configured
-    const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
+    const fromAddress = DEFAULT_FROM;
 
     // Send email FIRST - before creating anything in the database
     const sent = await sendEmail({
@@ -221,7 +221,7 @@ export async function replyToConversation(
 
     // Always use RESEND_FROM for verified domain
     // Fallback to Resend onboarding domain if not configured
-    const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
+    const fromAddress = DEFAULT_FROM;
 
     const sent = await sendEmail({
       to: conversation.externalEmail,

@@ -33,7 +33,7 @@ function buildFromAddress(): string {
   // Final fallback
   return "ArbetsYtan <onboarding@resend.dev>";
 }
-const DEFAULT_FROM = buildFromAddress();
+export const DEFAULT_FROM = buildFromAddress();
 
 export type EmailAttachment = {
   filename: string;
