@@ -60,6 +60,7 @@ export async function extractAndSaveKnowledge(
   opts: ExtractAndSaveKnowledgeOptions
 ): Promise<{ extracted: number }> {
   const { db, conversationId, tenantId, userId } = opts;
+  logger.info("extractAndSaveKnowledge: starting", { conversationId, tenantId, userId });
   try {
     const conversation = await db.conversation.findFirst({
       where: { id: conversationId },
@@ -71,8 +72,10 @@ export async function extractAndSaveKnowledge(
       },
     });
     if (!conversation || conversation.messages.length === 0) {
+      logger.info("extractAndSaveKnowledge: no conversation or messages found", { conversationId });
       return { extracted: 0 };
     }
+    logger.info("extractAndSaveKnowledge: found messages", { count: conversation.messages.length });
 
     const transcript = conversation.messages
       .map((m) =>
