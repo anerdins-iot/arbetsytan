@@ -222,6 +222,7 @@
     "analyzing": "Analyserar…",
     "fileTooLarge": "Filen är för stor (max 50 MB)",
     "fileTypeNotAllowed": "Filtypen stöds inte",
+    "saveToProject": "Spara till projekt",
     "projectSelector": {
       "personal": "Personlig",
       "selectProject": "Välj projekt"

@@ -14,6 +14,7 @@ import {
   Image as ImageIcon,
   Loader2,
   FolderOpen,
+  FolderPlus,
   PanelRightClose,
   Maximize2,
   Minimize2,
@@ -102,6 +103,7 @@ type UploadedFile = {
   error?: string;
   url?: string;
   ocrText?: string | null;
+  thumbnailUrl?: string;
 };
 
 type AnalysisFileData = {
@@ -147,6 +149,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [messageDebugContext, setMessageDebugContext] = useState<Map<string, DebugContext>>(new Map());
   const [debugModalMessageId, setDebugModalMessageId] = useState<string | null>(null);
   const pendingDebugContextRef = useRef<DebugContext | null>(null);
+  // Track which messages have attached images (messageIndex -> fileIds)
+  const [chatImageMap, setChatImageMap] = useState<Map<number, string[]>>(new Map());
+  // Pending image file IDs to be sent with the next message
+  const pendingImageFileIdsRef = useRef<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -299,10 +305,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/ai/chat",
-      body: () => ({
-        ...(conversationId ? { conversationId } : {}),
-        ...(activeProjectIdRef.current ? { projectId: activeProjectIdRef.current } : {}),
-      }),
+      body: () => {
+        const imageFileIds = pendingImageFileIdsRef.current;
+        pendingImageFileIdsRef.current = [];
+        return {
+          ...(conversationId ? { conversationId } : {}),
+          ...(activeProjectIdRef.current ? { projectId: activeProjectIdRef.current } : {}),
+          ...(imageFileIds.length > 0 ? { imageFileIds } : {}),
+        };
+      },
       fetch: async (input, init) => {
         const res = await fetch(input, init);
         const convId = res.headers.get("X-Conversation-Id");
@@ -532,39 +543,31 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     return () => observer.disconnect();
   }, [conversationId, hasMore, isLoadingMore, loadMoreMessages]);
 
-  // Filuppladdning
+  // Filuppladdning — chatMode: upload silently, show thumbnail, send via vision
   const uploadFile = useCallback(
     async (file: File) => {
       const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const isImage = file.type.startsWith("image/");
+      const tempUrl = isImage ? URL.createObjectURL(file) : undefined;
+
       const uploadEntry: UploadedFile = {
         id: tempId,
         name: file.name,
         type: file.type,
         size: file.size,
         status: "uploading",
+        thumbnailUrl: tempUrl,
       };
 
       setUploadedFiles((prev) => [...prev, uploadEntry]);
 
-      // Open the dialog immediately with loading state for OCR
-      // User can start writing description while OCR runs
-      const tempUrl = URL.createObjectURL(file);
-      setAnalysisFile({
-        id: tempId,
-        name: file.name,
-        type: file.type,
-        url: tempUrl,
-        ocrText: null,
-        ocrLoading: true,
-      });
-
       try {
         const formData = new FormData();
         formData.append("file", file);
+        formData.append("chatMode", "true");
         if (conversationId) {
           formData.append("conversationId", conversationId);
         }
-        // Always upload to project when project is selected
         if (activeProjectIdRef.current) {
           formData.append("projectId", activeProjectIdRef.current);
         }
@@ -590,25 +593,16 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   status: "done" as const,
                   url: data.file.url,
                   ocrText: data.file.ocrText ?? null,
+                  thumbnailUrl: isImage ? (data.file.url ?? tempUrl) : undefined,
                 }
               : f
           )
         );
 
-        // Update the dialog with real file data and OCR result
-        setAnalysisFile((prev) => {
-          if (!prev || prev.id !== tempId) return prev;
-          // Revoke the temporary blob URL
+        // Revoke temp blob URL if we got a real URL
+        if (tempUrl && data.file.url) {
           URL.revokeObjectURL(tempUrl);
-          return {
-            id: data.file.id,
-            name: file.name,
-            type: file.type,
-            url: data.file.url ?? "",
-            ocrText: data.file.ocrText ?? null,
-            ocrLoading: false,
-          };
-        });
+        }
       } catch (err) {
         const errorMsg = err instanceof Error ? err.message : "Upload failed";
         setUploadedFiles((prev) =>
@@ -618,12 +612,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               : f
           )
         );
-        // Close dialog on error
-        setAnalysisFile(null);
-        URL.revokeObjectURL(tempUrl);
+        if (tempUrl) URL.revokeObjectURL(tempUrl);
       }
     },
-    [conversationId, sendMessage]
+    [conversationId]
   );
 
   const handleFileSelect = useCallback(
@@ -772,15 +764,36 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     (e?: { preventDefault?: () => void }) => {
       e?.preventDefault?.();
       const text = inputValue.trim();
-      if (!text || isLoading) return;
+      // Allow sending with images even without text
+      const imageFiles = uploadedFiles.filter(
+        (f) => f.status === "done" && f.type.startsWith("image/")
+      );
+      const hasImages = imageFiles.length > 0;
+      if ((!text && !hasImages) || isLoading) return;
       // Stop any current speech before sending new message
       stopSpeakingRef.current?.();
-      sendMessage({ text });
+
+      // Collect image file IDs to send
+      const imageFileIds = imageFiles.map((f) => f.id);
+      if (imageFileIds.length > 0) {
+        pendingImageFileIdsRef.current = imageFileIds;
+      }
+
+      // Track images for this message index (will be associated after send)
+      if (hasImages) {
+        const nextMsgIndex = messages.length;
+        setChatImageMap((prev) => {
+          const next = new Map(prev);
+          next.set(nextMsgIndex, imageFiles.map((f) => f.id));
+          return next;
+        });
+      }
+
+      sendMessage({ text: text || " " });
       setInputValue("");
-      // Clear any uploaded files after sending
       setUploadedFiles([]);
     },
-    [inputValue, isLoading, sendMessage]
+    [inputValue, isLoading, sendMessage, uploadedFiles, messages.length]
   );
 
   // Called when OCR review is complete - analysis runs in background
@@ -984,13 +997,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           </div>
         )}
         <div className="space-y-4 p-4">
-          {messages.map((message) => {
+          {messages.map((message, messageIndex) => {
             // Gruppera på varandra följande text-parts till en bubbla så att punktlistor
             // och långa svar inte blir en bubbla per rad/segment (AI SDK kan skicka flera text-parts per meddelande).
             const parts = message.parts ?? [];
             type TextGroup = { type: "text"; text: string };
             type ToolGroup = { type: "tool"; part: (typeof parts)[number]; index: number };
             const groups: Array<TextGroup | ToolGroup> = [];
+            // Get attached image file IDs for this user message
+            const attachedImageFileIds = message.role === "user" ? chatImageMap.get(messageIndex) : undefined;
             let textAcc: string[] = [];
             for (let i = 0; i < parts.length; i++) {
               const part = parts[i];
@@ -1288,6 +1303,57 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                 return null;
               })}
+              {/* Attached image thumbnails for user messages */}
+              {message.role === "user" && attachedImageFileIds && attachedImageFileIds.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 max-w-[85%]">
+                  {attachedImageFileIds.map((fileId) => (
+                    <div key={fileId} className="relative">
+                      <div className="size-16 overflow-hidden rounded-md border border-primary-foreground/20">
+                        <ImageIcon className="size-full p-3 text-primary-foreground/50" />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="icon"
+                        className="absolute -bottom-2 -right-2 size-6 rounded-full shadow-sm"
+                        onClick={() => {
+                          // Open OcrReviewDialog for this file
+                          setAnalysisFile({
+                            id: fileId,
+                            name: `image-${fileId.slice(0, 8)}`,
+                            type: "image/jpeg",
+                            url: "",
+                            ocrText: null,
+                            ocrLoading: true,
+                          });
+                          // Fetch file details to populate the dialog
+                          void (async () => {
+                            try {
+                              const res = await fetch(`/api/ai/upload/file-info?fileId=${fileId}`);
+                              if (res.ok) {
+                                const data = await res.json();
+                                setAnalysisFile({
+                                  id: fileId,
+                                  name: data.name || `image-${fileId.slice(0, 8)}`,
+                                  type: data.type || "image/jpeg",
+                                  url: data.url || "",
+                                  ocrText: data.ocrText ?? null,
+                                  ocrLoading: false,
+                                });
+                              }
+                            } catch {
+                              // Silently fail — user can close dialog
+                            }
+                          })();
+                        }}
+                        title={t("saveToProject")}
+                      >
+                        <FolderPlus className="size-3.5" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
               {/* RAG debug button for assistant messages */}
               {message.role === "assistant" && messageDebugContext.has(message.id) && (
                 <button
@@ -1306,46 +1372,80 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Uppladdade filer */}
+      {/* Uppladdade filer — thumbnails för bilder, kompakt chip för dokument */}
       {uploadedFiles.length > 0 && (
         <div className="border-t border-border px-3 py-2">
           <div className="flex flex-wrap gap-2">
-            {uploadedFiles.map((file) => (
-              <div
-                key={file.id}
-                className={cn(
-                  "flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs",
-                  file.status === "error"
-                    ? "border-destructive/50 bg-destructive/10 text-destructive"
-                    : file.status === "done"
-                      ? "border-border bg-muted text-foreground"
-                      : "border-border bg-muted/50 text-muted-foreground"
-                )}
-              >
-                {file.status === "uploading" || file.status === "analyzing" ? (
-                  <Loader2 className="size-3.5 animate-spin shrink-0" />
-                ) : (
-                  getFileIcon(file.type)
-                )}
-                <span className="max-w-[120px] truncate">{file.name}</span>
-                {file.status === "uploading" && (
-                  <span className="text-muted-foreground">{t("uploading")}</span>
-                )}
-                {file.status === "analyzing" && (
-                  <span className="text-muted-foreground">{t("analyzing")}</span>
-                )}
-                {file.error && (
-                  <span className="text-destructive">{file.error}</span>
-                )}
-                <button
-                  type="button"
-                  onClick={() => removeUploadedFile(file.id)}
-                  className="ml-auto rounded p-0.5 hover:bg-muted-foreground/20"
+            {uploadedFiles.map((file) => {
+              const isImage = file.type.startsWith("image/");
+              if (isImage && file.thumbnailUrl) {
+                return (
+                  <div
+                    key={file.id}
+                    className="group relative size-14 shrink-0 overflow-hidden rounded-md border border-border"
+                  >
+                    <img
+                      src={file.thumbnailUrl}
+                      alt={file.name}
+                      className="size-full object-cover"
+                    />
+                    {(file.status === "uploading" || file.status === "analyzing") && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-background/60">
+                        <Loader2 className="size-4 animate-spin text-muted-foreground" />
+                      </div>
+                    )}
+                    {file.status === "error" && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-destructive/20">
+                        <X className="size-4 text-destructive" />
+                      </div>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => removeUploadedFile(file.id)}
+                      className="absolute -right-1 -top-1 hidden rounded-full bg-background p-0.5 shadow-sm group-hover:block"
+                    >
+                      <X className="size-3" />
+                    </button>
+                  </div>
+                );
+              }
+              return (
+                <div
+                  key={file.id}
+                  className={cn(
+                    "flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs",
+                    file.status === "error"
+                      ? "border-destructive/50 bg-destructive/10 text-destructive"
+                      : file.status === "done"
+                        ? "border-border bg-muted text-foreground"
+                        : "border-border bg-muted/50 text-muted-foreground"
+                  )}
                 >
-                  <X className="size-3" />
-                </button>
-              </div>
-            ))}
+                  {file.status === "uploading" || file.status === "analyzing" ? (
+                    <Loader2 className="size-3.5 animate-spin shrink-0" />
+                  ) : (
+                    getFileIcon(file.type)
+                  )}
+                  <span className="max-w-[120px] truncate">{file.name}</span>
+                  {file.status === "uploading" && (
+                    <span className="text-muted-foreground">{t("uploading")}</span>
+                  )}
+                  {file.status === "analyzing" && (
+                    <span className="text-muted-foreground">{t("analyzing")}</span>
+                  )}
+                  {file.error && (
+                    <span className="text-destructive">{file.error}</span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => removeUploadedFile(file.id)}
+                    className="ml-auto rounded p-0.5 hover:bg-muted-foreground/20"
+                  >
+                    <X className="size-3" />
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -1460,7 +1560,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               type="submit"
               size="sm"
               className="gap-2"
-              disabled={!inputValue.trim()}
+              disabled={!inputValue.trim() && !uploadedFiles.some((f) => f.status === "done" && f.type.startsWith("image/"))}
               aria-label={t("send")}
             >
               <Send className="size-4" />

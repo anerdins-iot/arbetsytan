@@ -222,6 +222,7 @@
     "analyzing": "Analyzing…",
     "fileTooLarge": "File is too large (max 50 MB)",
     "fileTypeNotAllowed": "File type not supported",
+    "saveToProject": "Save to project",
     "projectSelector": {
       "personal": "Personal",
       "selectProject": "Select project"

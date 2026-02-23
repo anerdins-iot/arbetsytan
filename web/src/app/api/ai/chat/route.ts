@@ -8,7 +8,7 @@ import { streamText, stepCountIs, type UIMessage, convertToModelMessages } from 
 import { anthropic } from "@ai-sdk/anthropic";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, requireProject } from "@/lib/auth";
-import { tenantDb, userDb } from "@/lib/db";
+import { prisma, tenantDb, userDb } from "@/lib/db";
 import { getModel, streamConfig, type ProviderKey } from "@/lib/ai/providers";
 import { searchDocuments } from "@/lib/ai/embeddings";
 import { searchAllSources, type UnifiedSearchResult } from "@/lib/ai/unified-search";
@@ -23,6 +23,7 @@ import {
   type MessageEmbeddingsDb,
   queueMessageEmbeddingProcessing,
 } from "@/lib/ai/message-embeddings";
+import { fetchFileFromMinIO } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
 
 export type RagSource = {
@@ -37,6 +38,7 @@ type ChatRequestBody = {
   conversationId?: string;
   projectId?: string;
   provider?: ProviderKey;
+  imageFileIds?: string[];
 };
 
 export async function POST(req: NextRequest) {
@@ -58,7 +60,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { messages, conversationId, projectId, provider } = body;
+  const { messages, conversationId, projectId, provider, imageFileIds } = body;
 
   if (!messages || !Array.isArray(messages) || messages.length === 0) {
     return NextResponse.json(
@@ -311,7 +313,38 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Fetch image files from MinIO and prepare base64 data URLs for vision
+  const imageDataUrls: string[] = [];
+  if (imageFileIds && imageFileIds.length > 0) {
+    try {
+      const imageFiles = await prisma.file.findMany({
+        where: { id: { in: imageFileIds } },
+        select: { id: true, bucket: true, key: true, type: true, name: true },
+      });
+
+      for (const imgFile of imageFiles) {
+        try {
+          const buffer = await fetchFileFromMinIO(imgFile.bucket, imgFile.key);
+          const base64 = buffer.toString("base64");
+          const mimeType = imgFile.type || "image/jpeg";
+          imageDataUrls.push(`data:${mimeType};base64,${base64}`);
+        } catch (imgErr) {
+          logger.warn("Failed to fetch image file from MinIO", {
+            fileId: imgFile.id,
+            error: imgErr instanceof Error ? imgErr.message : String(imgErr),
+          });
+        }
+      }
+    } catch (dbErr) {
+      logger.warn("Failed to fetch image files from DB", {
+        imageFileIds,
+        error: dbErr instanceof Error ? dbErr.message : String(dbErr),
+      });
+    }
+  }
+
   const isFirstTurn = messages.filter((m) => m.role === "user").length <= 1;
+  const hasAttachedImages = imageDataUrls.length > 0;
   const systemPrompt = buildSystemPrompt({
     userName: user.name ?? undefined,
     userRole: role,
@@ -321,6 +354,7 @@ export async function POST(req: NextRequest) {
     knowledgeContext,
     checkUnreadOnStart: isFirstTurn,
     conversationSummary,
+    hasAttachedImages,
   });
 
   logger.info("AI chat request", {
@@ -345,6 +379,28 @@ export async function POST(req: NextRequest) {
       { error: "Invalid message format" },
       { status: 400 }
     );
+  }
+
+  // If we have images, inject image parts into the last user model message
+  if (imageDataUrls.length > 0) {
+    for (let i = modelMessages.length - 1; i >= 0; i--) {
+      const msg = modelMessages[i];
+      if (msg.role === "user") {
+        const imageParts = imageDataUrls.map((dataUrl) => ({
+          type: "image" as const,
+          image: dataUrl,
+        }));
+        // ModelMessage user content can be an array of parts
+        const existingContent = Array.isArray(msg.content)
+          ? msg.content
+          : [{ type: "text" as const, text: typeof msg.content === "string" ? msg.content : "" }];
+        modelMessages[i] = {
+          ...msg,
+          content: [...existingContent, ...imageParts],
+        };
+        break;
+      }
+    }
   }
 
   // Stream the response (with tools for project and personal AI)
@@ -499,8 +555,9 @@ function buildSystemPrompt(opts: {
   knowledgeContext?: string;
   checkUnreadOnStart?: boolean;
   conversationSummary?: string | null;
+  hasAttachedImages?: boolean;
 }): string {
-  const { userName, userRole, projectId, projectContext, ragContext, knowledgeContext, checkUnreadOnStart, conversationSummary } = opts;
+  const { userName, userRole, projectId, projectContext, ragContext, knowledgeContext, checkUnreadOnStart, conversationSummary, hasAttachedImages } = opts;
 
   const knowledgeBlock =
     knowledgeContext && knowledgeContext.trim()
@@ -596,6 +653,11 @@ VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
     ? ""
     : " VIKTIGT: När användaren frågar om dokument, filer, ritningar, eller specifikt innehåll — använd sökstrategin ovan. Svara ALDRIG 'jag hittade inget' utan att ha provat minst 2-3 verktyg!";
 
+  // Image analysis instruction when user attaches images
+  const imageAnalysisInstruction = hasAttachedImages
+    ? "\n\nBILDANALYS: Användaren har bifogat en eller flera bilder. Analysera bilden/bilderna noggrant och beskriv vad du ser. Ställ EN konkret följdfråga för att förstå sammanhanget bättre — t.ex. vad bilden föreställer, var den togs, eller hur den relaterar till arbetet."
+    : "";
+
   parts.push(
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
@@ -606,6 +668,7 @@ VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
     imageDisplayGuidance,
     webSearchGuidance,
     searchGuidance,
+    imageAnalysisInstruction,
     knowledgeBlock,
     summaryBlock
   );

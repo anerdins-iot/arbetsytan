@@ -50,6 +50,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get("file") as File | null;
     const conversationId = formData.get("conversationId") as string | null;
     const projectId = formData.get("projectId") as string | null;
+    const chatMode = formData.get("chatMode") === "true";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -119,8 +120,8 @@ export async function POST(req: NextRequest) {
       userId,
     });
 
-    // Skicka systemmeddelande till konversationen (använd userDb för personliga konversationer så att auto-emit triggas)
-    if (conversationId) {
+    // Skicka systemmeddelande till konversationen (skippa i chatMode — bilden skickas via AI vision istället)
+    if (conversationId && !chatMode) {
       // Use the same db client to find conversation
       const existingConv = await db.conversation.findFirst({
         where: { id: conversationId },
