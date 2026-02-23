@@ -368,11 +368,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     }
   }, [isLoading, messages]);
 
-  // Associate pending model key with assistant message once streaming finishes
+  // Associate pending model key with the last assistant message once streaming finishes
   useEffect(() => {
     if (isLoading || !pendingModelKeyRef.current) return;
-    const lastMsg = [...messages].reverse().find(m => m.role === "assistant");
-    if (lastMsg) {
+    const lastMsg = messages[messages.length - 1];
+    if (lastMsg?.role === "assistant") {
       const key = pendingModelKeyRef.current;
       pendingModelKeyRef.current = null;
       setMessageModels(prev => new Map(prev).set(lastMsg.id, key));
