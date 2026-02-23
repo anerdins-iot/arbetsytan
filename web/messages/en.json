@@ -79,6 +79,25 @@
       "linkToProject": "Link to project",
       "noProject": "No project"
     },
+    "sidebar": {
+      "inbox": "Inbox",
+      "sent": "Sent",
+      "compose": "Compose new",
+      "search": "Search conversations..."
+    },
+    "list": {
+      "searchPlaceholder": "Search conversations...",
+      "today": "Today",
+      "noContent": "(No content)"
+    },
+    "conversation": {
+      "selectConversation": "Select a conversation",
+      "selectConversationDescription": "Select a conversation from the list to read it.",
+      "noContent": "(No content)",
+      "dateSeparator": "{date}",
+      "you": "You",
+      "back": "Back"
+    },
     "recipients": "Recipients",
     "selectRecipients": "Choose who will receive your message",
     "recipientType": "Recipient type",

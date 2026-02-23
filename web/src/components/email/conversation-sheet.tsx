@@ -1,95 +1,97 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition, useRef } from "react";
 import { useTranslations } from "next-intl";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Archive, Loader2, Send } from "lucide-react";
+import { Archive, Loader2, Mail, ArrowLeft } from "lucide-react";
 import {
   getConversation,
   replyToConversation,
   markConversationAsRead,
   archiveConversation,
 } from "@/actions/email-conversations";
-import type { ConversationWithMessages, EmailMessageData } from "@/services/email-conversations";
-import { cn } from "@/lib/utils";
+import type {
+  ConversationWithMessages,
+  EmailMessageData,
+} from "@/services/email-conversations";
+import { MessageBubble, DateSeparator } from "./message-bubble";
+import { ReplyBox } from "./reply-box";
 
-type ConversationSheetProps = {
+type ConversationViewProps = {
   conversationId: string | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   onArchiveSuccess?: () => void;
+  onBack?: () => void;
 };
 
-function formatMessageTime(d: Date): string {
-  return new Date(d).toLocaleString(undefined, {
-    dateStyle: "short",
-    timeStyle: "short",
+function formatDateHeader(d: Date): string {
+  const date = new Date(d);
+  const now = new Date();
+  const isToday =
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear();
+  if (isToday) {
+    return new Date(d).toLocaleDateString(undefined, {
+      weekday: "long",
+    });
+  }
+  return new Date(d).toLocaleDateString(undefined, {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 }
 
-function MessageBubble({
-  message,
-  isOutbound,
-}: {
-  message: EmailMessageData;
-  isOutbound: boolean;
-}) {
-  const displayName =
-    message.fromName?.trim() || message.fromEmail;
-  const body = message.bodyText?.trim() || message.bodyHtml?.replace(/<[^>]+>/g, "").trim() || "";
-
-  return (
-    <div
-      className={cn(
-        "flex",
-        isOutbound ? "justify-end" : "justify-start"
-      )}
-    >
-      <div
-        className={cn(
-          "max-w-[85%] rounded-lg px-3 py-2 text-sm",
-          isOutbound
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-foreground"
-        )}
-      >
-        <p className="font-medium text-xs opacity-90">{displayName}</p>
-        <p className="whitespace-pre-wrap break-words mt-0.5">{body || "—"}</p>
-        <p className="text-xs opacity-80 mt-1">
-          {formatMessageTime(message.createdAt)}
-        </p>
-      </div>
-    </div>
-  );
+function getDateKey(d: Date): string {
+  const date = new Date(d);
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
 
-export function ConversationSheet({
+function groupMessagesByDate(
+  messages: EmailMessageData[]
+): { dateKey: string; dateLabel: string; messages: EmailMessageData[] }[] {
+  const groups: Map<
+    string,
+    { dateLabel: string; messages: EmailMessageData[] }
+  > = new Map();
+
+  for (const msg of messages) {
+    const key = getDateKey(msg.createdAt);
+    if (!groups.has(key)) {
+      groups.set(key, {
+        dateLabel: formatDateHeader(msg.createdAt),
+        messages: [],
+      });
+    }
+    groups.get(key)!.messages.push(msg);
+  }
+
+  return Array.from(groups.entries()).map(([dateKey, group]) => ({
+    dateKey,
+    ...group,
+  }));
+}
+
+export function ConversationView({
   conversationId,
-  open,
-  onOpenChange,
   onArchiveSuccess,
-}: ConversationSheetProps) {
-  const t = useTranslations("email.inbox");
-  const [conversation, setConversation] = useState<ConversationWithMessages | null>(null);
-  const [replyBody, setReplyBody] = useState("");
+  onBack,
+}: ConversationViewProps) {
+  const t = useTranslations("email.conversation");
+  const tInbox = useTranslations("email.inbox");
+  const [conversation, setConversation] =
+    useState<ConversationWithMessages | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isPendingReply, startReplyTransition] = useTransition();
   const [isPendingArchive, startArchiveTransition] = useTransition();
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open || !conversationId) {
+    if (!conversationId) {
       setConversation(null);
       setLoadError(null);
-      setReplyBody("");
       return;
     }
     let cancelled = false;
@@ -99,8 +101,13 @@ export function ConversationSheet({
         if (cancelled) return;
         if (res.success) {
           setConversation(res.conversation);
-          setReplyBody("");
           markConversationAsRead(conversationId).catch(() => {});
+          // Scroll to bottom after load
+          requestAnimationFrame(() => {
+            if (scrollRef.current) {
+              scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+            }
+          });
         } else {
           setLoadError(res.error ?? "UNKNOWN_ERROR");
         }
@@ -111,20 +118,28 @@ export function ConversationSheet({
     return () => {
       cancelled = true;
     };
-  }, [open, conversationId]);
+  }, [conversationId]);
 
-  const handleReply = () => {
-    if (!conversationId || !replyBody.trim()) return;
-    const html = replyBody.trim().replace(/\n/g, "<br>");
+  const handleReply = async (bodyText: string, bodyHtml: string) => {
+    if (!conversationId) return;
     startReplyTransition(async () => {
       const result = await replyToConversation(conversationId, {
-        bodyHtml: `<p>${html}</p>`,
-        bodyText: replyBody.trim(),
+        bodyHtml,
+        bodyText,
       });
       if (result.success) {
-        setReplyBody("");
         const res = await getConversation(conversationId);
-        if (res.success) setConversation(res.conversation);
+        if (res.success) {
+          setConversation(res.conversation);
+          requestAnimationFrame(() => {
+            if (scrollRef.current) {
+              scrollRef.current.scrollTo({
+                top: scrollRef.current.scrollHeight,
+                behavior: "smooth",
+              });
+            }
+          });
+        }
       }
     });
   };
@@ -134,64 +149,109 @@ export function ConversationSheet({
     startArchiveTransition(async () => {
       const result = await archiveConversation(conversationId);
       if (result.success) {
-        onOpenChange(false);
+        setConversation(null);
         onArchiveSuccess?.();
       }
     });
   };
 
+  // Empty state — no conversation selected
+  if (!conversationId) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center px-8">
+        <Mail className="h-12 w-12 text-muted-foreground/30 mb-4" />
+        <h3 className="text-lg font-medium text-foreground">
+          {t("selectConversation")}
+        </h3>
+        <p className="text-sm text-muted-foreground mt-1 max-w-sm">
+          {t("selectConversationDescription")}
+        </p>
+      </div>
+    );
+  }
+
+  // Error state
+  if (loadError) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <p className="text-sm text-destructive">{loadError}</p>
+      </div>
+    );
+  }
+
+  // Loading state
+  if (!conversation) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   const counterpart =
-    conversation?.externalName?.trim() || conversation?.externalEmail || "";
+    conversation.externalName?.trim() || conversation.externalEmail || "";
+  const messageGroups = groupMessagesByDate(conversation.messages);
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="flex flex-col w-full sm:max-w-lg"
-        showCloseButton
-      >
-        <SheetHeader className="shrink-0">
-          <div className="flex items-start justify-between gap-2 pr-6">
+    <div className="flex flex-col h-full bg-background">
+      {/* Header */}
+      <div className="border-b border-border px-4 py-3 bg-card shrink-0">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            {onBack && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onBack}
+                className="shrink-0 md:hidden h-8 w-8"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span className="sr-only">{t("back")}</span>
+              </Button>
+            )}
             <div className="min-w-0">
-              <SheetTitle className="truncate">
-                {conversation?.subject ?? t("loading")}
-              </SheetTitle>
-              <SheetDescription className="flex items-center gap-2 flex-wrap mt-1">
-                <span className="truncate">{counterpart}</span>
-                {conversation?.projectName && (
-                  <Badge variant="secondary" className="text-xs">
+              <h2 className="text-base font-semibold text-foreground truncate">
+                {conversation.subject || tInbox("noSubject")}
+              </h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-sm text-muted-foreground truncate">
+                  {counterpart}
+                </span>
+                {conversation.projectName && (
+                  <Badge variant="secondary" className="text-xs shrink-0">
                     {conversation.projectName}
                   </Badge>
                 )}
-              </SheetDescription>
+              </div>
             </div>
-            {conversation && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleArchive}
-                disabled={isPendingArchive}
-                className="shrink-0"
-              >
-                {isPendingArchive ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Archive className="h-4 w-4" />
-                )}
-                <span className="sr-only">{t("archive")}</span>
-              </Button>
-            )}
           </div>
-        </SheetHeader>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleArchive}
+            disabled={isPendingArchive}
+            className="shrink-0 text-muted-foreground hover:text-foreground"
+          >
+            {isPendingArchive ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Archive className="h-4 w-4" />
+            )}
+            <span className="ml-1.5 hidden sm:inline">
+              {tInbox("archive")}
+            </span>
+          </Button>
+        </div>
+      </div>
 
-        <div className="flex-1 flex flex-col min-h-0 mt-4">
-          {loadError && (
-            <p className="text-sm text-destructive py-4">{loadError}</p>
-          )}
-          {conversation && !loadError && (
-            <>
-              <div className="flex-1 overflow-y-auto space-y-3 pb-4">
-                {conversation.messages.map((msg) => (
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto" ref={scrollRef}>
+        <div className="px-4 py-4 space-y-3">
+          {messageGroups.map((group) => (
+            <div key={group.dateKey}>
+              <DateSeparator date={group.dateLabel} />
+              <div className="space-y-3">
+                {group.messages.map((msg) => (
                   <MessageBubble
                     key={msg.id}
                     message={msg}
@@ -199,32 +259,16 @@ export function ConversationSheet({
                   />
                 ))}
               </div>
-              <div className="border-t border-border pt-4 shrink-0 space-y-2">
-                <Textarea
-                  placeholder={t("replyPlaceholder")}
-                  value={replyBody}
-                  onChange={(e) => setReplyBody(e.target.value)}
-                  className="min-h-[80px] resize-none"
-                  disabled={isPendingReply}
-                />
-                <Button
-                  onClick={handleReply}
-                  disabled={!replyBody.trim() || isPendingReply}
-                  size="sm"
-                  className="w-full gap-2"
-                >
-                  {isPendingReply ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="h-4 w-4" />
-                  )}
-                  {t("sendReply")}
-                </Button>
-              </div>
-            </>
-          )}
+            </div>
+          ))}
         </div>
-      </SheetContent>
-    </Sheet>
+      </div>
+
+      {/* Reply box */}
+      <ReplyBox onSend={handleReply} isPending={isPendingReply} />
+    </div>
   );
 }
+
+// Keep backwards-compat export name
+export { ConversationView as ConversationSheet };
