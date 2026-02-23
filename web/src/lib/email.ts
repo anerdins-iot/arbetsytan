@@ -23,8 +23,11 @@ function buildFromAddress(): string {
   if (email) return `ArbetsYtan <${email}>`;
 
   // Legacy: single RESEND_FROM var (may have Coolify escaping issues)
-  const legacy = process.env.RESEND_FROM?.trim().replace(/^["']|["']$/g, "");
-  if (legacy?.includes("<") && legacy.includes(">")) return legacy;
+  const legacy = process.env.RESEND_FROM?.trim().replace(/^["']|["']$/g, "").trim();
+  if (legacy?.includes("<") && legacy.includes(">")) {
+    // Normalise: strip whitespace inside angle brackets e.g. "Name <email >" → "Name <email>"
+    return legacy.replace(/\s*>\s*$/, ">").replace(/<\s*/g, "<").trim();
+  }
   if (legacy?.includes("@")) return `ArbetsYtan <${legacy}>`;
 
   // Final fallback
