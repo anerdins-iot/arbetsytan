@@ -223,8 +223,8 @@ export type FileAnalysisWhereInput = {
   projectId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
   userId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
   file?: Prisma.XOR<Prisma.FileScalarRelationFilter, Prisma.FileWhereInput>
-  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
@@ -240,8 +240,8 @@ export type FileAnalysisOrderByWithRelationInput = {
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   file?: Prisma.FileOrderByWithRelationInput
-  tenant?: Prisma.TenantOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
+  tenant?: Prisma.TenantOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -260,8 +260,8 @@ export type FileAnalysisWhereUniqueInput = Prisma.AtLeast<{
   projectId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
   userId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
   file?: Prisma.XOR<Prisma.FileScalarRelationFilter, Prisma.FileWhereInput>
-  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
@@ -305,9 +305,9 @@ export type FileAnalysisCreateInput = {
   type?: string
   createdAt?: Date | string
   file: Prisma.FileCreateNestedOneWithoutAnalysesInput
-  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFileAnalysesInput
-  user?: Prisma.UserCreateNestedOneWithoutFileAnalysesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysisInput
+  user?: Prisma.UserCreateNestedOneWithoutFileAnalysisInput
 }
 
 export type FileAnalysisUncheckedCreateInput = {
@@ -331,9 +331,9 @@ export type FileAnalysisUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   file?: Prisma.FileUpdateOneRequiredWithoutAnalysesNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFileAnalysesNestedInput
-  user?: Prisma.UserUpdateOneWithoutFileAnalysesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysisNestedInput
+  user?: Prisma.UserUpdateOneWithoutFileAnalysisNestedInput
 }
 
 export type FileAnalysisUncheckedUpdateInput = {
@@ -433,6 +433,90 @@ export type FileAnalysisMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
 }
 
+export type FileAnalysisCreateNestedManyWithoutFileInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
+  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+}
+
+export type FileAnalysisUncheckedCreateNestedManyWithoutFileInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
+  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+}
+
+export type FileAnalysisUpdateManyWithoutFileNestedInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
+  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput[]
+  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
+  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput[]
+  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput[]
+  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
+}
+
+export type FileAnalysisUncheckedUpdateManyWithoutFileNestedInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
+  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput[]
+  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
+  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput[]
+  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput[]
+  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
+}
+
+export type FileAnalysisCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+}
+
+export type FileAnalysisUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+}
+
+export type FileAnalysisUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
+  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
+}
+
+export type FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
+  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
+  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
+}
+
 export type FileAnalysisCreateNestedManyWithoutTenantInput = {
   create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutTenantInput, Prisma.FileAnalysisUncheckedCreateWithoutTenantInput> | Prisma.FileAnalysisCreateWithoutTenantInput[] | Prisma.FileAnalysisUncheckedCreateWithoutTenantInput[]
   connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutTenantInput | Prisma.FileAnalysisCreateOrConnectWithoutTenantInput[]
@@ -517,256 +601,6 @@ export type FileAnalysisUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
 }
 
-export type FileAnalysisCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-}
-
-export type FileAnalysisUncheckedCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-}
-
-export type FileAnalysisUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
-  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
-}
-
-export type FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput> | Prisma.FileAnalysisCreateWithoutProjectInput[] | Prisma.FileAnalysisUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutProjectInput | Prisma.FileAnalysisCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.FileAnalysisCreateManyProjectInputEnvelope
-  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
-}
-
-export type FileAnalysisCreateNestedManyWithoutFileInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
-  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-}
-
-export type FileAnalysisUncheckedCreateNestedManyWithoutFileInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
-  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-}
-
-export type FileAnalysisUpdateManyWithoutFileNestedInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
-  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput[]
-  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
-  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput[]
-  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput[]
-  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
-}
-
-export type FileAnalysisUncheckedUpdateManyWithoutFileNestedInput = {
-  create?: Prisma.XOR<Prisma.FileAnalysisCreateWithoutFileInput, Prisma.FileAnalysisUncheckedCreateWithoutFileInput> | Prisma.FileAnalysisCreateWithoutFileInput[] | Prisma.FileAnalysisUncheckedCreateWithoutFileInput[]
-  connectOrCreate?: Prisma.FileAnalysisCreateOrConnectWithoutFileInput | Prisma.FileAnalysisCreateOrConnectWithoutFileInput[]
-  upsert?: Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpsertWithWhereUniqueWithoutFileInput[]
-  createMany?: Prisma.FileAnalysisCreateManyFileInputEnvelope
-  set?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  disconnect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  delete?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  connect?: Prisma.FileAnalysisWhereUniqueInput | Prisma.FileAnalysisWhereUniqueInput[]
-  update?: Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput | Prisma.FileAnalysisUpdateWithWhereUniqueWithoutFileInput[]
-  updateMany?: Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput | Prisma.FileAnalysisUpdateManyWithWhereWithoutFileInput[]
-  deleteMany?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
-}
-
-export type FileAnalysisCreateWithoutTenantInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  file: Prisma.FileCreateNestedOneWithoutAnalysesInput
-  project?: Prisma.ProjectCreateNestedOneWithoutFileAnalysesInput
-  user?: Prisma.UserCreateNestedOneWithoutFileAnalysesInput
-}
-
-export type FileAnalysisUncheckedCreateWithoutTenantInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  fileId: string
-  projectId?: string | null
-  userId?: string | null
-}
-
-export type FileAnalysisCreateOrConnectWithoutTenantInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutTenantInput, Prisma.FileAnalysisUncheckedCreateWithoutTenantInput>
-}
-
-export type FileAnalysisCreateManyTenantInputEnvelope = {
-  data: Prisma.FileAnalysisCreateManyTenantInput | Prisma.FileAnalysisCreateManyTenantInput[]
-  skipDuplicates?: boolean
-}
-
-export type FileAnalysisUpsertWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  update: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutTenantInput, Prisma.FileAnalysisUncheckedUpdateWithoutTenantInput>
-  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutTenantInput, Prisma.FileAnalysisUncheckedCreateWithoutTenantInput>
-}
-
-export type FileAnalysisUpdateWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  data: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutTenantInput, Prisma.FileAnalysisUncheckedUpdateWithoutTenantInput>
-}
-
-export type FileAnalysisUpdateManyWithWhereWithoutTenantInput = {
-  where: Prisma.FileAnalysisScalarWhereInput
-  data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantInput>
-}
-
-export type FileAnalysisScalarWhereInput = {
-  AND?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
-  OR?: Prisma.FileAnalysisScalarWhereInput[]
-  NOT?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
-  id?: Prisma.StringFilter<"FileAnalysis"> | string
-  content?: Prisma.StringFilter<"FileAnalysis"> | string
-  prompt?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
-  model?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
-  type?: Prisma.StringFilter<"FileAnalysis"> | string
-  createdAt?: Prisma.DateTimeFilter<"FileAnalysis"> | Date | string
-  fileId?: Prisma.StringFilter<"FileAnalysis"> | string
-  tenantId?: Prisma.StringFilter<"FileAnalysis"> | string
-  projectId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
-  userId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
-}
-
-export type FileAnalysisCreateWithoutUserInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  file: Prisma.FileCreateNestedOneWithoutAnalysesInput
-  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysesInput
-  project?: Prisma.ProjectCreateNestedOneWithoutFileAnalysesInput
-}
-
-export type FileAnalysisUncheckedCreateWithoutUserInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  fileId: string
-  tenantId: string
-  projectId?: string | null
-}
-
-export type FileAnalysisCreateOrConnectWithoutUserInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutUserInput, Prisma.FileAnalysisUncheckedCreateWithoutUserInput>
-}
-
-export type FileAnalysisCreateManyUserInputEnvelope = {
-  data: Prisma.FileAnalysisCreateManyUserInput | Prisma.FileAnalysisCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type FileAnalysisUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  update: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutUserInput, Prisma.FileAnalysisUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutUserInput, Prisma.FileAnalysisUncheckedCreateWithoutUserInput>
-}
-
-export type FileAnalysisUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  data: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutUserInput, Prisma.FileAnalysisUncheckedUpdateWithoutUserInput>
-}
-
-export type FileAnalysisUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.FileAnalysisScalarWhereInput
-  data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutUserInput>
-}
-
-export type FileAnalysisCreateWithoutProjectInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  file: Prisma.FileCreateNestedOneWithoutAnalysesInput
-  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysesInput
-  user?: Prisma.UserCreateNestedOneWithoutFileAnalysesInput
-}
-
-export type FileAnalysisUncheckedCreateWithoutProjectInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  fileId: string
-  tenantId: string
-  userId?: string | null
-}
-
-export type FileAnalysisCreateOrConnectWithoutProjectInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput>
-}
-
-export type FileAnalysisCreateManyProjectInputEnvelope = {
-  data: Prisma.FileAnalysisCreateManyProjectInput | Prisma.FileAnalysisCreateManyProjectInput[]
-  skipDuplicates?: boolean
-}
-
-export type FileAnalysisUpsertWithWhereUniqueWithoutProjectInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  update: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutProjectInput, Prisma.FileAnalysisUncheckedUpdateWithoutProjectInput>
-  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput>
-}
-
-export type FileAnalysisUpdateWithWhereUniqueWithoutProjectInput = {
-  where: Prisma.FileAnalysisWhereUniqueInput
-  data: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutProjectInput, Prisma.FileAnalysisUncheckedUpdateWithoutProjectInput>
-}
-
-export type FileAnalysisUpdateManyWithWhereWithoutProjectInput = {
-  where: Prisma.FileAnalysisScalarWhereInput
-  data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectInput>
-}
-
 export type FileAnalysisCreateWithoutFileInput = {
   id?: string
   content: string
@@ -774,9 +608,9 @@ export type FileAnalysisCreateWithoutFileInput = {
   model?: string | null
   type?: string
   createdAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysesInput
   project?: Prisma.ProjectCreateNestedOneWithoutFileAnalysesInput
-  user?: Prisma.UserCreateNestedOneWithoutFileAnalysesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysisInput
+  user?: Prisma.UserCreateNestedOneWithoutFileAnalysisInput
 }
 
 export type FileAnalysisUncheckedCreateWithoutFileInput = {
@@ -817,6 +651,268 @@ export type FileAnalysisUpdateManyWithWhereWithoutFileInput = {
   data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutFileInput>
 }
 
+export type FileAnalysisScalarWhereInput = {
+  AND?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
+  OR?: Prisma.FileAnalysisScalarWhereInput[]
+  NOT?: Prisma.FileAnalysisScalarWhereInput | Prisma.FileAnalysisScalarWhereInput[]
+  id?: Prisma.StringFilter<"FileAnalysis"> | string
+  content?: Prisma.StringFilter<"FileAnalysis"> | string
+  prompt?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
+  model?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
+  type?: Prisma.StringFilter<"FileAnalysis"> | string
+  createdAt?: Prisma.DateTimeFilter<"FileAnalysis"> | Date | string
+  fileId?: Prisma.StringFilter<"FileAnalysis"> | string
+  tenantId?: Prisma.StringFilter<"FileAnalysis"> | string
+  projectId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
+  userId?: Prisma.StringNullableFilter<"FileAnalysis"> | string | null
+}
+
+export type FileAnalysisCreateWithoutProjectInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  file: Prisma.FileCreateNestedOneWithoutAnalysesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysisInput
+  user?: Prisma.UserCreateNestedOneWithoutFileAnalysisInput
+}
+
+export type FileAnalysisUncheckedCreateWithoutProjectInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  fileId: string
+  tenantId: string
+  userId?: string | null
+}
+
+export type FileAnalysisCreateOrConnectWithoutProjectInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput>
+}
+
+export type FileAnalysisCreateManyProjectInputEnvelope = {
+  data: Prisma.FileAnalysisCreateManyProjectInput | Prisma.FileAnalysisCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type FileAnalysisUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  update: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutProjectInput, Prisma.FileAnalysisUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutProjectInput, Prisma.FileAnalysisUncheckedCreateWithoutProjectInput>
+}
+
+export type FileAnalysisUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  data: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutProjectInput, Prisma.FileAnalysisUncheckedUpdateWithoutProjectInput>
+}
+
+export type FileAnalysisUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.FileAnalysisScalarWhereInput
+  data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectInput>
+}
+
+export type FileAnalysisCreateWithoutTenantInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  file: Prisma.FileCreateNestedOneWithoutAnalysesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFileAnalysesInput
+  user?: Prisma.UserCreateNestedOneWithoutFileAnalysisInput
+}
+
+export type FileAnalysisUncheckedCreateWithoutTenantInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  fileId: string
+  projectId?: string | null
+  userId?: string | null
+}
+
+export type FileAnalysisCreateOrConnectWithoutTenantInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutTenantInput, Prisma.FileAnalysisUncheckedCreateWithoutTenantInput>
+}
+
+export type FileAnalysisCreateManyTenantInputEnvelope = {
+  data: Prisma.FileAnalysisCreateManyTenantInput | Prisma.FileAnalysisCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type FileAnalysisUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  update: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutTenantInput, Prisma.FileAnalysisUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutTenantInput, Prisma.FileAnalysisUncheckedCreateWithoutTenantInput>
+}
+
+export type FileAnalysisUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  data: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutTenantInput, Prisma.FileAnalysisUncheckedUpdateWithoutTenantInput>
+}
+
+export type FileAnalysisUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.FileAnalysisScalarWhereInput
+  data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type FileAnalysisCreateWithoutUserInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  file: Prisma.FileCreateNestedOneWithoutAnalysesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFileAnalysesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutFileAnalysisInput
+}
+
+export type FileAnalysisUncheckedCreateWithoutUserInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  fileId: string
+  tenantId: string
+  projectId?: string | null
+}
+
+export type FileAnalysisCreateOrConnectWithoutUserInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutUserInput, Prisma.FileAnalysisUncheckedCreateWithoutUserInput>
+}
+
+export type FileAnalysisCreateManyUserInputEnvelope = {
+  data: Prisma.FileAnalysisCreateManyUserInput | Prisma.FileAnalysisCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type FileAnalysisUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  update: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutUserInput, Prisma.FileAnalysisUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.FileAnalysisCreateWithoutUserInput, Prisma.FileAnalysisUncheckedCreateWithoutUserInput>
+}
+
+export type FileAnalysisUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.FileAnalysisWhereUniqueInput
+  data: Prisma.XOR<Prisma.FileAnalysisUpdateWithoutUserInput, Prisma.FileAnalysisUncheckedUpdateWithoutUserInput>
+}
+
+export type FileAnalysisUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.FileAnalysisScalarWhereInput
+  data: Prisma.XOR<Prisma.FileAnalysisUpdateManyMutationInput, Prisma.FileAnalysisUncheckedUpdateManyWithoutUserInput>
+}
+
+export type FileAnalysisCreateManyFileInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  tenantId: string
+  projectId?: string | null
+  userId?: string | null
+}
+
+export type FileAnalysisUpdateWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneWithoutFileAnalysesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysisNestedInput
+  user?: Prisma.UserUpdateOneWithoutFileAnalysisNestedInput
+}
+
+export type FileAnalysisUncheckedUpdateWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type FileAnalysisUncheckedUpdateManyWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type FileAnalysisCreateManyProjectInput = {
+  id?: string
+  content: string
+  prompt?: string | null
+  model?: string | null
+  type?: string
+  createdAt?: Date | string
+  fileId: string
+  tenantId: string
+  userId?: string | null
+}
+
+export type FileAnalysisUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  file?: Prisma.FileUpdateOneRequiredWithoutAnalysesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysisNestedInput
+  user?: Prisma.UserUpdateOneWithoutFileAnalysisNestedInput
+}
+
+export type FileAnalysisUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type FileAnalysisUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  fileId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 export type FileAnalysisCreateManyTenantInput = {
   id?: string
   content: string
@@ -838,7 +934,7 @@ export type FileAnalysisUpdateWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   file?: Prisma.FileUpdateOneRequiredWithoutAnalysesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFileAnalysesNestedInput
-  user?: Prisma.UserUpdateOneWithoutFileAnalysesNestedInput
+  user?: Prisma.UserUpdateOneWithoutFileAnalysisNestedInput
 }
 
 export type FileAnalysisUncheckedUpdateWithoutTenantInput = {
@@ -885,8 +981,8 @@ export type FileAnalysisUpdateWithoutUserInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   file?: Prisma.FileUpdateOneRequiredWithoutAnalysesNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysesNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFileAnalysesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysisNestedInput
 }
 
 export type FileAnalysisUncheckedUpdateWithoutUserInput = {
@@ -913,102 +1009,6 @@ export type FileAnalysisUncheckedUpdateManyWithoutUserInput = {
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type FileAnalysisCreateManyProjectInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  fileId: string
-  tenantId: string
-  userId?: string | null
-}
-
-export type FileAnalysisUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  file?: Prisma.FileUpdateOneRequiredWithoutAnalysesNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysesNestedInput
-  user?: Prisma.UserUpdateOneWithoutFileAnalysesNestedInput
-}
-
-export type FileAnalysisUncheckedUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  fileId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type FileAnalysisUncheckedUpdateManyWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  fileId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type FileAnalysisCreateManyFileInput = {
-  id?: string
-  content: string
-  prompt?: string | null
-  model?: string | null
-  type?: string
-  createdAt?: Date | string
-  tenantId: string
-  projectId?: string | null
-  userId?: string | null
-}
-
-export type FileAnalysisUpdateWithoutFileInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutFileAnalysesNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutFileAnalysesNestedInput
-  user?: Prisma.UserUpdateOneWithoutFileAnalysesNestedInput
-}
-
-export type FileAnalysisUncheckedUpdateWithoutFileInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type FileAnalysisUncheckedUpdateManyWithoutFileInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  prompt?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
 
 
 export type FileAnalysisSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1023,8 +1023,8 @@ export type FileAnalysisSelect<ExtArgs extends runtime.Types.Extensions.Internal
   projectId?: boolean
   userId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.FileAnalysis$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.FileAnalysis$userArgs<ExtArgs>
 }, ExtArgs["result"]["fileAnalysis"]>
 
@@ -1040,8 +1040,8 @@ export type FileAnalysisSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   projectId?: boolean
   userId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.FileAnalysis$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.FileAnalysis$userArgs<ExtArgs>
 }, ExtArgs["result"]["fileAnalysis"]>
 
@@ -1057,8 +1057,8 @@ export type FileAnalysisSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   projectId?: boolean
   userId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.FileAnalysis$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.FileAnalysis$userArgs<ExtArgs>
 }, ExtArgs["result"]["fileAnalysis"]>
 
@@ -1078,20 +1078,20 @@ export type FileAnalysisSelectScalar = {
 export type FileAnalysisOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "prompt" | "model" | "type" | "createdAt" | "fileId" | "tenantId" | "projectId" | "userId", ExtArgs["result"]["fileAnalysis"]>
 export type FileAnalysisInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.FileAnalysis$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.FileAnalysis$userArgs<ExtArgs>
 }
 export type FileAnalysisIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.FileAnalysis$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.FileAnalysis$userArgs<ExtArgs>
 }
 export type FileAnalysisIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.FileAnalysis$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.FileAnalysis$userArgs<ExtArgs>
 }
 
@@ -1099,8 +1099,8 @@ export type $FileAnalysisPayload<ExtArgs extends runtime.Types.Extensions.Intern
   name: "FileAnalysis"
   objects: {
     file: Prisma.$FilePayload<ExtArgs>
-    tenant: Prisma.$TenantPayload<ExtArgs>
     project: Prisma.$ProjectPayload<ExtArgs> | null
+    tenant: Prisma.$TenantPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1509,8 +1509,8 @@ readonly fields: FileAnalysisFieldRefs;
 export interface Prisma__FileAnalysisClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   file<T extends Prisma.FileDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileDefaultArgs<ExtArgs>>): Prisma.Prisma__FileClient<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   project<T extends Prisma.FileAnalysis$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileAnalysis$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.FileAnalysis$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FileAnalysis$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

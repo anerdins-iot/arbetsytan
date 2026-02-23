@@ -466,6 +466,11 @@ export type EmailMessageOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type EmailMessageNullableScalarRelationFilter = {
+  is?: Prisma.EmailMessageWhereInput | null
+  isNot?: Prisma.EmailMessageWhereInput | null
+}
+
 export type EmailMessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   conversationId?: Prisma.SortOrder
@@ -517,11 +522,6 @@ export type EmailMessageMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
 }
 
-export type EmailMessageNullableScalarRelationFilter = {
-  is?: Prisma.EmailMessageWhereInput | null
-  isNot?: Prisma.EmailMessageWhereInput | null
-}
-
 export type EmailMessageCreateNestedManyWithoutConversationInput = {
   create?: Prisma.XOR<Prisma.EmailMessageCreateWithoutConversationInput, Prisma.EmailMessageUncheckedCreateWithoutConversationInput> | Prisma.EmailMessageCreateWithoutConversationInput[] | Prisma.EmailMessageUncheckedCreateWithoutConversationInput[]
   connectOrCreate?: Prisma.EmailMessageCreateOrConnectWithoutConversationInput | Prisma.EmailMessageCreateOrConnectWithoutConversationInput[]
@@ -562,10 +562,6 @@ export type EmailMessageUncheckedUpdateManyWithoutConversationNestedInput = {
   update?: Prisma.EmailMessageUpdateWithWhereUniqueWithoutConversationInput | Prisma.EmailMessageUpdateWithWhereUniqueWithoutConversationInput[]
   updateMany?: Prisma.EmailMessageUpdateManyWithWhereWithoutConversationInput | Prisma.EmailMessageUpdateManyWithWhereWithoutConversationInput[]
   deleteMany?: Prisma.EmailMessageScalarWhereInput | Prisma.EmailMessageScalarWhereInput[]
-}
-
-export type EnumEmailDirectionFieldUpdateOperationsInput = {
-  set?: $Enums.EmailDirection
 }
 
 export type EmailMessageCreateNestedOneWithoutEmailLogInput = {

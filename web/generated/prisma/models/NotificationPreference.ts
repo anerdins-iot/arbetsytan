@@ -214,8 +214,8 @@ export type NotificationPreferenceWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string
   userId?: Prisma.StringFilter<"NotificationPreference"> | string
   tenantId?: Prisma.StringFilter<"NotificationPreference"> | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type NotificationPreferenceOrderByWithRelationInput = {
@@ -228,8 +228,8 @@ export type NotificationPreferenceOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
   tenant?: Prisma.TenantOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
@@ -246,8 +246,8 @@ export type NotificationPreferenceWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"NotificationPreference"> | Date | string
   userId?: Prisma.StringFilter<"NotificationPreference"> | string
   tenantId?: Prisma.StringFilter<"NotificationPreference"> | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "userId_tenantId">
 
 export type NotificationPreferenceOrderByWithAggregationInput = {
@@ -288,8 +288,8 @@ export type NotificationPreferenceCreateInput = {
   emailProjectStatusChanged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutNotificationPreferenceInput
   user: Prisma.UserCreateNestedOneWithoutNotificationPreferencesInput
-  tenant: Prisma.TenantCreateNestedOneWithoutNotificationPreferencesInput
 }
 
 export type NotificationPreferenceUncheckedCreateInput = {
@@ -312,8 +312,8 @@ export type NotificationPreferenceUpdateInput = {
   emailProjectStatusChanged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutNotificationPreferenceNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutNotificationPreferencesNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutNotificationPreferencesNestedInput
 }
 
 export type NotificationPreferenceUncheckedUpdateInput = {
@@ -362,16 +362,6 @@ export type NotificationPreferenceUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type NotificationPreferenceListRelationFilter = {
-  every?: Prisma.NotificationPreferenceWhereInput
-  some?: Prisma.NotificationPreferenceWhereInput
-  none?: Prisma.NotificationPreferenceWhereInput
-}
-
-export type NotificationPreferenceOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type NotificationPreferenceUserIdTenantIdCompoundUniqueInput = {
   userId: string
   tenantId: string
@@ -411,6 +401,16 @@ export type NotificationPreferenceMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+}
+
+export type NotificationPreferenceListRelationFilter = {
+  every?: Prisma.NotificationPreferenceWhereInput
+  some?: Prisma.NotificationPreferenceWhereInput
+  none?: Prisma.NotificationPreferenceWhereInput
+}
+
+export type NotificationPreferenceOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type NotificationPreferenceCreateNestedManyWithoutTenantInput = {
@@ -568,7 +568,7 @@ export type NotificationPreferenceCreateWithoutUserInput = {
   emailProjectStatusChanged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutNotificationPreferencesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutNotificationPreferenceInput
 }
 
 export type NotificationPreferenceUncheckedCreateWithoutUserInput = {
@@ -671,7 +671,7 @@ export type NotificationPreferenceUpdateWithoutUserInput = {
   emailProjectStatusChanged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutNotificationPreferencesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutNotificationPreferenceNestedInput
 }
 
 export type NotificationPreferenceUncheckedUpdateWithoutUserInput = {
@@ -708,8 +708,8 @@ export type NotificationPreferenceSelect<ExtArgs extends runtime.Types.Extension
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -722,8 +722,8 @@ export type NotificationPreferenceSelectCreateManyAndReturn<ExtArgs extends runt
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -736,8 +736,8 @@ export type NotificationPreferenceSelectUpdateManyAndReturn<ExtArgs extends runt
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["notificationPreference"]>
 
 export type NotificationPreferenceSelectScalar = {
@@ -754,23 +754,23 @@ export type NotificationPreferenceSelectScalar = {
 
 export type NotificationPreferenceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "pushEnabled" | "emailTaskAssigned" | "emailDeadlineTomorrow" | "emailProjectStatusChanged" | "createdAt" | "updatedAt" | "userId" | "tenantId", ExtArgs["result"]["notificationPreference"]>
 export type NotificationPreferenceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type NotificationPreferenceIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type NotificationPreferenceIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $NotificationPreferencePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "NotificationPreference"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
     tenant: Prisma.$TenantPayload<ExtArgs>
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1176,8 +1176,8 @@ readonly fields: NotificationPreferenceFieldRefs;
  */
 export interface Prisma__NotificationPreferenceClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

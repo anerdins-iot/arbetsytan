@@ -248,11 +248,11 @@ export type MessageChunkWhereInput = {
   tenantId?: Prisma.StringFilter<"MessageChunk"> | string
   userId?: Prisma.StringFilter<"MessageChunk"> | string
   projectId?: Prisma.StringNullableFilter<"MessageChunk"> | string | null
-  message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
+  message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }
 
 export type MessageChunkOrderByWithRelationInput = {
@@ -265,11 +265,11 @@ export type MessageChunkOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
-  message?: Prisma.MessageOrderByWithRelationInput
   conversation?: Prisma.ConversationOrderByWithRelationInput
+  message?: Prisma.MessageOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
   tenant?: Prisma.TenantOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
-  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type MessageChunkWhereUniqueInput = Prisma.AtLeast<{
@@ -285,11 +285,11 @@ export type MessageChunkWhereUniqueInput = Prisma.AtLeast<{
   tenantId?: Prisma.StringFilter<"MessageChunk"> | string
   userId?: Prisma.StringFilter<"MessageChunk"> | string
   projectId?: Prisma.StringNullableFilter<"MessageChunk"> | string | null
-  message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
   conversation?: Prisma.XOR<Prisma.ConversationScalarRelationFilter, Prisma.ConversationWhereInput>
+  message?: Prisma.XOR<Prisma.MessageScalarRelationFilter, Prisma.MessageWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }, "id">
 
 export type MessageChunkOrderByWithAggregationInput = {
@@ -329,11 +329,11 @@ export type MessageChunkCreateInput = {
   content: string
   chunkIndex?: number
   createdAt?: Date | string
-  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
   conversation: Prisma.ConversationCreateNestedOneWithoutMessageChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunksInput
-  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
+  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
   project?: Prisma.ProjectCreateNestedOneWithoutMessageChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunkInput
+  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
 }
 
 export type MessageChunkUncheckedCreateInput = {
@@ -353,11 +353,11 @@ export type MessageChunkUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
+  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
 }
 
 export type MessageChunkUncheckedUpdateInput = {
@@ -457,132 +457,6 @@ export type MessageChunkSumOrderByAggregateInput = {
   chunkIndex?: Prisma.SortOrder
 }
 
-export type MessageChunkCreateNestedManyWithoutTenantInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
-  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-}
-
-export type MessageChunkUncheckedCreateNestedManyWithoutTenantInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
-  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-}
-
-export type MessageChunkUpdateManyWithoutTenantNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
-  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput[]
-  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
-  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput[]
-  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput | Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput[]
-  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
-}
-
-export type MessageChunkUncheckedUpdateManyWithoutTenantNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
-  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput[]
-  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
-  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput[]
-  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput | Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput[]
-  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
-}
-
-export type MessageChunkCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-}
-
-export type MessageChunkUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-}
-
-export type MessageChunkUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
-  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput | Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
-}
-
-export type MessageChunkUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
-  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput | Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
-}
-
-export type MessageChunkCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-}
-
-export type MessageChunkUncheckedCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-}
-
-export type MessageChunkUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
-  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput | Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
-}
-
-export type MessageChunkUncheckedUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
-  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
-  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput | Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
-}
-
 export type MessageChunkCreateNestedManyWithoutConversationInput = {
   create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutConversationInput, Prisma.MessageChunkUncheckedCreateWithoutConversationInput> | Prisma.MessageChunkCreateWithoutConversationInput[] | Prisma.MessageChunkUncheckedCreateWithoutConversationInput[]
   connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutConversationInput | Prisma.MessageChunkCreateOrConnectWithoutConversationInput[]
@@ -667,52 +541,178 @@ export type MessageChunkUncheckedUpdateManyWithoutMessageNestedInput = {
   deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
 }
 
-export type MessageChunkCreateWithoutTenantInput = {
+export type MessageChunkCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+}
+
+export type MessageChunkUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+}
+
+export type MessageChunkUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
+  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput | Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+}
+
+export type MessageChunkUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutProjectInput, Prisma.MessageChunkUncheckedCreateWithoutProjectInput> | Prisma.MessageChunkCreateWithoutProjectInput[] | Prisma.MessageChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutProjectInput | Prisma.MessageChunkCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.MessageChunkCreateManyProjectInputEnvelope
+  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput | Prisma.MessageChunkUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+}
+
+export type MessageChunkCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+}
+
+export type MessageChunkUncheckedCreateNestedManyWithoutTenantInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
+  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+}
+
+export type MessageChunkUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
+  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput | Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+}
+
+export type MessageChunkUncheckedUpdateManyWithoutTenantNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput> | Prisma.MessageChunkCreateWithoutTenantInput[] | Prisma.MessageChunkUncheckedCreateWithoutTenantInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutTenantInput | Prisma.MessageChunkCreateOrConnectWithoutTenantInput[]
+  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutTenantInput[]
+  createMany?: Prisma.MessageChunkCreateManyTenantInputEnvelope
+  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutTenantInput[]
+  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput | Prisma.MessageChunkUpdateManyWithWhereWithoutTenantInput[]
+  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+}
+
+export type MessageChunkCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+}
+
+export type MessageChunkUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+}
+
+export type MessageChunkUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
+  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput | Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+}
+
+export type MessageChunkUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput> | Prisma.MessageChunkCreateWithoutUserInput[] | Prisma.MessageChunkUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.MessageChunkCreateOrConnectWithoutUserInput | Prisma.MessageChunkCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.MessageChunkCreateManyUserInputEnvelope
+  set?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  disconnect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  delete?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  connect?: Prisma.MessageChunkWhereUniqueInput | Prisma.MessageChunkWhereUniqueInput[]
+  update?: Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput | Prisma.MessageChunkUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput | Prisma.MessageChunkUpdateManyWithWhereWithoutUserInput[]
+  deleteMany?: Prisma.MessageChunkScalarWhereInput | Prisma.MessageChunkScalarWhereInput[]
+}
+
+export type MessageChunkCreateWithoutConversationInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
   message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
-  conversation: Prisma.ConversationCreateNestedOneWithoutMessageChunksInput
-  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
   project?: Prisma.ProjectCreateNestedOneWithoutMessageChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunkInput
+  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
 }
 
-export type MessageChunkUncheckedCreateWithoutTenantInput = {
+export type MessageChunkUncheckedCreateWithoutConversationInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
   messageId: string
-  conversationId: string
+  tenantId: string
   userId: string
   projectId?: string | null
 }
 
-export type MessageChunkCreateOrConnectWithoutTenantInput = {
+export type MessageChunkCreateOrConnectWithoutConversationInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutConversationInput, Prisma.MessageChunkUncheckedCreateWithoutConversationInput>
 }
 
-export type MessageChunkCreateManyTenantInputEnvelope = {
-  data: Prisma.MessageChunkCreateManyTenantInput | Prisma.MessageChunkCreateManyTenantInput[]
+export type MessageChunkCreateManyConversationInputEnvelope = {
+  data: Prisma.MessageChunkCreateManyConversationInput | Prisma.MessageChunkCreateManyConversationInput[]
   skipDuplicates?: boolean
 }
 
-export type MessageChunkUpsertWithWhereUniqueWithoutTenantInput = {
+export type MessageChunkUpsertWithWhereUniqueWithoutConversationInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutTenantInput, Prisma.MessageChunkUncheckedUpdateWithoutTenantInput>
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput>
+  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutConversationInput, Prisma.MessageChunkUncheckedUpdateWithoutConversationInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutConversationInput, Prisma.MessageChunkUncheckedCreateWithoutConversationInput>
 }
 
-export type MessageChunkUpdateWithWhereUniqueWithoutTenantInput = {
+export type MessageChunkUpdateWithWhereUniqueWithoutConversationInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutTenantInput, Prisma.MessageChunkUncheckedUpdateWithoutTenantInput>
+  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutConversationInput, Prisma.MessageChunkUncheckedUpdateWithoutConversationInput>
 }
 
-export type MessageChunkUpdateManyWithWhereWithoutTenantInput = {
+export type MessageChunkUpdateManyWithWhereWithoutConversationInput = {
   where: Prisma.MessageChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutTenantInput>
+  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutConversationInput>
 }
 
 export type MessageChunkScalarWhereInput = {
@@ -730,52 +730,52 @@ export type MessageChunkScalarWhereInput = {
   projectId?: Prisma.StringNullableFilter<"MessageChunk"> | string | null
 }
 
-export type MessageChunkCreateWithoutUserInput = {
+export type MessageChunkCreateWithoutMessageInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
-  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
   conversation: Prisma.ConversationCreateNestedOneWithoutMessageChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunksInput
   project?: Prisma.ProjectCreateNestedOneWithoutMessageChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunkInput
+  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
 }
 
-export type MessageChunkUncheckedCreateWithoutUserInput = {
+export type MessageChunkUncheckedCreateWithoutMessageInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
-  messageId: string
   conversationId: string
   tenantId: string
+  userId: string
   projectId?: string | null
 }
 
-export type MessageChunkCreateOrConnectWithoutUserInput = {
+export type MessageChunkCreateOrConnectWithoutMessageInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutMessageInput, Prisma.MessageChunkUncheckedCreateWithoutMessageInput>
 }
 
-export type MessageChunkCreateManyUserInputEnvelope = {
-  data: Prisma.MessageChunkCreateManyUserInput | Prisma.MessageChunkCreateManyUserInput[]
+export type MessageChunkCreateManyMessageInputEnvelope = {
+  data: Prisma.MessageChunkCreateManyMessageInput | Prisma.MessageChunkCreateManyMessageInput[]
   skipDuplicates?: boolean
 }
 
-export type MessageChunkUpsertWithWhereUniqueWithoutUserInput = {
+export type MessageChunkUpsertWithWhereUniqueWithoutMessageInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutUserInput, Prisma.MessageChunkUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutMessageInput, Prisma.MessageChunkUncheckedUpdateWithoutMessageInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutMessageInput, Prisma.MessageChunkUncheckedCreateWithoutMessageInput>
 }
 
-export type MessageChunkUpdateWithWhereUniqueWithoutUserInput = {
+export type MessageChunkUpdateWithWhereUniqueWithoutMessageInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutUserInput, Prisma.MessageChunkUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutMessageInput, Prisma.MessageChunkUncheckedUpdateWithoutMessageInput>
 }
 
-export type MessageChunkUpdateManyWithWhereWithoutUserInput = {
+export type MessageChunkUpdateManyWithWhereWithoutMessageInput = {
   where: Prisma.MessageChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutMessageInput>
 }
 
 export type MessageChunkCreateWithoutProjectInput = {
@@ -783,9 +783,9 @@ export type MessageChunkCreateWithoutProjectInput = {
   content: string
   chunkIndex?: number
   createdAt?: Date | string
-  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
   conversation: Prisma.ConversationCreateNestedOneWithoutMessageChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunksInput
+  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunkInput
   user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
 }
 
@@ -826,147 +826,66 @@ export type MessageChunkUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutProjectInput>
 }
 
-export type MessageChunkCreateWithoutConversationInput = {
-  id?: string
-  content: string
-  chunkIndex?: number
-  createdAt?: Date | string
-  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunksInput
-  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
-  project?: Prisma.ProjectCreateNestedOneWithoutMessageChunksInput
-}
-
-export type MessageChunkUncheckedCreateWithoutConversationInput = {
-  id?: string
-  content: string
-  chunkIndex?: number
-  createdAt?: Date | string
-  messageId: string
-  tenantId: string
-  userId: string
-  projectId?: string | null
-}
-
-export type MessageChunkCreateOrConnectWithoutConversationInput = {
-  where: Prisma.MessageChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutConversationInput, Prisma.MessageChunkUncheckedCreateWithoutConversationInput>
-}
-
-export type MessageChunkCreateManyConversationInputEnvelope = {
-  data: Prisma.MessageChunkCreateManyConversationInput | Prisma.MessageChunkCreateManyConversationInput[]
-  skipDuplicates?: boolean
-}
-
-export type MessageChunkUpsertWithWhereUniqueWithoutConversationInput = {
-  where: Prisma.MessageChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutConversationInput, Prisma.MessageChunkUncheckedUpdateWithoutConversationInput>
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutConversationInput, Prisma.MessageChunkUncheckedCreateWithoutConversationInput>
-}
-
-export type MessageChunkUpdateWithWhereUniqueWithoutConversationInput = {
-  where: Prisma.MessageChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutConversationInput, Prisma.MessageChunkUncheckedUpdateWithoutConversationInput>
-}
-
-export type MessageChunkUpdateManyWithWhereWithoutConversationInput = {
-  where: Prisma.MessageChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutConversationInput>
-}
-
-export type MessageChunkCreateWithoutMessageInput = {
+export type MessageChunkCreateWithoutTenantInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
   conversation: Prisma.ConversationCreateNestedOneWithoutMessageChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunksInput
-  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
+  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
   project?: Prisma.ProjectCreateNestedOneWithoutMessageChunksInput
+  user: Prisma.UserCreateNestedOneWithoutMessageChunksInput
 }
 
-export type MessageChunkUncheckedCreateWithoutMessageInput = {
+export type MessageChunkUncheckedCreateWithoutTenantInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
+  messageId: string
   conversationId: string
-  tenantId: string
   userId: string
   projectId?: string | null
 }
 
-export type MessageChunkCreateOrConnectWithoutMessageInput = {
+export type MessageChunkCreateOrConnectWithoutTenantInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutMessageInput, Prisma.MessageChunkUncheckedCreateWithoutMessageInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput>
 }
 
-export type MessageChunkCreateManyMessageInputEnvelope = {
-  data: Prisma.MessageChunkCreateManyMessageInput | Prisma.MessageChunkCreateManyMessageInput[]
+export type MessageChunkCreateManyTenantInputEnvelope = {
+  data: Prisma.MessageChunkCreateManyTenantInput | Prisma.MessageChunkCreateManyTenantInput[]
   skipDuplicates?: boolean
 }
 
-export type MessageChunkUpsertWithWhereUniqueWithoutMessageInput = {
+export type MessageChunkUpsertWithWhereUniqueWithoutTenantInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutMessageInput, Prisma.MessageChunkUncheckedUpdateWithoutMessageInput>
-  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutMessageInput, Prisma.MessageChunkUncheckedCreateWithoutMessageInput>
+  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutTenantInput, Prisma.MessageChunkUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutTenantInput, Prisma.MessageChunkUncheckedCreateWithoutTenantInput>
 }
 
-export type MessageChunkUpdateWithWhereUniqueWithoutMessageInput = {
+export type MessageChunkUpdateWithWhereUniqueWithoutTenantInput = {
   where: Prisma.MessageChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutMessageInput, Prisma.MessageChunkUncheckedUpdateWithoutMessageInput>
+  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutTenantInput, Prisma.MessageChunkUncheckedUpdateWithoutTenantInput>
 }
 
-export type MessageChunkUpdateManyWithWhereWithoutMessageInput = {
+export type MessageChunkUpdateManyWithWhereWithoutTenantInput = {
   where: Prisma.MessageChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutMessageInput>
+  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutTenantInput>
 }
 
-export type MessageChunkCreateManyTenantInput = {
+export type MessageChunkCreateWithoutUserInput = {
   id?: string
   content: string
   chunkIndex?: number
   createdAt?: Date | string
-  messageId: string
-  conversationId: string
-  userId: string
-  projectId?: string | null
+  conversation: Prisma.ConversationCreateNestedOneWithoutMessageChunksInput
+  message: Prisma.MessageCreateNestedOneWithoutMessageChunksInput
+  project?: Prisma.ProjectCreateNestedOneWithoutMessageChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutMessageChunkInput
 }
 
-export type MessageChunkUpdateWithoutTenantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
-  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
-}
-
-export type MessageChunkUncheckedUpdateWithoutTenantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messageId?: Prisma.StringFieldUpdateOperationsInput | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type MessageChunkUncheckedUpdateManyWithoutTenantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messageId?: Prisma.StringFieldUpdateOperationsInput | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-}
-
-export type MessageChunkCreateManyUserInput = {
+export type MessageChunkUncheckedCreateWithoutUserInput = {
   id?: string
   content: string
   chunkIndex?: number
@@ -977,81 +896,30 @@ export type MessageChunkCreateManyUserInput = {
   projectId?: string | null
 }
 
-export type MessageChunkUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
-  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunksNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
+export type MessageChunkCreateOrConnectWithoutUserInput = {
+  where: Prisma.MessageChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput>
 }
 
-export type MessageChunkUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messageId?: Prisma.StringFieldUpdateOperationsInput | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+export type MessageChunkCreateManyUserInputEnvelope = {
+  data: Prisma.MessageChunkCreateManyUserInput | Prisma.MessageChunkCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
-export type MessageChunkUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messageId?: Prisma.StringFieldUpdateOperationsInput | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+export type MessageChunkUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.MessageChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.MessageChunkUpdateWithoutUserInput, Prisma.MessageChunkUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.MessageChunkCreateWithoutUserInput, Prisma.MessageChunkUncheckedCreateWithoutUserInput>
 }
 
-export type MessageChunkCreateManyProjectInput = {
-  id?: string
-  content: string
-  chunkIndex?: number
-  createdAt?: Date | string
-  messageId: string
-  conversationId: string
-  tenantId: string
-  userId: string
+export type MessageChunkUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.MessageChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.MessageChunkUpdateWithoutUserInput, Prisma.MessageChunkUncheckedUpdateWithoutUserInput>
 }
 
-export type MessageChunkUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
-  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
-}
-
-export type MessageChunkUncheckedUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messageId?: Prisma.StringFieldUpdateOperationsInput | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-}
-
-export type MessageChunkUncheckedUpdateManyWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messageId?: Prisma.StringFieldUpdateOperationsInput | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
+export type MessageChunkUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.MessageChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.MessageChunkUpdateManyMutationInput, Prisma.MessageChunkUncheckedUpdateManyWithoutUserInput>
 }
 
 export type MessageChunkCreateManyConversationInput = {
@@ -1071,9 +939,9 @@ export type MessageChunkUpdateWithoutConversationInput = {
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
 }
 
 export type MessageChunkUncheckedUpdateWithoutConversationInput = {
@@ -1115,9 +983,9 @@ export type MessageChunkUpdateWithoutMessageInput = {
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
   project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
 }
 
 export type MessageChunkUncheckedUpdateWithoutMessageInput = {
@@ -1142,6 +1010,138 @@ export type MessageChunkUncheckedUpdateManyWithoutMessageInput = {
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
+export type MessageChunkCreateManyProjectInput = {
+  id?: string
+  content: string
+  chunkIndex?: number
+  createdAt?: Date | string
+  messageId: string
+  conversationId: string
+  tenantId: string
+  userId: string
+}
+
+export type MessageChunkUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
+  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
+}
+
+export type MessageChunkUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type MessageChunkUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type MessageChunkCreateManyTenantInput = {
+  id?: string
+  content: string
+  chunkIndex?: number
+  createdAt?: Date | string
+  messageId: string
+  conversationId: string
+  userId: string
+  projectId?: string | null
+}
+
+export type MessageChunkUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
+  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutMessageChunksNestedInput
+}
+
+export type MessageChunkUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MessageChunkUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MessageChunkCreateManyUserInput = {
+  id?: string
+  content: string
+  chunkIndex?: number
+  createdAt?: Date | string
+  messageId: string
+  conversationId: string
+  tenantId: string
+  projectId?: string | null
+}
+
+export type MessageChunkUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessageChunksNestedInput
+  message?: Prisma.MessageUpdateOneRequiredWithoutMessageChunksNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutMessageChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutMessageChunkNestedInput
+}
+
+export type MessageChunkUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MessageChunkUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  messageId?: Prisma.StringFieldUpdateOperationsInput | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
 
 
 export type MessageChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1154,11 +1154,11 @@ export type MessageChunkSelect<ExtArgs extends runtime.Types.Extensions.Internal
   tenantId?: boolean
   userId?: boolean
   projectId?: boolean
-  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
+  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
 }, ExtArgs["result"]["messageChunk"]>
 
 export type MessageChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1171,11 +1171,11 @@ export type MessageChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   tenantId?: boolean
   userId?: boolean
   projectId?: boolean
-  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
+  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
 }, ExtArgs["result"]["messageChunk"]>
 
 export type MessageChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1188,11 +1188,11 @@ export type MessageChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   tenantId?: boolean
   userId?: boolean
   projectId?: boolean
-  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
+  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
 }, ExtArgs["result"]["messageChunk"]>
 
 export type MessageChunkSelectScalar = {
@@ -1209,35 +1209,35 @@ export type MessageChunkSelectScalar = {
 
 export type MessageChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "chunkIndex" | "createdAt" | "messageId" | "conversationId" | "tenantId" | "userId" | "projectId", ExtArgs["result"]["messageChunk"]>
 export type MessageChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
+  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
 }
 export type MessageChunkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
+  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
 }
 export type MessageChunkIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
   conversation?: boolean | Prisma.ConversationDefaultArgs<ExtArgs>
+  message?: boolean | Prisma.MessageDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.MessageChunk$projectArgs<ExtArgs>
 }
 
 export type $MessageChunkPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MessageChunk"
   objects: {
-    message: Prisma.$MessagePayload<ExtArgs>
     conversation: Prisma.$ConversationPayload<ExtArgs>
+    message: Prisma.$MessagePayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
     tenant: Prisma.$TenantPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
-    project: Prisma.$ProjectPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1643,11 +1643,11 @@ readonly fields: MessageChunkFieldRefs;
  */
 export interface Prisma__MessageChunkClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  message<T extends Prisma.MessageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageDefaultArgs<ExtArgs>>): Prisma.Prisma__MessageClient<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   conversation<T extends Prisma.ConversationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConversationDefaultArgs<ExtArgs>>): Prisma.Prisma__ConversationClient<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  message<T extends Prisma.MessageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageDefaultArgs<ExtArgs>>): Prisma.Prisma__MessageClient<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.MessageChunk$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageChunk$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  project<T extends Prisma.MessageChunk$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MessageChunk$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

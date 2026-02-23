@@ -282,11 +282,11 @@ export type InvitationCreateInput = {
   email: string
   role?: $Enums.Role
   status?: $Enums.InvitationStatus
-  token?: string
+  token: string
   expiresAt: Date | string
   createdAt?: Date | string
   invitedById: string
-  tenant: Prisma.TenantCreateNestedOneWithoutInvitationsInput
+  tenant: Prisma.TenantCreateNestedOneWithoutInvitationInput
 }
 
 export type InvitationUncheckedCreateInput = {
@@ -294,7 +294,7 @@ export type InvitationUncheckedCreateInput = {
   email: string
   role?: $Enums.Role
   status?: $Enums.InvitationStatus
-  token?: string
+  token: string
   expiresAt: Date | string
   createdAt?: Date | string
   tenantId: string
@@ -310,7 +310,7 @@ export type InvitationUpdateInput = {
   expiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitedById?: Prisma.StringFieldUpdateOperationsInput | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutInvitationsNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutInvitationNestedInput
 }
 
 export type InvitationUncheckedUpdateInput = {
@@ -330,7 +330,7 @@ export type InvitationCreateManyInput = {
   email: string
   role?: $Enums.Role
   status?: $Enums.InvitationStatus
-  token?: string
+  token: string
   expiresAt: Date | string
   createdAt?: Date | string
   tenantId: string
@@ -358,16 +358,6 @@ export type InvitationUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   invitedById?: Prisma.StringFieldUpdateOperationsInput | string
-}
-
-export type InvitationListRelationFilter = {
-  every?: Prisma.InvitationWhereInput
-  some?: Prisma.InvitationWhereInput
-  none?: Prisma.InvitationWhereInput
-}
-
-export type InvitationOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
 }
 
 export type InvitationEmailTenantIdCompoundUniqueInput = {
@@ -409,6 +399,24 @@ export type InvitationMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   invitedById?: Prisma.SortOrder
+}
+
+export type InvitationListRelationFilter = {
+  every?: Prisma.InvitationWhereInput
+  some?: Prisma.InvitationWhereInput
+  none?: Prisma.InvitationWhereInput
+}
+
+export type InvitationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type EnumRoleFieldUpdateOperationsInput = {
+  set?: $Enums.Role
+}
+
+export type EnumInvitationStatusFieldUpdateOperationsInput = {
+  set?: $Enums.InvitationStatus
 }
 
 export type InvitationCreateNestedManyWithoutTenantInput = {
@@ -453,16 +461,12 @@ export type InvitationUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.InvitationScalarWhereInput | Prisma.InvitationScalarWhereInput[]
 }
 
-export type EnumInvitationStatusFieldUpdateOperationsInput = {
-  set?: $Enums.InvitationStatus
-}
-
 export type InvitationCreateWithoutTenantInput = {
   id?: string
   email: string
   role?: $Enums.Role
   status?: $Enums.InvitationStatus
-  token?: string
+  token: string
   expiresAt: Date | string
   createdAt?: Date | string
   invitedById: string
@@ -473,7 +477,7 @@ export type InvitationUncheckedCreateWithoutTenantInput = {
   email: string
   role?: $Enums.Role
   status?: $Enums.InvitationStatus
-  token?: string
+  token: string
   expiresAt: Date | string
   createdAt?: Date | string
   invitedById: string
@@ -525,7 +529,7 @@ export type InvitationCreateManyTenantInput = {
   email: string
   role?: $Enums.Role
   status?: $Enums.InvitationStatus
-  token?: string
+  token: string
   expiresAt: Date | string
   createdAt?: Date | string
   invitedById: string

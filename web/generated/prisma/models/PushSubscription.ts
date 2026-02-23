@@ -214,8 +214,8 @@ export type PushSubscriptionWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"PushSubscription"> | Date | string
   userId?: Prisma.StringFilter<"PushSubscription"> | string
   tenantId?: Prisma.StringFilter<"PushSubscription"> | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type PushSubscriptionOrderByWithRelationInput = {
@@ -228,8 +228,8 @@ export type PushSubscriptionOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
   tenant?: Prisma.TenantOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type PushSubscriptionWhereUniqueInput = Prisma.AtLeast<{
@@ -246,8 +246,8 @@ export type PushSubscriptionWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"PushSubscription"> | Date | string
   userId?: Prisma.StringFilter<"PushSubscription"> | string
   tenantId?: Prisma.StringFilter<"PushSubscription"> | string
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id" | "tenantId_endpoint">
 
 export type PushSubscriptionOrderByWithAggregationInput = {
@@ -288,8 +288,8 @@ export type PushSubscriptionCreateInput = {
   userAgent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutPushSubscriptionInput
   user: Prisma.UserCreateNestedOneWithoutPushSubscriptionsInput
-  tenant: Prisma.TenantCreateNestedOneWithoutPushSubscriptionsInput
 }
 
 export type PushSubscriptionUncheckedCreateInput = {
@@ -312,8 +312,8 @@ export type PushSubscriptionUpdateInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutPushSubscriptionNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutPushSubscriptionsNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutPushSubscriptionsNestedInput
 }
 
 export type PushSubscriptionUncheckedUpdateInput = {
@@ -362,16 +362,6 @@ export type PushSubscriptionUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type PushSubscriptionListRelationFilter = {
-  every?: Prisma.PushSubscriptionWhereInput
-  some?: Prisma.PushSubscriptionWhereInput
-  none?: Prisma.PushSubscriptionWhereInput
-}
-
-export type PushSubscriptionOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type PushSubscriptionTenantIdEndpointCompoundUniqueInput = {
   tenantId: string
   endpoint: string
@@ -411,6 +401,16 @@ export type PushSubscriptionMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+}
+
+export type PushSubscriptionListRelationFilter = {
+  every?: Prisma.PushSubscriptionWhereInput
+  some?: Prisma.PushSubscriptionWhereInput
+  none?: Prisma.PushSubscriptionWhereInput
+}
+
+export type PushSubscriptionOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type PushSubscriptionCreateNestedManyWithoutTenantInput = {
@@ -568,7 +568,7 @@ export type PushSubscriptionCreateWithoutUserInput = {
   userAgent?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutPushSubscriptionsInput
+  tenant: Prisma.TenantCreateNestedOneWithoutPushSubscriptionInput
 }
 
 export type PushSubscriptionUncheckedCreateWithoutUserInput = {
@@ -671,7 +671,7 @@ export type PushSubscriptionUpdateWithoutUserInput = {
   userAgent?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutPushSubscriptionsNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutPushSubscriptionNestedInput
 }
 
 export type PushSubscriptionUncheckedUpdateWithoutUserInput = {
@@ -708,8 +708,8 @@ export type PushSubscriptionSelect<ExtArgs extends runtime.Types.Extensions.Inte
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pushSubscription"]>
 
 export type PushSubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -722,8 +722,8 @@ export type PushSubscriptionSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pushSubscription"]>
 
 export type PushSubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -736,8 +736,8 @@ export type PushSubscriptionSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pushSubscription"]>
 
 export type PushSubscriptionSelectScalar = {
@@ -754,23 +754,23 @@ export type PushSubscriptionSelectScalar = {
 
 export type PushSubscriptionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "endpoint" | "p256dhKey" | "authKey" | "userAgent" | "createdAt" | "updatedAt" | "userId" | "tenantId", ExtArgs["result"]["pushSubscription"]>
 export type PushSubscriptionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PushSubscriptionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PushSubscriptionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $PushSubscriptionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PushSubscription"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
     tenant: Prisma.$TenantPayload<ExtArgs>
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1176,8 +1176,8 @@ readonly fields: PushSubscriptionFieldRefs;
  */
 export interface Prisma__PushSubscriptionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

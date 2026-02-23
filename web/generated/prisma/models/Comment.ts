@@ -302,16 +302,6 @@ export type CommentUncheckedUpdateManyInput = {
   authorId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type CommentListRelationFilter = {
-  every?: Prisma.CommentWhereInput
-  some?: Prisma.CommentWhereInput
-  none?: Prisma.CommentWhereInput
-}
-
-export type CommentOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type CommentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
@@ -337,6 +327,16 @@ export type CommentMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
   authorId?: Prisma.SortOrder
+}
+
+export type CommentListRelationFilter = {
+  every?: Prisma.CommentWhereInput
+  some?: Prisma.CommentWhereInput
+  none?: Prisma.CommentWhereInput
+}
+
+export type CommentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type CommentCreateNestedManyWithoutTaskInput = {

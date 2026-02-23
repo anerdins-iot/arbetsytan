@@ -86,8 +86,8 @@ export async function POST(req: NextRequest) {
       size: file.size,
       bucket: bucketName,
       key: objectKey,
-      project: { connect: { id: projectId } },
-      uploadedBy: { connect: { id: userId } },
+      projectId,
+      uploadedById: userId,
     },
   });
 

@@ -282,7 +282,7 @@ export type EmailTemplateCreateInput = {
   locale: string
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailTemplatesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailTemplateInput
 }
 
 export type EmailTemplateUncheckedCreateInput = {
@@ -306,7 +306,7 @@ export type EmailTemplateUpdateInput = {
   locale?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailTemplatesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailTemplateNestedInput
 }
 
 export type EmailTemplateUncheckedUpdateInput = {
@@ -356,16 +356,6 @@ export type EmailTemplateUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type EmailTemplateListRelationFilter = {
-  every?: Prisma.EmailTemplateWhereInput
-  some?: Prisma.EmailTemplateWhereInput
-  none?: Prisma.EmailTemplateWhereInput
-}
-
-export type EmailTemplateOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type EmailTemplateTenantIdNameLocaleCompoundUniqueInput = {
   tenantId: string
   name: string
@@ -404,6 +394,16 @@ export type EmailTemplateMinOrderByAggregateInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+}
+
+export type EmailTemplateListRelationFilter = {
+  every?: Prisma.EmailTemplateWhereInput
+  some?: Prisma.EmailTemplateWhereInput
+  none?: Prisma.EmailTemplateWhereInput
+}
+
+export type EmailTemplateOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type EmailTemplateCreateNestedManyWithoutTenantInput = {

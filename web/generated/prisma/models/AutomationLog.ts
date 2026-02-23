@@ -228,7 +228,7 @@ export type AutomationLogWhereInput = {
   executedAt?: Prisma.DateTimeFilter<"AutomationLog"> | Date | string
   durationMs?: Prisma.IntNullableFilter<"AutomationLog"> | number | null
   automationId?: Prisma.StringFilter<"AutomationLog"> | string
-  automation?: Prisma.XOR<Prisma.AutomationScalarRelationFilter, Prisma.AutomationWhereInput>
+  Automation?: Prisma.XOR<Prisma.AutomationScalarRelationFilter, Prisma.AutomationWhereInput>
 }
 
 export type AutomationLogOrderByWithRelationInput = {
@@ -239,7 +239,7 @@ export type AutomationLogOrderByWithRelationInput = {
   executedAt?: Prisma.SortOrder
   durationMs?: Prisma.SortOrderInput | Prisma.SortOrder
   automationId?: Prisma.SortOrder
-  automation?: Prisma.AutomationOrderByWithRelationInput
+  Automation?: Prisma.AutomationOrderByWithRelationInput
 }
 
 export type AutomationLogWhereUniqueInput = Prisma.AtLeast<{
@@ -253,7 +253,7 @@ export type AutomationLogWhereUniqueInput = Prisma.AtLeast<{
   executedAt?: Prisma.DateTimeFilter<"AutomationLog"> | Date | string
   durationMs?: Prisma.IntNullableFilter<"AutomationLog"> | number | null
   automationId?: Prisma.StringFilter<"AutomationLog"> | string
-  automation?: Prisma.XOR<Prisma.AutomationScalarRelationFilter, Prisma.AutomationWhereInput>
+  Automation?: Prisma.XOR<Prisma.AutomationScalarRelationFilter, Prisma.AutomationWhereInput>
 }, "id">
 
 export type AutomationLogOrderByWithAggregationInput = {
@@ -291,7 +291,7 @@ export type AutomationLogCreateInput = {
   errorMessage?: string | null
   executedAt?: Date | string
   durationMs?: number | null
-  automation: Prisma.AutomationCreateNestedOneWithoutLogsInput
+  Automation: Prisma.AutomationCreateNestedOneWithoutAutomationLogInput
 }
 
 export type AutomationLogUncheckedCreateInput = {
@@ -311,7 +311,7 @@ export type AutomationLogUpdateInput = {
   errorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   executedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   durationMs?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  automation?: Prisma.AutomationUpdateOneRequiredWithoutLogsNestedInput
+  Automation?: Prisma.AutomationUpdateOneRequiredWithoutAutomationLogNestedInput
 }
 
 export type AutomationLogUncheckedUpdateInput = {
@@ -548,7 +548,7 @@ export type AutomationLogSelect<ExtArgs extends runtime.Types.Extensions.Interna
   executedAt?: boolean
   durationMs?: boolean
   automationId?: boolean
-  automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
+  Automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationLog"]>
 
 export type AutomationLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -559,7 +559,7 @@ export type AutomationLogSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   executedAt?: boolean
   durationMs?: boolean
   automationId?: boolean
-  automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
+  Automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationLog"]>
 
 export type AutomationLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -570,7 +570,7 @@ export type AutomationLogSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   executedAt?: boolean
   durationMs?: boolean
   automationId?: boolean
-  automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
+  Automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automationLog"]>
 
 export type AutomationLogSelectScalar = {
@@ -585,19 +585,19 @@ export type AutomationLogSelectScalar = {
 
 export type AutomationLogOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "status" | "result" | "errorMessage" | "executedAt" | "durationMs" | "automationId", ExtArgs["result"]["automationLog"]>
 export type AutomationLogInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
+  Automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
 }
 export type AutomationLogIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
+  Automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
 }
 export type AutomationLogIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
+  Automation?: boolean | Prisma.AutomationDefaultArgs<ExtArgs>
 }
 
 export type $AutomationLogPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AutomationLog"
   objects: {
-    automation: Prisma.$AutomationPayload<ExtArgs>
+    Automation: Prisma.$AutomationPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1001,7 +1001,7 @@ readonly fields: AutomationLogFieldRefs;
  */
 export interface Prisma__AutomationLogClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  automation<T extends Prisma.AutomationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AutomationDefaultArgs<ExtArgs>>): Prisma.Prisma__AutomationClient<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  Automation<T extends Prisma.AutomationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AutomationDefaultArgs<ExtArgs>>): Prisma.Prisma__AutomationClient<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

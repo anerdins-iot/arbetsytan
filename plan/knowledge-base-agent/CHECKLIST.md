@@ -1,35 +1,35 @@
 # Checklist: Kunskapsbas-Agent
 
 ## Fas 1: Design och Datastruktur
-- [ ] Prisma-schema för kunskapsbas definierat (`KnowledgeEntity`, `KnowledgeRelation`)
-- [ ] Multi-tenant-isolering säkerställd i schemat
-- [ ] Indexstrategi implementerad för snabba sökningar
-- [ ] Migration skapad och testad
-- [ ] Integrationsspecifikation för AI-chatt-rutt dokumenterad
+- [x] Prisma-schema för kunskapsbas definierat (`KnowledgeEntity`, `KnowledgeRelation`)
+- [x] Multi-tenant-isolering säkerställd i schemat (tenantId-index, alla queries scopade)
+- [x] Indexstrategi implementerad för snabba sökningar (sammansatta index på tenantId+entityType+entityId)
+- [x] Migration skapad och testad (`20260223000000_add_knowledge_base` applicerad mot DB)
+- [x] Integrationsspecifikation för AI-chatt-rutt dokumenterad (se PLAN.md)
 
 ## Fas 2: Bakgrundsagent för Extraktion
-- [ ] Kunskapsextraktions-agent implementerad
-- [ ] LLM-prompt för entitetsextraktion optimerad
-- [ ] Konfidensbedömning och filtrering fungerar
-- [ ] Stöd för olika entitetstyper (projekt, uppgifter, användare, etc.)
-- [ ] Unit-tester för extraktionslogik skrivna och passerade
+- [x] Kunskapsextraktions-agent implementerad (`src/lib/ai/knowledge-extractor.ts`)
+- [x] LLM-prompt för entitetsextraktion optimerad (strukturerad JSON-extraktion med Claude)
+- [x] Konfidensbedömning och filtrering fungerar (threshold 0.7)
+- [x] Stöd för olika entitetstyper (projekt, uppgifter, användare, preferens, vanliga_frågor)
+- [ ] Unit-tester för extraktionslogik skrivna och passerade (ej implementerat — Playwright-test täcker E2E)
 
 ## Fas 3: Kontextintegration och Injicering
-- [ ] Kontexthämtning från kunskapsbas implementerad
-- [ ] Relevansranking av entiteter fungerar
-- [ ] Token-begränsningshantering implementerad
-- [ ] Integration med AI-chatt-rutt fullständig
-- [ ] Kontext visas korrekt i AI-anrop (verifierat med loggar)
+- [x] Kontexthämtning från kunskapsbas implementerad (findMany i route.ts med tenantId+userId-filter)
+- [x] Relevansranking av entiteter fungerar (sorterat på lastSeen, top 15)
+- [x] Token-begränsningshantering implementerad (max 15 entiteter, kompakt format)
+- [x] Integration med AI-chatt-rutt fullständig (buildSystemPrompt tar knowledgeContext-parameter)
+- [ ] Kontext visas korrekt i AI-anrop (verifieras via Playwright-test)
 
 ## Fas 4: Underhåll och Optimering
-- [ ] TTL-mekanism för kunskapsentiteter implementerad
-- [ ] Användningsbaserad prioritering fungerar
-- [ ] Schemalagd rensningsjobb konfigurerad
-- [ ] Prestandamonitorering på plats
-- [ ] Kunskapsbas-storlek stabiliseras över tid
+- [x] TTL-mekanism för kunskapsentiteter implementerad (`cleanupOldKnowledge` raderar >90 dagar)
+- [ ] Användningsbaserad prioritering fungerar (lastSeen uppdateras vid upsert — OK)
+- [x] Schemalagd rensningsjobb konfigurerad (1% sannolikhet per request i onFinish)
+- [ ] Prestandamonitorering på plats (ej implementerat)
+- [ ] Kunskapsbas-storlek stabiliseras över tid (täcks av TTL-mekanismen)
 
 ## Fas 5: Testning och Validering
-- [ ] Alla användarflöden testade och fungerande
+- [ ] Alla användarflöden testade och fungerande (Playwright-test pågår)
 - [ ] Multi-tenant-isolering verifierad med tester
 - [ ] Prestandabenchmarks inom krav (<100ms kontexthämtning)
 - [ ] Säkerhetsgranskning genomförd
@@ -38,4 +38,4 @@
 ## Dokumentation
 - [ ] AGENTS.md uppdaterad med ny kunskapsbas-funktionalitet
 - [ ] AI.md uppdaterad med beskrivning av kontextinjicering
-- [ ] DEVLOG.md innehåller lärdomar från implementeringen
+- [x] DEVLOG.md innehåller lärdomar från implementeringen (Prisma 7 + schema-fix dokumenterat)

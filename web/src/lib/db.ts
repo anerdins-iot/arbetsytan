@@ -32,6 +32,7 @@ const DIRECT_TENANT_MODELS = [
   "automation",
   "emailTemplate",
   "documentChunk",
+  "documentTemplate",
   "noteCategory",
   "timeEntry",
   "emailConversation",
@@ -488,6 +489,7 @@ export type TenantScopedClient = Omit<
   | "notification"
   | "file"
   | "documentChunk"
+  | "documentTemplate"
   | "timeEntry"
   | "comment"
   | "taskAssignment"
@@ -513,6 +515,7 @@ export type TenantScopedClient = Omit<
   notification: PrismaClient["notification"];
   file: PrismaClient["file"];
   documentChunk: PrismaClient["documentChunk"];
+  documentTemplate: PrismaClient["documentTemplate"];
   timeEntry: PrismaClient["timeEntry"];
   comment: PrismaClient["comment"];
   taskAssignment: PrismaClient["taskAssignment"];

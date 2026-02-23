@@ -206,24 +206,24 @@ export type ProjectWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   tenantId?: Prisma.StringFilter<"Project"> | string
+  aIMessages?: Prisma.AIMessageListRelationFilter
+  activityLogs?: Prisma.ActivityLogListRelationFilter
+  automations?: Prisma.AutomationListRelationFilter
+  conversations?: Prisma.ConversationListRelationFilter
+  documentChunks?: Prisma.DocumentChunkListRelationFilter
+  emailChunks?: Prisma.EmailChunkListRelationFilter
+  emailConversations?: Prisma.EmailConversationListRelationFilter
+  emailLogs?: Prisma.EmailLogListRelationFilter
+  files?: Prisma.FileListRelationFilter
+  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
+  messageChunks?: Prisma.MessageChunkListRelationFilter
+  notes?: Prisma.NoteListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   projectMembers?: Prisma.ProjectMemberListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
-  files?: Prisma.FileListRelationFilter
-  chunks?: Prisma.DocumentChunkListRelationFilter
-  conversations?: Prisma.ConversationListRelationFilter
-  aiMessages?: Prisma.AIMessageListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
-  activityLogs?: Prisma.ActivityLogListRelationFilter
   timeEntries?: Prisma.TimeEntryListRelationFilter
-  notes?: Prisma.NoteListRelationFilter
-  automations?: Prisma.AutomationListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
-  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
-  emailLogs?: Prisma.EmailLogListRelationFilter
-  emailChunks?: Prisma.EmailChunkListRelationFilter
-  emailConversations?: Prisma.EmailConversationListRelationFilter
-  messageChunks?: Prisma.MessageChunkListRelationFilter
 }
 
 export type ProjectOrderByWithRelationInput = {
@@ -235,24 +235,24 @@ export type ProjectOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  aIMessages?: Prisma.AIMessageOrderByRelationAggregateInput
+  activityLogs?: Prisma.ActivityLogOrderByRelationAggregateInput
+  automations?: Prisma.AutomationOrderByRelationAggregateInput
+  conversations?: Prisma.ConversationOrderByRelationAggregateInput
+  documentChunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
+  emailChunks?: Prisma.EmailChunkOrderByRelationAggregateInput
+  emailConversations?: Prisma.EmailConversationOrderByRelationAggregateInput
+  emailLogs?: Prisma.EmailLogOrderByRelationAggregateInput
+  files?: Prisma.FileOrderByRelationAggregateInput
+  fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
+  messages?: Prisma.MessageOrderByRelationAggregateInput
+  messageChunks?: Prisma.MessageChunkOrderByRelationAggregateInput
+  notes?: Prisma.NoteOrderByRelationAggregateInput
+  notifications?: Prisma.NotificationOrderByRelationAggregateInput
   tenant?: Prisma.TenantOrderByWithRelationInput
   projectMembers?: Prisma.ProjectMemberOrderByRelationAggregateInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
-  files?: Prisma.FileOrderByRelationAggregateInput
-  chunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
-  conversations?: Prisma.ConversationOrderByRelationAggregateInput
-  aiMessages?: Prisma.AIMessageOrderByRelationAggregateInput
-  notifications?: Prisma.NotificationOrderByRelationAggregateInput
-  activityLogs?: Prisma.ActivityLogOrderByRelationAggregateInput
   timeEntries?: Prisma.TimeEntryOrderByRelationAggregateInput
-  notes?: Prisma.NoteOrderByRelationAggregateInput
-  automations?: Prisma.AutomationOrderByRelationAggregateInput
-  messages?: Prisma.MessageOrderByRelationAggregateInput
-  fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
-  emailLogs?: Prisma.EmailLogOrderByRelationAggregateInput
-  emailChunks?: Prisma.EmailChunkOrderByRelationAggregateInput
-  emailConversations?: Prisma.EmailConversationOrderByRelationAggregateInput
-  messageChunks?: Prisma.MessageChunkOrderByRelationAggregateInput
 }
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -267,24 +267,24 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   tenantId?: Prisma.StringFilter<"Project"> | string
+  aIMessages?: Prisma.AIMessageListRelationFilter
+  activityLogs?: Prisma.ActivityLogListRelationFilter
+  automations?: Prisma.AutomationListRelationFilter
+  conversations?: Prisma.ConversationListRelationFilter
+  documentChunks?: Prisma.DocumentChunkListRelationFilter
+  emailChunks?: Prisma.EmailChunkListRelationFilter
+  emailConversations?: Prisma.EmailConversationListRelationFilter
+  emailLogs?: Prisma.EmailLogListRelationFilter
+  files?: Prisma.FileListRelationFilter
+  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
+  messageChunks?: Prisma.MessageChunkListRelationFilter
+  notes?: Prisma.NoteListRelationFilter
+  notifications?: Prisma.NotificationListRelationFilter
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   projectMembers?: Prisma.ProjectMemberListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
-  files?: Prisma.FileListRelationFilter
-  chunks?: Prisma.DocumentChunkListRelationFilter
-  conversations?: Prisma.ConversationListRelationFilter
-  aiMessages?: Prisma.AIMessageListRelationFilter
-  notifications?: Prisma.NotificationListRelationFilter
-  activityLogs?: Prisma.ActivityLogListRelationFilter
   timeEntries?: Prisma.TimeEntryListRelationFilter
-  notes?: Prisma.NoteListRelationFilter
-  automations?: Prisma.AutomationListRelationFilter
-  messages?: Prisma.MessageListRelationFilter
-  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
-  emailLogs?: Prisma.EmailLogListRelationFilter
-  emailChunks?: Prisma.EmailChunkListRelationFilter
-  emailConversations?: Prisma.EmailConversationListRelationFilter
-  messageChunks?: Prisma.MessageChunkListRelationFilter
 }, "id">
 
 export type ProjectOrderByWithAggregationInput = {
@@ -323,24 +323,24 @@ export type ProjectCreateInput = {
   address?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
   emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateInput = {
@@ -352,23 +352,23 @@ export type ProjectUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
   emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUpdateInput = {
@@ -379,24 +379,24 @@ export type ProjectUpdateInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
   emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateInput = {
@@ -408,23 +408,23 @@ export type ProjectUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
   emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyInput = {
@@ -459,14 +459,14 @@ export type ProjectUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type ProjectListRelationFilter = {
-  every?: Prisma.ProjectWhereInput
-  some?: Prisma.ProjectWhereInput
-  none?: Prisma.ProjectWhereInput
+export type ProjectScalarRelationFilter = {
+  is?: Prisma.ProjectWhereInput
+  isNot?: Prisma.ProjectWhereInput
 }
 
-export type ProjectOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
+export type ProjectNullableScalarRelationFilter = {
+  is?: Prisma.ProjectWhereInput | null
+  isNot?: Prisma.ProjectWhereInput | null
 }
 
 export type ProjectCountOrderByAggregateInput = {
@@ -502,14 +502,266 @@ export type ProjectMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
 }
 
-export type ProjectScalarRelationFilter = {
-  is?: Prisma.ProjectWhereInput
-  isNot?: Prisma.ProjectWhereInput
+export type ProjectListRelationFilter = {
+  every?: Prisma.ProjectWhereInput
+  some?: Prisma.ProjectWhereInput
+  none?: Prisma.ProjectWhereInput
 }
 
-export type ProjectNullableScalarRelationFilter = {
-  is?: Prisma.ProjectWhereInput | null
-  isNot?: Prisma.ProjectWhereInput | null
+export type ProjectOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type ProjectCreateNestedOneWithoutAIMessagesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAIMessagesInput, Prisma.ProjectUncheckedCreateWithoutAIMessagesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAIMessagesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutAIMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAIMessagesInput, Prisma.ProjectUncheckedCreateWithoutAIMessagesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAIMessagesInput
+  upsert?: Prisma.ProjectUpsertWithoutAIMessagesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutAIMessagesInput, Prisma.ProjectUpdateWithoutAIMessagesInput>, Prisma.ProjectUncheckedUpdateWithoutAIMessagesInput>
+}
+
+export type ProjectCreateNestedOneWithoutActivityLogsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActivityLogsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutActivityLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActivityLogsInput
+  upsert?: Prisma.ProjectUpsertWithoutActivityLogsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutActivityLogsInput, Prisma.ProjectUpdateWithoutActivityLogsInput>, Prisma.ProjectUncheckedUpdateWithoutActivityLogsInput>
+}
+
+export type ProjectCreateNestedOneWithoutAutomationsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAutomationsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutAutomationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAutomationsInput
+  upsert?: Prisma.ProjectUpsertWithoutAutomationsInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutAutomationsInput, Prisma.ProjectUpdateWithoutAutomationsInput>, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
+}
+
+export type ProjectCreateNestedOneWithoutConversationsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutConversationsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutConversationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutConversationsInput
+  upsert?: Prisma.ProjectUpsertWithoutConversationsInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutConversationsInput, Prisma.ProjectUpdateWithoutConversationsInput>, Prisma.ProjectUncheckedUpdateWithoutConversationsInput>
+}
+
+export type ProjectCreateNestedOneWithoutDocumentChunksInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDocumentChunksInput, Prisma.ProjectUncheckedCreateWithoutDocumentChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDocumentChunksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutDocumentChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutDocumentChunksInput, Prisma.ProjectUncheckedCreateWithoutDocumentChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutDocumentChunksInput
+  upsert?: Prisma.ProjectUpsertWithoutDocumentChunksInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutDocumentChunksInput, Prisma.ProjectUpdateWithoutDocumentChunksInput>, Prisma.ProjectUncheckedUpdateWithoutDocumentChunksInput>
+}
+
+export type ProjectCreateNestedOneWithoutEmailChunksInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailChunksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutEmailChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailChunksInput
+  upsert?: Prisma.ProjectUpsertWithoutEmailChunksInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailChunksInput, Prisma.ProjectUpdateWithoutEmailChunksInput>, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+}
+
+export type ProjectCreateNestedOneWithoutEmailConversationsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailConversationsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutEmailConversationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailConversationsInput
+  upsert?: Prisma.ProjectUpsertWithoutEmailConversationsInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailConversationsInput, Prisma.ProjectUpdateWithoutEmailConversationsInput>, Prisma.ProjectUncheckedUpdateWithoutEmailConversationsInput>
+}
+
+export type ProjectCreateNestedOneWithoutEmailLogsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailLogsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutEmailLogsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailLogsInput
+  upsert?: Prisma.ProjectUpsertWithoutEmailLogsInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailLogsInput, Prisma.ProjectUpdateWithoutEmailLogsInput>, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+}
+
+export type ProjectCreateNestedOneWithoutFilesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFilesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutFilesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFilesInput
+  upsert?: Prisma.ProjectUpsertWithoutFilesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFilesInput, Prisma.ProjectUpdateWithoutFilesInput>, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
+}
+
+export type ProjectCreateNestedOneWithoutFileAnalysesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFileAnalysesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutFileAnalysesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFileAnalysesInput
+  upsert?: Prisma.ProjectUpsertWithoutFileAnalysesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFileAnalysesInput, Prisma.ProjectUpdateWithoutFileAnalysesInput>, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
+}
+
+export type ProjectCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.ProjectUpsertWithoutMessagesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutMessagesInput, Prisma.ProjectUpdateWithoutMessagesInput>, Prisma.ProjectUncheckedUpdateWithoutMessagesInput>
+}
+
+export type ProjectCreateNestedOneWithoutMessageChunksInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessageChunksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutMessageChunksNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessageChunksInput
+  upsert?: Prisma.ProjectUpsertWithoutMessageChunksInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutMessageChunksInput, Prisma.ProjectUpdateWithoutMessageChunksInput>, Prisma.ProjectUncheckedUpdateWithoutMessageChunksInput>
+}
+
+export type ProjectCreateNestedOneWithoutNotesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutNotesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotesInput
+  upsert?: Prisma.ProjectUpsertWithoutNotesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNotesInput, Prisma.ProjectUpdateWithoutNotesInput>, Prisma.ProjectUncheckedUpdateWithoutNotesInput>
+}
+
+export type ProjectCreateNestedOneWithoutNotificationsInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotificationsInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutNotificationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotificationsInput
+  upsert?: Prisma.ProjectUpsertWithoutNotificationsInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNotificationsInput, Prisma.ProjectUpdateWithoutNotificationsInput>, Prisma.ProjectUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type EnumProjectStatusFieldUpdateOperationsInput = {
+  set?: $Enums.ProjectStatus
+}
+
+export type ProjectCreateNestedOneWithoutProjectMembersInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutProjectMembersInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutProjectMembersNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutProjectMembersInput
+  upsert?: Prisma.ProjectUpsertWithoutProjectMembersInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutProjectMembersInput, Prisma.ProjectUpdateWithoutProjectMembersInput>, Prisma.ProjectUncheckedUpdateWithoutProjectMembersInput>
+}
+
+export type ProjectCreateNestedOneWithoutTasksInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTasksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneRequiredWithoutTasksNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTasksInput
+  upsert?: Prisma.ProjectUpsertWithoutTasksInput
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutTasksInput, Prisma.ProjectUpdateWithoutTasksInput>, Prisma.ProjectUncheckedUpdateWithoutTasksInput>
 }
 
 export type ProjectCreateNestedManyWithoutTenantInput = {
@@ -554,178 +806,6 @@ export type ProjectUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.ProjectScalarWhereInput | Prisma.ProjectScalarWhereInput[]
 }
 
-export type EnumProjectStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ProjectStatus
-}
-
-export type ProjectCreateNestedOneWithoutProjectMembersInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutProjectMembersInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutProjectMembersNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutProjectMembersInput
-  upsert?: Prisma.ProjectUpsertWithoutProjectMembersInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutProjectMembersInput, Prisma.ProjectUpdateWithoutProjectMembersInput>, Prisma.ProjectUncheckedUpdateWithoutProjectMembersInput>
-}
-
-export type ProjectCreateNestedOneWithoutTasksInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTasksInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutTasksNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTasksInput
-  upsert?: Prisma.ProjectUpsertWithoutTasksInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutTasksInput, Prisma.ProjectUpdateWithoutTasksInput>, Prisma.ProjectUncheckedUpdateWithoutTasksInput>
-}
-
-export type ProjectCreateNestedOneWithoutFilesInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFilesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutFilesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFilesInput
-  upsert?: Prisma.ProjectUpsertWithoutFilesInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFilesInput, Prisma.ProjectUpdateWithoutFilesInput>, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
-}
-
-export type ProjectCreateNestedOneWithoutFileAnalysesInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFileAnalysesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutFileAnalysesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutFileAnalysesInput
-  upsert?: Prisma.ProjectUpsertWithoutFileAnalysesInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutFileAnalysesInput, Prisma.ProjectUpdateWithoutFileAnalysesInput>, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
-}
-
-export type ProjectCreateNestedOneWithoutChunksInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutChunksInput, Prisma.ProjectUncheckedCreateWithoutChunksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutChunksInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutChunksInput, Prisma.ProjectUncheckedCreateWithoutChunksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutChunksInput
-  upsert?: Prisma.ProjectUpsertWithoutChunksInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutChunksInput, Prisma.ProjectUpdateWithoutChunksInput>, Prisma.ProjectUncheckedUpdateWithoutChunksInput>
-}
-
-export type ProjectCreateNestedOneWithoutConversationsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutConversationsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutConversationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutConversationsInput
-  upsert?: Prisma.ProjectUpsertWithoutConversationsInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutConversationsInput, Prisma.ProjectUpdateWithoutConversationsInput>, Prisma.ProjectUncheckedUpdateWithoutConversationsInput>
-}
-
-export type ProjectCreateNestedOneWithoutMessagesInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessagesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutMessagesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessagesInput
-  upsert?: Prisma.ProjectUpsertWithoutMessagesInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutMessagesInput, Prisma.ProjectUpdateWithoutMessagesInput>, Prisma.ProjectUncheckedUpdateWithoutMessagesInput>
-}
-
-export type ProjectCreateNestedOneWithoutMessageChunksInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessageChunksInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutMessageChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutMessageChunksInput
-  upsert?: Prisma.ProjectUpsertWithoutMessageChunksInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutMessageChunksInput, Prisma.ProjectUpdateWithoutMessageChunksInput>, Prisma.ProjectUncheckedUpdateWithoutMessageChunksInput>
-}
-
-export type ProjectCreateNestedOneWithoutAiMessagesInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAiMessagesInput, Prisma.ProjectUncheckedCreateWithoutAiMessagesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAiMessagesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutAiMessagesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAiMessagesInput, Prisma.ProjectUncheckedCreateWithoutAiMessagesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAiMessagesInput
-  upsert?: Prisma.ProjectUpsertWithoutAiMessagesInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutAiMessagesInput, Prisma.ProjectUpdateWithoutAiMessagesInput>, Prisma.ProjectUncheckedUpdateWithoutAiMessagesInput>
-}
-
-export type ProjectCreateNestedOneWithoutNotificationsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotificationsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneWithoutNotificationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotificationsInput
-  upsert?: Prisma.ProjectUpsertWithoutNotificationsInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNotificationsInput, Prisma.ProjectUpdateWithoutNotificationsInput>, Prisma.ProjectUncheckedUpdateWithoutNotificationsInput>
-}
-
-export type ProjectCreateNestedOneWithoutActivityLogsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActivityLogsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-}
-
-export type ProjectUpdateOneRequiredWithoutActivityLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutActivityLogsInput
-  upsert?: Prisma.ProjectUpsertWithoutActivityLogsInput
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutActivityLogsInput, Prisma.ProjectUpdateWithoutActivityLogsInput>, Prisma.ProjectUncheckedUpdateWithoutActivityLogsInput>
-}
-
 export type ProjectCreateNestedOneWithoutTimeEntriesInput = {
   create?: Prisma.XOR<Prisma.ProjectCreateWithoutTimeEntriesInput, Prisma.ProjectUncheckedCreateWithoutTimeEntriesInput>
   connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutTimeEntriesInput
@@ -742,84 +822,1988 @@ export type ProjectUpdateOneWithoutTimeEntriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutTimeEntriesInput, Prisma.ProjectUpdateWithoutTimeEntriesInput>, Prisma.ProjectUncheckedUpdateWithoutTimeEntriesInput>
 }
 
-export type ProjectCreateNestedOneWithoutNotesInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotesInput
-  connect?: Prisma.ProjectWhereUniqueInput
+export type ProjectCreateWithoutAIMessagesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
 }
 
-export type ProjectUpdateOneWithoutNotesNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutNotesInput
-  upsert?: Prisma.ProjectUpsertWithoutNotesInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutNotesInput, Prisma.ProjectUpdateWithoutNotesInput>, Prisma.ProjectUncheckedUpdateWithoutNotesInput>
+export type ProjectUncheckedCreateWithoutAIMessagesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
 }
 
-export type ProjectCreateNestedOneWithoutAutomationsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAutomationsInput
-  connect?: Prisma.ProjectWhereUniqueInput
+export type ProjectCreateOrConnectWithoutAIMessagesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutAIMessagesInput, Prisma.ProjectUncheckedCreateWithoutAIMessagesInput>
 }
 
-export type ProjectUpdateOneWithoutAutomationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutAutomationsInput
-  upsert?: Prisma.ProjectUpsertWithoutAutomationsInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutAutomationsInput, Prisma.ProjectUpdateWithoutAutomationsInput>, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
+export type ProjectUpsertWithoutAIMessagesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutAIMessagesInput, Prisma.ProjectUncheckedUpdateWithoutAIMessagesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutAIMessagesInput, Prisma.ProjectUncheckedCreateWithoutAIMessagesInput>
+  where?: Prisma.ProjectWhereInput
 }
 
-export type ProjectCreateNestedOneWithoutEmailConversationsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailConversationsInput
-  connect?: Prisma.ProjectWhereUniqueInput
+export type ProjectUpdateToOneWithWhereWithoutAIMessagesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutAIMessagesInput, Prisma.ProjectUncheckedUpdateWithoutAIMessagesInput>
 }
 
-export type ProjectUpdateOneWithoutEmailConversationsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailConversationsInput
-  upsert?: Prisma.ProjectUpsertWithoutEmailConversationsInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailConversationsInput, Prisma.ProjectUpdateWithoutEmailConversationsInput>, Prisma.ProjectUncheckedUpdateWithoutEmailConversationsInput>
+export type ProjectUpdateWithoutAIMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
 }
 
-export type ProjectCreateNestedOneWithoutEmailLogsInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailLogsInput
-  connect?: Prisma.ProjectWhereUniqueInput
+export type ProjectUncheckedUpdateWithoutAIMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
-export type ProjectUpdateOneWithoutEmailLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailLogsInput
-  upsert?: Prisma.ProjectUpsertWithoutEmailLogsInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailLogsInput, Prisma.ProjectUpdateWithoutEmailLogsInput>, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+export type ProjectCreateWithoutActivityLogsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
 }
 
-export type ProjectCreateNestedOneWithoutEmailChunksInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailChunksInput
-  connect?: Prisma.ProjectWhereUniqueInput
+export type ProjectUncheckedCreateWithoutActivityLogsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
 }
 
-export type ProjectUpdateOneWithoutEmailChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
-  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutEmailChunksInput
-  upsert?: Prisma.ProjectUpsertWithoutEmailChunksInput
-  disconnect?: Prisma.ProjectWhereInput | boolean
-  delete?: Prisma.ProjectWhereInput | boolean
-  connect?: Prisma.ProjectWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutEmailChunksInput, Prisma.ProjectUpdateWithoutEmailChunksInput>, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+export type ProjectCreateOrConnectWithoutActivityLogsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
+}
+
+export type ProjectUpsertWithoutActivityLogsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutActivityLogsInput, Prisma.ProjectUncheckedUpdateWithoutActivityLogsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutActivityLogsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutActivityLogsInput, Prisma.ProjectUncheckedUpdateWithoutActivityLogsInput>
+}
+
+export type ProjectUpdateWithoutActivityLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutAutomationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutAutomationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutAutomationsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
+}
+
+export type ProjectUpsertWithoutAutomationsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutAutomationsInput, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutAutomationsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutAutomationsInput, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
+}
+
+export type ProjectUpdateWithoutAutomationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutAutomationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutConversationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutConversationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutConversationsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
+}
+
+export type ProjectUpsertWithoutConversationsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutConversationsInput, Prisma.ProjectUncheckedUpdateWithoutConversationsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutConversationsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutConversationsInput, Prisma.ProjectUncheckedUpdateWithoutConversationsInput>
+}
+
+export type ProjectUpdateWithoutConversationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutConversationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutDocumentChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutDocumentChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutDocumentChunksInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDocumentChunksInput, Prisma.ProjectUncheckedCreateWithoutDocumentChunksInput>
+}
+
+export type ProjectUpsertWithoutDocumentChunksInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutDocumentChunksInput, Prisma.ProjectUncheckedUpdateWithoutDocumentChunksInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutDocumentChunksInput, Prisma.ProjectUncheckedCreateWithoutDocumentChunksInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutDocumentChunksInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutDocumentChunksInput, Prisma.ProjectUncheckedUpdateWithoutDocumentChunksInput>
+}
+
+export type ProjectUpdateWithoutDocumentChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutDocumentChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutEmailChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutEmailChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutEmailChunksInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+}
+
+export type ProjectUpsertWithoutEmailChunksInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailChunksInput, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutEmailChunksInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailChunksInput, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
+}
+
+export type ProjectUpdateWithoutEmailChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutEmailChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutEmailConversationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutEmailConversationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutEmailConversationsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
+}
+
+export type ProjectUpsertWithoutEmailConversationsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailConversationsInput, Prisma.ProjectUncheckedUpdateWithoutEmailConversationsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutEmailConversationsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailConversationsInput, Prisma.ProjectUncheckedUpdateWithoutEmailConversationsInput>
+}
+
+export type ProjectUpdateWithoutEmailConversationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutEmailConversationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutEmailLogsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutEmailLogsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutEmailLogsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+}
+
+export type ProjectUpsertWithoutEmailLogsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailLogsInput, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutEmailLogsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailLogsInput, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
+}
+
+export type ProjectUpdateWithoutEmailLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutEmailLogsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutFilesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutFilesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutFilesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
+}
+
+export type ProjectUpsertWithoutFilesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFilesInput, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutFilesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFilesInput, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
+}
+
+export type ProjectUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutFilesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutFileAnalysesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutFileAnalysesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutFileAnalysesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+}
+
+export type ProjectUpsertWithoutFileAnalysesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFileAnalysesInput, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutFileAnalysesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFileAnalysesInput, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
+}
+
+export type ProjectUpdateWithoutFileAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutFileAnalysesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutMessagesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutMessagesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutMessagesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
+}
+
+export type ProjectUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutMessagesInput, Prisma.ProjectUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutMessagesInput, Prisma.ProjectUncheckedUpdateWithoutMessagesInput>
+}
+
+export type ProjectUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutMessageChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutMessageChunksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutMessageChunksInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
+}
+
+export type ProjectUpsertWithoutMessageChunksInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutMessageChunksInput, Prisma.ProjectUncheckedUpdateWithoutMessageChunksInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutMessageChunksInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutMessageChunksInput, Prisma.ProjectUncheckedUpdateWithoutMessageChunksInput>
+}
+
+export type ProjectUpdateWithoutMessageChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutMessageChunksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNotesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNotesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNotesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
+}
+
+export type ProjectUpsertWithoutNotesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNotesInput, Prisma.ProjectUncheckedUpdateWithoutNotesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNotesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNotesInput, Prisma.ProjectUncheckedUpdateWithoutNotesInput>
+}
+
+export type ProjectUpdateWithoutNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutNotificationsInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutNotificationsInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
+}
+
+export type ProjectUpsertWithoutNotificationsInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNotificationsInput, Prisma.ProjectUncheckedUpdateWithoutNotificationsInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutNotificationsInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNotificationsInput, Prisma.ProjectUncheckedUpdateWithoutNotificationsInput>
+}
+
+export type ProjectUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutNotificationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutProjectMembersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutProjectMembersInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutProjectMembersInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
+}
+
+export type ProjectUpsertWithoutProjectMembersInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutProjectMembersInput, Prisma.ProjectUncheckedUpdateWithoutProjectMembersInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutProjectMembersInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutProjectMembersInput, Prisma.ProjectUncheckedUpdateWithoutProjectMembersInput>
+}
+
+export type ProjectUpdateWithoutProjectMembersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutTasksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutTasksInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutTasksInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
+}
+
+export type ProjectUpsertWithoutTasksInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutTasksInput, Prisma.ProjectUncheckedUpdateWithoutTasksInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutTasksInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutTasksInput, Prisma.ProjectUncheckedUpdateWithoutTasksInput>
+}
+
+export type ProjectUpdateWithoutTasksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutTasksInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateWithoutTenantInput = {
@@ -830,23 +2814,23 @@ export type ProjectCreateWithoutTenantInput = {
   address?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
   emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTenantInput = {
@@ -857,23 +2841,23 @@ export type ProjectUncheckedCreateWithoutTenantInput = {
   address?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
   emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTenantInput = {
@@ -916,1370 +2900,6 @@ export type ProjectScalarWhereInput = {
   tenantId?: Prisma.StringFilter<"Project"> | string
 }
 
-export type ProjectCreateWithoutProjectMembersInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutProjectMembersInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutProjectMembersInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
-}
-
-export type ProjectUpsertWithoutProjectMembersInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutProjectMembersInput, Prisma.ProjectUncheckedUpdateWithoutProjectMembersInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutProjectMembersInput, Prisma.ProjectUncheckedCreateWithoutProjectMembersInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutProjectMembersInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutProjectMembersInput, Prisma.ProjectUncheckedUpdateWithoutProjectMembersInput>
-}
-
-export type ProjectUpdateWithoutProjectMembersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutTasksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutTasksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutTasksInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
-}
-
-export type ProjectUpsertWithoutTasksInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutTasksInput, Prisma.ProjectUncheckedUpdateWithoutTasksInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutTasksInput, Prisma.ProjectUncheckedCreateWithoutTasksInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutTasksInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutTasksInput, Prisma.ProjectUncheckedUpdateWithoutTasksInput>
-}
-
-export type ProjectUpdateWithoutTasksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutTasksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutFilesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutFilesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutFilesInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
-}
-
-export type ProjectUpsertWithoutFilesInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFilesInput, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutFilesInput, Prisma.ProjectUncheckedCreateWithoutFilesInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutFilesInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFilesInput, Prisma.ProjectUncheckedUpdateWithoutFilesInput>
-}
-
-export type ProjectUpdateWithoutFilesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutFilesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutFileAnalysesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutFileAnalysesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutFileAnalysesInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
-}
-
-export type ProjectUpsertWithoutFileAnalysesInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutFileAnalysesInput, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutFileAnalysesInput, Prisma.ProjectUncheckedCreateWithoutFileAnalysesInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutFileAnalysesInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutFileAnalysesInput, Prisma.ProjectUncheckedUpdateWithoutFileAnalysesInput>
-}
-
-export type ProjectUpdateWithoutFileAnalysesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutFileAnalysesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutChunksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutChunksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutChunksInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutChunksInput, Prisma.ProjectUncheckedCreateWithoutChunksInput>
-}
-
-export type ProjectUpsertWithoutChunksInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutChunksInput, Prisma.ProjectUncheckedUpdateWithoutChunksInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutChunksInput, Prisma.ProjectUncheckedCreateWithoutChunksInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutChunksInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutChunksInput, Prisma.ProjectUncheckedUpdateWithoutChunksInput>
-}
-
-export type ProjectUpdateWithoutChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutConversationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutConversationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutConversationsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
-}
-
-export type ProjectUpsertWithoutConversationsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutConversationsInput, Prisma.ProjectUncheckedUpdateWithoutConversationsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutConversationsInput, Prisma.ProjectUncheckedCreateWithoutConversationsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutConversationsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutConversationsInput, Prisma.ProjectUncheckedUpdateWithoutConversationsInput>
-}
-
-export type ProjectUpdateWithoutConversationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutConversationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutMessagesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutMessagesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutMessagesInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
-}
-
-export type ProjectUpsertWithoutMessagesInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutMessagesInput, Prisma.ProjectUncheckedUpdateWithoutMessagesInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessagesInput, Prisma.ProjectUncheckedCreateWithoutMessagesInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutMessagesInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutMessagesInput, Prisma.ProjectUncheckedUpdateWithoutMessagesInput>
-}
-
-export type ProjectUpdateWithoutMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutMessageChunksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutMessageChunksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutMessageChunksInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
-}
-
-export type ProjectUpsertWithoutMessageChunksInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutMessageChunksInput, Prisma.ProjectUncheckedUpdateWithoutMessageChunksInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutMessageChunksInput, Prisma.ProjectUncheckedCreateWithoutMessageChunksInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutMessageChunksInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutMessageChunksInput, Prisma.ProjectUncheckedUpdateWithoutMessageChunksInput>
-}
-
-export type ProjectUpdateWithoutMessageChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutMessageChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutAiMessagesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutAiMessagesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutAiMessagesInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutAiMessagesInput, Prisma.ProjectUncheckedCreateWithoutAiMessagesInput>
-}
-
-export type ProjectUpsertWithoutAiMessagesInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutAiMessagesInput, Prisma.ProjectUncheckedUpdateWithoutAiMessagesInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutAiMessagesInput, Prisma.ProjectUncheckedCreateWithoutAiMessagesInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutAiMessagesInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutAiMessagesInput, Prisma.ProjectUncheckedUpdateWithoutAiMessagesInput>
-}
-
-export type ProjectUpdateWithoutAiMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutAiMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutNotificationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutNotificationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutNotificationsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
-}
-
-export type ProjectUpsertWithoutNotificationsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNotificationsInput, Prisma.ProjectUncheckedUpdateWithoutNotificationsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotificationsInput, Prisma.ProjectUncheckedCreateWithoutNotificationsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutNotificationsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNotificationsInput, Prisma.ProjectUncheckedUpdateWithoutNotificationsInput>
-}
-
-export type ProjectUpdateWithoutNotificationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutNotificationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutActivityLogsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutActivityLogsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutActivityLogsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
-}
-
-export type ProjectUpsertWithoutActivityLogsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutActivityLogsInput, Prisma.ProjectUncheckedUpdateWithoutActivityLogsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutActivityLogsInput, Prisma.ProjectUncheckedCreateWithoutActivityLogsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutActivityLogsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutActivityLogsInput, Prisma.ProjectUncheckedUpdateWithoutActivityLogsInput>
-}
-
-export type ProjectUpdateWithoutActivityLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
 export type ProjectCreateWithoutTimeEntriesInput = {
   id?: string
   name: string
@@ -2288,23 +2908,23 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   address?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
   activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
   emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
   emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
   messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
@@ -2316,22 +2936,22 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
   activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
   emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
   emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
   messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
 }
 
 export type ProjectCreateOrConnectWithoutTimeEntriesInput = {
@@ -2358,23 +2978,23 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
   emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
@@ -2386,642 +3006,22 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
   emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutNotesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutNotesInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutNotesInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
-}
-
-export type ProjectUpsertWithoutNotesInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutNotesInput, Prisma.ProjectUncheckedUpdateWithoutNotesInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutNotesInput, Prisma.ProjectUncheckedCreateWithoutNotesInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutNotesInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutNotesInput, Prisma.ProjectUncheckedUpdateWithoutNotesInput>
-}
-
-export type ProjectUpdateWithoutNotesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutNotesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
   emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutAutomationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutAutomationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutAutomationsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
-}
-
-export type ProjectUpsertWithoutAutomationsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutAutomationsInput, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutAutomationsInput, Prisma.ProjectUncheckedCreateWithoutAutomationsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutAutomationsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutAutomationsInput, Prisma.ProjectUncheckedUpdateWithoutAutomationsInput>
-}
-
-export type ProjectUpdateWithoutAutomationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutAutomationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutEmailConversationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutEmailConversationsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutEmailConversationsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
-}
-
-export type ProjectUpsertWithoutEmailConversationsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailConversationsInput, Prisma.ProjectUncheckedUpdateWithoutEmailConversationsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailConversationsInput, Prisma.ProjectUncheckedCreateWithoutEmailConversationsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutEmailConversationsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailConversationsInput, Prisma.ProjectUncheckedUpdateWithoutEmailConversationsInput>
-}
-
-export type ProjectUpdateWithoutEmailConversationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutEmailConversationsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutEmailLogsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutEmailLogsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutEmailLogsInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
-}
-
-export type ProjectUpsertWithoutEmailLogsInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailLogsInput, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailLogsInput, Prisma.ProjectUncheckedCreateWithoutEmailLogsInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutEmailLogsInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailLogsInput, Prisma.ProjectUncheckedUpdateWithoutEmailLogsInput>
-}
-
-export type ProjectUpdateWithoutEmailLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutEmailLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectCreateWithoutEmailChunksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutProjectsInput
-  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectUncheckedCreateWithoutEmailChunksInput = {
-  id?: string
-  name: string
-  description?: string | null
-  status?: $Enums.ProjectStatus
-  address?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenantId: string
-  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
-  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
-  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
-  aiMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
-  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
-  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
-  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
-  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
-  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
-}
-
-export type ProjectCreateOrConnectWithoutEmailChunksInput = {
-  where: Prisma.ProjectWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
-}
-
-export type ProjectUpsertWithoutEmailChunksInput = {
-  update: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailChunksInput, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
-  create: Prisma.XOR<Prisma.ProjectCreateWithoutEmailChunksInput, Prisma.ProjectUncheckedCreateWithoutEmailChunksInput>
-  where?: Prisma.ProjectWhereInput
-}
-
-export type ProjectUpdateToOneWithWhereWithoutEmailChunksInput = {
-  where?: Prisma.ProjectWhereInput
-  data: Prisma.XOR<Prisma.ProjectUpdateWithoutEmailChunksInput, Prisma.ProjectUncheckedUpdateWithoutEmailChunksInput>
-}
-
-export type ProjectUpdateWithoutEmailChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectsNestedInput
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
-}
-
-export type ProjectUncheckedUpdateWithoutEmailChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
-  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
-  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyTenantInput = {
@@ -3042,23 +3042,23 @@ export type ProjectUpdateWithoutTenantInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
   activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
   emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
   emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
   messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateWithoutTenantInput = {
@@ -3069,23 +3069,23 @@ export type ProjectUncheckedUpdateWithoutTenantInput = {
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
-  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
-  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
-  aiMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
-  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
   activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
-  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
-  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
   emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
   emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
   messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectUncheckedUpdateManyWithoutTenantInput = {
@@ -3104,43 +3104,43 @@ export type ProjectUncheckedUpdateManyWithoutTenantInput = {
  */
 
 export type ProjectCountOutputType = {
-  projectMembers: number
-  tasks: number
-  files: number
-  chunks: number
-  conversations: number
-  aiMessages: number
-  notifications: number
+  aIMessages: number
   activityLogs: number
-  timeEntries: number
-  notes: number
   automations: number
-  messages: number
-  fileAnalyses: number
-  emailLogs: number
+  conversations: number
+  documentChunks: number
   emailChunks: number
   emailConversations: number
+  emailLogs: number
+  files: number
+  fileAnalyses: number
+  messages: number
   messageChunks: number
+  notes: number
+  notifications: number
+  projectMembers: number
+  tasks: number
+  timeEntries: number
 }
 
 export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  projectMembers?: boolean | ProjectCountOutputTypeCountProjectMembersArgs
-  tasks?: boolean | ProjectCountOutputTypeCountTasksArgs
-  files?: boolean | ProjectCountOutputTypeCountFilesArgs
-  chunks?: boolean | ProjectCountOutputTypeCountChunksArgs
-  conversations?: boolean | ProjectCountOutputTypeCountConversationsArgs
-  aiMessages?: boolean | ProjectCountOutputTypeCountAiMessagesArgs
-  notifications?: boolean | ProjectCountOutputTypeCountNotificationsArgs
+  aIMessages?: boolean | ProjectCountOutputTypeCountAIMessagesArgs
   activityLogs?: boolean | ProjectCountOutputTypeCountActivityLogsArgs
-  timeEntries?: boolean | ProjectCountOutputTypeCountTimeEntriesArgs
-  notes?: boolean | ProjectCountOutputTypeCountNotesArgs
   automations?: boolean | ProjectCountOutputTypeCountAutomationsArgs
-  messages?: boolean | ProjectCountOutputTypeCountMessagesArgs
-  fileAnalyses?: boolean | ProjectCountOutputTypeCountFileAnalysesArgs
-  emailLogs?: boolean | ProjectCountOutputTypeCountEmailLogsArgs
+  conversations?: boolean | ProjectCountOutputTypeCountConversationsArgs
+  documentChunks?: boolean | ProjectCountOutputTypeCountDocumentChunksArgs
   emailChunks?: boolean | ProjectCountOutputTypeCountEmailChunksArgs
   emailConversations?: boolean | ProjectCountOutputTypeCountEmailConversationsArgs
+  emailLogs?: boolean | ProjectCountOutputTypeCountEmailLogsArgs
+  files?: boolean | ProjectCountOutputTypeCountFilesArgs
+  fileAnalyses?: boolean | ProjectCountOutputTypeCountFileAnalysesArgs
+  messages?: boolean | ProjectCountOutputTypeCountMessagesArgs
   messageChunks?: boolean | ProjectCountOutputTypeCountMessageChunksArgs
+  notes?: boolean | ProjectCountOutputTypeCountNotesArgs
+  notifications?: boolean | ProjectCountOutputTypeCountNotificationsArgs
+  projectMembers?: boolean | ProjectCountOutputTypeCountProjectMembersArgs
+  tasks?: boolean | ProjectCountOutputTypeCountTasksArgs
+  timeEntries?: boolean | ProjectCountOutputTypeCountTimeEntriesArgs
 }
 
 /**
@@ -3156,50 +3156,8 @@ export type ProjectCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
 /**
  * ProjectCountOutputType without action
  */
-export type ProjectCountOutputTypeCountProjectMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProjectMemberWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountTasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TaskWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FileWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DocumentChunkWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ConversationWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountAiMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ProjectCountOutputTypeCountAIMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AIMessageWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NotificationWhereInput
 }
 
 /**
@@ -3212,20 +3170,6 @@ export type ProjectCountOutputTypeCountActivityLogsArgs<ExtArgs extends runtime.
 /**
  * ProjectCountOutputType without action
  */
-export type ProjectCountOutputTypeCountTimeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TimeEntryWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NoteWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
 export type ProjectCountOutputTypeCountAutomationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AutomationWhereInput
 }
@@ -3233,22 +3177,15 @@ export type ProjectCountOutputTypeCountAutomationsArgs<ExtArgs extends runtime.T
 /**
  * ProjectCountOutputType without action
  */
-export type ProjectCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MessageWhereInput
+export type ProjectCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationWhereInput
 }
 
 /**
  * ProjectCountOutputType without action
  */
-export type ProjectCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FileAnalysisWhereInput
-}
-
-/**
- * ProjectCountOutputType without action
- */
-export type ProjectCountOutputTypeCountEmailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.EmailLogWhereInput
+export type ProjectCountOutputTypeCountDocumentChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentChunkWhereInput
 }
 
 /**
@@ -3268,8 +3205,71 @@ export type ProjectCountOutputTypeCountEmailConversationsArgs<ExtArgs extends ru
 /**
  * ProjectCountOutputType without action
  */
+export type ProjectCountOutputTypeCountEmailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailLogWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileAnalysisWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
 export type ProjectCountOutputTypeCountMessageChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MessageChunkWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NoteWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountNotificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountProjectMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectMemberWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountTasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TaskWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
+export type ProjectCountOutputTypeCountTimeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TimeEntryWhereInput
 }
 
 
@@ -3282,24 +3282,24 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   updatedAt?: boolean
   tenantId?: boolean
+  aIMessages?: boolean | Prisma.Project$aIMessagesArgs<ExtArgs>
+  activityLogs?: boolean | Prisma.Project$activityLogsArgs<ExtArgs>
+  automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
+  conversations?: boolean | Prisma.Project$conversationsArgs<ExtArgs>
+  documentChunks?: boolean | Prisma.Project$documentChunksArgs<ExtArgs>
+  emailChunks?: boolean | Prisma.Project$emailChunksArgs<ExtArgs>
+  emailConversations?: boolean | Prisma.Project$emailConversationsArgs<ExtArgs>
+  emailLogs?: boolean | Prisma.Project$emailLogsArgs<ExtArgs>
+  files?: boolean | Prisma.Project$filesArgs<ExtArgs>
+  fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
+  messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
+  messageChunks?: boolean | Prisma.Project$messageChunksArgs<ExtArgs>
+  notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
+  notifications?: boolean | Prisma.Project$notificationsArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   projectMembers?: boolean | Prisma.Project$projectMembersArgs<ExtArgs>
   tasks?: boolean | Prisma.Project$tasksArgs<ExtArgs>
-  files?: boolean | Prisma.Project$filesArgs<ExtArgs>
-  chunks?: boolean | Prisma.Project$chunksArgs<ExtArgs>
-  conversations?: boolean | Prisma.Project$conversationsArgs<ExtArgs>
-  aiMessages?: boolean | Prisma.Project$aiMessagesArgs<ExtArgs>
-  notifications?: boolean | Prisma.Project$notificationsArgs<ExtArgs>
-  activityLogs?: boolean | Prisma.Project$activityLogsArgs<ExtArgs>
   timeEntries?: boolean | Prisma.Project$timeEntriesArgs<ExtArgs>
-  notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
-  automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
-  messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
-  fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
-  emailLogs?: boolean | Prisma.Project$emailLogsArgs<ExtArgs>
-  emailChunks?: boolean | Prisma.Project$emailChunksArgs<ExtArgs>
-  emailConversations?: boolean | Prisma.Project$emailConversationsArgs<ExtArgs>
-  messageChunks?: boolean | Prisma.Project$messageChunksArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["project"]>
 
@@ -3340,24 +3340,24 @@ export type ProjectSelectScalar = {
 
 export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "status" | "address" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["project"]>
 export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  aIMessages?: boolean | Prisma.Project$aIMessagesArgs<ExtArgs>
+  activityLogs?: boolean | Prisma.Project$activityLogsArgs<ExtArgs>
+  automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
+  conversations?: boolean | Prisma.Project$conversationsArgs<ExtArgs>
+  documentChunks?: boolean | Prisma.Project$documentChunksArgs<ExtArgs>
+  emailChunks?: boolean | Prisma.Project$emailChunksArgs<ExtArgs>
+  emailConversations?: boolean | Prisma.Project$emailConversationsArgs<ExtArgs>
+  emailLogs?: boolean | Prisma.Project$emailLogsArgs<ExtArgs>
+  files?: boolean | Prisma.Project$filesArgs<ExtArgs>
+  fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
+  messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
+  messageChunks?: boolean | Prisma.Project$messageChunksArgs<ExtArgs>
+  notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
+  notifications?: boolean | Prisma.Project$notificationsArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   projectMembers?: boolean | Prisma.Project$projectMembersArgs<ExtArgs>
   tasks?: boolean | Prisma.Project$tasksArgs<ExtArgs>
-  files?: boolean | Prisma.Project$filesArgs<ExtArgs>
-  chunks?: boolean | Prisma.Project$chunksArgs<ExtArgs>
-  conversations?: boolean | Prisma.Project$conversationsArgs<ExtArgs>
-  aiMessages?: boolean | Prisma.Project$aiMessagesArgs<ExtArgs>
-  notifications?: boolean | Prisma.Project$notificationsArgs<ExtArgs>
-  activityLogs?: boolean | Prisma.Project$activityLogsArgs<ExtArgs>
   timeEntries?: boolean | Prisma.Project$timeEntriesArgs<ExtArgs>
-  notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
-  automations?: boolean | Prisma.Project$automationsArgs<ExtArgs>
-  messages?: boolean | Prisma.Project$messagesArgs<ExtArgs>
-  fileAnalyses?: boolean | Prisma.Project$fileAnalysesArgs<ExtArgs>
-  emailLogs?: boolean | Prisma.Project$emailLogsArgs<ExtArgs>
-  emailChunks?: boolean | Prisma.Project$emailChunksArgs<ExtArgs>
-  emailConversations?: boolean | Prisma.Project$emailConversationsArgs<ExtArgs>
-  messageChunks?: boolean | Prisma.Project$messageChunksArgs<ExtArgs>
   _count?: boolean | Prisma.ProjectCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProjectIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3370,24 +3370,24 @@ export type ProjectIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Project"
   objects: {
+    aIMessages: Prisma.$AIMessagePayload<ExtArgs>[]
+    activityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
+    automations: Prisma.$AutomationPayload<ExtArgs>[]
+    conversations: Prisma.$ConversationPayload<ExtArgs>[]
+    documentChunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
+    emailChunks: Prisma.$EmailChunkPayload<ExtArgs>[]
+    emailConversations: Prisma.$EmailConversationPayload<ExtArgs>[]
+    emailLogs: Prisma.$EmailLogPayload<ExtArgs>[]
+    files: Prisma.$FilePayload<ExtArgs>[]
+    fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
+    messages: Prisma.$MessagePayload<ExtArgs>[]
+    messageChunks: Prisma.$MessageChunkPayload<ExtArgs>[]
+    notes: Prisma.$NotePayload<ExtArgs>[]
+    notifications: Prisma.$NotificationPayload<ExtArgs>[]
     tenant: Prisma.$TenantPayload<ExtArgs>
     projectMembers: Prisma.$ProjectMemberPayload<ExtArgs>[]
     tasks: Prisma.$TaskPayload<ExtArgs>[]
-    files: Prisma.$FilePayload<ExtArgs>[]
-    chunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
-    conversations: Prisma.$ConversationPayload<ExtArgs>[]
-    aiMessages: Prisma.$AIMessagePayload<ExtArgs>[]
-    notifications: Prisma.$NotificationPayload<ExtArgs>[]
-    activityLogs: Prisma.$ActivityLogPayload<ExtArgs>[]
     timeEntries: Prisma.$TimeEntryPayload<ExtArgs>[]
-    notes: Prisma.$NotePayload<ExtArgs>[]
-    automations: Prisma.$AutomationPayload<ExtArgs>[]
-    messages: Prisma.$MessagePayload<ExtArgs>[]
-    fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
-    emailLogs: Prisma.$EmailLogPayload<ExtArgs>[]
-    emailChunks: Prisma.$EmailChunkPayload<ExtArgs>[]
-    emailConversations: Prisma.$EmailConversationPayload<ExtArgs>[]
-    messageChunks: Prisma.$MessageChunkPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3792,24 +3792,24 @@ readonly fields: ProjectFieldRefs;
  */
 export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  aIMessages<T extends Prisma.Project$aIMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$aIMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AIMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activityLogs<T extends Prisma.Project$activityLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$activityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  automations<T extends Prisma.Project$automationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$automationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  conversations<T extends Prisma.Project$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  documentChunks<T extends Prisma.Project$documentChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$documentChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailChunks<T extends Prisma.Project$emailChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailConversations<T extends Prisma.Project$emailConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  emailLogs<T extends Prisma.Project$emailLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  files<T extends Prisma.Project$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  fileAnalyses<T extends Prisma.Project$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messages<T extends Prisma.Project$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messageChunks<T extends Prisma.Project$messageChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$messageChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notes<T extends Prisma.Project$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  notifications<T extends Prisma.Project$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   projectMembers<T extends Prisma.Project$projectMembersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$projectMembersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tasks<T extends Prisma.Project$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  files<T extends Prisma.Project$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  chunks<T extends Prisma.Project$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversations<T extends Prisma.Project$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  aiMessages<T extends Prisma.Project$aiMessagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$aiMessagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AIMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notifications<T extends Prisma.Project$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  activityLogs<T extends Prisma.Project$activityLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$activityLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ActivityLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   timeEntries<T extends Prisma.Project$timeEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$timeEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimeEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  notes<T extends Prisma.Project$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  automations<T extends Prisma.Project$automationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$automationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  messages<T extends Prisma.Project$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  fileAnalyses<T extends Prisma.Project$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailLogs<T extends Prisma.Project$emailLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailChunks<T extends Prisma.Project$emailChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailConversations<T extends Prisma.Project$emailConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$emailConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  messageChunks<T extends Prisma.Project$messageChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$messageChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4243,129 +4243,9 @@ export type ProjectDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * Project.projectMembers
+ * Project.aIMessages
  */
-export type Project$projectMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the ProjectMember
-   */
-  select?: Prisma.ProjectMemberSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the ProjectMember
-   */
-  omit?: Prisma.ProjectMemberOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProjectMemberInclude<ExtArgs> | null
-  where?: Prisma.ProjectMemberWhereInput
-  orderBy?: Prisma.ProjectMemberOrderByWithRelationInput | Prisma.ProjectMemberOrderByWithRelationInput[]
-  cursor?: Prisma.ProjectMemberWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProjectMemberScalarFieldEnum | Prisma.ProjectMemberScalarFieldEnum[]
-}
-
-/**
- * Project.tasks
- */
-export type Project$tasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Task
-   */
-  select?: Prisma.TaskSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Task
-   */
-  omit?: Prisma.TaskOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TaskInclude<ExtArgs> | null
-  where?: Prisma.TaskWhereInput
-  orderBy?: Prisma.TaskOrderByWithRelationInput | Prisma.TaskOrderByWithRelationInput[]
-  cursor?: Prisma.TaskWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TaskScalarFieldEnum | Prisma.TaskScalarFieldEnum[]
-}
-
-/**
- * Project.files
- */
-export type Project$filesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the File
-   */
-  select?: Prisma.FileSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the File
-   */
-  omit?: Prisma.FileOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FileInclude<ExtArgs> | null
-  where?: Prisma.FileWhereInput
-  orderBy?: Prisma.FileOrderByWithRelationInput | Prisma.FileOrderByWithRelationInput[]
-  cursor?: Prisma.FileWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.FileScalarFieldEnum | Prisma.FileScalarFieldEnum[]
-}
-
-/**
- * Project.chunks
- */
-export type Project$chunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the DocumentChunk
-   */
-  select?: Prisma.DocumentChunkSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the DocumentChunk
-   */
-  omit?: Prisma.DocumentChunkOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.DocumentChunkInclude<ExtArgs> | null
-  where?: Prisma.DocumentChunkWhereInput
-  orderBy?: Prisma.DocumentChunkOrderByWithRelationInput | Prisma.DocumentChunkOrderByWithRelationInput[]
-  cursor?: Prisma.DocumentChunkWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.DocumentChunkScalarFieldEnum | Prisma.DocumentChunkScalarFieldEnum[]
-}
-
-/**
- * Project.conversations
- */
-export type Project$conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Conversation
-   */
-  select?: Prisma.ConversationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Conversation
-   */
-  omit?: Prisma.ConversationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ConversationInclude<ExtArgs> | null
-  where?: Prisma.ConversationWhereInput
-  orderBy?: Prisma.ConversationOrderByWithRelationInput | Prisma.ConversationOrderByWithRelationInput[]
-  cursor?: Prisma.ConversationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
-}
-
-/**
- * Project.aiMessages
- */
-export type Project$aiMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Project$aIMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the AIMessage
    */
@@ -4384,30 +4264,6 @@ export type Project$aiMessagesArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.AIMessageScalarFieldEnum | Prisma.AIMessageScalarFieldEnum[]
-}
-
-/**
- * Project.notifications
- */
-export type Project$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Notification
-   */
-  select?: Prisma.NotificationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Notification
-   */
-  omit?: Prisma.NotificationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.NotificationInclude<ExtArgs> | null
-  where?: Prisma.NotificationWhereInput
-  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
-  cursor?: Prisma.NotificationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
 }
 
 /**
@@ -4435,54 +4291,6 @@ export type Project$activityLogsArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * Project.timeEntries
- */
-export type Project$timeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TimeEntry
-   */
-  select?: Prisma.TimeEntrySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TimeEntry
-   */
-  omit?: Prisma.TimeEntryOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TimeEntryInclude<ExtArgs> | null
-  where?: Prisma.TimeEntryWhereInput
-  orderBy?: Prisma.TimeEntryOrderByWithRelationInput | Prisma.TimeEntryOrderByWithRelationInput[]
-  cursor?: Prisma.TimeEntryWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TimeEntryScalarFieldEnum | Prisma.TimeEntryScalarFieldEnum[]
-}
-
-/**
- * Project.notes
- */
-export type Project$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Note
-   */
-  select?: Prisma.NoteSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Note
-   */
-  omit?: Prisma.NoteOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.NoteInclude<ExtArgs> | null
-  where?: Prisma.NoteWhereInput
-  orderBy?: Prisma.NoteOrderByWithRelationInput | Prisma.NoteOrderByWithRelationInput[]
-  cursor?: Prisma.NoteWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.NoteScalarFieldEnum | Prisma.NoteScalarFieldEnum[]
-}
-
-/**
  * Project.automations
  */
 export type Project$automationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4507,75 +4315,51 @@ export type Project$automationsArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * Project.messages
+ * Project.conversations
  */
-export type Project$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Project$conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Message
+   * Select specific fields to fetch from the Conversation
    */
-  select?: Prisma.MessageSelect<ExtArgs> | null
+  select?: Prisma.ConversationSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Message
+   * Omit specific fields from the Conversation
    */
-  omit?: Prisma.MessageOmit<ExtArgs> | null
+  omit?: Prisma.ConversationOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.MessageInclude<ExtArgs> | null
-  where?: Prisma.MessageWhereInput
-  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
-  cursor?: Prisma.MessageWhereUniqueInput
+  include?: Prisma.ConversationInclude<ExtArgs> | null
+  where?: Prisma.ConversationWhereInput
+  orderBy?: Prisma.ConversationOrderByWithRelationInput | Prisma.ConversationOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
 }
 
 /**
- * Project.fileAnalyses
+ * Project.documentChunks
  */
-export type Project$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Project$documentChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the FileAnalysis
+   * Select specific fields to fetch from the DocumentChunk
    */
-  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
+  select?: Prisma.DocumentChunkSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the FileAnalysis
+   * Omit specific fields from the DocumentChunk
    */
-  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
+  omit?: Prisma.DocumentChunkOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
-  where?: Prisma.FileAnalysisWhereInput
-  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
-  cursor?: Prisma.FileAnalysisWhereUniqueInput
+  include?: Prisma.DocumentChunkInclude<ExtArgs> | null
+  where?: Prisma.DocumentChunkWhereInput
+  orderBy?: Prisma.DocumentChunkOrderByWithRelationInput | Prisma.DocumentChunkOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentChunkWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
-}
-
-/**
- * Project.emailLogs
- */
-export type Project$emailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the EmailLog
-   */
-  select?: Prisma.EmailLogSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the EmailLog
-   */
-  omit?: Prisma.EmailLogOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.EmailLogInclude<ExtArgs> | null
-  where?: Prisma.EmailLogWhereInput
-  orderBy?: Prisma.EmailLogOrderByWithRelationInput | Prisma.EmailLogOrderByWithRelationInput[]
-  cursor?: Prisma.EmailLogWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.EmailLogScalarFieldEnum | Prisma.EmailLogScalarFieldEnum[]
+  distinct?: Prisma.DocumentChunkScalarFieldEnum | Prisma.DocumentChunkScalarFieldEnum[]
 }
 
 /**
@@ -4627,6 +4411,102 @@ export type Project$emailConversationsArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
+ * Project.emailLogs
+ */
+export type Project$emailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailLog
+   */
+  select?: Prisma.EmailLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailLog
+   */
+  omit?: Prisma.EmailLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailLogInclude<ExtArgs> | null
+  where?: Prisma.EmailLogWhereInput
+  orderBy?: Prisma.EmailLogOrderByWithRelationInput | Prisma.EmailLogOrderByWithRelationInput[]
+  cursor?: Prisma.EmailLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailLogScalarFieldEnum | Prisma.EmailLogScalarFieldEnum[]
+}
+
+/**
+ * Project.files
+ */
+export type Project$filesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the File
+   */
+  select?: Prisma.FileSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the File
+   */
+  omit?: Prisma.FileOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileInclude<ExtArgs> | null
+  where?: Prisma.FileWhereInput
+  orderBy?: Prisma.FileOrderByWithRelationInput | Prisma.FileOrderByWithRelationInput[]
+  cursor?: Prisma.FileWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileScalarFieldEnum | Prisma.FileScalarFieldEnum[]
+}
+
+/**
+ * Project.fileAnalyses
+ */
+export type Project$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileAnalysis
+   */
+  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileAnalysis
+   */
+  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
+  where?: Prisma.FileAnalysisWhereInput
+  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
+  cursor?: Prisma.FileAnalysisWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
+}
+
+/**
+ * Project.messages
+ */
+export type Project$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Message
+   */
+  select?: Prisma.MessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Message
+   */
+  omit?: Prisma.MessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null
+  where?: Prisma.MessageWhereInput
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
+  cursor?: Prisma.MessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+}
+
+/**
  * Project.messageChunks
  */
 export type Project$messageChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4648,6 +4528,126 @@ export type Project$messageChunksArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.MessageChunkScalarFieldEnum | Prisma.MessageChunkScalarFieldEnum[]
+}
+
+/**
+ * Project.notes
+ */
+export type Project$notesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Note
+   */
+  select?: Prisma.NoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Note
+   */
+  omit?: Prisma.NoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NoteInclude<ExtArgs> | null
+  where?: Prisma.NoteWhereInput
+  orderBy?: Prisma.NoteOrderByWithRelationInput | Prisma.NoteOrderByWithRelationInput[]
+  cursor?: Prisma.NoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NoteScalarFieldEnum | Prisma.NoteScalarFieldEnum[]
+}
+
+/**
+ * Project.notifications
+ */
+export type Project$notificationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Notification
+   */
+  select?: Prisma.NotificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Notification
+   */
+  omit?: Prisma.NotificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationInclude<ExtArgs> | null
+  where?: Prisma.NotificationWhereInput
+  orderBy?: Prisma.NotificationOrderByWithRelationInput | Prisma.NotificationOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationScalarFieldEnum | Prisma.NotificationScalarFieldEnum[]
+}
+
+/**
+ * Project.projectMembers
+ */
+export type Project$projectMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProjectMember
+   */
+  select?: Prisma.ProjectMemberSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProjectMember
+   */
+  omit?: Prisma.ProjectMemberOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectMemberInclude<ExtArgs> | null
+  where?: Prisma.ProjectMemberWhereInput
+  orderBy?: Prisma.ProjectMemberOrderByWithRelationInput | Prisma.ProjectMemberOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectMemberWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectMemberScalarFieldEnum | Prisma.ProjectMemberScalarFieldEnum[]
+}
+
+/**
+ * Project.tasks
+ */
+export type Project$tasksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Task
+   */
+  select?: Prisma.TaskSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Task
+   */
+  omit?: Prisma.TaskOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TaskInclude<ExtArgs> | null
+  where?: Prisma.TaskWhereInput
+  orderBy?: Prisma.TaskOrderByWithRelationInput | Prisma.TaskOrderByWithRelationInput[]
+  cursor?: Prisma.TaskWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TaskScalarFieldEnum | Prisma.TaskScalarFieldEnum[]
+}
+
+/**
+ * Project.timeEntries
+ */
+export type Project$timeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TimeEntry
+   */
+  select?: Prisma.TimeEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TimeEntry
+   */
+  omit?: Prisma.TimeEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TimeEntryInclude<ExtArgs> | null
+  where?: Prisma.TimeEntryWhereInput
+  orderBy?: Prisma.TimeEntryOrderByWithRelationInput | Prisma.TimeEntryOrderByWithRelationInput[]
+  cursor?: Prisma.TimeEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TimeEntryScalarFieldEnum | Prisma.TimeEntryScalarFieldEnum[]
 }
 
 /**

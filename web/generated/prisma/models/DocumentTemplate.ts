@@ -30,9 +30,9 @@ export type DocumentTemplateMinAggregateOutputType = {
   description: string | null
   category: string | null
   fileId: string | null
-  tenantId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  tenantId: string | null
 }
 
 export type DocumentTemplateMaxAggregateOutputType = {
@@ -41,9 +41,9 @@ export type DocumentTemplateMaxAggregateOutputType = {
   description: string | null
   category: string | null
   fileId: string | null
-  tenantId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  tenantId: string | null
 }
 
 export type DocumentTemplateCountAggregateOutputType = {
@@ -53,9 +53,9 @@ export type DocumentTemplateCountAggregateOutputType = {
   category: number
   fileId: number
   expectedVariables: number
-  tenantId: number
   createdAt: number
   updatedAt: number
+  tenantId: number
   _all: number
 }
 
@@ -66,9 +66,9 @@ export type DocumentTemplateMinAggregateInputType = {
   description?: true
   category?: true
   fileId?: true
-  tenantId?: true
   createdAt?: true
   updatedAt?: true
+  tenantId?: true
 }
 
 export type DocumentTemplateMaxAggregateInputType = {
@@ -77,9 +77,9 @@ export type DocumentTemplateMaxAggregateInputType = {
   description?: true
   category?: true
   fileId?: true
-  tenantId?: true
   createdAt?: true
   updatedAt?: true
+  tenantId?: true
 }
 
 export type DocumentTemplateCountAggregateInputType = {
@@ -89,9 +89,9 @@ export type DocumentTemplateCountAggregateInputType = {
   category?: true
   fileId?: true
   expectedVariables?: true
-  tenantId?: true
   createdAt?: true
   updatedAt?: true
+  tenantId?: true
   _all?: true
 }
 
@@ -174,9 +174,9 @@ export type DocumentTemplateGroupByOutputType = {
   category: string
   fileId: string
   expectedVariables: runtime.JsonValue | null
-  tenantId: string
   createdAt: Date
   updatedAt: Date
+  tenantId: string
   _count: DocumentTemplateCountAggregateOutputType | null
   _min: DocumentTemplateMinAggregateOutputType | null
   _max: DocumentTemplateMaxAggregateOutputType | null
@@ -207,9 +207,9 @@ export type DocumentTemplateWhereInput = {
   category?: Prisma.StringFilter<"DocumentTemplate"> | string
   fileId?: Prisma.StringFilter<"DocumentTemplate"> | string
   expectedVariables?: Prisma.JsonNullableFilter<"DocumentTemplate">
-  tenantId?: Prisma.StringFilter<"DocumentTemplate"> | string
   createdAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
+  tenantId?: Prisma.StringFilter<"DocumentTemplate"> | string
   file?: Prisma.XOR<Prisma.FileScalarRelationFilter, Prisma.FileWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
 }
@@ -221,29 +221,29 @@ export type DocumentTemplateOrderByWithRelationInput = {
   category?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
   expectedVariables?: Prisma.SortOrderInput | Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   file?: Prisma.FileOrderByWithRelationInput
   tenant?: Prisma.TenantOrderByWithRelationInput
 }
 
 export type DocumentTemplateWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  fileId?: string
   AND?: Prisma.DocumentTemplateWhereInput | Prisma.DocumentTemplateWhereInput[]
   OR?: Prisma.DocumentTemplateWhereInput[]
   NOT?: Prisma.DocumentTemplateWhereInput | Prisma.DocumentTemplateWhereInput[]
   name?: Prisma.StringFilter<"DocumentTemplate"> | string
   description?: Prisma.StringNullableFilter<"DocumentTemplate"> | string | null
   category?: Prisma.StringFilter<"DocumentTemplate"> | string
+  fileId?: Prisma.StringFilter<"DocumentTemplate"> | string
   expectedVariables?: Prisma.JsonNullableFilter<"DocumentTemplate">
-  tenantId?: Prisma.StringFilter<"DocumentTemplate"> | string
   createdAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
+  tenantId?: Prisma.StringFilter<"DocumentTemplate"> | string
   file?: Prisma.XOR<Prisma.FileScalarRelationFilter, Prisma.FileWhereInput>
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
-}, "id" | "fileId">
+}, "id">
 
 export type DocumentTemplateOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -252,9 +252,9 @@ export type DocumentTemplateOrderByWithAggregationInput = {
   category?: Prisma.SortOrder
   fileId?: Prisma.SortOrder
   expectedVariables?: Prisma.SortOrderInput | Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
   _count?: Prisma.DocumentTemplateCountOrderByAggregateInput
   _max?: Prisma.DocumentTemplateMaxOrderByAggregateInput
   _min?: Prisma.DocumentTemplateMinOrderByAggregateInput
@@ -270,9 +270,9 @@ export type DocumentTemplateScalarWhereWithAggregatesInput = {
   category?: Prisma.StringWithAggregatesFilter<"DocumentTemplate"> | string
   fileId?: Prisma.StringWithAggregatesFilter<"DocumentTemplate"> | string
   expectedVariables?: Prisma.JsonNullableWithAggregatesFilter<"DocumentTemplate">
-  tenantId?: Prisma.StringWithAggregatesFilter<"DocumentTemplate"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DocumentTemplate"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"DocumentTemplate"> | Date | string
+  tenantId?: Prisma.StringWithAggregatesFilter<"DocumentTemplate"> | string
 }
 
 export type DocumentTemplateCreateInput = {
@@ -283,8 +283,8 @@ export type DocumentTemplateCreateInput = {
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  file: Prisma.FileCreateNestedOneWithoutTemplateInput
-  tenant: Prisma.TenantCreateNestedOneWithoutDocumentTemplatesInput
+  file: Prisma.FileCreateNestedOneWithoutDocumentTemplatesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutDocumentTemplateInput
 }
 
 export type DocumentTemplateUncheckedCreateInput = {
@@ -294,9 +294,9 @@ export type DocumentTemplateUncheckedCreateInput = {
   category: string
   fileId: string
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  tenantId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenantId: string
 }
 
 export type DocumentTemplateUpdateInput = {
@@ -307,8 +307,8 @@ export type DocumentTemplateUpdateInput = {
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  file?: Prisma.FileUpdateOneRequiredWithoutTemplateNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentTemplatesNestedInput
+  file?: Prisma.FileUpdateOneRequiredWithoutDocumentTemplatesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentTemplateNestedInput
 }
 
 export type DocumentTemplateUncheckedUpdateInput = {
@@ -318,9 +318,9 @@ export type DocumentTemplateUncheckedUpdateInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string
   fileId?: Prisma.StringFieldUpdateOperationsInput | string
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type DocumentTemplateCreateManyInput = {
@@ -330,9 +330,9 @@ export type DocumentTemplateCreateManyInput = {
   category: string
   fileId: string
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  tenantId: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  tenantId: string
 }
 
 export type DocumentTemplateUpdateManyMutationInput = {
@@ -352,9 +352,43 @@ export type DocumentTemplateUncheckedUpdateManyInput = {
   category?: Prisma.StringFieldUpdateOperationsInput | string
   fileId?: Prisma.StringFieldUpdateOperationsInput | string
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type DocumentTemplateCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  fileId?: Prisma.SortOrder
+  expectedVariables?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
+}
+
+export type DocumentTemplateMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  fileId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
+}
+
+export type DocumentTemplateMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  description?: Prisma.SortOrder
+  category?: Prisma.SortOrder
+  fileId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  tenantId?: Prisma.SortOrder
 }
 
 export type DocumentTemplateListRelationFilter = {
@@ -367,43 +401,46 @@ export type DocumentTemplateOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
-export type DocumentTemplateNullableScalarRelationFilter = {
-  is?: Prisma.DocumentTemplateWhereInput | null
-  isNot?: Prisma.DocumentTemplateWhereInput | null
+export type DocumentTemplateCreateNestedManyWithoutFileInput = {
+  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput> | Prisma.DocumentTemplateCreateWithoutFileInput[] | Prisma.DocumentTemplateUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput | Prisma.DocumentTemplateCreateOrConnectWithoutFileInput[]
+  createMany?: Prisma.DocumentTemplateCreateManyFileInputEnvelope
+  connect?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
 }
 
-export type DocumentTemplateCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  category?: Prisma.SortOrder
-  fileId?: Prisma.SortOrder
-  expectedVariables?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+export type DocumentTemplateUncheckedCreateNestedManyWithoutFileInput = {
+  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput> | Prisma.DocumentTemplateCreateWithoutFileInput[] | Prisma.DocumentTemplateUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput | Prisma.DocumentTemplateCreateOrConnectWithoutFileInput[]
+  createMany?: Prisma.DocumentTemplateCreateManyFileInputEnvelope
+  connect?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
 }
 
-export type DocumentTemplateMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  category?: Prisma.SortOrder
-  fileId?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+export type DocumentTemplateUpdateManyWithoutFileNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput> | Prisma.DocumentTemplateCreateWithoutFileInput[] | Prisma.DocumentTemplateUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput | Prisma.DocumentTemplateCreateOrConnectWithoutFileInput[]
+  upsert?: Prisma.DocumentTemplateUpsertWithWhereUniqueWithoutFileInput | Prisma.DocumentTemplateUpsertWithWhereUniqueWithoutFileInput[]
+  createMany?: Prisma.DocumentTemplateCreateManyFileInputEnvelope
+  set?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  disconnect?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  delete?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  connect?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  update?: Prisma.DocumentTemplateUpdateWithWhereUniqueWithoutFileInput | Prisma.DocumentTemplateUpdateWithWhereUniqueWithoutFileInput[]
+  updateMany?: Prisma.DocumentTemplateUpdateManyWithWhereWithoutFileInput | Prisma.DocumentTemplateUpdateManyWithWhereWithoutFileInput[]
+  deleteMany?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
 }
 
-export type DocumentTemplateMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  description?: Prisma.SortOrder
-  category?: Prisma.SortOrder
-  fileId?: Prisma.SortOrder
-  tenantId?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+export type DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput = {
+  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput> | Prisma.DocumentTemplateCreateWithoutFileInput[] | Prisma.DocumentTemplateUncheckedCreateWithoutFileInput[]
+  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput | Prisma.DocumentTemplateCreateOrConnectWithoutFileInput[]
+  upsert?: Prisma.DocumentTemplateUpsertWithWhereUniqueWithoutFileInput | Prisma.DocumentTemplateUpsertWithWhereUniqueWithoutFileInput[]
+  createMany?: Prisma.DocumentTemplateCreateManyFileInputEnvelope
+  set?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  disconnect?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  delete?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  connect?: Prisma.DocumentTemplateWhereUniqueInput | Prisma.DocumentTemplateWhereUniqueInput[]
+  update?: Prisma.DocumentTemplateUpdateWithWhereUniqueWithoutFileInput | Prisma.DocumentTemplateUpdateWithWhereUniqueWithoutFileInput[]
+  updateMany?: Prisma.DocumentTemplateUpdateManyWithWhereWithoutFileInput | Prisma.DocumentTemplateUpdateManyWithWhereWithoutFileInput[]
+  deleteMany?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
 }
 
 export type DocumentTemplateCreateNestedManyWithoutTenantInput = {
@@ -448,36 +485,67 @@ export type DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
 }
 
-export type DocumentTemplateCreateNestedOneWithoutFileInput = {
-  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
-  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput
-  connect?: Prisma.DocumentTemplateWhereUniqueInput
+export type DocumentTemplateCreateWithoutFileInput = {
+  id?: string
+  name: string
+  description?: string | null
+  category: string
+  expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutDocumentTemplateInput
 }
 
-export type DocumentTemplateUncheckedCreateNestedOneWithoutFileInput = {
-  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
-  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput
-  connect?: Prisma.DocumentTemplateWhereUniqueInput
+export type DocumentTemplateUncheckedCreateWithoutFileInput = {
+  id?: string
+  name: string
+  description?: string | null
+  category: string
+  expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
 }
 
-export type DocumentTemplateUpdateOneWithoutFileNestedInput = {
-  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
-  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput
-  upsert?: Prisma.DocumentTemplateUpsertWithoutFileInput
-  disconnect?: Prisma.DocumentTemplateWhereInput | boolean
-  delete?: Prisma.DocumentTemplateWhereInput | boolean
-  connect?: Prisma.DocumentTemplateWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentTemplateUpdateToOneWithWhereWithoutFileInput, Prisma.DocumentTemplateUpdateWithoutFileInput>, Prisma.DocumentTemplateUncheckedUpdateWithoutFileInput>
+export type DocumentTemplateCreateOrConnectWithoutFileInput = {
+  where: Prisma.DocumentTemplateWhereUniqueInput
+  create: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
 }
 
-export type DocumentTemplateUncheckedUpdateOneWithoutFileNestedInput = {
-  create?: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
-  connectOrCreate?: Prisma.DocumentTemplateCreateOrConnectWithoutFileInput
-  upsert?: Prisma.DocumentTemplateUpsertWithoutFileInput
-  disconnect?: Prisma.DocumentTemplateWhereInput | boolean
-  delete?: Prisma.DocumentTemplateWhereInput | boolean
-  connect?: Prisma.DocumentTemplateWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DocumentTemplateUpdateToOneWithWhereWithoutFileInput, Prisma.DocumentTemplateUpdateWithoutFileInput>, Prisma.DocumentTemplateUncheckedUpdateWithoutFileInput>
+export type DocumentTemplateCreateManyFileInputEnvelope = {
+  data: Prisma.DocumentTemplateCreateManyFileInput | Prisma.DocumentTemplateCreateManyFileInput[]
+  skipDuplicates?: boolean
+}
+
+export type DocumentTemplateUpsertWithWhereUniqueWithoutFileInput = {
+  where: Prisma.DocumentTemplateWhereUniqueInput
+  update: Prisma.XOR<Prisma.DocumentTemplateUpdateWithoutFileInput, Prisma.DocumentTemplateUncheckedUpdateWithoutFileInput>
+  create: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
+}
+
+export type DocumentTemplateUpdateWithWhereUniqueWithoutFileInput = {
+  where: Prisma.DocumentTemplateWhereUniqueInput
+  data: Prisma.XOR<Prisma.DocumentTemplateUpdateWithoutFileInput, Prisma.DocumentTemplateUncheckedUpdateWithoutFileInput>
+}
+
+export type DocumentTemplateUpdateManyWithWhereWithoutFileInput = {
+  where: Prisma.DocumentTemplateScalarWhereInput
+  data: Prisma.XOR<Prisma.DocumentTemplateUpdateManyMutationInput, Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileInput>
+}
+
+export type DocumentTemplateScalarWhereInput = {
+  AND?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
+  OR?: Prisma.DocumentTemplateScalarWhereInput[]
+  NOT?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
+  id?: Prisma.StringFilter<"DocumentTemplate"> | string
+  name?: Prisma.StringFilter<"DocumentTemplate"> | string
+  description?: Prisma.StringNullableFilter<"DocumentTemplate"> | string | null
+  category?: Prisma.StringFilter<"DocumentTemplate"> | string
+  fileId?: Prisma.StringFilter<"DocumentTemplate"> | string
+  expectedVariables?: Prisma.JsonNullableFilter<"DocumentTemplate">
+  createdAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
+  tenantId?: Prisma.StringFilter<"DocumentTemplate"> | string
 }
 
 export type DocumentTemplateCreateWithoutTenantInput = {
@@ -488,7 +556,7 @@ export type DocumentTemplateCreateWithoutTenantInput = {
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  file: Prisma.FileCreateNestedOneWithoutTemplateInput
+  file: Prisma.FileCreateNestedOneWithoutDocumentTemplatesInput
 }
 
 export type DocumentTemplateUncheckedCreateWithoutTenantInput = {
@@ -528,22 +596,7 @@ export type DocumentTemplateUpdateManyWithWhereWithoutTenantInput = {
   data: Prisma.XOR<Prisma.DocumentTemplateUpdateManyMutationInput, Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantInput>
 }
 
-export type DocumentTemplateScalarWhereInput = {
-  AND?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
-  OR?: Prisma.DocumentTemplateScalarWhereInput[]
-  NOT?: Prisma.DocumentTemplateScalarWhereInput | Prisma.DocumentTemplateScalarWhereInput[]
-  id?: Prisma.StringFilter<"DocumentTemplate"> | string
-  name?: Prisma.StringFilter<"DocumentTemplate"> | string
-  description?: Prisma.StringNullableFilter<"DocumentTemplate"> | string | null
-  category?: Prisma.StringFilter<"DocumentTemplate"> | string
-  fileId?: Prisma.StringFilter<"DocumentTemplate"> | string
-  expectedVariables?: Prisma.JsonNullableFilter<"DocumentTemplate">
-  tenantId?: Prisma.StringFilter<"DocumentTemplate"> | string
-  createdAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"DocumentTemplate"> | Date | string
-}
-
-export type DocumentTemplateCreateWithoutFileInput = {
+export type DocumentTemplateCreateManyFileInput = {
   id?: string
   name: string
   description?: string | null
@@ -551,34 +604,7 @@ export type DocumentTemplateCreateWithoutFileInput = {
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutDocumentTemplatesInput
-}
-
-export type DocumentTemplateUncheckedCreateWithoutFileInput = {
-  id?: string
-  name: string
-  description?: string | null
-  category: string
-  expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tenantId: string
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type DocumentTemplateCreateOrConnectWithoutFileInput = {
-  where: Prisma.DocumentTemplateWhereUniqueInput
-  create: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
-}
-
-export type DocumentTemplateUpsertWithoutFileInput = {
-  update: Prisma.XOR<Prisma.DocumentTemplateUpdateWithoutFileInput, Prisma.DocumentTemplateUncheckedUpdateWithoutFileInput>
-  create: Prisma.XOR<Prisma.DocumentTemplateCreateWithoutFileInput, Prisma.DocumentTemplateUncheckedCreateWithoutFileInput>
-  where?: Prisma.DocumentTemplateWhereInput
-}
-
-export type DocumentTemplateUpdateToOneWithWhereWithoutFileInput = {
-  where?: Prisma.DocumentTemplateWhereInput
-  data: Prisma.XOR<Prisma.DocumentTemplateUpdateWithoutFileInput, Prisma.DocumentTemplateUncheckedUpdateWithoutFileInput>
 }
 
 export type DocumentTemplateUpdateWithoutFileInput = {
@@ -589,7 +615,7 @@ export type DocumentTemplateUpdateWithoutFileInput = {
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentTemplatesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutDocumentTemplateNestedInput
 }
 
 export type DocumentTemplateUncheckedUpdateWithoutFileInput = {
@@ -598,9 +624,20 @@ export type DocumentTemplateUncheckedUpdateWithoutFileInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   category?: Prisma.StringFieldUpdateOperationsInput | string
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type DocumentTemplateUncheckedUpdateManyWithoutFileInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  category?: Prisma.StringFieldUpdateOperationsInput | string
+  expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type DocumentTemplateCreateManyTenantInput = {
@@ -622,7 +659,7 @@ export type DocumentTemplateUpdateWithoutTenantInput = {
   expectedVariables?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  file?: Prisma.FileUpdateOneRequiredWithoutTemplateNestedInput
+  file?: Prisma.FileUpdateOneRequiredWithoutDocumentTemplatesNestedInput
 }
 
 export type DocumentTemplateUncheckedUpdateWithoutTenantInput = {
@@ -656,9 +693,9 @@ export type DocumentTemplateSelect<ExtArgs extends runtime.Types.Extensions.Inte
   category?: boolean
   fileId?: boolean
   expectedVariables?: boolean
-  tenantId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenantId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["documentTemplate"]>
@@ -670,9 +707,9 @@ export type DocumentTemplateSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   category?: boolean
   fileId?: boolean
   expectedVariables?: boolean
-  tenantId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenantId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["documentTemplate"]>
@@ -684,9 +721,9 @@ export type DocumentTemplateSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   category?: boolean
   fileId?: boolean
   expectedVariables?: boolean
-  tenantId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenantId?: boolean
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["documentTemplate"]>
@@ -698,12 +735,12 @@ export type DocumentTemplateSelectScalar = {
   category?: boolean
   fileId?: boolean
   expectedVariables?: boolean
-  tenantId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  tenantId?: boolean
 }
 
-export type DocumentTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "category" | "fileId" | "expectedVariables" | "tenantId" | "createdAt" | "updatedAt", ExtArgs["result"]["documentTemplate"]>
+export type DocumentTemplateOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "category" | "fileId" | "expectedVariables" | "createdAt" | "updatedAt" | "tenantId", ExtArgs["result"]["documentTemplate"]>
 export type DocumentTemplateInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   file?: boolean | Prisma.FileDefaultArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
@@ -730,9 +767,9 @@ export type $DocumentTemplatePayload<ExtArgs extends runtime.Types.Extensions.In
     category: string
     fileId: string
     expectedVariables: runtime.JsonValue | null
-    tenantId: string
     createdAt: Date
     updatedAt: Date
+    tenantId: string
   }, ExtArgs["result"]["documentTemplate"]>
   composites: {}
 }
@@ -1164,9 +1201,9 @@ export interface DocumentTemplateFieldRefs {
   readonly category: Prisma.FieldRef<"DocumentTemplate", 'String'>
   readonly fileId: Prisma.FieldRef<"DocumentTemplate", 'String'>
   readonly expectedVariables: Prisma.FieldRef<"DocumentTemplate", 'Json'>
-  readonly tenantId: Prisma.FieldRef<"DocumentTemplate", 'String'>
   readonly createdAt: Prisma.FieldRef<"DocumentTemplate", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"DocumentTemplate", 'DateTime'>
+  readonly tenantId: Prisma.FieldRef<"DocumentTemplate", 'String'>
 }
     
 

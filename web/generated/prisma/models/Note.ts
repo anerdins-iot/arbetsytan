@@ -214,8 +214,8 @@ export type NoteWhereInput = {
   createdById?: Prisma.StringFilter<"Note"> | string
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
-  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }
 
 export type NoteOrderByWithRelationInput = {
@@ -228,8 +228,8 @@ export type NoteOrderByWithRelationInput = {
   createdById?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  project?: Prisma.ProjectOrderByWithRelationInput
   createdBy?: Prisma.UserOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type NoteWhereUniqueInput = Prisma.AtLeast<{
@@ -245,8 +245,8 @@ export type NoteWhereUniqueInput = Prisma.AtLeast<{
   createdById?: Prisma.StringFilter<"Note"> | string
   createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
-  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   createdBy?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }, "id">
 
 export type NoteOrderByWithAggregationInput = {
@@ -287,8 +287,8 @@ export type NoteCreateInput = {
   isPinned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  project?: Prisma.ProjectCreateNestedOneWithoutNotesInput
   createdBy: Prisma.UserCreateNestedOneWithoutNotesInput
+  project?: Prisma.ProjectCreateNestedOneWithoutNotesInput
 }
 
 export type NoteUncheckedCreateInput = {
@@ -311,8 +311,8 @@ export type NoteUpdateInput = {
   isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  project?: Prisma.ProjectUpdateOneWithoutNotesNestedInput
   createdBy?: Prisma.UserUpdateOneRequiredWithoutNotesNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutNotesNestedInput
 }
 
 export type NoteUncheckedUpdateInput = {
@@ -361,16 +361,6 @@ export type NoteUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type NoteListRelationFilter = {
-  every?: Prisma.NoteWhereInput
-  some?: Prisma.NoteWhereInput
-  none?: Prisma.NoteWhereInput
-}
-
-export type NoteOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type NoteCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
@@ -407,46 +397,14 @@ export type NoteMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type NoteCreateNestedManyWithoutCreatedByInput = {
-  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
-  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
-  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+export type NoteListRelationFilter = {
+  every?: Prisma.NoteWhereInput
+  some?: Prisma.NoteWhereInput
+  none?: Prisma.NoteWhereInput
 }
 
-export type NoteUncheckedCreateNestedManyWithoutCreatedByInput = {
-  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
-  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
-  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-}
-
-export type NoteUpdateManyWithoutCreatedByNestedInput = {
-  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
-  upsert?: Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput[]
-  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
-  set?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  disconnect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  delete?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  update?: Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput[]
-  updateMany?: Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput | Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput[]
-  deleteMany?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
-}
-
-export type NoteUncheckedUpdateManyWithoutCreatedByNestedInput = {
-  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
-  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
-  upsert?: Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput[]
-  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
-  set?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  disconnect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  delete?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
-  update?: Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput[]
-  updateMany?: Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput | Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput[]
-  deleteMany?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
+export type NoteOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type NoteCreateNestedManyWithoutProjectInput = {
@@ -491,67 +449,46 @@ export type NoteUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
 }
 
-export type NoteCreateWithoutCreatedByInput = {
-  id?: string
-  title?: string
-  content: string
-  category?: string | null
-  isPinned?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  project?: Prisma.ProjectCreateNestedOneWithoutNotesInput
+export type NoteCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
+  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
 }
 
-export type NoteUncheckedCreateWithoutCreatedByInput = {
-  id?: string
-  title?: string
-  content: string
-  category?: string | null
-  isPinned?: boolean
-  projectId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
+export type NoteUncheckedCreateNestedManyWithoutCreatedByInput = {
+  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
+  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
+  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
 }
 
-export type NoteCreateOrConnectWithoutCreatedByInput = {
-  where: Prisma.NoteWhereUniqueInput
-  create: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput>
+export type NoteUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
+  set?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  disconnect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  delete?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  update?: Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput | Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
 }
 
-export type NoteCreateManyCreatedByInputEnvelope = {
-  data: Prisma.NoteCreateManyCreatedByInput | Prisma.NoteCreateManyCreatedByInput[]
-  skipDuplicates?: boolean
-}
-
-export type NoteUpsertWithWhereUniqueWithoutCreatedByInput = {
-  where: Prisma.NoteWhereUniqueInput
-  update: Prisma.XOR<Prisma.NoteUpdateWithoutCreatedByInput, Prisma.NoteUncheckedUpdateWithoutCreatedByInput>
-  create: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput>
-}
-
-export type NoteUpdateWithWhereUniqueWithoutCreatedByInput = {
-  where: Prisma.NoteWhereUniqueInput
-  data: Prisma.XOR<Prisma.NoteUpdateWithoutCreatedByInput, Prisma.NoteUncheckedUpdateWithoutCreatedByInput>
-}
-
-export type NoteUpdateManyWithWhereWithoutCreatedByInput = {
-  where: Prisma.NoteScalarWhereInput
-  data: Prisma.XOR<Prisma.NoteUpdateManyMutationInput, Prisma.NoteUncheckedUpdateManyWithoutCreatedByInput>
-}
-
-export type NoteScalarWhereInput = {
-  AND?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
-  OR?: Prisma.NoteScalarWhereInput[]
-  NOT?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
-  id?: Prisma.StringFilter<"Note"> | string
-  title?: Prisma.StringFilter<"Note"> | string
-  content?: Prisma.StringFilter<"Note"> | string
-  category?: Prisma.StringNullableFilter<"Note"> | string | null
-  isPinned?: Prisma.BoolFilter<"Note"> | boolean
-  projectId?: Prisma.StringNullableFilter<"Note"> | string | null
-  createdById?: Prisma.StringFilter<"Note"> | string
-  createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
+export type NoteUncheckedUpdateManyWithoutCreatedByNestedInput = {
+  create?: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput> | Prisma.NoteCreateWithoutCreatedByInput[] | Prisma.NoteUncheckedCreateWithoutCreatedByInput[]
+  connectOrCreate?: Prisma.NoteCreateOrConnectWithoutCreatedByInput | Prisma.NoteCreateOrConnectWithoutCreatedByInput[]
+  upsert?: Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpsertWithWhereUniqueWithoutCreatedByInput[]
+  createMany?: Prisma.NoteCreateManyCreatedByInputEnvelope
+  set?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  disconnect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  delete?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  connect?: Prisma.NoteWhereUniqueInput | Prisma.NoteWhereUniqueInput[]
+  update?: Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput | Prisma.NoteUpdateWithWhereUniqueWithoutCreatedByInput[]
+  updateMany?: Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput | Prisma.NoteUpdateManyWithWhereWithoutCreatedByInput[]
+  deleteMany?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
 }
 
 export type NoteCreateWithoutProjectInput = {
@@ -602,7 +539,33 @@ export type NoteUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.NoteUpdateManyMutationInput, Prisma.NoteUncheckedUpdateManyWithoutProjectInput>
 }
 
-export type NoteCreateManyCreatedByInput = {
+export type NoteScalarWhereInput = {
+  AND?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
+  OR?: Prisma.NoteScalarWhereInput[]
+  NOT?: Prisma.NoteScalarWhereInput | Prisma.NoteScalarWhereInput[]
+  id?: Prisma.StringFilter<"Note"> | string
+  title?: Prisma.StringFilter<"Note"> | string
+  content?: Prisma.StringFilter<"Note"> | string
+  category?: Prisma.StringNullableFilter<"Note"> | string | null
+  isPinned?: Prisma.BoolFilter<"Note"> | boolean
+  projectId?: Prisma.StringNullableFilter<"Note"> | string | null
+  createdById?: Prisma.StringFilter<"Note"> | string
+  createdAt?: Prisma.DateTimeFilter<"Note"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Note"> | Date | string
+}
+
+export type NoteCreateWithoutCreatedByInput = {
+  id?: string
+  title?: string
+  content: string
+  category?: string | null
+  isPinned?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project?: Prisma.ProjectCreateNestedOneWithoutNotesInput
+}
+
+export type NoteUncheckedCreateWithoutCreatedByInput = {
   id?: string
   title?: string
   content: string
@@ -613,37 +576,30 @@ export type NoteCreateManyCreatedByInput = {
   updatedAt?: Date | string
 }
 
-export type NoteUpdateWithoutCreatedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  project?: Prisma.ProjectUpdateOneWithoutNotesNestedInput
+export type NoteCreateOrConnectWithoutCreatedByInput = {
+  where: Prisma.NoteWhereUniqueInput
+  create: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput>
 }
 
-export type NoteUncheckedUpdateWithoutCreatedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type NoteCreateManyCreatedByInputEnvelope = {
+  data: Prisma.NoteCreateManyCreatedByInput | Prisma.NoteCreateManyCreatedByInput[]
+  skipDuplicates?: boolean
 }
 
-export type NoteUncheckedUpdateManyWithoutCreatedByInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  title?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type NoteUpsertWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.NoteWhereUniqueInput
+  update: Prisma.XOR<Prisma.NoteUpdateWithoutCreatedByInput, Prisma.NoteUncheckedUpdateWithoutCreatedByInput>
+  create: Prisma.XOR<Prisma.NoteCreateWithoutCreatedByInput, Prisma.NoteUncheckedCreateWithoutCreatedByInput>
+}
+
+export type NoteUpdateWithWhereUniqueWithoutCreatedByInput = {
+  where: Prisma.NoteWhereUniqueInput
+  data: Prisma.XOR<Prisma.NoteUpdateWithoutCreatedByInput, Prisma.NoteUncheckedUpdateWithoutCreatedByInput>
+}
+
+export type NoteUpdateManyWithWhereWithoutCreatedByInput = {
+  where: Prisma.NoteScalarWhereInput
+  data: Prisma.XOR<Prisma.NoteUpdateManyMutationInput, Prisma.NoteUncheckedUpdateManyWithoutCreatedByInput>
 }
 
 export type NoteCreateManyProjectInput = {
@@ -690,6 +646,50 @@ export type NoteUncheckedUpdateManyWithoutProjectInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type NoteCreateManyCreatedByInput = {
+  id?: string
+  title?: string
+  content: string
+  category?: string | null
+  isPinned?: boolean
+  projectId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type NoteUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneWithoutNotesNestedInput
+}
+
+export type NoteUncheckedUpdateWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type NoteUncheckedUpdateManyWithoutCreatedByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isPinned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -702,8 +702,8 @@ export type NoteSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
 export type NoteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -716,8 +716,8 @@ export type NoteSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
 export type NoteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -730,8 +730,8 @@ export type NoteSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   createdById?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
 }, ExtArgs["result"]["note"]>
 
 export type NoteSelectScalar = {
@@ -748,23 +748,23 @@ export type NoteSelectScalar = {
 
 export type NoteOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "content" | "category" | "isPinned" | "projectId" | "createdById" | "createdAt" | "updatedAt", ExtArgs["result"]["note"]>
 export type NoteInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
 }
 export type NoteIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
 }
 export type NoteIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
   createdBy?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.Note$projectArgs<ExtArgs>
 }
 
 export type $NotePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Note"
   objects: {
-    project: Prisma.$ProjectPayload<ExtArgs> | null
     createdBy: Prisma.$UserPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1170,8 +1170,8 @@ readonly fields: NoteFieldRefs;
  */
 export interface Prisma__NoteClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  project<T extends Prisma.Note$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Note$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   createdBy<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.Note$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Note$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

@@ -174,8 +174,8 @@ export type TaskAssignmentWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"TaskAssignment"> | Date | string
   taskId?: Prisma.StringFilter<"TaskAssignment"> | string
   membershipId?: Prisma.StringFilter<"TaskAssignment"> | string
-  task?: Prisma.XOR<Prisma.TaskScalarRelationFilter, Prisma.TaskWhereInput>
   membership?: Prisma.XOR<Prisma.MembershipScalarRelationFilter, Prisma.MembershipWhereInput>
+  task?: Prisma.XOR<Prisma.TaskScalarRelationFilter, Prisma.TaskWhereInput>
 }
 
 export type TaskAssignmentOrderByWithRelationInput = {
@@ -183,8 +183,8 @@ export type TaskAssignmentOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   taskId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
-  task?: Prisma.TaskOrderByWithRelationInput
   membership?: Prisma.MembershipOrderByWithRelationInput
+  task?: Prisma.TaskOrderByWithRelationInput
 }
 
 export type TaskAssignmentWhereUniqueInput = Prisma.AtLeast<{
@@ -196,8 +196,8 @@ export type TaskAssignmentWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"TaskAssignment"> | Date | string
   taskId?: Prisma.StringFilter<"TaskAssignment"> | string
   membershipId?: Prisma.StringFilter<"TaskAssignment"> | string
-  task?: Prisma.XOR<Prisma.TaskScalarRelationFilter, Prisma.TaskWhereInput>
   membership?: Prisma.XOR<Prisma.MembershipScalarRelationFilter, Prisma.MembershipWhereInput>
+  task?: Prisma.XOR<Prisma.TaskScalarRelationFilter, Prisma.TaskWhereInput>
 }, "id" | "taskId_membershipId">
 
 export type TaskAssignmentOrderByWithAggregationInput = {
@@ -223,8 +223,8 @@ export type TaskAssignmentScalarWhereWithAggregatesInput = {
 export type TaskAssignmentCreateInput = {
   id?: string
   createdAt?: Date | string
+  membership: Prisma.MembershipCreateNestedOneWithoutTaskAssignmentsInput
   task: Prisma.TaskCreateNestedOneWithoutAssignmentsInput
-  membership: Prisma.MembershipCreateNestedOneWithoutAssignedTasksInput
 }
 
 export type TaskAssignmentUncheckedCreateInput = {
@@ -237,8 +237,8 @@ export type TaskAssignmentUncheckedCreateInput = {
 export type TaskAssignmentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  membership?: Prisma.MembershipUpdateOneRequiredWithoutTaskAssignmentsNestedInput
   task?: Prisma.TaskUpdateOneRequiredWithoutAssignmentsNestedInput
-  membership?: Prisma.MembershipUpdateOneRequiredWithoutAssignedTasksNestedInput
 }
 
 export type TaskAssignmentUncheckedUpdateInput = {
@@ -438,7 +438,7 @@ export type TaskAssignmentScalarWhereInput = {
 export type TaskAssignmentCreateWithoutTaskInput = {
   id?: string
   createdAt?: Date | string
-  membership: Prisma.MembershipCreateNestedOneWithoutAssignedTasksInput
+  membership: Prisma.MembershipCreateNestedOneWithoutTaskAssignmentsInput
 }
 
 export type TaskAssignmentUncheckedCreateWithoutTaskInput = {
@@ -506,7 +506,7 @@ export type TaskAssignmentCreateManyTaskInput = {
 export type TaskAssignmentUpdateWithoutTaskInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  membership?: Prisma.MembershipUpdateOneRequiredWithoutAssignedTasksNestedInput
+  membership?: Prisma.MembershipUpdateOneRequiredWithoutTaskAssignmentsNestedInput
 }
 
 export type TaskAssignmentUncheckedUpdateWithoutTaskInput = {
@@ -528,8 +528,8 @@ export type TaskAssignmentSelect<ExtArgs extends runtime.Types.Extensions.Intern
   createdAt?: boolean
   taskId?: boolean
   membershipId?: boolean
-  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taskAssignment"]>
 
 export type TaskAssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -537,8 +537,8 @@ export type TaskAssignmentSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   createdAt?: boolean
   taskId?: boolean
   membershipId?: boolean
-  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taskAssignment"]>
 
 export type TaskAssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -546,8 +546,8 @@ export type TaskAssignmentSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   createdAt?: boolean
   taskId?: boolean
   membershipId?: boolean
-  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["taskAssignment"]>
 
 export type TaskAssignmentSelectScalar = {
@@ -559,23 +559,23 @@ export type TaskAssignmentSelectScalar = {
 
 export type TaskAssignmentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "taskId" | "membershipId", ExtArgs["result"]["taskAssignment"]>
 export type TaskAssignmentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
 }
 export type TaskAssignmentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
 }
 export type TaskAssignmentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  task?: boolean | Prisma.TaskDefaultArgs<ExtArgs>
 }
 
 export type $TaskAssignmentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "TaskAssignment"
   objects: {
-    task: Prisma.$TaskPayload<ExtArgs>
     membership: Prisma.$MembershipPayload<ExtArgs>
+    task: Prisma.$TaskPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -976,8 +976,8 @@ readonly fields: TaskAssignmentFieldRefs;
  */
 export interface Prisma__TaskAssignmentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  task<T extends Prisma.TaskDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaskDefaultArgs<ExtArgs>>): Prisma.Prisma__TaskClient<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   membership<T extends Prisma.MembershipDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MembershipDefaultArgs<ExtArgs>>): Prisma.Prisma__MembershipClient<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  task<T extends Prisma.TaskDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TaskDefaultArgs<ExtArgs>>): Prisma.Prisma__TaskClient<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

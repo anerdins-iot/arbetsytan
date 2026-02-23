@@ -9,59 +9,12 @@
 * 🟢 You can import this file directly.
 */
 
-export const Role = {
-  ADMIN: 'ADMIN',
-  PROJECT_MANAGER: 'PROJECT_MANAGER',
-  WORKER: 'WORKER'
+export const AIDirection = {
+  PROJECT_TO_PERSONAL: 'PROJECT_TO_PERSONAL',
+  PERSONAL_TO_PROJECT: 'PERSONAL_TO_PROJECT'
 } as const
 
-export type Role = (typeof Role)[keyof typeof Role]
-
-
-export const InvitationStatus = {
-  PENDING: 'PENDING',
-  ACCEPTED: 'ACCEPTED',
-  EXPIRED: 'EXPIRED'
-} as const
-
-export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
-
-
-export const ProjectStatus = {
-  ACTIVE: 'ACTIVE',
-  PAUSED: 'PAUSED',
-  COMPLETED: 'COMPLETED',
-  ARCHIVED: 'ARCHIVED'
-} as const
-
-export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
-
-
-export const TaskStatus = {
-  TODO: 'TODO',
-  IN_PROGRESS: 'IN_PROGRESS',
-  DONE: 'DONE'
-} as const
-
-export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
-
-
-export const Priority = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  URGENT: 'URGENT'
-} as const
-
-export type Priority = (typeof Priority)[keyof typeof Priority]
-
-
-export const ConversationType = {
-  PERSONAL: 'PERSONAL',
-  PROJECT: 'PROJECT'
-} as const
-
-export type ConversationType = (typeof ConversationType)[keyof typeof ConversationType]
+export type AIDirection = (typeof AIDirection)[keyof typeof AIDirection]
 
 
 export const AIProvider = {
@@ -73,20 +26,77 @@ export const AIProvider = {
 export type AIProvider = (typeof AIProvider)[keyof typeof AIProvider]
 
 
+export const AutomationCreator = {
+  USER: 'USER',
+  AI: 'AI'
+} as const
+
+export type AutomationCreator = (typeof AutomationCreator)[keyof typeof AutomationCreator]
+
+
+export const AutomationLogStatus = {
+  SUCCESS: 'SUCCESS',
+  FAILED: 'FAILED',
+  SKIPPED: 'SKIPPED'
+} as const
+
+export type AutomationLogStatus = (typeof AutomationLogStatus)[keyof typeof AutomationLogStatus]
+
+
+export const AutomationStatus = {
+  PENDING: 'PENDING',
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type AutomationStatus = (typeof AutomationStatus)[keyof typeof AutomationStatus]
+
+
+export const ConversationType = {
+  PERSONAL: 'PERSONAL',
+  PROJECT: 'PROJECT'
+} as const
+
+export type ConversationType = (typeof ConversationType)[keyof typeof ConversationType]
+
+
+export const EmailDirection = {
+  INBOUND: 'INBOUND',
+  OUTBOUND: 'OUTBOUND'
+} as const
+
+export type EmailDirection = (typeof EmailDirection)[keyof typeof EmailDirection]
+
+
+export const EmailStatus = {
+  QUEUED: 'QUEUED',
+  SENT: 'SENT',
+  DELIVERED: 'DELIVERED',
+  BOUNCED: 'BOUNCED',
+  FAILED: 'FAILED'
+} as const
+
+export type EmailStatus = (typeof EmailStatus)[keyof typeof EmailStatus]
+
+
+export const InvitationStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
+
+
 export const MessageRole = {
   USER: 'USER',
   ASSISTANT: 'ASSISTANT'
 } as const
 
 export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole]
-
-
-export const AIDirection = {
-  PROJECT_TO_PERSONAL: 'PROJECT_TO_PERSONAL',
-  PERSONAL_TO_PROJECT: 'PERSONAL_TO_PROJECT'
-} as const
-
-export type AIDirection = (typeof AIDirection)[keyof typeof AIDirection]
 
 
 export const NotificationChannel = {
@@ -108,46 +118,33 @@ export const NotificationEventType = {
 export type NotificationEventType = (typeof NotificationEventType)[keyof typeof NotificationEventType]
 
 
-export const TimeEntryType = {
-  WORK: 'WORK',
-  VACATION: 'VACATION',
-  SICK: 'SICK',
-  VAB: 'VAB',
-  PARENTAL: 'PARENTAL',
-  EDUCATION: 'EDUCATION',
-  OTHER: 'OTHER'
+export const Priority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
 } as const
 
-export type TimeEntryType = (typeof TimeEntryType)[keyof typeof TimeEntryType]
+export type Priority = (typeof Priority)[keyof typeof Priority]
 
 
-export const AutomationStatus = {
-  PENDING: 'PENDING',
+export const ProjectStatus = {
   ACTIVE: 'ACTIVE',
   PAUSED: 'PAUSED',
   COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED'
+  ARCHIVED: 'ARCHIVED'
 } as const
 
-export type AutomationStatus = (typeof AutomationStatus)[keyof typeof AutomationStatus]
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus]
 
 
-export const AutomationCreator = {
-  USER: 'USER',
-  AI: 'AI'
+export const Role = {
+  ADMIN: 'ADMIN',
+  PROJECT_MANAGER: 'PROJECT_MANAGER',
+  WORKER: 'WORKER'
 } as const
 
-export type AutomationCreator = (typeof AutomationCreator)[keyof typeof AutomationCreator]
-
-
-export const AutomationLogStatus = {
-  SUCCESS: 'SUCCESS',
-  FAILED: 'FAILED',
-  SKIPPED: 'SKIPPED'
-} as const
-
-export type AutomationLogStatus = (typeof AutomationLogStatus)[keyof typeof AutomationLogStatus]
+export type Role = (typeof Role)[keyof typeof Role]
 
 
 export const SubscriptionStatus = {
@@ -160,20 +157,23 @@ export const SubscriptionStatus = {
 export type SubscriptionStatus = (typeof SubscriptionStatus)[keyof typeof SubscriptionStatus]
 
 
-export const EmailDirection = {
-  INBOUND: 'INBOUND',
-  OUTBOUND: 'OUTBOUND'
+export const TaskStatus = {
+  TODO: 'TODO',
+  IN_PROGRESS: 'IN_PROGRESS',
+  DONE: 'DONE'
 } as const
 
-export type EmailDirection = (typeof EmailDirection)[keyof typeof EmailDirection]
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus]
 
 
-export const EmailStatus = {
-  QUEUED: 'QUEUED',
-  SENT: 'SENT',
-  DELIVERED: 'DELIVERED',
-  BOUNCED: 'BOUNCED',
-  FAILED: 'FAILED'
+export const TimeEntryType = {
+  WORK: 'WORK',
+  VACATION: 'VACATION',
+  SICK: 'SICK',
+  VAB: 'VAB',
+  PARENTAL: 'PARENTAL',
+  EDUCATION: 'EDUCATION',
+  OTHER: 'OTHER'
 } as const
 
-export type EmailStatus = (typeof EmailStatus)[keyof typeof EmailStatus]
+export type TimeEntryType = (typeof TimeEntryType)[keyof typeof TimeEntryType]

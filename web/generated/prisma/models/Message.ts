@@ -353,48 +353,6 @@ export type MessageScalarRelationFilter = {
   isNot?: Prisma.MessageWhereInput
 }
 
-export type MessageCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-}
-
-export type MessageUncheckedCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-}
-
-export type MessageUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutProjectInput | Prisma.MessageUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
-export type MessageUncheckedUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
-  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
-  update?: Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutProjectInput | Prisma.MessageUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-}
-
 export type MessageCreateNestedManyWithoutConversationInput = {
   create?: Prisma.XOR<Prisma.MessageCreateWithoutConversationInput, Prisma.MessageUncheckedCreateWithoutConversationInput> | Prisma.MessageCreateWithoutConversationInput[] | Prisma.MessageUncheckedCreateWithoutConversationInput[]
   connectOrCreate?: Prisma.MessageCreateOrConnectWithoutConversationInput | Prisma.MessageCreateOrConnectWithoutConversationInput[]
@@ -455,60 +413,46 @@ export type MessageUpdateOneRequiredWithoutMessageChunksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MessageUpdateToOneWithWhereWithoutMessageChunksInput, Prisma.MessageUpdateWithoutMessageChunksInput>, Prisma.MessageUncheckedUpdateWithoutMessageChunksInput>
 }
 
-export type MessageCreateWithoutProjectInput = {
-  id?: string
-  role: $Enums.MessageRole
-  content: string
-  createdAt?: Date | string
-  conversation: Prisma.ConversationCreateNestedOneWithoutMessagesInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutMessageInput
+export type MessageCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
 }
 
-export type MessageUncheckedCreateWithoutProjectInput = {
-  id?: string
-  role: $Enums.MessageRole
-  content: string
-  createdAt?: Date | string
-  conversationId: string
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutMessageInput
+export type MessageUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
 }
 
-export type MessageCreateOrConnectWithoutProjectInput = {
-  where: Prisma.MessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput>
+export type MessageUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutProjectInput | Prisma.MessageUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
-export type MessageCreateManyProjectInputEnvelope = {
-  data: Prisma.MessageCreateManyProjectInput | Prisma.MessageCreateManyProjectInput[]
-  skipDuplicates?: boolean
-}
-
-export type MessageUpsertWithWhereUniqueWithoutProjectInput = {
-  where: Prisma.MessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.MessageUpdateWithoutProjectInput, Prisma.MessageUncheckedUpdateWithoutProjectInput>
-  create: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput>
-}
-
-export type MessageUpdateWithWhereUniqueWithoutProjectInput = {
-  where: Prisma.MessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.MessageUpdateWithoutProjectInput, Prisma.MessageUncheckedUpdateWithoutProjectInput>
-}
-
-export type MessageUpdateManyWithWhereWithoutProjectInput = {
-  where: Prisma.MessageScalarWhereInput
-  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutProjectInput>
-}
-
-export type MessageScalarWhereInput = {
-  AND?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-  OR?: Prisma.MessageScalarWhereInput[]
-  NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
-  id?: Prisma.StringFilter<"Message"> | string
-  role?: Prisma.EnumMessageRoleFilter<"Message"> | $Enums.MessageRole
-  content?: Prisma.StringFilter<"Message"> | string
-  createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
-  conversationId?: Prisma.StringFilter<"Message"> | string
-  projectId?: Prisma.StringNullableFilter<"Message"> | string | null
+export type MessageUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput> | Prisma.MessageCreateWithoutProjectInput[] | Prisma.MessageUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.MessageCreateOrConnectWithoutProjectInput | Prisma.MessageCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput | Prisma.MessageUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.MessageCreateManyProjectInputEnvelope
+  set?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  disconnect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  delete?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  connect?: Prisma.MessageWhereUniqueInput | Prisma.MessageWhereUniqueInput[]
+  update?: Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput | Prisma.MessageUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.MessageUpdateManyWithWhereWithoutProjectInput | Prisma.MessageUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
 export type MessageCreateWithoutConversationInput = {
@@ -553,6 +497,18 @@ export type MessageUpdateWithWhereUniqueWithoutConversationInput = {
 export type MessageUpdateManyWithWhereWithoutConversationInput = {
   where: Prisma.MessageScalarWhereInput
   data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutConversationInput>
+}
+
+export type MessageScalarWhereInput = {
+  AND?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+  OR?: Prisma.MessageScalarWhereInput[]
+  NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
+  id?: Prisma.StringFilter<"Message"> | string
+  role?: Prisma.EnumMessageRoleFilter<"Message"> | $Enums.MessageRole
+  content?: Prisma.StringFilter<"Message"> | string
+  createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
+  conversationId?: Prisma.StringFilter<"Message"> | string
+  projectId?: Prisma.StringNullableFilter<"Message"> | string | null
 }
 
 export type MessageCreateWithoutMessageChunksInput = {
@@ -607,38 +563,48 @@ export type MessageUncheckedUpdateWithoutMessageChunksInput = {
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type MessageCreateManyProjectInput = {
+export type MessageCreateWithoutProjectInput = {
+  id?: string
+  role: $Enums.MessageRole
+  content: string
+  createdAt?: Date | string
+  conversation: Prisma.ConversationCreateNestedOneWithoutMessagesInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutMessageInput
+}
+
+export type MessageUncheckedCreateWithoutProjectInput = {
   id?: string
   role: $Enums.MessageRole
   content: string
   createdAt?: Date | string
   conversationId: string
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutMessageInput
 }
 
-export type MessageUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessagesNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutMessageNestedInput
+export type MessageCreateOrConnectWithoutProjectInput = {
+  where: Prisma.MessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput>
 }
 
-export type MessageUncheckedUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutMessageNestedInput
+export type MessageCreateManyProjectInputEnvelope = {
+  data: Prisma.MessageCreateManyProjectInput | Prisma.MessageCreateManyProjectInput[]
+  skipDuplicates?: boolean
 }
 
-export type MessageUncheckedUpdateManyWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  role?: Prisma.EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+export type MessageUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.MessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.MessageUpdateWithoutProjectInput, Prisma.MessageUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.MessageCreateWithoutProjectInput, Prisma.MessageUncheckedCreateWithoutProjectInput>
+}
+
+export type MessageUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.MessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.MessageUpdateWithoutProjectInput, Prisma.MessageUncheckedUpdateWithoutProjectInput>
+}
+
+export type MessageUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.MessageScalarWhereInput
+  data: Prisma.XOR<Prisma.MessageUpdateManyMutationInput, Prisma.MessageUncheckedUpdateManyWithoutProjectInput>
 }
 
 export type MessageCreateManyConversationInput = {
@@ -673,6 +639,40 @@ export type MessageUncheckedUpdateManyWithoutConversationInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type MessageCreateManyProjectInput = {
+  id?: string
+  role: $Enums.MessageRole
+  content: string
+  createdAt?: Date | string
+  conversationId: string
+}
+
+export type MessageUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversation?: Prisma.ConversationUpdateOneRequiredWithoutMessagesNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutMessageNestedInput
+}
+
+export type MessageUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutMessageNestedInput
+}
+
+export type MessageUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumMessageRoleFieldUpdateOperationsInput | $Enums.MessageRole
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversationId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 

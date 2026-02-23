@@ -36,9 +36,17 @@ cd /workspace/web
 echo "Building application..."
 npm run build
 
+# Load .env explicitly (override any empty container env vars like ANTHROPIC_API_KEY)
+if [ -f ".env" ]; then
+  set -a
+  source .env
+  set +a
+  echo "Loaded .env"
+fi
+
 # Start the server
 echo "Starting server on port $PORT..."
-npm start > /tmp/server.log 2>&1 &
+NODE_ENV=production npx tsx server.ts > /tmp/server.log 2>&1 &
 
 # Wait for server to be ready and capture the actual server PID
 echo "Waiting for server to be ready..."

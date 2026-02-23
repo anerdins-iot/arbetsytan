@@ -260,7 +260,7 @@ export type NoteCategoryCreateInput = {
   color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutNoteCategoriesInput
+  tenant: Prisma.TenantCreateNestedOneWithoutNoteCategoryInput
 }
 
 export type NoteCategoryUncheckedCreateInput = {
@@ -280,7 +280,7 @@ export type NoteCategoryUpdateInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutNoteCategoriesNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutNoteCategoryNestedInput
 }
 
 export type NoteCategoryUncheckedUpdateInput = {
@@ -322,16 +322,6 @@ export type NoteCategoryUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type NoteCategoryListRelationFilter = {
-  every?: Prisma.NoteCategoryWhereInput
-  some?: Prisma.NoteCategoryWhereInput
-  none?: Prisma.NoteCategoryWhereInput
-}
-
-export type NoteCategoryOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type NoteCategoryTenantIdSlugCompoundUniqueInput = {
   tenantId: string
   slug: string
@@ -365,6 +355,16 @@ export type NoteCategoryMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+}
+
+export type NoteCategoryListRelationFilter = {
+  every?: Prisma.NoteCategoryWhereInput
+  some?: Prisma.NoteCategoryWhereInput
+  none?: Prisma.NoteCategoryWhereInput
+}
+
+export type NoteCategoryOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type NoteCategoryCreateNestedManyWithoutTenantInput = {

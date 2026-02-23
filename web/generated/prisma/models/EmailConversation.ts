@@ -46,9 +46,9 @@ export type EmailConversationMinAggregateOutputType = {
   lastMessageAt: Date | null
   unreadCount: number | null
   isArchived: boolean | null
-  isUnassigned: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  isUnassigned: boolean | null
 }
 
 export type EmailConversationMaxAggregateOutputType = {
@@ -63,9 +63,9 @@ export type EmailConversationMaxAggregateOutputType = {
   lastMessageAt: Date | null
   unreadCount: number | null
   isArchived: boolean | null
-  isUnassigned: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
+  isUnassigned: boolean | null
 }
 
 export type EmailConversationCountAggregateOutputType = {
@@ -80,9 +80,9 @@ export type EmailConversationCountAggregateOutputType = {
   lastMessageAt: number
   unreadCount: number
   isArchived: number
-  isUnassigned: number
   createdAt: number
   updatedAt: number
+  isUnassigned: number
   _all: number
 }
 
@@ -107,9 +107,9 @@ export type EmailConversationMinAggregateInputType = {
   lastMessageAt?: true
   unreadCount?: true
   isArchived?: true
-  isUnassigned?: true
   createdAt?: true
   updatedAt?: true
+  isUnassigned?: true
 }
 
 export type EmailConversationMaxAggregateInputType = {
@@ -124,9 +124,9 @@ export type EmailConversationMaxAggregateInputType = {
   lastMessageAt?: true
   unreadCount?: true
   isArchived?: true
-  isUnassigned?: true
   createdAt?: true
   updatedAt?: true
+  isUnassigned?: true
 }
 
 export type EmailConversationCountAggregateInputType = {
@@ -141,9 +141,9 @@ export type EmailConversationCountAggregateInputType = {
   lastMessageAt?: true
   unreadCount?: true
   isArchived?: true
-  isUnassigned?: true
   createdAt?: true
   updatedAt?: true
+  isUnassigned?: true
   _all?: true
 }
 
@@ -245,9 +245,9 @@ export type EmailConversationGroupByOutputType = {
   lastMessageAt: Date
   unreadCount: number
   isArchived: boolean
-  isUnassigned: boolean
   createdAt: Date
   updatedAt: Date
+  isUnassigned: boolean
   _count: EmailConversationCountAggregateOutputType | null
   _avg: EmailConversationAvgAggregateOutputType | null
   _sum: EmailConversationSumAggregateOutputType | null
@@ -285,12 +285,12 @@ export type EmailConversationWhereInput = {
   lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
-  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
+  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   messages?: Prisma.EmailMessageListRelationFilter
 }
 
@@ -306,12 +306,12 @@ export type EmailConversationOrderByWithRelationInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
-  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
+  project?: Prisma.ProjectOrderByWithRelationInput
   tenant?: Prisma.TenantOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
-  project?: Prisma.ProjectOrderByWithRelationInput
   messages?: Prisma.EmailMessageOrderByRelationAggregateInput
 }
 
@@ -330,12 +330,12 @@ export type EmailConversationWhereUniqueInput = Prisma.AtLeast<{
   lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
-  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
+  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
   messages?: Prisma.EmailMessageListRelationFilter
 }, "id" | "trackingCode">
 
@@ -351,9 +351,9 @@ export type EmailConversationOrderByWithAggregationInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
-  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
   _count?: Prisma.EmailConversationCountOrderByAggregateInput
   _avg?: Prisma.EmailConversationAvgOrderByAggregateInput
   _max?: Prisma.EmailConversationMaxOrderByAggregateInput
@@ -376,9 +376,9 @@ export type EmailConversationScalarWhereWithAggregatesInput = {
   lastMessageAt?: Prisma.DateTimeWithAggregatesFilter<"EmailConversation"> | Date | string
   unreadCount?: Prisma.IntWithAggregatesFilter<"EmailConversation"> | number
   isArchived?: Prisma.BoolWithAggregatesFilter<"EmailConversation"> | boolean
-  isUnassigned?: Prisma.BoolWithAggregatesFilter<"EmailConversation"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"EmailConversation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"EmailConversation"> | Date | string
+  isUnassigned?: Prisma.BoolWithAggregatesFilter<"EmailConversation"> | boolean
 }
 
 export type EmailConversationCreateInput = {
@@ -390,12 +390,12 @@ export type EmailConversationCreateInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
-  user: Prisma.UserCreateNestedOneWithoutEmailConversationsInput
+  isUnassigned?: boolean
   project?: Prisma.ProjectCreateNestedOneWithoutEmailConversationsInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationInput
+  user: Prisma.UserCreateNestedOneWithoutEmailConversationInput
   messages?: Prisma.EmailMessageCreateNestedManyWithoutConversationInput
 }
 
@@ -411,9 +411,9 @@ export type EmailConversationUncheckedCreateInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
   messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
 }
 
@@ -426,12 +426,12 @@ export type EmailConversationUpdateInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationsNestedInput
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationNestedInput
   messages?: Prisma.EmailMessageUpdateManyWithoutConversationNestedInput
 }
 
@@ -447,9 +447,9 @@ export type EmailConversationUncheckedUpdateInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
 }
 
@@ -465,9 +465,9 @@ export type EmailConversationCreateManyInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
 }
 
 export type EmailConversationUpdateManyMutationInput = {
@@ -479,9 +479,9 @@ export type EmailConversationUpdateManyMutationInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type EmailConversationUncheckedUpdateManyInput = {
@@ -496,19 +496,9 @@ export type EmailConversationUncheckedUpdateManyInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type EmailConversationListRelationFilter = {
-  every?: Prisma.EmailConversationWhereInput
-  some?: Prisma.EmailConversationWhereInput
-  none?: Prisma.EmailConversationWhereInput
-}
-
-export type EmailConversationOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type EmailConversationCountOrderByAggregateInput = {
@@ -523,9 +513,9 @@ export type EmailConversationCountOrderByAggregateInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
-  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
 }
 
 export type EmailConversationAvgOrderByAggregateInput = {
@@ -544,9 +534,9 @@ export type EmailConversationMaxOrderByAggregateInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
-  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
 }
 
 export type EmailConversationMinOrderByAggregateInput = {
@@ -561,9 +551,9 @@ export type EmailConversationMinOrderByAggregateInput = {
   lastMessageAt?: Prisma.SortOrder
   unreadCount?: Prisma.SortOrder
   isArchived?: Prisma.SortOrder
-  isUnassigned?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  isUnassigned?: Prisma.SortOrder
 }
 
 export type EmailConversationSumOrderByAggregateInput = {
@@ -573,6 +563,72 @@ export type EmailConversationSumOrderByAggregateInput = {
 export type EmailConversationScalarRelationFilter = {
   is?: Prisma.EmailConversationWhereInput
   isNot?: Prisma.EmailConversationWhereInput
+}
+
+export type EmailConversationListRelationFilter = {
+  every?: Prisma.EmailConversationWhereInput
+  some?: Prisma.EmailConversationWhereInput
+  none?: Prisma.EmailConversationWhereInput
+}
+
+export type EmailConversationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type EmailConversationCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.EmailConversationWhereUniqueInput
+}
+
+export type EmailConversationUpdateOneRequiredWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.EmailConversationUpsertWithoutMessagesInput
+  connect?: Prisma.EmailConversationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.EmailConversationUpdateToOneWithWhereWithoutMessagesInput, Prisma.EmailConversationUpdateWithoutMessagesInput>, Prisma.EmailConversationUncheckedUpdateWithoutMessagesInput>
+}
+
+export type EmailConversationCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
+  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+}
+
+export type EmailConversationUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
+  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+}
+
+export type EmailConversationUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
+  set?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  disconnect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  delete?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  update?: Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput | Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
+}
+
+export type EmailConversationUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
+  set?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  disconnect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  delete?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
+  update?: Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput | Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
 }
 
 export type EmailConversationCreateNestedManyWithoutTenantInput = {
@@ -659,63 +715,7 @@ export type EmailConversationUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
 }
 
-export type EmailConversationCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
-  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-}
-
-export type EmailConversationUncheckedCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
-  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-}
-
-export type EmailConversationUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
-  set?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  disconnect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  delete?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  update?: Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput | Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
-}
-
-export type EmailConversationUncheckedUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutProjectInput, Prisma.EmailConversationUncheckedCreateWithoutProjectInput> | Prisma.EmailConversationCreateWithoutProjectInput[] | Prisma.EmailConversationUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutProjectInput | Prisma.EmailConversationCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.EmailConversationCreateManyProjectInputEnvelope
-  set?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  disconnect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  delete?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  connect?: Prisma.EmailConversationWhereUniqueInput | Prisma.EmailConversationWhereUniqueInput[]
-  update?: Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailConversationUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput | Prisma.EmailConversationUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
-}
-
-export type EmailConversationCreateNestedOneWithoutMessagesInput = {
-  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
-  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutMessagesInput
-  connect?: Prisma.EmailConversationWhereUniqueInput
-}
-
-export type EmailConversationUpdateOneRequiredWithoutMessagesNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
-  connectOrCreate?: Prisma.EmailConversationCreateOrConnectWithoutMessagesInput
-  upsert?: Prisma.EmailConversationUpsertWithoutMessagesInput
-  connect?: Prisma.EmailConversationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.EmailConversationUpdateToOneWithWhereWithoutMessagesInput, Prisma.EmailConversationUpdateWithoutMessagesInput>, Prisma.EmailConversationUncheckedUpdateWithoutMessagesInput>
-}
-
-export type EmailConversationCreateWithoutTenantInput = {
+export type EmailConversationCreateWithoutMessagesInput = {
   id?: string
   externalEmail: string
   externalName?: string | null
@@ -724,16 +724,17 @@ export type EmailConversationCreateWithoutTenantInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutEmailConversationsInput
+  isUnassigned?: boolean
   project?: Prisma.ProjectCreateNestedOneWithoutEmailConversationsInput
-  messages?: Prisma.EmailMessageCreateNestedManyWithoutConversationInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationInput
+  user: Prisma.UserCreateNestedOneWithoutEmailConversationInput
 }
 
-export type EmailConversationUncheckedCreateWithoutTenantInput = {
+export type EmailConversationUncheckedCreateWithoutMessagesInput = {
   id?: string
+  tenantId: string
   userId: string
   projectId?: string | null
   externalEmail: string
@@ -743,116 +744,59 @@ export type EmailConversationUncheckedCreateWithoutTenantInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
-}
-
-export type EmailConversationCreateOrConnectWithoutTenantInput = {
-  where: Prisma.EmailConversationWhereUniqueInput
-  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutTenantInput, Prisma.EmailConversationUncheckedCreateWithoutTenantInput>
-}
-
-export type EmailConversationCreateManyTenantInputEnvelope = {
-  data: Prisma.EmailConversationCreateManyTenantInput | Prisma.EmailConversationCreateManyTenantInput[]
-  skipDuplicates?: boolean
-}
-
-export type EmailConversationUpsertWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.EmailConversationWhereUniqueInput
-  update: Prisma.XOR<Prisma.EmailConversationUpdateWithoutTenantInput, Prisma.EmailConversationUncheckedUpdateWithoutTenantInput>
-  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutTenantInput, Prisma.EmailConversationUncheckedCreateWithoutTenantInput>
-}
-
-export type EmailConversationUpdateWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.EmailConversationWhereUniqueInput
-  data: Prisma.XOR<Prisma.EmailConversationUpdateWithoutTenantInput, Prisma.EmailConversationUncheckedUpdateWithoutTenantInput>
-}
-
-export type EmailConversationUpdateManyWithWhereWithoutTenantInput = {
-  where: Prisma.EmailConversationScalarWhereInput
-  data: Prisma.XOR<Prisma.EmailConversationUpdateManyMutationInput, Prisma.EmailConversationUncheckedUpdateManyWithoutTenantInput>
-}
-
-export type EmailConversationScalarWhereInput = {
-  AND?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
-  OR?: Prisma.EmailConversationScalarWhereInput[]
-  NOT?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
-  id?: Prisma.StringFilter<"EmailConversation"> | string
-  tenantId?: Prisma.StringFilter<"EmailConversation"> | string
-  userId?: Prisma.StringFilter<"EmailConversation"> | string
-  projectId?: Prisma.StringNullableFilter<"EmailConversation"> | string | null
-  externalEmail?: Prisma.StringFilter<"EmailConversation"> | string
-  externalName?: Prisma.StringNullableFilter<"EmailConversation"> | string | null
-  trackingCode?: Prisma.StringFilter<"EmailConversation"> | string
-  subject?: Prisma.StringFilter<"EmailConversation"> | string
-  lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
-  unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
-  isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
-  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
-  createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
-}
-
-export type EmailConversationCreateWithoutUserInput = {
-  id?: string
-  externalEmail: string
-  externalName?: string | null
-  trackingCode: string
-  subject: string
-  lastMessageAt?: Date | string
-  unreadCount?: number
-  isArchived?: boolean
   isUnassigned?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
-  project?: Prisma.ProjectCreateNestedOneWithoutEmailConversationsInput
-  messages?: Prisma.EmailMessageCreateNestedManyWithoutConversationInput
 }
 
-export type EmailConversationUncheckedCreateWithoutUserInput = {
-  id?: string
-  tenantId: string
-  projectId?: string | null
-  externalEmail: string
-  externalName?: string | null
-  trackingCode: string
-  subject: string
-  lastMessageAt?: Date | string
-  unreadCount?: number
-  isArchived?: boolean
-  isUnassigned?: boolean
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
-}
-
-export type EmailConversationCreateOrConnectWithoutUserInput = {
+export type EmailConversationCreateOrConnectWithoutMessagesInput = {
   where: Prisma.EmailConversationWhereUniqueInput
-  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutUserInput, Prisma.EmailConversationUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
 }
 
-export type EmailConversationCreateManyUserInputEnvelope = {
-  data: Prisma.EmailConversationCreateManyUserInput | Prisma.EmailConversationCreateManyUserInput[]
-  skipDuplicates?: boolean
+export type EmailConversationUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.EmailConversationUpdateWithoutMessagesInput, Prisma.EmailConversationUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.EmailConversationWhereInput
 }
 
-export type EmailConversationUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.EmailConversationWhereUniqueInput
-  update: Prisma.XOR<Prisma.EmailConversationUpdateWithoutUserInput, Prisma.EmailConversationUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutUserInput, Prisma.EmailConversationUncheckedCreateWithoutUserInput>
+export type EmailConversationUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.EmailConversationWhereInput
+  data: Prisma.XOR<Prisma.EmailConversationUpdateWithoutMessagesInput, Prisma.EmailConversationUncheckedUpdateWithoutMessagesInput>
 }
 
-export type EmailConversationUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.EmailConversationWhereUniqueInput
-  data: Prisma.XOR<Prisma.EmailConversationUpdateWithoutUserInput, Prisma.EmailConversationUncheckedUpdateWithoutUserInput>
+export type EmailConversationUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationNestedInput
 }
 
-export type EmailConversationUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.EmailConversationScalarWhereInput
-  data: Prisma.XOR<Prisma.EmailConversationUpdateManyMutationInput, Prisma.EmailConversationUncheckedUpdateManyWithoutUserInput>
+export type EmailConversationUncheckedUpdateWithoutMessagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type EmailConversationCreateWithoutProjectInput = {
@@ -864,11 +808,11 @@ export type EmailConversationCreateWithoutProjectInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
-  user: Prisma.UserCreateNestedOneWithoutEmailConversationsInput
+  isUnassigned?: boolean
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationInput
+  user: Prisma.UserCreateNestedOneWithoutEmailConversationInput
   messages?: Prisma.EmailMessageCreateNestedManyWithoutConversationInput
 }
 
@@ -883,9 +827,9 @@ export type EmailConversationUncheckedCreateWithoutProjectInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
   messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
 }
 
@@ -915,7 +859,27 @@ export type EmailConversationUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.EmailConversationUpdateManyMutationInput, Prisma.EmailConversationUncheckedUpdateManyWithoutProjectInput>
 }
 
-export type EmailConversationCreateWithoutMessagesInput = {
+export type EmailConversationScalarWhereInput = {
+  AND?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
+  OR?: Prisma.EmailConversationScalarWhereInput[]
+  NOT?: Prisma.EmailConversationScalarWhereInput | Prisma.EmailConversationScalarWhereInput[]
+  id?: Prisma.StringFilter<"EmailConversation"> | string
+  tenantId?: Prisma.StringFilter<"EmailConversation"> | string
+  userId?: Prisma.StringFilter<"EmailConversation"> | string
+  projectId?: Prisma.StringNullableFilter<"EmailConversation"> | string | null
+  externalEmail?: Prisma.StringFilter<"EmailConversation"> | string
+  externalName?: Prisma.StringNullableFilter<"EmailConversation"> | string | null
+  trackingCode?: Prisma.StringFilter<"EmailConversation"> | string
+  subject?: Prisma.StringFilter<"EmailConversation"> | string
+  lastMessageAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
+  unreadCount?: Prisma.IntFilter<"EmailConversation"> | number
+  isArchived?: Prisma.BoolFilter<"EmailConversation"> | boolean
+  createdAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"EmailConversation"> | Date | string
+  isUnassigned?: Prisma.BoolFilter<"EmailConversation"> | boolean
+}
+
+export type EmailConversationCreateWithoutTenantInput = {
   id?: string
   externalEmail: string
   externalName?: string | null
@@ -924,17 +888,16 @@ export type EmailConversationCreateWithoutMessagesInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationsInput
-  user: Prisma.UserCreateNestedOneWithoutEmailConversationsInput
+  isUnassigned?: boolean
   project?: Prisma.ProjectCreateNestedOneWithoutEmailConversationsInput
+  user: Prisma.UserCreateNestedOneWithoutEmailConversationInput
+  messages?: Prisma.EmailMessageCreateNestedManyWithoutConversationInput
 }
 
-export type EmailConversationUncheckedCreateWithoutMessagesInput = {
+export type EmailConversationUncheckedCreateWithoutTenantInput = {
   id?: string
-  tenantId: string
   userId: string
   projectId?: string | null
   externalEmail: string
@@ -944,65 +907,40 @@ export type EmailConversationUncheckedCreateWithoutMessagesInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
+  messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
 }
 
-export type EmailConversationCreateOrConnectWithoutMessagesInput = {
+export type EmailConversationCreateOrConnectWithoutTenantInput = {
   where: Prisma.EmailConversationWhereUniqueInput
-  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutTenantInput, Prisma.EmailConversationUncheckedCreateWithoutTenantInput>
 }
 
-export type EmailConversationUpsertWithoutMessagesInput = {
-  update: Prisma.XOR<Prisma.EmailConversationUpdateWithoutMessagesInput, Prisma.EmailConversationUncheckedUpdateWithoutMessagesInput>
-  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutMessagesInput, Prisma.EmailConversationUncheckedCreateWithoutMessagesInput>
-  where?: Prisma.EmailConversationWhereInput
+export type EmailConversationCreateManyTenantInputEnvelope = {
+  data: Prisma.EmailConversationCreateManyTenantInput | Prisma.EmailConversationCreateManyTenantInput[]
+  skipDuplicates?: boolean
 }
 
-export type EmailConversationUpdateToOneWithWhereWithoutMessagesInput = {
-  where?: Prisma.EmailConversationWhereInput
-  data: Prisma.XOR<Prisma.EmailConversationUpdateWithoutMessagesInput, Prisma.EmailConversationUncheckedUpdateWithoutMessagesInput>
+export type EmailConversationUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.EmailConversationWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmailConversationUpdateWithoutTenantInput, Prisma.EmailConversationUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutTenantInput, Prisma.EmailConversationUncheckedCreateWithoutTenantInput>
 }
 
-export type EmailConversationUpdateWithoutMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationsNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
+export type EmailConversationUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.EmailConversationWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmailConversationUpdateWithoutTenantInput, Prisma.EmailConversationUncheckedUpdateWithoutTenantInput>
 }
 
-export type EmailConversationUncheckedUpdateWithoutMessagesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type EmailConversationUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.EmailConversationScalarWhereInput
+  data: Prisma.XOR<Prisma.EmailConversationUpdateManyMutationInput, Prisma.EmailConversationUncheckedUpdateManyWithoutTenantInput>
 }
 
-export type EmailConversationCreateManyTenantInput = {
+export type EmailConversationCreateWithoutUserInput = {
   id?: string
-  userId: string
-  projectId?: string | null
   externalEmail: string
   externalName?: string | null
   trackingCode: string
@@ -1010,62 +948,15 @@ export type EmailConversationCreateManyTenantInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
+  project?: Prisma.ProjectCreateNestedOneWithoutEmailConversationsInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailConversationInput
+  messages?: Prisma.EmailMessageCreateNestedManyWithoutConversationInput
 }
 
-export type EmailConversationUpdateWithoutTenantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationsNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
-  messages?: Prisma.EmailMessageUpdateManyWithoutConversationNestedInput
-}
-
-export type EmailConversationUncheckedUpdateWithoutTenantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
-}
-
-export type EmailConversationUncheckedUpdateManyWithoutTenantInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type EmailConversationCreateManyUserInput = {
+export type EmailConversationUncheckedCreateWithoutUserInput = {
   id?: string
   tenantId: string
   projectId?: string | null
@@ -1076,59 +967,36 @@ export type EmailConversationCreateManyUserInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
+  messages?: Prisma.EmailMessageUncheckedCreateNestedManyWithoutConversationInput
 }
 
-export type EmailConversationUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
-  messages?: Prisma.EmailMessageUpdateManyWithoutConversationNestedInput
+export type EmailConversationCreateOrConnectWithoutUserInput = {
+  where: Prisma.EmailConversationWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutUserInput, Prisma.EmailConversationUncheckedCreateWithoutUserInput>
 }
 
-export type EmailConversationUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
+export type EmailConversationCreateManyUserInputEnvelope = {
+  data: Prisma.EmailConversationCreateManyUserInput | Prisma.EmailConversationCreateManyUserInput[]
+  skipDuplicates?: boolean
 }
 
-export type EmailConversationUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
-  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
-  subject?: Prisma.StringFieldUpdateOperationsInput | string
-  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
-  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type EmailConversationUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.EmailConversationWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmailConversationUpdateWithoutUserInput, Prisma.EmailConversationUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.EmailConversationCreateWithoutUserInput, Prisma.EmailConversationUncheckedCreateWithoutUserInput>
+}
+
+export type EmailConversationUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.EmailConversationWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmailConversationUpdateWithoutUserInput, Prisma.EmailConversationUncheckedUpdateWithoutUserInput>
+}
+
+export type EmailConversationUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.EmailConversationScalarWhereInput
+  data: Prisma.XOR<Prisma.EmailConversationUpdateManyMutationInput, Prisma.EmailConversationUncheckedUpdateManyWithoutUserInput>
 }
 
 export type EmailConversationCreateManyProjectInput = {
@@ -1142,9 +1010,9 @@ export type EmailConversationCreateManyProjectInput = {
   lastMessageAt?: Date | string
   unreadCount?: number
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  isUnassigned?: boolean
 }
 
 export type EmailConversationUpdateWithoutProjectInput = {
@@ -1156,11 +1024,11 @@ export type EmailConversationUpdateWithoutProjectInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationsNestedInput
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationNestedInput
   messages?: Prisma.EmailMessageUpdateManyWithoutConversationNestedInput
 }
 
@@ -1175,9 +1043,9 @@ export type EmailConversationUncheckedUpdateWithoutProjectInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
 }
 
@@ -1192,9 +1060,141 @@ export type EmailConversationUncheckedUpdateManyWithoutProjectInput = {
   lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
   isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type EmailConversationCreateManyTenantInput = {
+  id?: string
+  userId: string
+  projectId?: string | null
+  externalEmail: string
+  externalName?: string | null
+  trackingCode: string
+  subject: string
+  lastMessageAt?: Date | string
+  unreadCount?: number
+  isArchived?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isUnassigned?: boolean
+}
+
+export type EmailConversationUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailConversationNestedInput
+  messages?: Prisma.EmailMessageUpdateManyWithoutConversationNestedInput
+}
+
+export type EmailConversationUncheckedUpdateWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
+}
+
+export type EmailConversationUncheckedUpdateManyWithoutTenantInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+}
+
+export type EmailConversationCreateManyUserInput = {
+  id?: string
+  tenantId: string
+  projectId?: string | null
+  externalEmail: string
+  externalName?: string | null
+  trackingCode: string
+  subject: string
+  lastMessageAt?: Date | string
+  unreadCount?: number
+  isArchived?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  isUnassigned?: boolean
+}
+
+export type EmailConversationUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  project?: Prisma.ProjectUpdateOneWithoutEmailConversationsNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailConversationNestedInput
+  messages?: Prisma.EmailMessageUpdateManyWithoutConversationNestedInput
+}
+
+export type EmailConversationUncheckedUpdateWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  messages?: Prisma.EmailMessageUncheckedUpdateManyWithoutConversationNestedInput
+}
+
+export type EmailConversationUncheckedUpdateManyWithoutUserInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  externalEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  externalName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  trackingCode?: Prisma.StringFieldUpdateOperationsInput | string
+  subject?: Prisma.StringFieldUpdateOperationsInput | string
+  lastMessageAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  unreadCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isArchived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  isUnassigned?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -1240,12 +1240,12 @@ export type EmailConversationSelect<ExtArgs extends runtime.Types.Extensions.Int
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isUnassigned?: boolean
+  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   messages?: boolean | Prisma.EmailConversation$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.EmailConversationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailConversation"]>
@@ -1262,12 +1262,12 @@ export type EmailConversationSelectCreateManyAndReturn<ExtArgs extends runtime.T
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isUnassigned?: boolean
+  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
 }, ExtArgs["result"]["emailConversation"]>
 
 export type EmailConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1282,12 +1282,12 @@ export type EmailConversationSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isUnassigned?: boolean
+  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
 }, ExtArgs["result"]["emailConversation"]>
 
 export type EmailConversationSelectScalar = {
@@ -1302,36 +1302,36 @@ export type EmailConversationSelectScalar = {
   lastMessageAt?: boolean
   unreadCount?: boolean
   isArchived?: boolean
-  isUnassigned?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  isUnassigned?: boolean
 }
 
-export type EmailConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "userId" | "projectId" | "externalEmail" | "externalName" | "trackingCode" | "subject" | "lastMessageAt" | "unreadCount" | "isArchived" | "isUnassigned" | "createdAt" | "updatedAt", ExtArgs["result"]["emailConversation"]>
+export type EmailConversationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "userId" | "projectId" | "externalEmail" | "externalName" | "trackingCode" | "subject" | "lastMessageAt" | "unreadCount" | "isArchived" | "createdAt" | "updatedAt" | "isUnassigned", ExtArgs["result"]["emailConversation"]>
 export type EmailConversationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   messages?: boolean | Prisma.EmailConversation$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.EmailConversationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type EmailConversationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
 }
 export type EmailConversationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-  project?: boolean | Prisma.EmailConversation$projectArgs<ExtArgs>
 }
 
 export type $EmailConversationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "EmailConversation"
   objects: {
+    project: Prisma.$ProjectPayload<ExtArgs> | null
     tenant: Prisma.$TenantPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
-    project: Prisma.$ProjectPayload<ExtArgs> | null
     messages: Prisma.$EmailMessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1346,9 +1346,9 @@ export type $EmailConversationPayload<ExtArgs extends runtime.Types.Extensions.I
     lastMessageAt: Date
     unreadCount: number
     isArchived: boolean
-    isUnassigned: boolean
     createdAt: Date
     updatedAt: Date
+    isUnassigned: boolean
   }, ExtArgs["result"]["emailConversation"]>
   composites: {}
 }
@@ -1743,9 +1743,9 @@ readonly fields: EmailConversationFieldRefs;
  */
 export interface Prisma__EmailConversationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  project<T extends Prisma.EmailConversation$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailConversation$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  project<T extends Prisma.EmailConversation$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailConversation$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   messages<T extends Prisma.EmailConversation$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailConversation$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1787,9 +1787,9 @@ export interface EmailConversationFieldRefs {
   readonly lastMessageAt: Prisma.FieldRef<"EmailConversation", 'DateTime'>
   readonly unreadCount: Prisma.FieldRef<"EmailConversation", 'Int'>
   readonly isArchived: Prisma.FieldRef<"EmailConversation", 'Boolean'>
-  readonly isUnassigned: Prisma.FieldRef<"EmailConversation", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"EmailConversation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"EmailConversation", 'DateTime'>
+  readonly isUnassigned: Prisma.FieldRef<"EmailConversation", 'Boolean'>
 }
     
 

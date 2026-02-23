@@ -51,42 +51,44 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Tenant: 'Tenant',
-  User: 'User',
-  Membership: 'Membership',
-  Account: 'Account',
-  Session: 'Session',
-  VerificationToken: 'VerificationToken',
-  Invitation: 'Invitation',
-  Project: 'Project',
-  ProjectMember: 'ProjectMember',
-  Task: 'Task',
-  TaskAssignment: 'TaskAssignment',
-  File: 'File',
-  DocumentTemplate: 'DocumentTemplate',
-  FileAnalysis: 'FileAnalysis',
-  DocumentChunk: 'DocumentChunk',
-  Conversation: 'Conversation',
-  Message: 'Message',
-  MessageChunk: 'MessageChunk',
+  KnowledgeEntity: 'KnowledgeEntity',
+  KnowledgeRelation: 'KnowledgeRelation',
   AIMessage: 'AIMessage',
-  Notification: 'Notification',
-  NotificationPreference: 'NotificationPreference',
-  EmailTemplate: 'EmailTemplate',
-  PushSubscription: 'PushSubscription',
-  Comment: 'Comment',
+  Account: 'Account',
   ActivityLog: 'ActivityLog',
-  TimeEntry: 'TimeEntry',
-  Note: 'Note',
   Automation: 'Automation',
   AutomationLog: 'AutomationLog',
-  NoteCategory: 'NoteCategory',
-  Subscription: 'Subscription',
-  EmailConversation: 'EmailConversation',
-  EmailMessage: 'EmailMessage',
-  EmailLog: 'EmailLog',
+  Comment: 'Comment',
+  Conversation: 'Conversation',
+  DocumentChunk: 'DocumentChunk',
+  DocumentTemplate: 'DocumentTemplate',
   EmailAttachment: 'EmailAttachment',
-  EmailChunk: 'EmailChunk'
+  EmailChunk: 'EmailChunk',
+  EmailConversation: 'EmailConversation',
+  EmailLog: 'EmailLog',
+  EmailMessage: 'EmailMessage',
+  EmailTemplate: 'EmailTemplate',
+  File: 'File',
+  FileAnalysis: 'FileAnalysis',
+  Invitation: 'Invitation',
+  Membership: 'Membership',
+  Message: 'Message',
+  MessageChunk: 'MessageChunk',
+  Note: 'Note',
+  NoteCategory: 'NoteCategory',
+  Notification: 'Notification',
+  NotificationPreference: 'NotificationPreference',
+  Project: 'Project',
+  ProjectMember: 'ProjectMember',
+  PushSubscription: 'PushSubscription',
+  Session: 'Session',
+  Subscription: 'Subscription',
+  Task: 'Task',
+  TaskAssignment: 'TaskAssignment',
+  Tenant: 'Tenant',
+  TimeEntry: 'TimeEntry',
+  User: 'User',
+  VerificationToken: 'VerificationToken'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -105,52 +107,44 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
-export const TenantScalarFieldEnum = {
+export const KnowledgeEntityScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  inboxCode: 'inboxCode',
-  orgNumber: 'orgNumber',
-  address: 'address',
-  stripeCustomerId: 'stripeCustomerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
-
-
-export const UserScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  email: 'email',
-  emailVerified: 'emailVerified',
-  image: 'image',
-  phone: 'phone',
-  bio: 'bio',
-  password: 'password',
-  isSuperAdmin: 'isSuperAdmin',
-  locale: 'locale',
-  pushToken: 'pushToken',
-  lockedAt: 'lockedAt',
-  failedLoginAttempts: 'failedLoginAttempts',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
-
-
-export const MembershipScalarFieldEnum = {
-  id: 'id',
-  role: 'role',
-  permissions: 'permissions',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  metadata: 'metadata',
+  confidence: 'confidence',
+  lastSeen: 'lastSeen',
   tenantId: 'tenantId'
 } as const
 
-export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+export type KnowledgeEntityScalarFieldEnum = (typeof KnowledgeEntityScalarFieldEnum)[keyof typeof KnowledgeEntityScalarFieldEnum]
+
+
+export const KnowledgeRelationScalarFieldEnum = {
+  id: 'id',
+  fromEntityId: 'fromEntityId',
+  toEntityId: 'toEntityId',
+  relationType: 'relationType',
+  metadata: 'metadata',
+  tenantId: 'tenantId'
+} as const
+
+export type KnowledgeRelationScalarFieldEnum = (typeof KnowledgeRelationScalarFieldEnum)[keyof typeof KnowledgeRelationScalarFieldEnum]
+
+
+export const AIMessageScalarFieldEnum = {
+  id: 'id',
+  direction: 'direction',
+  type: 'type',
+  content: 'content',
+  read: 'read',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  projectId: 'projectId',
+  parentId: 'parentId'
+} as const
+
+export type AIMessageScalarFieldEnum = (typeof AIMessageScalarFieldEnum)[keyof typeof AIMessageScalarFieldEnum]
 
 
 export const AccountScalarFieldEnum = {
@@ -171,288 +165,6 @@ export const AccountScalarFieldEnum = {
 export type AccountScalarFieldEnum = (typeof AccountScalarFieldEnum)[keyof typeof AccountScalarFieldEnum]
 
 
-export const SessionScalarFieldEnum = {
-  id: 'id',
-  sessionToken: 'sessionToken',
-  userId: 'userId',
-  expires: 'expires'
-} as const
-
-export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
-
-
-export const VerificationTokenScalarFieldEnum = {
-  identifier: 'identifier',
-  token: 'token',
-  expires: 'expires'
-} as const
-
-export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
-
-
-export const InvitationScalarFieldEnum = {
-  id: 'id',
-  email: 'email',
-  role: 'role',
-  status: 'status',
-  token: 'token',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt',
-  tenantId: 'tenantId',
-  invitedById: 'invitedById'
-} as const
-
-export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
-
-
-export const ProjectScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  status: 'status',
-  address: 'address',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  tenantId: 'tenantId'
-} as const
-
-export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
-
-
-export const ProjectMemberScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  projectId: 'projectId',
-  membershipId: 'membershipId'
-} as const
-
-export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
-
-
-export const TaskScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  description: 'description',
-  status: 'status',
-  priority: 'priority',
-  deadline: 'deadline',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  projectId: 'projectId'
-} as const
-
-export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
-
-
-export const TaskAssignmentScalarFieldEnum = {
-  id: 'id',
-  createdAt: 'createdAt',
-  taskId: 'taskId',
-  membershipId: 'membershipId'
-} as const
-
-export type TaskAssignmentScalarFieldEnum = (typeof TaskAssignmentScalarFieldEnum)[keyof typeof TaskAssignmentScalarFieldEnum]
-
-
-export const FileScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  type: 'type',
-  size: 'size',
-  bucket: 'bucket',
-  key: 'key',
-  ocrText: 'ocrText',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  projectId: 'projectId',
-  uploadedById: 'uploadedById',
-  userDescription: 'userDescription',
-  aiAnalysis: 'aiAnalysis',
-  label: 'label',
-  parentFileId: 'parentFileId',
-  versionNumber: 'versionNumber'
-} as const
-
-export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
-
-
-export const DocumentTemplateScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  category: 'category',
-  fileId: 'fileId',
-  expectedVariables: 'expectedVariables',
-  tenantId: 'tenantId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type DocumentTemplateScalarFieldEnum = (typeof DocumentTemplateScalarFieldEnum)[keyof typeof DocumentTemplateScalarFieldEnum]
-
-
-export const FileAnalysisScalarFieldEnum = {
-  id: 'id',
-  content: 'content',
-  prompt: 'prompt',
-  model: 'model',
-  type: 'type',
-  createdAt: 'createdAt',
-  fileId: 'fileId',
-  tenantId: 'tenantId',
-  projectId: 'projectId',
-  userId: 'userId'
-} as const
-
-export type FileAnalysisScalarFieldEnum = (typeof FileAnalysisScalarFieldEnum)[keyof typeof FileAnalysisScalarFieldEnum]
-
-
-export const DocumentChunkScalarFieldEnum = {
-  id: 'id',
-  content: 'content',
-  metadata: 'metadata',
-  page: 'page',
-  createdAt: 'createdAt',
-  fileId: 'fileId',
-  tenantId: 'tenantId',
-  projectId: 'projectId',
-  userId: 'userId'
-} as const
-
-export type DocumentChunkScalarFieldEnum = (typeof DocumentChunkScalarFieldEnum)[keyof typeof DocumentChunkScalarFieldEnum]
-
-
-export const ConversationScalarFieldEnum = {
-  id: 'id',
-  type: 'type',
-  title: 'title',
-  summary: 'summary',
-  provider: 'provider',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId',
-  projectId: 'projectId'
-} as const
-
-export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
-
-
-export const MessageScalarFieldEnum = {
-  id: 'id',
-  role: 'role',
-  content: 'content',
-  createdAt: 'createdAt',
-  conversationId: 'conversationId',
-  projectId: 'projectId'
-} as const
-
-export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
-
-
-export const MessageChunkScalarFieldEnum = {
-  id: 'id',
-  content: 'content',
-  chunkIndex: 'chunkIndex',
-  createdAt: 'createdAt',
-  messageId: 'messageId',
-  conversationId: 'conversationId',
-  tenantId: 'tenantId',
-  userId: 'userId',
-  projectId: 'projectId'
-} as const
-
-export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
-
-
-export const AIMessageScalarFieldEnum = {
-  id: 'id',
-  direction: 'direction',
-  type: 'type',
-  content: 'content',
-  read: 'read',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  projectId: 'projectId',
-  parentId: 'parentId'
-} as const
-
-export type AIMessageScalarFieldEnum = (typeof AIMessageScalarFieldEnum)[keyof typeof AIMessageScalarFieldEnum]
-
-
-export const NotificationScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  body: 'body',
-  channel: 'channel',
-  eventType: 'eventType',
-  read: 'read',
-  sent: 'sent',
-  createdAt: 'createdAt',
-  userId: 'userId',
-  projectId: 'projectId',
-  taskId: 'taskId'
-} as const
-
-export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
-
-
-export const NotificationPreferenceScalarFieldEnum = {
-  id: 'id',
-  pushEnabled: 'pushEnabled',
-  emailTaskAssigned: 'emailTaskAssigned',
-  emailDeadlineTomorrow: 'emailDeadlineTomorrow',
-  emailProjectStatusChanged: 'emailProjectStatusChanged',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId',
-  tenantId: 'tenantId'
-} as const
-
-export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
-
-
-export const EmailTemplateScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  subject: 'subject',
-  htmlTemplate: 'htmlTemplate',
-  variables: 'variables',
-  locale: 'locale',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  tenantId: 'tenantId'
-} as const
-
-export type EmailTemplateScalarFieldEnum = (typeof EmailTemplateScalarFieldEnum)[keyof typeof EmailTemplateScalarFieldEnum]
-
-
-export const PushSubscriptionScalarFieldEnum = {
-  id: 'id',
-  endpoint: 'endpoint',
-  p256dhKey: 'p256dhKey',
-  authKey: 'authKey',
-  userAgent: 'userAgent',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  userId: 'userId',
-  tenantId: 'tenantId'
-} as const
-
-export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
-
-
-export const CommentScalarFieldEnum = {
-  id: 'id',
-  content: 'content',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  taskId: 'taskId',
-  authorId: 'authorId'
-} as const
-
-export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
-
-
 export const ActivityLogScalarFieldEnum = {
   id: 'id',
   action: 'action',
@@ -465,38 +177,6 @@ export const ActivityLogScalarFieldEnum = {
 } as const
 
 export type ActivityLogScalarFieldEnum = (typeof ActivityLogScalarFieldEnum)[keyof typeof ActivityLogScalarFieldEnum]
-
-
-export const TimeEntryScalarFieldEnum = {
-  id: 'id',
-  description: 'description',
-  minutes: 'minutes',
-  date: 'date',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  taskId: 'taskId',
-  projectId: 'projectId',
-  userId: 'userId',
-  tenantId: 'tenantId',
-  entryType: 'entryType'
-} as const
-
-export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]
-
-
-export const NoteScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  content: 'content',
-  category: 'category',
-  isPinned: 'isPinned',
-  projectId: 'projectId',
-  createdById: 'createdById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
 
 
 export const AutomationScalarFieldEnum = {
@@ -536,100 +216,61 @@ export const AutomationLogScalarFieldEnum = {
 export type AutomationLogScalarFieldEnum = (typeof AutomationLogScalarFieldEnum)[keyof typeof AutomationLogScalarFieldEnum]
 
 
-export const NoteCategoryScalarFieldEnum = {
+export const CommentScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  slug: 'slug',
-  color: 'color',
-  tenantId: 'tenantId',
+  content: 'content',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  taskId: 'taskId',
+  authorId: 'authorId'
 } as const
 
-export type NoteCategoryScalarFieldEnum = (typeof NoteCategoryScalarFieldEnum)[keyof typeof NoteCategoryScalarFieldEnum]
+export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
 
 
-export const SubscriptionScalarFieldEnum = {
+export const ConversationScalarFieldEnum = {
   id: 'id',
-  stripeSubscriptionId: 'stripeSubscriptionId',
-  stripePriceId: 'stripePriceId',
-  status: 'status',
-  currentPeriodStart: 'currentPeriodStart',
-  currentPeriodEnd: 'currentPeriodEnd',
-  trialEndsAt: 'trialEndsAt',
-  canceledAt: 'canceledAt',
+  type: 'type',
+  title: 'title',
+  summary: 'summary',
+  provider: 'provider',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  projectId: 'projectId'
+} as const
+
+export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
+
+
+export const DocumentChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  metadata: 'metadata',
+  page: 'page',
+  createdAt: 'createdAt',
+  fileId: 'fileId',
+  projectId: 'projectId',
+  tenantId: 'tenantId',
+  userId: 'userId'
+} as const
+
+export type DocumentChunkScalarFieldEnum = (typeof DocumentChunkScalarFieldEnum)[keyof typeof DocumentChunkScalarFieldEnum]
+
+
+export const DocumentTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  fileId: 'fileId',
+  expectedVariables: 'expectedVariables',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   tenantId: 'tenantId'
 } as const
 
-export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
-
-
-export const EmailConversationScalarFieldEnum = {
-  id: 'id',
-  tenantId: 'tenantId',
-  userId: 'userId',
-  projectId: 'projectId',
-  externalEmail: 'externalEmail',
-  externalName: 'externalName',
-  trackingCode: 'trackingCode',
-  subject: 'subject',
-  lastMessageAt: 'lastMessageAt',
-  unreadCount: 'unreadCount',
-  isArchived: 'isArchived',
-  isUnassigned: 'isUnassigned',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type EmailConversationScalarFieldEnum = (typeof EmailConversationScalarFieldEnum)[keyof typeof EmailConversationScalarFieldEnum]
-
-
-export const EmailMessageScalarFieldEnum = {
-  id: 'id',
-  conversationId: 'conversationId',
-  emailLogId: 'emailLogId',
-  direction: 'direction',
-  fromEmail: 'fromEmail',
-  fromName: 'fromName',
-  toEmail: 'toEmail',
-  subject: 'subject',
-  bodyText: 'bodyText',
-  bodyHtml: 'bodyHtml',
-  isRead: 'isRead',
-  sentAt: 'sentAt',
-  receivedAt: 'receivedAt',
-  createdAt: 'createdAt'
-} as const
-
-export type EmailMessageScalarFieldEnum = (typeof EmailMessageScalarFieldEnum)[keyof typeof EmailMessageScalarFieldEnum]
-
-
-export const EmailLogScalarFieldEnum = {
-  id: 'id',
-  direction: 'direction',
-  status: 'status',
-  from: 'from',
-  to: 'to',
-  cc: 'cc',
-  bcc: 'bcc',
-  subject: 'subject',
-  body: 'body',
-  htmlBody: 'htmlBody',
-  resendMessageId: 'resendMessageId',
-  resendError: 'resendError',
-  tenantId: 'tenantId',
-  userId: 'userId',
-  projectId: 'projectId',
-  createdAt: 'createdAt',
-  sentAt: 'sentAt',
-  deliveredAt: 'deliveredAt',
-  bouncedAt: 'bouncedAt',
-  failedAt: 'failedAt'
-} as const
-
-export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
+export type DocumentTemplateScalarFieldEnum = (typeof DocumentTemplateScalarFieldEnum)[keyof typeof DocumentTemplateScalarFieldEnum]
 
 
 export const EmailAttachmentScalarFieldEnum = {
@@ -658,6 +299,392 @@ export const EmailChunkScalarFieldEnum = {
 } as const
 
 export type EmailChunkScalarFieldEnum = (typeof EmailChunkScalarFieldEnum)[keyof typeof EmailChunkScalarFieldEnum]
+
+
+export const EmailConversationScalarFieldEnum = {
+  id: 'id',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId',
+  externalEmail: 'externalEmail',
+  externalName: 'externalName',
+  trackingCode: 'trackingCode',
+  subject: 'subject',
+  lastMessageAt: 'lastMessageAt',
+  unreadCount: 'unreadCount',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  isUnassigned: 'isUnassigned'
+} as const
+
+export type EmailConversationScalarFieldEnum = (typeof EmailConversationScalarFieldEnum)[keyof typeof EmailConversationScalarFieldEnum]
+
+
+export const EmailLogScalarFieldEnum = {
+  id: 'id',
+  direction: 'direction',
+  status: 'status',
+  from: 'from',
+  to: 'to',
+  cc: 'cc',
+  bcc: 'bcc',
+  subject: 'subject',
+  body: 'body',
+  htmlBody: 'htmlBody',
+  resendMessageId: 'resendMessageId',
+  resendError: 'resendError',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId',
+  createdAt: 'createdAt',
+  sentAt: 'sentAt',
+  deliveredAt: 'deliveredAt',
+  bouncedAt: 'bouncedAt',
+  failedAt: 'failedAt'
+} as const
+
+export type EmailLogScalarFieldEnum = (typeof EmailLogScalarFieldEnum)[keyof typeof EmailLogScalarFieldEnum]
+
+
+export const EmailMessageScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  emailLogId: 'emailLogId',
+  direction: 'direction',
+  fromEmail: 'fromEmail',
+  fromName: 'fromName',
+  toEmail: 'toEmail',
+  subject: 'subject',
+  bodyText: 'bodyText',
+  bodyHtml: 'bodyHtml',
+  isRead: 'isRead',
+  sentAt: 'sentAt',
+  receivedAt: 'receivedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailMessageScalarFieldEnum = (typeof EmailMessageScalarFieldEnum)[keyof typeof EmailMessageScalarFieldEnum]
+
+
+export const EmailTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  subject: 'subject',
+  htmlTemplate: 'htmlTemplate',
+  variables: 'variables',
+  locale: 'locale',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
+} as const
+
+export type EmailTemplateScalarFieldEnum = (typeof EmailTemplateScalarFieldEnum)[keyof typeof EmailTemplateScalarFieldEnum]
+
+
+export const FileScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  size: 'size',
+  bucket: 'bucket',
+  key: 'key',
+  ocrText: 'ocrText',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  projectId: 'projectId',
+  uploadedById: 'uploadedById',
+  aiAnalysis: 'aiAnalysis',
+  label: 'label',
+  userDescription: 'userDescription',
+  parentFileId: 'parentFileId',
+  versionNumber: 'versionNumber'
+} as const
+
+export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
+
+
+export const FileAnalysisScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  prompt: 'prompt',
+  model: 'model',
+  type: 'type',
+  createdAt: 'createdAt',
+  fileId: 'fileId',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  userId: 'userId'
+} as const
+
+export type FileAnalysisScalarFieldEnum = (typeof FileAnalysisScalarFieldEnum)[keyof typeof FileAnalysisScalarFieldEnum]
+
+
+export const InvitationScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  role: 'role',
+  status: 'status',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  tenantId: 'tenantId',
+  invitedById: 'invitedById'
+} as const
+
+export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
+
+
+export const MembershipScalarFieldEnum = {
+  id: 'id',
+  role: 'role',
+  permissions: 'permissions',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  tenantId: 'tenantId'
+} as const
+
+export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
+
+
+export const MessageScalarFieldEnum = {
+  id: 'id',
+  role: 'role',
+  content: 'content',
+  createdAt: 'createdAt',
+  conversationId: 'conversationId',
+  projectId: 'projectId'
+} as const
+
+export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  chunkIndex: 'chunkIndex',
+  createdAt: 'createdAt',
+  messageId: 'messageId',
+  conversationId: 'conversationId',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId'
+} as const
+
+export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
+
+
+export const NoteScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  content: 'content',
+  category: 'category',
+  isPinned: 'isPinned',
+  projectId: 'projectId',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const NoteCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  color: 'color',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NoteCategoryScalarFieldEnum = (typeof NoteCategoryScalarFieldEnum)[keyof typeof NoteCategoryScalarFieldEnum]
+
+
+export const NotificationScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  body: 'body',
+  channel: 'channel',
+  read: 'read',
+  sent: 'sent',
+  createdAt: 'createdAt',
+  userId: 'userId',
+  projectId: 'projectId',
+  eventType: 'eventType',
+  taskId: 'taskId'
+} as const
+
+export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const NotificationPreferenceScalarFieldEnum = {
+  id: 'id',
+  pushEnabled: 'pushEnabled',
+  emailTaskAssigned: 'emailTaskAssigned',
+  emailDeadlineTomorrow: 'emailDeadlineTomorrow',
+  emailProjectStatusChanged: 'emailProjectStatusChanged',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  tenantId: 'tenantId'
+} as const
+
+export type NotificationPreferenceScalarFieldEnum = (typeof NotificationPreferenceScalarFieldEnum)[keyof typeof NotificationPreferenceScalarFieldEnum]
+
+
+export const ProjectScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  status: 'status',
+  address: 'address',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId'
+} as const
+
+export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const ProjectMemberScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  projectId: 'projectId',
+  membershipId: 'membershipId'
+} as const
+
+export type ProjectMemberScalarFieldEnum = (typeof ProjectMemberScalarFieldEnum)[keyof typeof ProjectMemberScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  endpoint: 'endpoint',
+  p256dhKey: 'p256dhKey',
+  authKey: 'authKey',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  tenantId: 'tenantId'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
+export const SessionScalarFieldEnum = {
+  id: 'id',
+  sessionToken: 'sessionToken',
+  userId: 'userId',
+  expires: 'expires'
+} as const
+
+export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  status: 'status',
+  currentPeriodEnd: 'currentPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  tenantId: 'tenantId',
+  stripePriceId: 'stripePriceId',
+  currentPeriodStart: 'currentPeriodStart',
+  trialEndsAt: 'trialEndsAt',
+  canceledAt: 'canceledAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const TaskScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  priority: 'priority',
+  deadline: 'deadline',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  projectId: 'projectId'
+} as const
+
+export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
+
+
+export const TaskAssignmentScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt',
+  taskId: 'taskId',
+  membershipId: 'membershipId'
+} as const
+
+export type TaskAssignmentScalarFieldEnum = (typeof TaskAssignmentScalarFieldEnum)[keyof typeof TaskAssignmentScalarFieldEnum]
+
+
+export const TenantScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  orgNumber: 'orgNumber',
+  stripeCustomerId: 'stripeCustomerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  address: 'address',
+  inboxCode: 'inboxCode'
+} as const
+
+export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]
+
+
+export const TimeEntryScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  minutes: 'minutes',
+  date: 'date',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  taskId: 'taskId',
+  projectId: 'projectId',
+  userId: 'userId',
+  entryType: 'entryType',
+  tenantId: 'tenantId'
+} as const
+
+export type TimeEntryScalarFieldEnum = (typeof TimeEntryScalarFieldEnum)[keyof typeof TimeEntryScalarFieldEnum]
+
+
+export const UserScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  emailVerified: 'emailVerified',
+  image: 'image',
+  password: 'password',
+  isSuperAdmin: 'isSuperAdmin',
+  locale: 'locale',
+  pushToken: 'pushToken',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  failedLoginAttempts: 'failedLoginAttempts',
+  lockedAt: 'lockedAt',
+  phone: 'phone',
+  bio: 'bio'
+} as const
+
+export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const VerificationTokenScalarFieldEnum = {
+  identifier: 'identifier',
+  token: 'token',
+  expires: 'expires'
+} as const
+
+export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -691,14 +718,6 @@ export const QueryMode = {
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
-export const NullsOrder = {
-  first: 'first',
-  last: 'last'
-} as const
-
-export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
 export const JsonNullValueFilter = {
   DbNull: DbNull,
   JsonNull: JsonNull,
@@ -706,4 +725,12 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

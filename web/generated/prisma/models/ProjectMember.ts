@@ -174,8 +174,8 @@ export type ProjectMemberWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"ProjectMember"> | Date | string
   projectId?: Prisma.StringFilter<"ProjectMember"> | string
   membershipId?: Prisma.StringFilter<"ProjectMember"> | string
-  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   membership?: Prisma.XOR<Prisma.MembershipScalarRelationFilter, Prisma.MembershipWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
 }
 
 export type ProjectMemberOrderByWithRelationInput = {
@@ -183,8 +183,8 @@ export type ProjectMemberOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   membershipId?: Prisma.SortOrder
-  project?: Prisma.ProjectOrderByWithRelationInput
   membership?: Prisma.MembershipOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type ProjectMemberWhereUniqueInput = Prisma.AtLeast<{
@@ -196,8 +196,8 @@ export type ProjectMemberWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"ProjectMember"> | Date | string
   projectId?: Prisma.StringFilter<"ProjectMember"> | string
   membershipId?: Prisma.StringFilter<"ProjectMember"> | string
-  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   membership?: Prisma.XOR<Prisma.MembershipScalarRelationFilter, Prisma.MembershipWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
 }, "id" | "projectId_membershipId">
 
 export type ProjectMemberOrderByWithAggregationInput = {
@@ -223,8 +223,8 @@ export type ProjectMemberScalarWhereWithAggregatesInput = {
 export type ProjectMemberCreateInput = {
   id?: string
   createdAt?: Date | string
-  project: Prisma.ProjectCreateNestedOneWithoutProjectMembersInput
   membership: Prisma.MembershipCreateNestedOneWithoutProjectMembersInput
+  project: Prisma.ProjectCreateNestedOneWithoutProjectMembersInput
 }
 
 export type ProjectMemberUncheckedCreateInput = {
@@ -237,8 +237,8 @@ export type ProjectMemberUncheckedCreateInput = {
 export type ProjectMemberUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  project?: Prisma.ProjectUpdateOneRequiredWithoutProjectMembersNestedInput
   membership?: Prisma.MembershipUpdateOneRequiredWithoutProjectMembersNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutProjectMembersNestedInput
 }
 
 export type ProjectMemberUncheckedUpdateInput = {
@@ -528,8 +528,8 @@ export type ProjectMemberSelect<ExtArgs extends runtime.Types.Extensions.Interna
   createdAt?: boolean
   projectId?: boolean
   membershipId?: boolean
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["projectMember"]>
 
 export type ProjectMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -537,8 +537,8 @@ export type ProjectMemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean
   projectId?: boolean
   membershipId?: boolean
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["projectMember"]>
 
 export type ProjectMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -546,8 +546,8 @@ export type ProjectMemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   createdAt?: boolean
   projectId?: boolean
   membershipId?: boolean
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["projectMember"]>
 
 export type ProjectMemberSelectScalar = {
@@ -559,23 +559,23 @@ export type ProjectMemberSelectScalar = {
 
 export type ProjectMemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "createdAt" | "projectId" | "membershipId", ExtArgs["result"]["projectMember"]>
 export type ProjectMemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 export type ProjectMemberIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 export type ProjectMemberIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   membership?: boolean | Prisma.MembershipDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }
 
 export type $ProjectMemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProjectMember"
   objects: {
-    project: Prisma.$ProjectPayload<ExtArgs>
     membership: Prisma.$MembershipPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -976,8 +976,8 @@ readonly fields: ProjectMemberFieldRefs;
  */
 export interface Prisma__ProjectMemberClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   membership<T extends Prisma.MembershipDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MembershipDefaultArgs<ExtArgs>>): Prisma.Prisma__MembershipClient<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.

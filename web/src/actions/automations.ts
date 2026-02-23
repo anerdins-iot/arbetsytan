@@ -89,14 +89,14 @@ const resumeAutomationSchema = z.object({
 // ─────────────────────────────────────────
 
 const LOGS_INCLUDE = {
-  logs: {
+  AutomationLog: {
     orderBy: { executedAt: "desc" as const },
     take: 5,
   },
 } as const;
 
 const LOGS_FULL_INCLUDE = {
-  logs: {
+  AutomationLog: {
     orderBy: { executedAt: "desc" as const },
   },
 } as const;
@@ -104,18 +104,18 @@ const LOGS_FULL_INCLUDE = {
 function formatLog(log: {
   id: string;
   status: string;
-  result: unknown;
-  errorMessage: string | null;
+  result?: unknown;
+  errorMessage?: string | null;
   executedAt: Date;
-  durationMs: number | null;
+  durationMs?: number | null;
 }): AutomationLogItem {
   return {
     id: log.id,
     status: log.status,
-    result: log.result,
-    errorMessage: log.errorMessage,
+    result: log.result ?? null,
+    errorMessage: log.errorMessage ?? null,
     executedAt: log.executedAt.toISOString(),
-    durationMs: log.durationMs,
+    durationMs: log.durationMs ?? null,
   };
 }
 
@@ -160,7 +160,12 @@ function formatAutomation(
     nextRunAt: a.nextRunAt?.toISOString() ?? null,
     createdAt: a.createdAt.toISOString(),
     updatedAt: a.updatedAt.toISOString(),
-    ...(a.logs && { logs: a.logs.map(formatLog) }),
+    ...(function (): { logs?: ReturnType<typeof formatLog>[] } {
+  const logList = "AutomationLog" in a && Array.isArray((a as { AutomationLog?: unknown[] }).AutomationLog)
+    ? (a as { AutomationLog: Array<{ id: string; executedAt: Date; status: string; result?: unknown; errorMessage?: string | null; durationMs?: number | null }> }).AutomationLog
+    : (a as { logs?: Array<{ id: string; executedAt: Date; status: string; result?: unknown; errorMessage?: string | null; durationMs?: number | null }> }).logs;
+  return logList?.length ? { logs: logList.map(formatLog) } : {};
+})(),
   };
 }
 

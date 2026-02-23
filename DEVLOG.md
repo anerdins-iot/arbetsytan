@@ -248,3 +248,22 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 2. Eller: rensa browser-cache
 3. Eller: `npm run build && npm start`
 **Prevention:** start-server.sh kör nu alltid `npm run build` före `npm start` så att servern alltid har senaste build-versionen.
+
+---
+
+### Prisma 7: schema hade tre felaktiga generators med prisma-client-js (2026-02-23)
+**Problem:** TypeScript-build misslyckades med massiva typfel. Auth.js PrismaAdapter vägrade ta emot custom-genererad PrismaClient (TS2345).
+**Orsak:** schema.prisma hade tre generators med `provider = "prisma-client-js"` (gammal Prisma 6-syntax). Prisma 7 kräver `provider = "prisma-client"`. Utan korrekt generator genererades aldrig TypeScript-typer korrekt.
+**Lösning:**
+1. Fixade schema till en enda generator: `provider = "prisma-client"` + `output = "../generated/prisma"`
+2. Körde `prisma db pull` + `prisma generate` för att regenerera hela klienten (37 modeller)
+3. Löste Auth.js PrismaAdapter-typkonflikten via tsconfig.json path alias: `"@prisma/client": ["./generated/prisma/client.ts"]` — ingen cast behövdes
+**Lärdom:** Prisma 7 kräver `provider = "prisma-client"`. Typkonflikter med tredjepartsbibliotek som importerar `@prisma/client` löses via tsconfig path alias utan casts.
+
+---
+
+### Container sätter ANTHROPIC_API_KEY="" (tom sträng) — dotenv överskriver inte (2026-02-23)
+**Problem:** Servern returnerade 503 för alla AI-anrop trots att ANTHROPIC_API_KEY fanns i .env.
+**Orsak:** Container-miljön hade `ANTHROPIC_API_KEY=` (tom sträng) satt som env-variabel. `dotenv.config()` överskriver INTE befintliga env-variabler — tomma strängar räknas som "satta".
+**Lösning:** Starta servern med `set -a; source .env; set +a` innan serverprocessen startas, så att .env-värden tvingade in i miljön och överskriver tomma container-värden. Uppdaterade `scripts/start-server.sh` med detta mönster.
+**Lärdom:** I containermiljöer kan API-nycklar vara tomma strängar i env. Använd `set -a; source .env; set +a` för att säkerställa att .env-värden vinner. `dotenv.config({ override: true })` är alternativet i Node.js-koden.

@@ -283,7 +283,7 @@ export type AutomationWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Automation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Automation"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
-  logs?: Prisma.AutomationLogListRelationFilter
+  AutomationLog?: Prisma.AutomationLogListRelationFilter
 }
 
 export type AutomationOrderByWithRelationInput = {
@@ -306,7 +306,7 @@ export type AutomationOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
-  logs?: Prisma.AutomationLogOrderByRelationAggregateInput
+  AutomationLog?: Prisma.AutomationLogOrderByRelationAggregateInput
 }
 
 export type AutomationWhereUniqueInput = Prisma.AtLeast<{
@@ -332,7 +332,7 @@ export type AutomationWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Automation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Automation"> | Date | string
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
-  logs?: Prisma.AutomationLogListRelationFilter
+  AutomationLog?: Prisma.AutomationLogListRelationFilter
 }, "id">
 
 export type AutomationOrderByWithAggregationInput = {
@@ -402,7 +402,7 @@ export type AutomationCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   project?: Prisma.ProjectCreateNestedOneWithoutAutomationsInput
-  logs?: Prisma.AutomationLogCreateNestedManyWithoutAutomationInput
+  AutomationLog?: Prisma.AutomationLogCreateNestedManyWithoutAutomationInput
 }
 
 export type AutomationUncheckedCreateInput = {
@@ -424,7 +424,7 @@ export type AutomationUncheckedCreateInput = {
   nextRunAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  logs?: Prisma.AutomationLogUncheckedCreateNestedManyWithoutAutomationInput
+  AutomationLog?: Prisma.AutomationLogUncheckedCreateNestedManyWithoutAutomationInput
 }
 
 export type AutomationUpdateInput = {
@@ -446,7 +446,7 @@ export type AutomationUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   project?: Prisma.ProjectUpdateOneWithoutAutomationsNestedInput
-  logs?: Prisma.AutomationLogUpdateManyWithoutAutomationNestedInput
+  AutomationLog?: Prisma.AutomationLogUpdateManyWithoutAutomationNestedInput
 }
 
 export type AutomationUncheckedUpdateInput = {
@@ -468,7 +468,7 @@ export type AutomationUncheckedUpdateInput = {
   nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  logs?: Prisma.AutomationLogUncheckedUpdateManyWithoutAutomationNestedInput
+  AutomationLog?: Prisma.AutomationLogUncheckedUpdateManyWithoutAutomationNestedInput
 }
 
 export type AutomationCreateManyInput = {
@@ -531,16 +531,6 @@ export type AutomationUncheckedUpdateManyInput = {
   nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type AutomationListRelationFilter = {
-  every?: Prisma.AutomationWhereInput
-  some?: Prisma.AutomationWhereInput
-  none?: Prisma.AutomationWhereInput
-}
-
-export type AutomationOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
 }
 
 export type AutomationCountOrderByAggregateInput = {
@@ -609,6 +599,42 @@ export type AutomationScalarRelationFilter = {
   isNot?: Prisma.AutomationWhereInput
 }
 
+export type AutomationListRelationFilter = {
+  every?: Prisma.AutomationWhereInput
+  some?: Prisma.AutomationWhereInput
+  none?: Prisma.AutomationWhereInput
+}
+
+export type AutomationOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type EnumAutomationStatusFieldUpdateOperationsInput = {
+  set?: $Enums.AutomationStatus
+}
+
+export type EnumAutomationCreatorFieldUpdateOperationsInput = {
+  set?: $Enums.AutomationCreator
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
+export type AutomationCreateNestedOneWithoutAutomationLogInput = {
+  create?: Prisma.XOR<Prisma.AutomationCreateWithoutAutomationLogInput, Prisma.AutomationUncheckedCreateWithoutAutomationLogInput>
+  connectOrCreate?: Prisma.AutomationCreateOrConnectWithoutAutomationLogInput
+  connect?: Prisma.AutomationWhereUniqueInput
+}
+
+export type AutomationUpdateOneRequiredWithoutAutomationLogNestedInput = {
+  create?: Prisma.XOR<Prisma.AutomationCreateWithoutAutomationLogInput, Prisma.AutomationUncheckedCreateWithoutAutomationLogInput>
+  connectOrCreate?: Prisma.AutomationCreateOrConnectWithoutAutomationLogInput
+  upsert?: Prisma.AutomationUpsertWithoutAutomationLogInput
+  connect?: Prisma.AutomationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AutomationUpdateToOneWithWhereWithoutAutomationLogInput, Prisma.AutomationUpdateWithoutAutomationLogInput>, Prisma.AutomationUncheckedUpdateWithoutAutomationLogInput>
+}
+
 export type AutomationCreateNestedManyWithoutProjectInput = {
   create?: Prisma.XOR<Prisma.AutomationCreateWithoutProjectInput, Prisma.AutomationUncheckedCreateWithoutProjectInput> | Prisma.AutomationCreateWithoutProjectInput[] | Prisma.AutomationUncheckedCreateWithoutProjectInput[]
   connectOrCreate?: Prisma.AutomationCreateOrConnectWithoutProjectInput | Prisma.AutomationCreateOrConnectWithoutProjectInput[]
@@ -651,26 +677,104 @@ export type AutomationUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.AutomationScalarWhereInput | Prisma.AutomationScalarWhereInput[]
 }
 
-export type EnumAutomationStatusFieldUpdateOperationsInput = {
-  set?: $Enums.AutomationStatus
+export type AutomationCreateWithoutAutomationLogInput = {
+  id?: string
+  name: string
+  description?: string | null
+  triggerAt: Date | string
+  recurrence?: string | null
+  timezone?: string
+  actionTool: string
+  actionParams: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.AutomationStatus
+  createdBy?: $Enums.AutomationCreator
+  sourceConversationId?: string | null
+  userId: string
+  tenantId: string
+  lastRunAt?: Date | string | null
+  nextRunAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  project?: Prisma.ProjectCreateNestedOneWithoutAutomationsInput
 }
 
-export type EnumAutomationCreatorFieldUpdateOperationsInput = {
-  set?: $Enums.AutomationCreator
+export type AutomationUncheckedCreateWithoutAutomationLogInput = {
+  id?: string
+  name: string
+  description?: string | null
+  triggerAt: Date | string
+  recurrence?: string | null
+  timezone?: string
+  actionTool: string
+  actionParams: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.AutomationStatus
+  projectId?: string | null
+  createdBy?: $Enums.AutomationCreator
+  sourceConversationId?: string | null
+  userId: string
+  tenantId: string
+  lastRunAt?: Date | string | null
+  nextRunAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
-export type AutomationCreateNestedOneWithoutLogsInput = {
-  create?: Prisma.XOR<Prisma.AutomationCreateWithoutLogsInput, Prisma.AutomationUncheckedCreateWithoutLogsInput>
-  connectOrCreate?: Prisma.AutomationCreateOrConnectWithoutLogsInput
-  connect?: Prisma.AutomationWhereUniqueInput
+export type AutomationCreateOrConnectWithoutAutomationLogInput = {
+  where: Prisma.AutomationWhereUniqueInput
+  create: Prisma.XOR<Prisma.AutomationCreateWithoutAutomationLogInput, Prisma.AutomationUncheckedCreateWithoutAutomationLogInput>
 }
 
-export type AutomationUpdateOneRequiredWithoutLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.AutomationCreateWithoutLogsInput, Prisma.AutomationUncheckedCreateWithoutLogsInput>
-  connectOrCreate?: Prisma.AutomationCreateOrConnectWithoutLogsInput
-  upsert?: Prisma.AutomationUpsertWithoutLogsInput
-  connect?: Prisma.AutomationWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AutomationUpdateToOneWithWhereWithoutLogsInput, Prisma.AutomationUpdateWithoutLogsInput>, Prisma.AutomationUncheckedUpdateWithoutLogsInput>
+export type AutomationUpsertWithoutAutomationLogInput = {
+  update: Prisma.XOR<Prisma.AutomationUpdateWithoutAutomationLogInput, Prisma.AutomationUncheckedUpdateWithoutAutomationLogInput>
+  create: Prisma.XOR<Prisma.AutomationCreateWithoutAutomationLogInput, Prisma.AutomationUncheckedCreateWithoutAutomationLogInput>
+  where?: Prisma.AutomationWhereInput
+}
+
+export type AutomationUpdateToOneWithWhereWithoutAutomationLogInput = {
+  where?: Prisma.AutomationWhereInput
+  data: Prisma.XOR<Prisma.AutomationUpdateWithoutAutomationLogInput, Prisma.AutomationUncheckedUpdateWithoutAutomationLogInput>
+}
+
+export type AutomationUpdateWithoutAutomationLogInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  triggerAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recurrence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  actionTool?: Prisma.StringFieldUpdateOperationsInput | string
+  actionParams?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.EnumAutomationStatusFieldUpdateOperationsInput | $Enums.AutomationStatus
+  createdBy?: Prisma.EnumAutomationCreatorFieldUpdateOperationsInput | $Enums.AutomationCreator
+  sourceConversationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  lastRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneWithoutAutomationsNestedInput
+}
+
+export type AutomationUncheckedUpdateWithoutAutomationLogInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  triggerAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  recurrence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  actionTool?: Prisma.StringFieldUpdateOperationsInput | string
+  actionParams?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.EnumAutomationStatusFieldUpdateOperationsInput | $Enums.AutomationStatus
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdBy?: Prisma.EnumAutomationCreatorFieldUpdateOperationsInput | $Enums.AutomationCreator
+  sourceConversationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  lastRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AutomationCreateWithoutProjectInput = {
@@ -691,7 +795,7 @@ export type AutomationCreateWithoutProjectInput = {
   nextRunAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  logs?: Prisma.AutomationLogCreateNestedManyWithoutAutomationInput
+  AutomationLog?: Prisma.AutomationLogCreateNestedManyWithoutAutomationInput
 }
 
 export type AutomationUncheckedCreateWithoutProjectInput = {
@@ -712,7 +816,7 @@ export type AutomationUncheckedCreateWithoutProjectInput = {
   nextRunAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  logs?: Prisma.AutomationLogUncheckedCreateNestedManyWithoutAutomationInput
+  AutomationLog?: Prisma.AutomationLogUncheckedCreateNestedManyWithoutAutomationInput
 }
 
 export type AutomationCreateOrConnectWithoutProjectInput = {
@@ -765,106 +869,6 @@ export type AutomationScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Automation"> | Date | string
 }
 
-export type AutomationCreateWithoutLogsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  triggerAt: Date | string
-  recurrence?: string | null
-  timezone?: string
-  actionTool: string
-  actionParams: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: $Enums.AutomationStatus
-  createdBy?: $Enums.AutomationCreator
-  sourceConversationId?: string | null
-  userId: string
-  tenantId: string
-  lastRunAt?: Date | string | null
-  nextRunAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  project?: Prisma.ProjectCreateNestedOneWithoutAutomationsInput
-}
-
-export type AutomationUncheckedCreateWithoutLogsInput = {
-  id?: string
-  name: string
-  description?: string | null
-  triggerAt: Date | string
-  recurrence?: string | null
-  timezone?: string
-  actionTool: string
-  actionParams: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: $Enums.AutomationStatus
-  projectId?: string | null
-  createdBy?: $Enums.AutomationCreator
-  sourceConversationId?: string | null
-  userId: string
-  tenantId: string
-  lastRunAt?: Date | string | null
-  nextRunAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-export type AutomationCreateOrConnectWithoutLogsInput = {
-  where: Prisma.AutomationWhereUniqueInput
-  create: Prisma.XOR<Prisma.AutomationCreateWithoutLogsInput, Prisma.AutomationUncheckedCreateWithoutLogsInput>
-}
-
-export type AutomationUpsertWithoutLogsInput = {
-  update: Prisma.XOR<Prisma.AutomationUpdateWithoutLogsInput, Prisma.AutomationUncheckedUpdateWithoutLogsInput>
-  create: Prisma.XOR<Prisma.AutomationCreateWithoutLogsInput, Prisma.AutomationUncheckedCreateWithoutLogsInput>
-  where?: Prisma.AutomationWhereInput
-}
-
-export type AutomationUpdateToOneWithWhereWithoutLogsInput = {
-  where?: Prisma.AutomationWhereInput
-  data: Prisma.XOR<Prisma.AutomationUpdateWithoutLogsInput, Prisma.AutomationUncheckedUpdateWithoutLogsInput>
-}
-
-export type AutomationUpdateWithoutLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  triggerAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  recurrence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  actionTool?: Prisma.StringFieldUpdateOperationsInput | string
-  actionParams?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumAutomationStatusFieldUpdateOperationsInput | $Enums.AutomationStatus
-  createdBy?: Prisma.EnumAutomationCreatorFieldUpdateOperationsInput | $Enums.AutomationCreator
-  sourceConversationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  lastRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  project?: Prisma.ProjectUpdateOneWithoutAutomationsNestedInput
-}
-
-export type AutomationUncheckedUpdateWithoutLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  triggerAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  recurrence?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  timezone?: Prisma.StringFieldUpdateOperationsInput | string
-  actionTool?: Prisma.StringFieldUpdateOperationsInput | string
-  actionParams?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  status?: Prisma.EnumAutomationStatusFieldUpdateOperationsInput | $Enums.AutomationStatus
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdBy?: Prisma.EnumAutomationCreatorFieldUpdateOperationsInput | $Enums.AutomationCreator
-  sourceConversationId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  lastRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
 export type AutomationCreateManyProjectInput = {
   id?: string
   name: string
@@ -903,7 +907,7 @@ export type AutomationUpdateWithoutProjectInput = {
   nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  logs?: Prisma.AutomationLogUpdateManyWithoutAutomationNestedInput
+  AutomationLog?: Prisma.AutomationLogUpdateManyWithoutAutomationNestedInput
 }
 
 export type AutomationUncheckedUpdateWithoutProjectInput = {
@@ -924,7 +928,7 @@ export type AutomationUncheckedUpdateWithoutProjectInput = {
   nextRunAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  logs?: Prisma.AutomationLogUncheckedUpdateManyWithoutAutomationNestedInput
+  AutomationLog?: Prisma.AutomationLogUncheckedUpdateManyWithoutAutomationNestedInput
 }
 
 export type AutomationUncheckedUpdateManyWithoutProjectInput = {
@@ -953,11 +957,11 @@ export type AutomationUncheckedUpdateManyWithoutProjectInput = {
  */
 
 export type AutomationCountOutputType = {
-  logs: number
+  AutomationLog: number
 }
 
 export type AutomationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  logs?: boolean | AutomationCountOutputTypeCountLogsArgs
+  AutomationLog?: boolean | AutomationCountOutputTypeCountAutomationLogArgs
 }
 
 /**
@@ -973,7 +977,7 @@ export type AutomationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.E
 /**
  * AutomationCountOutputType without action
  */
-export type AutomationCountOutputTypeCountLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type AutomationCountOutputTypeCountAutomationLogArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AutomationLogWhereInput
 }
 
@@ -998,7 +1002,7 @@ export type AutomationSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   createdAt?: boolean
   updatedAt?: boolean
   project?: boolean | Prisma.Automation$projectArgs<ExtArgs>
-  logs?: boolean | Prisma.Automation$logsArgs<ExtArgs>
+  AutomationLog?: boolean | Prisma.Automation$AutomationLogArgs<ExtArgs>
   _count?: boolean | Prisma.AutomationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["automation"]>
 
@@ -1070,7 +1074,7 @@ export type AutomationSelectScalar = {
 export type AutomationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "triggerAt" | "recurrence" | "timezone" | "actionTool" | "actionParams" | "status" | "projectId" | "createdBy" | "sourceConversationId" | "userId" | "tenantId" | "lastRunAt" | "nextRunAt" | "createdAt" | "updatedAt", ExtArgs["result"]["automation"]>
 export type AutomationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.Automation$projectArgs<ExtArgs>
-  logs?: boolean | Prisma.Automation$logsArgs<ExtArgs>
+  AutomationLog?: boolean | Prisma.Automation$AutomationLogArgs<ExtArgs>
   _count?: boolean | Prisma.AutomationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AutomationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1084,7 +1088,7 @@ export type $AutomationPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "Automation"
   objects: {
     project: Prisma.$ProjectPayload<ExtArgs> | null
-    logs: Prisma.$AutomationLogPayload<ExtArgs>[]
+    AutomationLog: Prisma.$AutomationLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1500,7 +1504,7 @@ readonly fields: AutomationFieldRefs;
 export interface Prisma__AutomationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   project<T extends Prisma.Automation$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Automation$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  logs<T extends Prisma.Automation$logsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Automation$logsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  AutomationLog<T extends Prisma.Automation$AutomationLogArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Automation$AutomationLogArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AutomationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1963,9 +1967,9 @@ export type Automation$projectArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * Automation.logs
+ * Automation.AutomationLog
  */
-export type Automation$logsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Automation$AutomationLogArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the AutomationLog
    */

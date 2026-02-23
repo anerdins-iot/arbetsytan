@@ -14,7 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model AIMessage
- * Can be removed later if no longer needed for notifications.
+ * 
  */
 export type AIMessageModel = runtime.Types.Result.DefaultSelection<Prisma.$AIMessagePayload>
 
@@ -214,10 +214,10 @@ export type AIMessageWhereInput = {
   userId?: Prisma.StringFilter<"AIMessage"> | string
   projectId?: Prisma.StringFilter<"AIMessage"> | string
   parentId?: Prisma.StringNullableFilter<"AIMessage"> | string | null
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  AIMessage?: Prisma.XOR<Prisma.AIMessageNullableScalarRelationFilter, Prisma.AIMessageWhereInput> | null
+  other_AIMessage?: Prisma.AIMessageListRelationFilter
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
-  parent?: Prisma.XOR<Prisma.AIMessageNullableScalarRelationFilter, Prisma.AIMessageWhereInput> | null
-  replies?: Prisma.AIMessageListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
 export type AIMessageOrderByWithRelationInput = {
@@ -230,10 +230,10 @@ export type AIMessageOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   projectId?: Prisma.SortOrder
   parentId?: Prisma.SortOrderInput | Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  AIMessage?: Prisma.AIMessageOrderByWithRelationInput
+  other_AIMessage?: Prisma.AIMessageOrderByRelationAggregateInput
   project?: Prisma.ProjectOrderByWithRelationInput
-  parent?: Prisma.AIMessageOrderByWithRelationInput
-  replies?: Prisma.AIMessageOrderByRelationAggregateInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type AIMessageWhereUniqueInput = Prisma.AtLeast<{
@@ -249,10 +249,10 @@ export type AIMessageWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"AIMessage"> | string
   projectId?: Prisma.StringFilter<"AIMessage"> | string
   parentId?: Prisma.StringNullableFilter<"AIMessage"> | string | null
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  AIMessage?: Prisma.XOR<Prisma.AIMessageNullableScalarRelationFilter, Prisma.AIMessageWhereInput> | null
+  other_AIMessage?: Prisma.AIMessageListRelationFilter
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
-  parent?: Prisma.XOR<Prisma.AIMessageNullableScalarRelationFilter, Prisma.AIMessageWhereInput> | null
-  replies?: Prisma.AIMessageListRelationFilter
+  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
 export type AIMessageOrderByWithAggregationInput = {
@@ -292,10 +292,10 @@ export type AIMessageCreateInput = {
   content: string
   read?: boolean
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutAiMessagesInput
-  project: Prisma.ProjectCreateNestedOneWithoutAiMessagesInput
-  parent?: Prisma.AIMessageCreateNestedOneWithoutRepliesInput
-  replies?: Prisma.AIMessageCreateNestedManyWithoutParentInput
+  AIMessage?: Prisma.AIMessageCreateNestedOneWithoutOther_AIMessageInput
+  other_AIMessage?: Prisma.AIMessageCreateNestedManyWithoutAIMessageInput
+  project: Prisma.ProjectCreateNestedOneWithoutAIMessagesInput
+  user: Prisma.UserCreateNestedOneWithoutAIMessageInput
 }
 
 export type AIMessageUncheckedCreateInput = {
@@ -308,7 +308,7 @@ export type AIMessageUncheckedCreateInput = {
   userId: string
   projectId: string
   parentId?: string | null
-  replies?: Prisma.AIMessageUncheckedCreateNestedManyWithoutParentInput
+  other_AIMessage?: Prisma.AIMessageUncheckedCreateNestedManyWithoutAIMessageInput
 }
 
 export type AIMessageUpdateInput = {
@@ -318,10 +318,10 @@ export type AIMessageUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutAiMessagesNestedInput
-  project?: Prisma.ProjectUpdateOneRequiredWithoutAiMessagesNestedInput
-  parent?: Prisma.AIMessageUpdateOneWithoutRepliesNestedInput
-  replies?: Prisma.AIMessageUpdateManyWithoutParentNestedInput
+  AIMessage?: Prisma.AIMessageUpdateOneWithoutOther_AIMessageNestedInput
+  other_AIMessage?: Prisma.AIMessageUpdateManyWithoutAIMessageNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutAIMessagesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutAIMessageNestedInput
 }
 
 export type AIMessageUncheckedUpdateInput = {
@@ -334,7 +334,7 @@ export type AIMessageUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  replies?: Prisma.AIMessageUncheckedUpdateManyWithoutParentNestedInput
+  other_AIMessage?: Prisma.AIMessageUncheckedUpdateManyWithoutAIMessageNestedInput
 }
 
 export type AIMessageCreateManyInput = {
@@ -370,6 +370,11 @@ export type AIMessageUncheckedUpdateManyInput = {
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
+export type AIMessageNullableScalarRelationFilter = {
+  is?: Prisma.AIMessageWhereInput | null
+  isNot?: Prisma.AIMessageWhereInput | null
+}
+
 export type AIMessageListRelationFilter = {
   every?: Prisma.AIMessageWhereInput
   some?: Prisma.AIMessageWhereInput
@@ -378,11 +383,6 @@ export type AIMessageListRelationFilter = {
 
 export type AIMessageOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
-}
-
-export type AIMessageNullableScalarRelationFilter = {
-  is?: Prisma.AIMessageWhereInput | null
-  isNot?: Prisma.AIMessageWhereInput | null
 }
 
 export type AIMessageCountOrderByAggregateInput = {
@@ -421,45 +421,73 @@ export type AIMessageMinOrderByAggregateInput = {
   parentId?: Prisma.SortOrder
 }
 
-export type AIMessageCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
+export type AIMessageCreateNestedOneWithoutOther_AIMessageInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutOther_AIMessageInput, Prisma.AIMessageUncheckedCreateWithoutOther_AIMessageInput>
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutOther_AIMessageInput
+  connect?: Prisma.AIMessageWhereUniqueInput
+}
+
+export type AIMessageCreateNestedManyWithoutAIMessageInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutAIMessageInput, Prisma.AIMessageUncheckedCreateWithoutAIMessageInput> | Prisma.AIMessageCreateWithoutAIMessageInput[] | Prisma.AIMessageUncheckedCreateWithoutAIMessageInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutAIMessageInput | Prisma.AIMessageCreateOrConnectWithoutAIMessageInput[]
+  createMany?: Prisma.AIMessageCreateManyAIMessageInputEnvelope
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
 }
 
-export type AIMessageUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
+export type AIMessageUncheckedCreateNestedManyWithoutAIMessageInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutAIMessageInput, Prisma.AIMessageUncheckedCreateWithoutAIMessageInput> | Prisma.AIMessageCreateWithoutAIMessageInput[] | Prisma.AIMessageUncheckedCreateWithoutAIMessageInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutAIMessageInput | Prisma.AIMessageCreateOrConnectWithoutAIMessageInput[]
+  createMany?: Prisma.AIMessageCreateManyAIMessageInputEnvelope
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
 }
 
-export type AIMessageUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
+export type EnumAIDirectionFieldUpdateOperationsInput = {
+  set?: $Enums.AIDirection
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type AIMessageUpdateOneWithoutOther_AIMessageNestedInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutOther_AIMessageInput, Prisma.AIMessageUncheckedCreateWithoutOther_AIMessageInput>
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutOther_AIMessageInput
+  upsert?: Prisma.AIMessageUpsertWithoutOther_AIMessageInput
+  disconnect?: Prisma.AIMessageWhereInput | boolean
+  delete?: Prisma.AIMessageWhereInput | boolean
+  connect?: Prisma.AIMessageWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AIMessageUpdateToOneWithWhereWithoutOther_AIMessageInput, Prisma.AIMessageUpdateWithoutOther_AIMessageInput>, Prisma.AIMessageUncheckedUpdateWithoutOther_AIMessageInput>
+}
+
+export type AIMessageUpdateManyWithoutAIMessageNestedInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutAIMessageInput, Prisma.AIMessageUncheckedCreateWithoutAIMessageInput> | Prisma.AIMessageCreateWithoutAIMessageInput[] | Prisma.AIMessageUncheckedCreateWithoutAIMessageInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutAIMessageInput | Prisma.AIMessageCreateOrConnectWithoutAIMessageInput[]
+  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutAIMessageInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutAIMessageInput[]
+  createMany?: Prisma.AIMessageCreateManyAIMessageInputEnvelope
   set?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   disconnect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   delete?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
-  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutUserInput | Prisma.AIMessageUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutAIMessageInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutAIMessageInput[]
+  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutAIMessageInput | Prisma.AIMessageUpdateManyWithWhereWithoutAIMessageInput[]
   deleteMany?: Prisma.AIMessageScalarWhereInput | Prisma.AIMessageScalarWhereInput[]
 }
 
-export type AIMessageUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
+}
+
+export type AIMessageUncheckedUpdateManyWithoutAIMessageNestedInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutAIMessageInput, Prisma.AIMessageUncheckedCreateWithoutAIMessageInput> | Prisma.AIMessageCreateWithoutAIMessageInput[] | Prisma.AIMessageUncheckedCreateWithoutAIMessageInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutAIMessageInput | Prisma.AIMessageCreateOrConnectWithoutAIMessageInput[]
+  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutAIMessageInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutAIMessageInput[]
+  createMany?: Prisma.AIMessageCreateManyAIMessageInputEnvelope
   set?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   disconnect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   delete?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
-  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutUserInput | Prisma.AIMessageUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutAIMessageInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutAIMessageInput[]
+  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutAIMessageInput | Prisma.AIMessageUpdateManyWithWhereWithoutAIMessageInput[]
   deleteMany?: Prisma.AIMessageScalarWhereInput | Prisma.AIMessageScalarWhereInput[]
 }
 
@@ -505,116 +533,160 @@ export type AIMessageUncheckedUpdateManyWithoutProjectNestedInput = {
   deleteMany?: Prisma.AIMessageScalarWhereInput | Prisma.AIMessageScalarWhereInput[]
 }
 
-export type AIMessageCreateNestedOneWithoutRepliesInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutRepliesInput, Prisma.AIMessageUncheckedCreateWithoutRepliesInput>
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutRepliesInput
-  connect?: Prisma.AIMessageWhereUniqueInput
-}
-
-export type AIMessageCreateNestedManyWithoutParentInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutParentInput, Prisma.AIMessageUncheckedCreateWithoutParentInput> | Prisma.AIMessageCreateWithoutParentInput[] | Prisma.AIMessageUncheckedCreateWithoutParentInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutParentInput | Prisma.AIMessageCreateOrConnectWithoutParentInput[]
-  createMany?: Prisma.AIMessageCreateManyParentInputEnvelope
+export type AIMessageCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
 }
 
-export type AIMessageUncheckedCreateNestedManyWithoutParentInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutParentInput, Prisma.AIMessageUncheckedCreateWithoutParentInput> | Prisma.AIMessageCreateWithoutParentInput[] | Prisma.AIMessageUncheckedCreateWithoutParentInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutParentInput | Prisma.AIMessageCreateOrConnectWithoutParentInput[]
-  createMany?: Prisma.AIMessageCreateManyParentInputEnvelope
+export type AIMessageUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
 }
 
-export type EnumAIDirectionFieldUpdateOperationsInput = {
-  set?: $Enums.AIDirection
-}
-
-export type AIMessageUpdateOneWithoutRepliesNestedInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutRepliesInput, Prisma.AIMessageUncheckedCreateWithoutRepliesInput>
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutRepliesInput
-  upsert?: Prisma.AIMessageUpsertWithoutRepliesInput
-  disconnect?: Prisma.AIMessageWhereInput | boolean
-  delete?: Prisma.AIMessageWhereInput | boolean
-  connect?: Prisma.AIMessageWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.AIMessageUpdateToOneWithWhereWithoutRepliesInput, Prisma.AIMessageUpdateWithoutRepliesInput>, Prisma.AIMessageUncheckedUpdateWithoutRepliesInput>
-}
-
-export type AIMessageUpdateManyWithoutParentNestedInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutParentInput, Prisma.AIMessageUncheckedCreateWithoutParentInput> | Prisma.AIMessageCreateWithoutParentInput[] | Prisma.AIMessageUncheckedCreateWithoutParentInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutParentInput | Prisma.AIMessageCreateOrConnectWithoutParentInput[]
-  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutParentInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutParentInput[]
-  createMany?: Prisma.AIMessageCreateManyParentInputEnvelope
+export type AIMessageUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
   set?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   disconnect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   delete?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
-  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutParentInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutParentInput[]
-  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutParentInput | Prisma.AIMessageUpdateManyWithWhereWithoutParentInput[]
+  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutUserInput | Prisma.AIMessageUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.AIMessageScalarWhereInput | Prisma.AIMessageScalarWhereInput[]
 }
 
-export type AIMessageUncheckedUpdateManyWithoutParentNestedInput = {
-  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutParentInput, Prisma.AIMessageUncheckedCreateWithoutParentInput> | Prisma.AIMessageCreateWithoutParentInput[] | Prisma.AIMessageUncheckedCreateWithoutParentInput[]
-  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutParentInput | Prisma.AIMessageCreateOrConnectWithoutParentInput[]
-  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutParentInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutParentInput[]
-  createMany?: Prisma.AIMessageCreateManyParentInputEnvelope
+export type AIMessageUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput> | Prisma.AIMessageCreateWithoutUserInput[] | Prisma.AIMessageUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.AIMessageCreateOrConnectWithoutUserInput | Prisma.AIMessageCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.AIMessageCreateManyUserInputEnvelope
   set?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   disconnect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   delete?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
   connect?: Prisma.AIMessageWhereUniqueInput | Prisma.AIMessageWhereUniqueInput[]
-  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutParentInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutParentInput[]
-  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutParentInput | Prisma.AIMessageUpdateManyWithWhereWithoutParentInput[]
+  update?: Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput | Prisma.AIMessageUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.AIMessageUpdateManyWithWhereWithoutUserInput | Prisma.AIMessageUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.AIMessageScalarWhereInput | Prisma.AIMessageScalarWhereInput[]
 }
 
-export type AIMessageCreateWithoutUserInput = {
+export type AIMessageCreateWithoutOther_AIMessageInput = {
   id?: string
   direction: $Enums.AIDirection
   type: string
   content: string
   read?: boolean
   createdAt?: Date | string
-  project: Prisma.ProjectCreateNestedOneWithoutAiMessagesInput
-  parent?: Prisma.AIMessageCreateNestedOneWithoutRepliesInput
-  replies?: Prisma.AIMessageCreateNestedManyWithoutParentInput
+  AIMessage?: Prisma.AIMessageCreateNestedOneWithoutOther_AIMessageInput
+  project: Prisma.ProjectCreateNestedOneWithoutAIMessagesInput
+  user: Prisma.UserCreateNestedOneWithoutAIMessageInput
 }
 
-export type AIMessageUncheckedCreateWithoutUserInput = {
+export type AIMessageUncheckedCreateWithoutOther_AIMessageInput = {
   id?: string
   direction: $Enums.AIDirection
   type: string
   content: string
   read?: boolean
   createdAt?: Date | string
+  userId: string
   projectId: string
   parentId?: string | null
-  replies?: Prisma.AIMessageUncheckedCreateNestedManyWithoutParentInput
 }
 
-export type AIMessageCreateOrConnectWithoutUserInput = {
+export type AIMessageCreateOrConnectWithoutOther_AIMessageInput = {
   where: Prisma.AIMessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.AIMessageCreateWithoutOther_AIMessageInput, Prisma.AIMessageUncheckedCreateWithoutOther_AIMessageInput>
 }
 
-export type AIMessageCreateManyUserInputEnvelope = {
-  data: Prisma.AIMessageCreateManyUserInput | Prisma.AIMessageCreateManyUserInput[]
+export type AIMessageCreateWithoutAIMessageInput = {
+  id?: string
+  direction: $Enums.AIDirection
+  type: string
+  content: string
+  read?: boolean
+  createdAt?: Date | string
+  other_AIMessage?: Prisma.AIMessageCreateNestedManyWithoutAIMessageInput
+  project: Prisma.ProjectCreateNestedOneWithoutAIMessagesInput
+  user: Prisma.UserCreateNestedOneWithoutAIMessageInput
+}
+
+export type AIMessageUncheckedCreateWithoutAIMessageInput = {
+  id?: string
+  direction: $Enums.AIDirection
+  type: string
+  content: string
+  read?: boolean
+  createdAt?: Date | string
+  userId: string
+  projectId: string
+  other_AIMessage?: Prisma.AIMessageUncheckedCreateNestedManyWithoutAIMessageInput
+}
+
+export type AIMessageCreateOrConnectWithoutAIMessageInput = {
+  where: Prisma.AIMessageWhereUniqueInput
+  create: Prisma.XOR<Prisma.AIMessageCreateWithoutAIMessageInput, Prisma.AIMessageUncheckedCreateWithoutAIMessageInput>
+}
+
+export type AIMessageCreateManyAIMessageInputEnvelope = {
+  data: Prisma.AIMessageCreateManyAIMessageInput | Prisma.AIMessageCreateManyAIMessageInput[]
   skipDuplicates?: boolean
 }
 
-export type AIMessageUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.AIMessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.AIMessageUpdateWithoutUserInput, Prisma.AIMessageUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput>
+export type AIMessageUpsertWithoutOther_AIMessageInput = {
+  update: Prisma.XOR<Prisma.AIMessageUpdateWithoutOther_AIMessageInput, Prisma.AIMessageUncheckedUpdateWithoutOther_AIMessageInput>
+  create: Prisma.XOR<Prisma.AIMessageCreateWithoutOther_AIMessageInput, Prisma.AIMessageUncheckedCreateWithoutOther_AIMessageInput>
+  where?: Prisma.AIMessageWhereInput
 }
 
-export type AIMessageUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.AIMessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.AIMessageUpdateWithoutUserInput, Prisma.AIMessageUncheckedUpdateWithoutUserInput>
+export type AIMessageUpdateToOneWithWhereWithoutOther_AIMessageInput = {
+  where?: Prisma.AIMessageWhereInput
+  data: Prisma.XOR<Prisma.AIMessageUpdateWithoutOther_AIMessageInput, Prisma.AIMessageUncheckedUpdateWithoutOther_AIMessageInput>
 }
 
-export type AIMessageUpdateManyWithWhereWithoutUserInput = {
+export type AIMessageUpdateWithoutOther_AIMessageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  AIMessage?: Prisma.AIMessageUpdateOneWithoutOther_AIMessageNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutAIMessagesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutAIMessageNestedInput
+}
+
+export type AIMessageUncheckedUpdateWithoutOther_AIMessageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type AIMessageUpsertWithWhereUniqueWithoutAIMessageInput = {
+  where: Prisma.AIMessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.AIMessageUpdateWithoutAIMessageInput, Prisma.AIMessageUncheckedUpdateWithoutAIMessageInput>
+  create: Prisma.XOR<Prisma.AIMessageCreateWithoutAIMessageInput, Prisma.AIMessageUncheckedCreateWithoutAIMessageInput>
+}
+
+export type AIMessageUpdateWithWhereUniqueWithoutAIMessageInput = {
+  where: Prisma.AIMessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.AIMessageUpdateWithoutAIMessageInput, Prisma.AIMessageUncheckedUpdateWithoutAIMessageInput>
+}
+
+export type AIMessageUpdateManyWithWhereWithoutAIMessageInput = {
   where: Prisma.AIMessageScalarWhereInput
-  data: Prisma.XOR<Prisma.AIMessageUpdateManyMutationInput, Prisma.AIMessageUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.AIMessageUpdateManyMutationInput, Prisma.AIMessageUncheckedUpdateManyWithoutAIMessageInput>
 }
 
 export type AIMessageScalarWhereInput = {
@@ -639,9 +711,9 @@ export type AIMessageCreateWithoutProjectInput = {
   content: string
   read?: boolean
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutAiMessagesInput
-  parent?: Prisma.AIMessageCreateNestedOneWithoutRepliesInput
-  replies?: Prisma.AIMessageCreateNestedManyWithoutParentInput
+  AIMessage?: Prisma.AIMessageCreateNestedOneWithoutOther_AIMessageInput
+  other_AIMessage?: Prisma.AIMessageCreateNestedManyWithoutAIMessageInput
+  user: Prisma.UserCreateNestedOneWithoutAIMessageInput
 }
 
 export type AIMessageUncheckedCreateWithoutProjectInput = {
@@ -653,7 +725,7 @@ export type AIMessageUncheckedCreateWithoutProjectInput = {
   createdAt?: Date | string
   userId: string
   parentId?: string | null
-  replies?: Prisma.AIMessageUncheckedCreateNestedManyWithoutParentInput
+  other_AIMessage?: Prisma.AIMessageUncheckedCreateNestedManyWithoutAIMessageInput
 }
 
 export type AIMessageCreateOrConnectWithoutProjectInput = {
@@ -682,93 +754,80 @@ export type AIMessageUpdateManyWithWhereWithoutProjectInput = {
   data: Prisma.XOR<Prisma.AIMessageUpdateManyMutationInput, Prisma.AIMessageUncheckedUpdateManyWithoutProjectInput>
 }
 
-export type AIMessageCreateWithoutRepliesInput = {
+export type AIMessageCreateWithoutUserInput = {
   id?: string
   direction: $Enums.AIDirection
   type: string
   content: string
   read?: boolean
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutAiMessagesInput
-  project: Prisma.ProjectCreateNestedOneWithoutAiMessagesInput
-  parent?: Prisma.AIMessageCreateNestedOneWithoutRepliesInput
+  AIMessage?: Prisma.AIMessageCreateNestedOneWithoutOther_AIMessageInput
+  other_AIMessage?: Prisma.AIMessageCreateNestedManyWithoutAIMessageInput
+  project: Prisma.ProjectCreateNestedOneWithoutAIMessagesInput
 }
 
-export type AIMessageUncheckedCreateWithoutRepliesInput = {
+export type AIMessageUncheckedCreateWithoutUserInput = {
   id?: string
   direction: $Enums.AIDirection
   type: string
   content: string
   read?: boolean
   createdAt?: Date | string
-  userId: string
   projectId: string
   parentId?: string | null
+  other_AIMessage?: Prisma.AIMessageUncheckedCreateNestedManyWithoutAIMessageInput
 }
 
-export type AIMessageCreateOrConnectWithoutRepliesInput = {
+export type AIMessageCreateOrConnectWithoutUserInput = {
   where: Prisma.AIMessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.AIMessageCreateWithoutRepliesInput, Prisma.AIMessageUncheckedCreateWithoutRepliesInput>
+  create: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput>
 }
 
-export type AIMessageCreateWithoutParentInput = {
-  id?: string
-  direction: $Enums.AIDirection
-  type: string
-  content: string
-  read?: boolean
-  createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutAiMessagesInput
-  project: Prisma.ProjectCreateNestedOneWithoutAiMessagesInput
-  replies?: Prisma.AIMessageCreateNestedManyWithoutParentInput
-}
-
-export type AIMessageUncheckedCreateWithoutParentInput = {
-  id?: string
-  direction: $Enums.AIDirection
-  type: string
-  content: string
-  read?: boolean
-  createdAt?: Date | string
-  userId: string
-  projectId: string
-  replies?: Prisma.AIMessageUncheckedCreateNestedManyWithoutParentInput
-}
-
-export type AIMessageCreateOrConnectWithoutParentInput = {
-  where: Prisma.AIMessageWhereUniqueInput
-  create: Prisma.XOR<Prisma.AIMessageCreateWithoutParentInput, Prisma.AIMessageUncheckedCreateWithoutParentInput>
-}
-
-export type AIMessageCreateManyParentInputEnvelope = {
-  data: Prisma.AIMessageCreateManyParentInput | Prisma.AIMessageCreateManyParentInput[]
+export type AIMessageCreateManyUserInputEnvelope = {
+  data: Prisma.AIMessageCreateManyUserInput | Prisma.AIMessageCreateManyUserInput[]
   skipDuplicates?: boolean
 }
 
-export type AIMessageUpsertWithoutRepliesInput = {
-  update: Prisma.XOR<Prisma.AIMessageUpdateWithoutRepliesInput, Prisma.AIMessageUncheckedUpdateWithoutRepliesInput>
-  create: Prisma.XOR<Prisma.AIMessageCreateWithoutRepliesInput, Prisma.AIMessageUncheckedCreateWithoutRepliesInput>
-  where?: Prisma.AIMessageWhereInput
+export type AIMessageUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.AIMessageWhereUniqueInput
+  update: Prisma.XOR<Prisma.AIMessageUpdateWithoutUserInput, Prisma.AIMessageUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.AIMessageCreateWithoutUserInput, Prisma.AIMessageUncheckedCreateWithoutUserInput>
 }
 
-export type AIMessageUpdateToOneWithWhereWithoutRepliesInput = {
-  where?: Prisma.AIMessageWhereInput
-  data: Prisma.XOR<Prisma.AIMessageUpdateWithoutRepliesInput, Prisma.AIMessageUncheckedUpdateWithoutRepliesInput>
+export type AIMessageUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.AIMessageWhereUniqueInput
+  data: Prisma.XOR<Prisma.AIMessageUpdateWithoutUserInput, Prisma.AIMessageUncheckedUpdateWithoutUserInput>
 }
 
-export type AIMessageUpdateWithoutRepliesInput = {
+export type AIMessageUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.AIMessageScalarWhereInput
+  data: Prisma.XOR<Prisma.AIMessageUpdateManyMutationInput, Prisma.AIMessageUncheckedUpdateManyWithoutUserInput>
+}
+
+export type AIMessageCreateManyAIMessageInput = {
+  id?: string
+  direction: $Enums.AIDirection
+  type: string
+  content: string
+  read?: boolean
+  createdAt?: Date | string
+  userId: string
+  projectId: string
+}
+
+export type AIMessageUpdateWithoutAIMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
   type?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutAiMessagesNestedInput
-  project?: Prisma.ProjectUpdateOneRequiredWithoutAiMessagesNestedInput
-  parent?: Prisma.AIMessageUpdateOneWithoutRepliesNestedInput
+  other_AIMessage?: Prisma.AIMessageUpdateManyWithoutAIMessageNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutAIMessagesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutAIMessageNestedInput
 }
 
-export type AIMessageUncheckedUpdateWithoutRepliesInput = {
+export type AIMessageUncheckedUpdateWithoutAIMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
   type?: Prisma.StringFieldUpdateOperationsInput | string
@@ -777,69 +836,18 @@ export type AIMessageUncheckedUpdateWithoutRepliesInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
-  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  other_AIMessage?: Prisma.AIMessageUncheckedUpdateManyWithoutAIMessageNestedInput
 }
 
-export type AIMessageUpsertWithWhereUniqueWithoutParentInput = {
-  where: Prisma.AIMessageWhereUniqueInput
-  update: Prisma.XOR<Prisma.AIMessageUpdateWithoutParentInput, Prisma.AIMessageUncheckedUpdateWithoutParentInput>
-  create: Prisma.XOR<Prisma.AIMessageCreateWithoutParentInput, Prisma.AIMessageUncheckedCreateWithoutParentInput>
-}
-
-export type AIMessageUpdateWithWhereUniqueWithoutParentInput = {
-  where: Prisma.AIMessageWhereUniqueInput
-  data: Prisma.XOR<Prisma.AIMessageUpdateWithoutParentInput, Prisma.AIMessageUncheckedUpdateWithoutParentInput>
-}
-
-export type AIMessageUpdateManyWithWhereWithoutParentInput = {
-  where: Prisma.AIMessageScalarWhereInput
-  data: Prisma.XOR<Prisma.AIMessageUpdateManyMutationInput, Prisma.AIMessageUncheckedUpdateManyWithoutParentInput>
-}
-
-export type AIMessageCreateManyUserInput = {
-  id?: string
-  direction: $Enums.AIDirection
-  type: string
-  content: string
-  read?: boolean
-  createdAt?: Date | string
-  projectId: string
-  parentId?: string | null
-}
-
-export type AIMessageUpdateWithoutUserInput = {
+export type AIMessageUncheckedUpdateManyWithoutAIMessageInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
   type?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  project?: Prisma.ProjectUpdateOneRequiredWithoutAiMessagesNestedInput
-  parent?: Prisma.AIMessageUpdateOneWithoutRepliesNestedInput
-  replies?: Prisma.AIMessageUpdateManyWithoutParentNestedInput
-}
-
-export type AIMessageUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
-  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  replies?: Prisma.AIMessageUncheckedUpdateManyWithoutParentNestedInput
-}
-
-export type AIMessageUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
-  type?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  read?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
-  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type AIMessageCreateManyProjectInput = {
@@ -860,9 +868,9 @@ export type AIMessageUpdateWithoutProjectInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutAiMessagesNestedInput
-  parent?: Prisma.AIMessageUpdateOneWithoutRepliesNestedInput
-  replies?: Prisma.AIMessageUpdateManyWithoutParentNestedInput
+  AIMessage?: Prisma.AIMessageUpdateOneWithoutOther_AIMessageNestedInput
+  other_AIMessage?: Prisma.AIMessageUpdateManyWithoutAIMessageNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutAIMessageNestedInput
 }
 
 export type AIMessageUncheckedUpdateWithoutProjectInput = {
@@ -874,7 +882,7 @@ export type AIMessageUncheckedUpdateWithoutProjectInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  replies?: Prisma.AIMessageUncheckedUpdateManyWithoutParentNestedInput
+  other_AIMessage?: Prisma.AIMessageUncheckedUpdateManyWithoutAIMessageNestedInput
 }
 
 export type AIMessageUncheckedUpdateManyWithoutProjectInput = {
@@ -888,50 +896,50 @@ export type AIMessageUncheckedUpdateManyWithoutProjectInput = {
   parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type AIMessageCreateManyParentInput = {
+export type AIMessageCreateManyUserInput = {
   id?: string
   direction: $Enums.AIDirection
   type: string
   content: string
   read?: boolean
   createdAt?: Date | string
-  userId: string
   projectId: string
+  parentId?: string | null
 }
 
-export type AIMessageUpdateWithoutParentInput = {
+export type AIMessageUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
   type?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutAiMessagesNestedInput
-  project?: Prisma.ProjectUpdateOneRequiredWithoutAiMessagesNestedInput
-  replies?: Prisma.AIMessageUpdateManyWithoutParentNestedInput
+  AIMessage?: Prisma.AIMessageUpdateOneWithoutOther_AIMessageNestedInput
+  other_AIMessage?: Prisma.AIMessageUpdateManyWithoutAIMessageNestedInput
+  project?: Prisma.ProjectUpdateOneRequiredWithoutAIMessagesNestedInput
 }
 
-export type AIMessageUncheckedUpdateWithoutParentInput = {
+export type AIMessageUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
   type?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
-  replies?: Prisma.AIMessageUncheckedUpdateManyWithoutParentNestedInput
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  other_AIMessage?: Prisma.AIMessageUncheckedUpdateManyWithoutAIMessageNestedInput
 }
 
-export type AIMessageUncheckedUpdateManyWithoutParentInput = {
+export type AIMessageUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   direction?: Prisma.EnumAIDirectionFieldUpdateOperationsInput | $Enums.AIDirection
   type?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
   read?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
   projectId?: Prisma.StringFieldUpdateOperationsInput | string
+  parentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -940,11 +948,11 @@ export type AIMessageUncheckedUpdateManyWithoutParentInput = {
  */
 
 export type AIMessageCountOutputType = {
-  replies: number
+  other_AIMessage: number
 }
 
 export type AIMessageCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  replies?: boolean | AIMessageCountOutputTypeCountRepliesArgs
+  other_AIMessage?: boolean | AIMessageCountOutputTypeCountOther_AIMessageArgs
 }
 
 /**
@@ -960,7 +968,7 @@ export type AIMessageCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ex
 /**
  * AIMessageCountOutputType without action
  */
-export type AIMessageCountOutputTypeCountRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type AIMessageCountOutputTypeCountOther_AIMessageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.AIMessageWhereInput
 }
 
@@ -975,10 +983,10 @@ export type AIMessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   userId?: boolean
   projectId?: boolean
   parentId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  AIMessage?: boolean | Prisma.AIMessage$AIMessageArgs<ExtArgs>
+  other_AIMessage?: boolean | Prisma.AIMessage$other_AIMessageArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
-  parent?: boolean | Prisma.AIMessage$parentArgs<ExtArgs>
-  replies?: boolean | Prisma.AIMessage$repliesArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.AIMessageCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["aIMessage"]>
 
@@ -992,9 +1000,9 @@ export type AIMessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   userId?: boolean
   projectId?: boolean
   parentId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  AIMessage?: boolean | Prisma.AIMessage$AIMessageArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
-  parent?: boolean | Prisma.AIMessage$parentArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["aIMessage"]>
 
 export type AIMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1007,9 +1015,9 @@ export type AIMessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   userId?: boolean
   projectId?: boolean
   parentId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  AIMessage?: boolean | Prisma.AIMessage$AIMessageArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
-  parent?: boolean | Prisma.AIMessage$parentArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["aIMessage"]>
 
 export type AIMessageSelectScalar = {
@@ -1026,30 +1034,30 @@ export type AIMessageSelectScalar = {
 
 export type AIMessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "direction" | "type" | "content" | "read" | "createdAt" | "userId" | "projectId" | "parentId", ExtArgs["result"]["aIMessage"]>
 export type AIMessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  AIMessage?: boolean | Prisma.AIMessage$AIMessageArgs<ExtArgs>
+  other_AIMessage?: boolean | Prisma.AIMessage$other_AIMessageArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
-  parent?: boolean | Prisma.AIMessage$parentArgs<ExtArgs>
-  replies?: boolean | Prisma.AIMessage$repliesArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   _count?: boolean | Prisma.AIMessageCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AIMessageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  AIMessage?: boolean | Prisma.AIMessage$AIMessageArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
-  parent?: boolean | Prisma.AIMessage$parentArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type AIMessageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  AIMessage?: boolean | Prisma.AIMessage$AIMessageArgs<ExtArgs>
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
-  parent?: boolean | Prisma.AIMessage$parentArgs<ExtArgs>
+  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $AIMessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "AIMessage"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs>
+    AIMessage: Prisma.$AIMessagePayload<ExtArgs> | null
+    other_AIMessage: Prisma.$AIMessagePayload<ExtArgs>[]
     project: Prisma.$ProjectPayload<ExtArgs>
-    parent: Prisma.$AIMessagePayload<ExtArgs> | null
-    replies: Prisma.$AIMessagePayload<ExtArgs>[]
+    user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1455,10 +1463,10 @@ readonly fields: AIMessageFieldRefs;
  */
 export interface Prisma__AIMessageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  AIMessage<T extends Prisma.AIMessage$AIMessageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AIMessage$AIMessageArgs<ExtArgs>>): Prisma.Prisma__AIMessageClient<runtime.Types.Result.GetResult<Prisma.$AIMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  other_AIMessage<T extends Prisma.AIMessage$other_AIMessageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AIMessage$other_AIMessageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AIMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   project<T extends Prisma.ProjectDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProjectDefaultArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  parent<T extends Prisma.AIMessage$parentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AIMessage$parentArgs<ExtArgs>>): Prisma.Prisma__AIMessageClient<runtime.Types.Result.GetResult<Prisma.$AIMessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  replies<T extends Prisma.AIMessage$repliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AIMessage$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AIMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1893,9 +1901,9 @@ export type AIMessageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Int
 }
 
 /**
- * AIMessage.parent
+ * AIMessage.AIMessage
  */
-export type AIMessage$parentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type AIMessage$AIMessageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the AIMessage
    */
@@ -1912,9 +1920,9 @@ export type AIMessage$parentArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * AIMessage.replies
+ * AIMessage.other_AIMessage
  */
-export type AIMessage$repliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type AIMessage$other_AIMessageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the AIMessage
    */

@@ -241,8 +241,8 @@ export type EmailChunkWhereInput = {
   projectId?: Prisma.StringNullableFilter<"EmailChunk"> | string | null
   userId?: Prisma.StringFilter<"EmailChunk"> | string
   emailLog?: Prisma.XOR<Prisma.EmailLogScalarRelationFilter, Prisma.EmailLogWhereInput>
-  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }
 
@@ -256,8 +256,8 @@ export type EmailChunkOrderByWithRelationInput = {
   projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   emailLog?: Prisma.EmailLogOrderByWithRelationInput
-  tenant?: Prisma.TenantOrderByWithRelationInput
   project?: Prisma.ProjectOrderByWithRelationInput
+  tenant?: Prisma.TenantOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -274,8 +274,8 @@ export type EmailChunkWhereUniqueInput = Prisma.AtLeast<{
   projectId?: Prisma.StringNullableFilter<"EmailChunk"> | string | null
   userId?: Prisma.StringFilter<"EmailChunk"> | string
   emailLog?: Prisma.XOR<Prisma.EmailLogScalarRelationFilter, Prisma.EmailLogWhereInput>
-  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+  tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
 }, "id">
 
@@ -314,10 +314,10 @@ export type EmailChunkCreateInput = {
   content: string
   chunkIndex: number
   createdAt?: Date | string
-  emailLog: Prisma.EmailLogCreateNestedOneWithoutChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunksInput
+  emailLog: Prisma.EmailLogCreateNestedOneWithoutEmailChunkInput
   project?: Prisma.ProjectCreateNestedOneWithoutEmailChunksInput
-  user: Prisma.UserCreateNestedOneWithoutEmailChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunkInput
+  user: Prisma.UserCreateNestedOneWithoutEmailChunkInput
 }
 
 export type EmailChunkUncheckedCreateInput = {
@@ -336,10 +336,10 @@ export type EmailChunkUpdateInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunksNestedInput
+  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutEmailChunkNestedInput
   project?: Prisma.ProjectUpdateOneWithoutEmailChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunkNestedInput
 }
 
 export type EmailChunkUncheckedUpdateInput = {
@@ -382,16 +382,6 @@ export type EmailChunkUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type EmailChunkListRelationFilter = {
-  every?: Prisma.EmailChunkWhereInput
-  some?: Prisma.EmailChunkWhereInput
-  none?: Prisma.EmailChunkWhereInput
-}
-
-export type EmailChunkOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type EmailChunkCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
@@ -431,6 +421,100 @@ export type EmailChunkMinOrderByAggregateInput = {
 
 export type EmailChunkSumOrderByAggregateInput = {
   chunkIndex?: Prisma.SortOrder
+}
+
+export type EmailChunkListRelationFilter = {
+  every?: Prisma.EmailChunkWhereInput
+  some?: Prisma.EmailChunkWhereInput
+  none?: Prisma.EmailChunkWhereInput
+}
+
+export type EmailChunkOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type EmailChunkCreateNestedManyWithoutEmailLogInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
+  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+}
+
+export type EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
+  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+}
+
+export type EmailChunkUpdateManyWithoutEmailLogNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
+  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput[]
+  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
+  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput[]
+  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput | Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput[]
+  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
+}
+
+export type EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
+  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput[]
+  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
+  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput[]
+  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput | Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput[]
+  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
+}
+
+export type EmailChunkCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+}
+
+export type EmailChunkUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+}
+
+export type EmailChunkUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
+  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput | Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
+}
+
+export type EmailChunkUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
+  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
+  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput | Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
 }
 
 export type EmailChunkCreateNestedManyWithoutTenantInput = {
@@ -517,250 +601,14 @@ export type EmailChunkUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
 }
 
-export type EmailChunkCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-}
-
-export type EmailChunkUncheckedCreateNestedManyWithoutProjectInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
-  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-}
-
-export type EmailChunkUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
-  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput | Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
-}
-
-export type EmailChunkUncheckedUpdateManyWithoutProjectNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput> | Prisma.EmailChunkCreateWithoutProjectInput[] | Prisma.EmailChunkUncheckedCreateWithoutProjectInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutProjectInput | Prisma.EmailChunkCreateOrConnectWithoutProjectInput[]
-  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutProjectInput[]
-  createMany?: Prisma.EmailChunkCreateManyProjectInputEnvelope
-  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutProjectInput[]
-  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput | Prisma.EmailChunkUpdateManyWithWhereWithoutProjectInput[]
-  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
-}
-
-export type EmailChunkCreateNestedManyWithoutEmailLogInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
-  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-}
-
-export type EmailChunkUncheckedCreateNestedManyWithoutEmailLogInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
-  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-}
-
-export type EmailChunkUpdateManyWithoutEmailLogNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
-  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput[]
-  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
-  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput[]
-  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput | Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput[]
-  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
-}
-
-export type EmailChunkUncheckedUpdateManyWithoutEmailLogNestedInput = {
-  create?: Prisma.XOR<Prisma.EmailChunkCreateWithoutEmailLogInput, Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput> | Prisma.EmailChunkCreateWithoutEmailLogInput[] | Prisma.EmailChunkUncheckedCreateWithoutEmailLogInput[]
-  connectOrCreate?: Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput | Prisma.EmailChunkCreateOrConnectWithoutEmailLogInput[]
-  upsert?: Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpsertWithWhereUniqueWithoutEmailLogInput[]
-  createMany?: Prisma.EmailChunkCreateManyEmailLogInputEnvelope
-  set?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  disconnect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  delete?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  connect?: Prisma.EmailChunkWhereUniqueInput | Prisma.EmailChunkWhereUniqueInput[]
-  update?: Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput | Prisma.EmailChunkUpdateWithWhereUniqueWithoutEmailLogInput[]
-  updateMany?: Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput | Prisma.EmailChunkUpdateManyWithWhereWithoutEmailLogInput[]
-  deleteMany?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
-}
-
-export type EmailChunkCreateWithoutTenantInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLog: Prisma.EmailLogCreateNestedOneWithoutChunksInput
-  project?: Prisma.ProjectCreateNestedOneWithoutEmailChunksInput
-  user: Prisma.UserCreateNestedOneWithoutEmailChunksInput
-}
-
-export type EmailChunkUncheckedCreateWithoutTenantInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLogId: string
-  projectId?: string | null
-  userId: string
-}
-
-export type EmailChunkCreateOrConnectWithoutTenantInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutTenantInput, Prisma.EmailChunkUncheckedCreateWithoutTenantInput>
-}
-
-export type EmailChunkCreateManyTenantInputEnvelope = {
-  data: Prisma.EmailChunkCreateManyTenantInput | Prisma.EmailChunkCreateManyTenantInput[]
-  skipDuplicates?: boolean
-}
-
-export type EmailChunkUpsertWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.EmailChunkUpdateWithoutTenantInput, Prisma.EmailChunkUncheckedUpdateWithoutTenantInput>
-  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutTenantInput, Prisma.EmailChunkUncheckedCreateWithoutTenantInput>
-}
-
-export type EmailChunkUpdateWithWhereUniqueWithoutTenantInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.EmailChunkUpdateWithoutTenantInput, Prisma.EmailChunkUncheckedUpdateWithoutTenantInput>
-}
-
-export type EmailChunkUpdateManyWithWhereWithoutTenantInput = {
-  where: Prisma.EmailChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutTenantInput>
-}
-
-export type EmailChunkScalarWhereInput = {
-  AND?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
-  OR?: Prisma.EmailChunkScalarWhereInput[]
-  NOT?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
-  id?: Prisma.StringFilter<"EmailChunk"> | string
-  content?: Prisma.StringFilter<"EmailChunk"> | string
-  chunkIndex?: Prisma.IntFilter<"EmailChunk"> | number
-  createdAt?: Prisma.DateTimeFilter<"EmailChunk"> | Date | string
-  emailLogId?: Prisma.StringFilter<"EmailChunk"> | string
-  tenantId?: Prisma.StringFilter<"EmailChunk"> | string
-  projectId?: Prisma.StringNullableFilter<"EmailChunk"> | string | null
-  userId?: Prisma.StringFilter<"EmailChunk"> | string
-}
-
-export type EmailChunkCreateWithoutUserInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLog: Prisma.EmailLogCreateNestedOneWithoutChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunksInput
-  project?: Prisma.ProjectCreateNestedOneWithoutEmailChunksInput
-}
-
-export type EmailChunkUncheckedCreateWithoutUserInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLogId: string
-  tenantId: string
-  projectId?: string | null
-}
-
-export type EmailChunkCreateOrConnectWithoutUserInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutUserInput, Prisma.EmailChunkUncheckedCreateWithoutUserInput>
-}
-
-export type EmailChunkCreateManyUserInputEnvelope = {
-  data: Prisma.EmailChunkCreateManyUserInput | Prisma.EmailChunkCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type EmailChunkUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.EmailChunkUpdateWithoutUserInput, Prisma.EmailChunkUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutUserInput, Prisma.EmailChunkUncheckedCreateWithoutUserInput>
-}
-
-export type EmailChunkUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.EmailChunkUpdateWithoutUserInput, Prisma.EmailChunkUncheckedUpdateWithoutUserInput>
-}
-
-export type EmailChunkUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.EmailChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutUserInput>
-}
-
-export type EmailChunkCreateWithoutProjectInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLog: Prisma.EmailLogCreateNestedOneWithoutChunksInput
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunksInput
-  user: Prisma.UserCreateNestedOneWithoutEmailChunksInput
-}
-
-export type EmailChunkUncheckedCreateWithoutProjectInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLogId: string
-  tenantId: string
-  userId: string
-}
-
-export type EmailChunkCreateOrConnectWithoutProjectInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput>
-}
-
-export type EmailChunkCreateManyProjectInputEnvelope = {
-  data: Prisma.EmailChunkCreateManyProjectInput | Prisma.EmailChunkCreateManyProjectInput[]
-  skipDuplicates?: boolean
-}
-
-export type EmailChunkUpsertWithWhereUniqueWithoutProjectInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  update: Prisma.XOR<Prisma.EmailChunkUpdateWithoutProjectInput, Prisma.EmailChunkUncheckedUpdateWithoutProjectInput>
-  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput>
-}
-
-export type EmailChunkUpdateWithWhereUniqueWithoutProjectInput = {
-  where: Prisma.EmailChunkWhereUniqueInput
-  data: Prisma.XOR<Prisma.EmailChunkUpdateWithoutProjectInput, Prisma.EmailChunkUncheckedUpdateWithoutProjectInput>
-}
-
-export type EmailChunkUpdateManyWithWhereWithoutProjectInput = {
-  where: Prisma.EmailChunkScalarWhereInput
-  data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutProjectInput>
-}
-
 export type EmailChunkCreateWithoutEmailLogInput = {
   id?: string
   content: string
   chunkIndex: number
   createdAt?: Date | string
-  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunksInput
   project?: Prisma.ProjectCreateNestedOneWithoutEmailChunksInput
-  user: Prisma.UserCreateNestedOneWithoutEmailChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunkInput
+  user: Prisma.UserCreateNestedOneWithoutEmailChunkInput
 }
 
 export type EmailChunkUncheckedCreateWithoutEmailLogInput = {
@@ -799,6 +647,238 @@ export type EmailChunkUpdateManyWithWhereWithoutEmailLogInput = {
   data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutEmailLogInput>
 }
 
+export type EmailChunkScalarWhereInput = {
+  AND?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
+  OR?: Prisma.EmailChunkScalarWhereInput[]
+  NOT?: Prisma.EmailChunkScalarWhereInput | Prisma.EmailChunkScalarWhereInput[]
+  id?: Prisma.StringFilter<"EmailChunk"> | string
+  content?: Prisma.StringFilter<"EmailChunk"> | string
+  chunkIndex?: Prisma.IntFilter<"EmailChunk"> | number
+  createdAt?: Prisma.DateTimeFilter<"EmailChunk"> | Date | string
+  emailLogId?: Prisma.StringFilter<"EmailChunk"> | string
+  tenantId?: Prisma.StringFilter<"EmailChunk"> | string
+  projectId?: Prisma.StringNullableFilter<"EmailChunk"> | string | null
+  userId?: Prisma.StringFilter<"EmailChunk"> | string
+}
+
+export type EmailChunkCreateWithoutProjectInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLog: Prisma.EmailLogCreateNestedOneWithoutEmailChunkInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunkInput
+  user: Prisma.UserCreateNestedOneWithoutEmailChunkInput
+}
+
+export type EmailChunkUncheckedCreateWithoutProjectInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLogId: string
+  tenantId: string
+  userId: string
+}
+
+export type EmailChunkCreateOrConnectWithoutProjectInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput>
+}
+
+export type EmailChunkCreateManyProjectInputEnvelope = {
+  data: Prisma.EmailChunkCreateManyProjectInput | Prisma.EmailChunkCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type EmailChunkUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmailChunkUpdateWithoutProjectInput, Prisma.EmailChunkUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutProjectInput, Prisma.EmailChunkUncheckedCreateWithoutProjectInput>
+}
+
+export type EmailChunkUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmailChunkUpdateWithoutProjectInput, Prisma.EmailChunkUncheckedUpdateWithoutProjectInput>
+}
+
+export type EmailChunkUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.EmailChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutProjectInput>
+}
+
+export type EmailChunkCreateWithoutTenantInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLog: Prisma.EmailLogCreateNestedOneWithoutEmailChunkInput
+  project?: Prisma.ProjectCreateNestedOneWithoutEmailChunksInput
+  user: Prisma.UserCreateNestedOneWithoutEmailChunkInput
+}
+
+export type EmailChunkUncheckedCreateWithoutTenantInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLogId: string
+  projectId?: string | null
+  userId: string
+}
+
+export type EmailChunkCreateOrConnectWithoutTenantInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutTenantInput, Prisma.EmailChunkUncheckedCreateWithoutTenantInput>
+}
+
+export type EmailChunkCreateManyTenantInputEnvelope = {
+  data: Prisma.EmailChunkCreateManyTenantInput | Prisma.EmailChunkCreateManyTenantInput[]
+  skipDuplicates?: boolean
+}
+
+export type EmailChunkUpsertWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmailChunkUpdateWithoutTenantInput, Prisma.EmailChunkUncheckedUpdateWithoutTenantInput>
+  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutTenantInput, Prisma.EmailChunkUncheckedCreateWithoutTenantInput>
+}
+
+export type EmailChunkUpdateWithWhereUniqueWithoutTenantInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmailChunkUpdateWithoutTenantInput, Prisma.EmailChunkUncheckedUpdateWithoutTenantInput>
+}
+
+export type EmailChunkUpdateManyWithWhereWithoutTenantInput = {
+  where: Prisma.EmailChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutTenantInput>
+}
+
+export type EmailChunkCreateWithoutUserInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLog: Prisma.EmailLogCreateNestedOneWithoutEmailChunkInput
+  project?: Prisma.ProjectCreateNestedOneWithoutEmailChunksInput
+  tenant: Prisma.TenantCreateNestedOneWithoutEmailChunkInput
+}
+
+export type EmailChunkUncheckedCreateWithoutUserInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLogId: string
+  tenantId: string
+  projectId?: string | null
+}
+
+export type EmailChunkCreateOrConnectWithoutUserInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutUserInput, Prisma.EmailChunkUncheckedCreateWithoutUserInput>
+}
+
+export type EmailChunkCreateManyUserInputEnvelope = {
+  data: Prisma.EmailChunkCreateManyUserInput | Prisma.EmailChunkCreateManyUserInput[]
+  skipDuplicates?: boolean
+}
+
+export type EmailChunkUpsertWithWhereUniqueWithoutUserInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  update: Prisma.XOR<Prisma.EmailChunkUpdateWithoutUserInput, Prisma.EmailChunkUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.EmailChunkCreateWithoutUserInput, Prisma.EmailChunkUncheckedCreateWithoutUserInput>
+}
+
+export type EmailChunkUpdateWithWhereUniqueWithoutUserInput = {
+  where: Prisma.EmailChunkWhereUniqueInput
+  data: Prisma.XOR<Prisma.EmailChunkUpdateWithoutUserInput, Prisma.EmailChunkUncheckedUpdateWithoutUserInput>
+}
+
+export type EmailChunkUpdateManyWithWhereWithoutUserInput = {
+  where: Prisma.EmailChunkScalarWhereInput
+  data: Prisma.XOR<Prisma.EmailChunkUpdateManyMutationInput, Prisma.EmailChunkUncheckedUpdateManyWithoutUserInput>
+}
+
+export type EmailChunkCreateManyEmailLogInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  tenantId: string
+  projectId?: string | null
+  userId: string
+}
+
+export type EmailChunkUpdateWithoutEmailLogInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneWithoutEmailChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunkNestedInput
+}
+
+export type EmailChunkUncheckedUpdateWithoutEmailLogInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type EmailChunkUncheckedUpdateManyWithoutEmailLogInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type EmailChunkCreateManyProjectInput = {
+  id?: string
+  content: string
+  chunkIndex: number
+  createdAt?: Date | string
+  emailLogId: string
+  tenantId: string
+  userId: string
+}
+
+export type EmailChunkUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutEmailChunkNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunkNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunkNestedInput
+}
+
+export type EmailChunkUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailLogId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
+export type EmailChunkUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  content?: Prisma.StringFieldUpdateOperationsInput | string
+  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailLogId?: Prisma.StringFieldUpdateOperationsInput | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+}
+
 export type EmailChunkCreateManyTenantInput = {
   id?: string
   content: string
@@ -814,9 +894,9 @@ export type EmailChunkUpdateWithoutTenantInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutChunksNestedInput
+  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutEmailChunkNestedInput
   project?: Prisma.ProjectUpdateOneWithoutEmailChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunksNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunkNestedInput
 }
 
 export type EmailChunkUncheckedUpdateWithoutTenantInput = {
@@ -854,9 +934,9 @@ export type EmailChunkUpdateWithoutUserInput = {
   content?: Prisma.StringFieldUpdateOperationsInput | string
   chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunksNestedInput
+  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutEmailChunkNestedInput
   project?: Prisma.ProjectUpdateOneWithoutEmailChunksNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunkNestedInput
 }
 
 export type EmailChunkUncheckedUpdateWithoutUserInput = {
@@ -879,86 +959,6 @@ export type EmailChunkUncheckedUpdateManyWithoutUserInput = {
   projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type EmailChunkCreateManyProjectInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  emailLogId: string
-  tenantId: string
-  userId: string
-}
-
-export type EmailChunkUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  emailLog?: Prisma.EmailLogUpdateOneRequiredWithoutChunksNestedInput
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunksNestedInput
-}
-
-export type EmailChunkUncheckedUpdateWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  emailLogId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-}
-
-export type EmailChunkUncheckedUpdateManyWithoutProjectInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  emailLogId?: Prisma.StringFieldUpdateOperationsInput | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-}
-
-export type EmailChunkCreateManyEmailLogInput = {
-  id?: string
-  content: string
-  chunkIndex: number
-  createdAt?: Date | string
-  tenantId: string
-  projectId?: string | null
-  userId: string
-}
-
-export type EmailChunkUpdateWithoutEmailLogInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenant?: Prisma.TenantUpdateOneRequiredWithoutEmailChunksNestedInput
-  project?: Prisma.ProjectUpdateOneWithoutEmailChunksNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutEmailChunksNestedInput
-}
-
-export type EmailChunkUncheckedUpdateWithoutEmailLogInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-}
-
-export type EmailChunkUncheckedUpdateManyWithoutEmailLogInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  content?: Prisma.StringFieldUpdateOperationsInput | string
-  chunkIndex?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-}
-
 
 
 export type EmailChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -971,8 +971,8 @@ export type EmailChunkSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   projectId?: boolean
   userId?: boolean
   emailLog?: boolean | Prisma.EmailLogDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.EmailChunk$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailChunk"]>
 
@@ -986,8 +986,8 @@ export type EmailChunkSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   projectId?: boolean
   userId?: boolean
   emailLog?: boolean | Prisma.EmailLogDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.EmailChunk$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailChunk"]>
 
@@ -1001,8 +1001,8 @@ export type EmailChunkSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   projectId?: boolean
   userId?: boolean
   emailLog?: boolean | Prisma.EmailLogDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.EmailChunk$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["emailChunk"]>
 
@@ -1020,20 +1020,20 @@ export type EmailChunkSelectScalar = {
 export type EmailChunkOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "chunkIndex" | "createdAt" | "emailLogId" | "tenantId" | "projectId" | "userId", ExtArgs["result"]["emailChunk"]>
 export type EmailChunkInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emailLog?: boolean | Prisma.EmailLogDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.EmailChunk$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type EmailChunkIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emailLog?: boolean | Prisma.EmailLogDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.EmailChunk$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type EmailChunkIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   emailLog?: boolean | Prisma.EmailLogDefaultArgs<ExtArgs>
-  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   project?: boolean | Prisma.EmailChunk$projectArgs<ExtArgs>
+  tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
@@ -1041,8 +1041,8 @@ export type $EmailChunkPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "EmailChunk"
   objects: {
     emailLog: Prisma.$EmailLogPayload<ExtArgs>
-    tenant: Prisma.$TenantPayload<ExtArgs>
     project: Prisma.$ProjectPayload<ExtArgs> | null
+    tenant: Prisma.$TenantPayload<ExtArgs>
     user: Prisma.$UserPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -1449,8 +1449,8 @@ readonly fields: EmailChunkFieldRefs;
 export interface Prisma__EmailChunkClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   emailLog<T extends Prisma.EmailLogDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailLogDefaultArgs<ExtArgs>>): Prisma.Prisma__EmailLogClient<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   project<T extends Prisma.EmailChunk$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.EmailChunk$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.

@@ -27,34 +27,34 @@ export type AggregateTenant = {
 export type TenantMinAggregateOutputType = {
   id: string | null
   name: string | null
-  inboxCode: string | null
   orgNumber: string | null
-  address: string | null
   stripeCustomerId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  address: string | null
+  inboxCode: string | null
 }
 
 export type TenantMaxAggregateOutputType = {
   id: string | null
   name: string | null
-  inboxCode: string | null
   orgNumber: string | null
-  address: string | null
   stripeCustomerId: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  address: string | null
+  inboxCode: string | null
 }
 
 export type TenantCountAggregateOutputType = {
   id: number
   name: number
-  inboxCode: number
   orgNumber: number
-  address: number
   stripeCustomerId: number
   createdAt: number
   updatedAt: number
+  address: number
+  inboxCode: number
   _all: number
 }
 
@@ -62,34 +62,34 @@ export type TenantCountAggregateOutputType = {
 export type TenantMinAggregateInputType = {
   id?: true
   name?: true
-  inboxCode?: true
   orgNumber?: true
-  address?: true
   stripeCustomerId?: true
   createdAt?: true
   updatedAt?: true
+  address?: true
+  inboxCode?: true
 }
 
 export type TenantMaxAggregateInputType = {
   id?: true
   name?: true
-  inboxCode?: true
   orgNumber?: true
-  address?: true
   stripeCustomerId?: true
   createdAt?: true
   updatedAt?: true
+  address?: true
+  inboxCode?: true
 }
 
 export type TenantCountAggregateInputType = {
   id?: true
   name?: true
-  inboxCode?: true
   orgNumber?: true
-  address?: true
   stripeCustomerId?: true
   createdAt?: true
   updatedAt?: true
+  address?: true
+  inboxCode?: true
   _all?: true
 }
 
@@ -168,12 +168,12 @@ export type TenantGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 export type TenantGroupByOutputType = {
   id: string
   name: string
-  inboxCode: string | null
   orgNumber: string | null
-  address: string | null
   stripeCustomerId: string | null
   createdAt: Date
   updatedAt: Date
+  address: string | null
+  inboxCode: string | null
   _count: TenantCountAggregateOutputType | null
   _min: TenantMinAggregateOutputType | null
   _max: TenantMaxAggregateOutputType | null
@@ -200,96 +200,96 @@ export type TenantWhereInput = {
   NOT?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   id?: Prisma.StringFilter<"Tenant"> | string
   name?: Prisma.StringFilter<"Tenant"> | string
-  inboxCode?: Prisma.StringNullableFilter<"Tenant"> | string | null
   orgNumber?: Prisma.StringNullableFilter<"Tenant"> | string | null
-  address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"Tenant"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
-  memberships?: Prisma.MembershipListRelationFilter
-  projects?: Prisma.ProjectListRelationFilter
-  invitations?: Prisma.InvitationListRelationFilter
-  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
-  notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
-  pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
-  emailTemplates?: Prisma.EmailTemplateListRelationFilter
-  documentChunks?: Prisma.DocumentChunkListRelationFilter
-  noteCategories?: Prisma.NoteCategoryListRelationFilter
-  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
-  timeEntries?: Prisma.TimeEntryListRelationFilter
-  emailLogs?: Prisma.EmailLogListRelationFilter
-  emailChunks?: Prisma.EmailChunkListRelationFilter
-  emailConversations?: Prisma.EmailConversationListRelationFilter
-  messageChunks?: Prisma.MessageChunkListRelationFilter
-  documentTemplates?: Prisma.DocumentTemplateListRelationFilter
+  address?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  inboxCode?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  DocumentChunk?: Prisma.DocumentChunkListRelationFilter
+  DocumentTemplate?: Prisma.DocumentTemplateListRelationFilter
+  EmailChunk?: Prisma.EmailChunkListRelationFilter
+  EmailConversation?: Prisma.EmailConversationListRelationFilter
+  EmailLog?: Prisma.EmailLogListRelationFilter
+  EmailTemplate?: Prisma.EmailTemplateListRelationFilter
+  FileAnalysis?: Prisma.FileAnalysisListRelationFilter
+  Invitation?: Prisma.InvitationListRelationFilter
+  Membership?: Prisma.MembershipListRelationFilter
+  MessageChunk?: Prisma.MessageChunkListRelationFilter
+  NoteCategory?: Prisma.NoteCategoryListRelationFilter
+  NotificationPreference?: Prisma.NotificationPreferenceListRelationFilter
+  Project?: Prisma.ProjectListRelationFilter
+  PushSubscription?: Prisma.PushSubscriptionListRelationFilter
+  Subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
+  TimeEntry?: Prisma.TimeEntryListRelationFilter
 }
 
 export type TenantOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  inboxCode?: Prisma.SortOrderInput | Prisma.SortOrder
   orgNumber?: Prisma.SortOrderInput | Prisma.SortOrder
-  address?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  memberships?: Prisma.MembershipOrderByRelationAggregateInput
-  projects?: Prisma.ProjectOrderByRelationAggregateInput
-  invitations?: Prisma.InvitationOrderByRelationAggregateInput
-  subscription?: Prisma.SubscriptionOrderByWithRelationInput
-  notificationPreferences?: Prisma.NotificationPreferenceOrderByRelationAggregateInput
-  pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
-  emailTemplates?: Prisma.EmailTemplateOrderByRelationAggregateInput
-  documentChunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
-  noteCategories?: Prisma.NoteCategoryOrderByRelationAggregateInput
-  fileAnalyses?: Prisma.FileAnalysisOrderByRelationAggregateInput
-  timeEntries?: Prisma.TimeEntryOrderByRelationAggregateInput
-  emailLogs?: Prisma.EmailLogOrderByRelationAggregateInput
-  emailChunks?: Prisma.EmailChunkOrderByRelationAggregateInput
-  emailConversations?: Prisma.EmailConversationOrderByRelationAggregateInput
-  messageChunks?: Prisma.MessageChunkOrderByRelationAggregateInput
-  documentTemplates?: Prisma.DocumentTemplateOrderByRelationAggregateInput
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  inboxCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  DocumentChunk?: Prisma.DocumentChunkOrderByRelationAggregateInput
+  DocumentTemplate?: Prisma.DocumentTemplateOrderByRelationAggregateInput
+  EmailChunk?: Prisma.EmailChunkOrderByRelationAggregateInput
+  EmailConversation?: Prisma.EmailConversationOrderByRelationAggregateInput
+  EmailLog?: Prisma.EmailLogOrderByRelationAggregateInput
+  EmailTemplate?: Prisma.EmailTemplateOrderByRelationAggregateInput
+  FileAnalysis?: Prisma.FileAnalysisOrderByRelationAggregateInput
+  Invitation?: Prisma.InvitationOrderByRelationAggregateInput
+  Membership?: Prisma.MembershipOrderByRelationAggregateInput
+  MessageChunk?: Prisma.MessageChunkOrderByRelationAggregateInput
+  NoteCategory?: Prisma.NoteCategoryOrderByRelationAggregateInput
+  NotificationPreference?: Prisma.NotificationPreferenceOrderByRelationAggregateInput
+  Project?: Prisma.ProjectOrderByRelationAggregateInput
+  PushSubscription?: Prisma.PushSubscriptionOrderByRelationAggregateInput
+  Subscription?: Prisma.SubscriptionOrderByWithRelationInput
+  TimeEntry?: Prisma.TimeEntryOrderByRelationAggregateInput
 }
 
 export type TenantWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  inboxCode?: string
   stripeCustomerId?: string
+  inboxCode?: string
   AND?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   OR?: Prisma.TenantWhereInput[]
   NOT?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   name?: Prisma.StringFilter<"Tenant"> | string
   orgNumber?: Prisma.StringNullableFilter<"Tenant"> | string | null
-  address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
-  memberships?: Prisma.MembershipListRelationFilter
-  projects?: Prisma.ProjectListRelationFilter
-  invitations?: Prisma.InvitationListRelationFilter
-  subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
-  notificationPreferences?: Prisma.NotificationPreferenceListRelationFilter
-  pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
-  emailTemplates?: Prisma.EmailTemplateListRelationFilter
-  documentChunks?: Prisma.DocumentChunkListRelationFilter
-  noteCategories?: Prisma.NoteCategoryListRelationFilter
-  fileAnalyses?: Prisma.FileAnalysisListRelationFilter
-  timeEntries?: Prisma.TimeEntryListRelationFilter
-  emailLogs?: Prisma.EmailLogListRelationFilter
-  emailChunks?: Prisma.EmailChunkListRelationFilter
-  emailConversations?: Prisma.EmailConversationListRelationFilter
-  messageChunks?: Prisma.MessageChunkListRelationFilter
-  documentTemplates?: Prisma.DocumentTemplateListRelationFilter
-}, "id" | "inboxCode" | "stripeCustomerId">
+  address?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  DocumentChunk?: Prisma.DocumentChunkListRelationFilter
+  DocumentTemplate?: Prisma.DocumentTemplateListRelationFilter
+  EmailChunk?: Prisma.EmailChunkListRelationFilter
+  EmailConversation?: Prisma.EmailConversationListRelationFilter
+  EmailLog?: Prisma.EmailLogListRelationFilter
+  EmailTemplate?: Prisma.EmailTemplateListRelationFilter
+  FileAnalysis?: Prisma.FileAnalysisListRelationFilter
+  Invitation?: Prisma.InvitationListRelationFilter
+  Membership?: Prisma.MembershipListRelationFilter
+  MessageChunk?: Prisma.MessageChunkListRelationFilter
+  NoteCategory?: Prisma.NoteCategoryListRelationFilter
+  NotificationPreference?: Prisma.NotificationPreferenceListRelationFilter
+  Project?: Prisma.ProjectListRelationFilter
+  PushSubscription?: Prisma.PushSubscriptionListRelationFilter
+  Subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
+  TimeEntry?: Prisma.TimeEntryListRelationFilter
+}, "id" | "stripeCustomerId" | "inboxCode">
 
 export type TenantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
-  inboxCode?: Prisma.SortOrderInput | Prisma.SortOrder
   orgNumber?: Prisma.SortOrderInput | Prisma.SortOrder
-  address?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  address?: Prisma.SortOrderInput | Prisma.SortOrder
+  inboxCode?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.TenantCountOrderByAggregateInput
   _max?: Prisma.TenantMaxOrderByAggregateInput
   _min?: Prisma.TenantMinOrderByAggregateInput
@@ -301,186 +301,153 @@ export type TenantScalarWhereWithAggregatesInput = {
   NOT?: Prisma.TenantScalarWhereWithAggregatesInput | Prisma.TenantScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
   name?: Prisma.StringWithAggregatesFilter<"Tenant"> | string
-  inboxCode?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   orgNumber?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
-  address?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
+  address?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  inboxCode?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
 }
 
 export type TenantCreateInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateManyInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
 }
 
 export type TenantUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TenantUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type TenantCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  inboxCode?: Prisma.SortOrder
-  orgNumber?: Prisma.SortOrder
-  address?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-}
-
-export type TenantMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  inboxCode?: Prisma.SortOrder
-  orgNumber?: Prisma.SortOrder
-  address?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
-}
-
-export type TenantMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder
-  name?: Prisma.SortOrder
-  inboxCode?: Prisma.SortOrder
-  orgNumber?: Prisma.SortOrder
-  address?: Prisma.SortOrder
-  stripeCustomerId?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
-  updatedAt?: Prisma.SortOrder
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TenantScalarRelationFilter = {
@@ -488,184 +455,233 @@ export type TenantScalarRelationFilter = {
   isNot?: Prisma.TenantWhereInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type TenantCountOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  orgNumber?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  inboxCode?: Prisma.SortOrder
 }
 
-export type NullableStringFieldUpdateOperationsInput = {
-  set?: string | null
+export type TenantMaxOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  orgNumber?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  inboxCode?: Prisma.SortOrder
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
+export type TenantMinOrderByAggregateInput = {
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  orgNumber?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
+  address?: Prisma.SortOrder
+  inboxCode?: Prisma.SortOrder
 }
 
-export type TenantCreateNestedOneWithoutMembershipsInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutMembershipsInput, Prisma.TenantUncheckedCreateWithoutMembershipsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMembershipsInput
+export type TenantCreateNestedOneWithoutDocumentChunkInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunkInput, Prisma.TenantUncheckedCreateWithoutDocumentChunkInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentChunkInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutMembershipsNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutMembershipsInput, Prisma.TenantUncheckedCreateWithoutMembershipsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMembershipsInput
-  upsert?: Prisma.TenantUpsertWithoutMembershipsInput
+export type TenantUpdateOneRequiredWithoutDocumentChunkNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunkInput, Prisma.TenantUncheckedCreateWithoutDocumentChunkInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentChunkInput
+  upsert?: Prisma.TenantUpsertWithoutDocumentChunkInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutMembershipsInput, Prisma.TenantUpdateWithoutMembershipsInput>, Prisma.TenantUncheckedUpdateWithoutMembershipsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutDocumentChunkInput, Prisma.TenantUpdateWithoutDocumentChunkInput>, Prisma.TenantUncheckedUpdateWithoutDocumentChunkInput>
 }
 
-export type TenantCreateNestedOneWithoutInvitationsInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutInvitationsInput, Prisma.TenantUncheckedCreateWithoutInvitationsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutInvitationsInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutInvitationsNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutInvitationsInput, Prisma.TenantUncheckedCreateWithoutInvitationsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutInvitationsInput
-  upsert?: Prisma.TenantUpsertWithoutInvitationsInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutInvitationsInput, Prisma.TenantUpdateWithoutInvitationsInput>, Prisma.TenantUncheckedUpdateWithoutInvitationsInput>
-}
-
-export type TenantCreateNestedOneWithoutProjectsInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutProjectsInput, Prisma.TenantUncheckedCreateWithoutProjectsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutProjectsInput
+export type TenantCreateNestedOneWithoutDocumentTemplateInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplateInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplateInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentTemplateInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutProjectsNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutProjectsInput, Prisma.TenantUncheckedCreateWithoutProjectsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutProjectsInput
-  upsert?: Prisma.TenantUpsertWithoutProjectsInput
+export type TenantUpdateOneRequiredWithoutDocumentTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplateInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplateInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentTemplateInput
+  upsert?: Prisma.TenantUpsertWithoutDocumentTemplateInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutProjectsInput, Prisma.TenantUpdateWithoutProjectsInput>, Prisma.TenantUncheckedUpdateWithoutProjectsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutDocumentTemplateInput, Prisma.TenantUpdateWithoutDocumentTemplateInput>, Prisma.TenantUncheckedUpdateWithoutDocumentTemplateInput>
 }
 
-export type TenantCreateNestedOneWithoutDocumentTemplatesInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplatesInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplatesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentTemplatesInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutDocumentTemplatesNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplatesInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplatesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentTemplatesInput
-  upsert?: Prisma.TenantUpsertWithoutDocumentTemplatesInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutDocumentTemplatesInput, Prisma.TenantUpdateWithoutDocumentTemplatesInput>, Prisma.TenantUncheckedUpdateWithoutDocumentTemplatesInput>
-}
-
-export type TenantCreateNestedOneWithoutFileAnalysesInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFileAnalysesInput
+export type TenantCreateNestedOneWithoutEmailChunkInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunkInput, Prisma.TenantUncheckedCreateWithoutEmailChunkInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailChunkInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutFileAnalysesNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFileAnalysesInput
-  upsert?: Prisma.TenantUpsertWithoutFileAnalysesInput
+export type TenantUpdateOneRequiredWithoutEmailChunkNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunkInput, Prisma.TenantUncheckedCreateWithoutEmailChunkInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailChunkInput
+  upsert?: Prisma.TenantUpsertWithoutEmailChunkInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutFileAnalysesInput, Prisma.TenantUpdateWithoutFileAnalysesInput>, Prisma.TenantUncheckedUpdateWithoutFileAnalysesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailChunkInput, Prisma.TenantUpdateWithoutEmailChunkInput>, Prisma.TenantUncheckedUpdateWithoutEmailChunkInput>
 }
 
-export type TenantCreateNestedOneWithoutDocumentChunksInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunksInput, Prisma.TenantUncheckedCreateWithoutDocumentChunksInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentChunksInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutDocumentChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunksInput, Prisma.TenantUncheckedCreateWithoutDocumentChunksInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutDocumentChunksInput
-  upsert?: Prisma.TenantUpsertWithoutDocumentChunksInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutDocumentChunksInput, Prisma.TenantUpdateWithoutDocumentChunksInput>, Prisma.TenantUncheckedUpdateWithoutDocumentChunksInput>
-}
-
-export type TenantCreateNestedOneWithoutMessageChunksInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunksInput, Prisma.TenantUncheckedCreateWithoutMessageChunksInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMessageChunksInput
+export type TenantCreateNestedOneWithoutEmailConversationInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationInput, Prisma.TenantUncheckedCreateWithoutEmailConversationInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailConversationInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutMessageChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunksInput, Prisma.TenantUncheckedCreateWithoutMessageChunksInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMessageChunksInput
-  upsert?: Prisma.TenantUpsertWithoutMessageChunksInput
+export type TenantUpdateOneRequiredWithoutEmailConversationNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationInput, Prisma.TenantUncheckedCreateWithoutEmailConversationInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailConversationInput
+  upsert?: Prisma.TenantUpsertWithoutEmailConversationInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutMessageChunksInput, Prisma.TenantUpdateWithoutMessageChunksInput>, Prisma.TenantUncheckedUpdateWithoutMessageChunksInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailConversationInput, Prisma.TenantUpdateWithoutEmailConversationInput>, Prisma.TenantUncheckedUpdateWithoutEmailConversationInput>
 }
 
-export type TenantCreateNestedOneWithoutNotificationPreferencesInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferencesInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferencesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNotificationPreferencesInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutNotificationPreferencesNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferencesInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferencesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNotificationPreferencesInput
-  upsert?: Prisma.TenantUpsertWithoutNotificationPreferencesInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutNotificationPreferencesInput, Prisma.TenantUpdateWithoutNotificationPreferencesInput>, Prisma.TenantUncheckedUpdateWithoutNotificationPreferencesInput>
-}
-
-export type TenantCreateNestedOneWithoutEmailTemplatesInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailTemplatesInput
+export type TenantCreateNestedOneWithoutEmailLogInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogInput, Prisma.TenantUncheckedCreateWithoutEmailLogInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailLogInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutEmailTemplatesNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailTemplatesInput
-  upsert?: Prisma.TenantUpsertWithoutEmailTemplatesInput
+export type TenantUpdateOneRequiredWithoutEmailLogNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogInput, Prisma.TenantUncheckedCreateWithoutEmailLogInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailLogInput
+  upsert?: Prisma.TenantUpsertWithoutEmailLogInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailTemplatesInput, Prisma.TenantUpdateWithoutEmailTemplatesInput>, Prisma.TenantUncheckedUpdateWithoutEmailTemplatesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailLogInput, Prisma.TenantUpdateWithoutEmailLogInput>, Prisma.TenantUncheckedUpdateWithoutEmailLogInput>
 }
 
-export type TenantCreateNestedOneWithoutPushSubscriptionsInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutPushSubscriptionsInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutPushSubscriptionsNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutPushSubscriptionsInput
-  upsert?: Prisma.TenantUpsertWithoutPushSubscriptionsInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutPushSubscriptionsInput, Prisma.TenantUpdateWithoutPushSubscriptionsInput>, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionsInput>
-}
-
-export type TenantCreateNestedOneWithoutTimeEntriesInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTimeEntriesInput
+export type TenantCreateNestedOneWithoutEmailTemplateInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplateInput, Prisma.TenantUncheckedCreateWithoutEmailTemplateInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailTemplateInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutTimeEntriesNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTimeEntriesInput
-  upsert?: Prisma.TenantUpsertWithoutTimeEntriesInput
+export type TenantUpdateOneRequiredWithoutEmailTemplateNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplateInput, Prisma.TenantUncheckedCreateWithoutEmailTemplateInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailTemplateInput
+  upsert?: Prisma.TenantUpsertWithoutEmailTemplateInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutTimeEntriesInput, Prisma.TenantUpdateWithoutTimeEntriesInput>, Prisma.TenantUncheckedUpdateWithoutTimeEntriesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailTemplateInput, Prisma.TenantUpdateWithoutEmailTemplateInput>, Prisma.TenantUncheckedUpdateWithoutEmailTemplateInput>
 }
 
-export type TenantCreateNestedOneWithoutNoteCategoriesInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoriesInput, Prisma.TenantUncheckedCreateWithoutNoteCategoriesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNoteCategoriesInput
+export type TenantCreateNestedOneWithoutFileAnalysisInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysisInput, Prisma.TenantUncheckedCreateWithoutFileAnalysisInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFileAnalysisInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutNoteCategoriesNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoriesInput, Prisma.TenantUncheckedCreateWithoutNoteCategoriesInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNoteCategoriesInput
-  upsert?: Prisma.TenantUpsertWithoutNoteCategoriesInput
+export type TenantUpdateOneRequiredWithoutFileAnalysisNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysisInput, Prisma.TenantUncheckedCreateWithoutFileAnalysisInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutFileAnalysisInput
+  upsert?: Prisma.TenantUpsertWithoutFileAnalysisInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutNoteCategoriesInput, Prisma.TenantUpdateWithoutNoteCategoriesInput>, Prisma.TenantUncheckedUpdateWithoutNoteCategoriesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutFileAnalysisInput, Prisma.TenantUpdateWithoutFileAnalysisInput>, Prisma.TenantUncheckedUpdateWithoutFileAnalysisInput>
+}
+
+export type TenantCreateNestedOneWithoutInvitationInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutInvitationInput, Prisma.TenantUncheckedCreateWithoutInvitationInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutInvitationInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutInvitationNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutInvitationInput, Prisma.TenantUncheckedCreateWithoutInvitationInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutInvitationInput
+  upsert?: Prisma.TenantUpsertWithoutInvitationInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutInvitationInput, Prisma.TenantUpdateWithoutInvitationInput>, Prisma.TenantUncheckedUpdateWithoutInvitationInput>
+}
+
+export type TenantCreateNestedOneWithoutMembershipInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutMembershipInput, Prisma.TenantUncheckedCreateWithoutMembershipInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMembershipInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutMembershipNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutMembershipInput, Prisma.TenantUncheckedCreateWithoutMembershipInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMembershipInput
+  upsert?: Prisma.TenantUpsertWithoutMembershipInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutMembershipInput, Prisma.TenantUpdateWithoutMembershipInput>, Prisma.TenantUncheckedUpdateWithoutMembershipInput>
+}
+
+export type TenantCreateNestedOneWithoutMessageChunkInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunkInput, Prisma.TenantUncheckedCreateWithoutMessageChunkInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMessageChunkInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutMessageChunkNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunkInput, Prisma.TenantUncheckedCreateWithoutMessageChunkInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutMessageChunkInput
+  upsert?: Prisma.TenantUpsertWithoutMessageChunkInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutMessageChunkInput, Prisma.TenantUpdateWithoutMessageChunkInput>, Prisma.TenantUncheckedUpdateWithoutMessageChunkInput>
+}
+
+export type TenantCreateNestedOneWithoutNoteCategoryInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoryInput, Prisma.TenantUncheckedCreateWithoutNoteCategoryInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNoteCategoryInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutNoteCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoryInput, Prisma.TenantUncheckedCreateWithoutNoteCategoryInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNoteCategoryInput
+  upsert?: Prisma.TenantUpsertWithoutNoteCategoryInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutNoteCategoryInput, Prisma.TenantUpdateWithoutNoteCategoryInput>, Prisma.TenantUncheckedUpdateWithoutNoteCategoryInput>
+}
+
+export type TenantCreateNestedOneWithoutNotificationPreferenceInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferenceInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferenceInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNotificationPreferenceInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutNotificationPreferenceNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferenceInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferenceInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutNotificationPreferenceInput
+  upsert?: Prisma.TenantUpsertWithoutNotificationPreferenceInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutNotificationPreferenceInput, Prisma.TenantUpdateWithoutNotificationPreferenceInput>, Prisma.TenantUncheckedUpdateWithoutNotificationPreferenceInput>
+}
+
+export type TenantCreateNestedOneWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutProjectInput, Prisma.TenantUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutProjectInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutProjectInput, Prisma.TenantUncheckedCreateWithoutProjectInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutProjectInput
+  upsert?: Prisma.TenantUpsertWithoutProjectInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutProjectInput, Prisma.TenantUpdateWithoutProjectInput>, Prisma.TenantUncheckedUpdateWithoutProjectInput>
+}
+
+export type TenantCreateNestedOneWithoutPushSubscriptionInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutPushSubscriptionInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutPushSubscriptionNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutPushSubscriptionInput
+  upsert?: Prisma.TenantUpsertWithoutPushSubscriptionInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutPushSubscriptionInput, Prisma.TenantUpdateWithoutPushSubscriptionInput>, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionInput>
 }
 
 export type TenantCreateNestedOneWithoutSubscriptionInput = {
@@ -682,1538 +698,1750 @@ export type TenantUpdateOneRequiredWithoutSubscriptionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutSubscriptionInput, Prisma.TenantUpdateWithoutSubscriptionInput>, Prisma.TenantUncheckedUpdateWithoutSubscriptionInput>
 }
 
-export type TenantCreateNestedOneWithoutEmailConversationsInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationsInput, Prisma.TenantUncheckedCreateWithoutEmailConversationsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailConversationsInput
+export type TenantCreateNestedOneWithoutTimeEntryInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntryInput, Prisma.TenantUncheckedCreateWithoutTimeEntryInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTimeEntryInput
   connect?: Prisma.TenantWhereUniqueInput
 }
 
-export type TenantUpdateOneRequiredWithoutEmailConversationsNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationsInput, Prisma.TenantUncheckedCreateWithoutEmailConversationsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailConversationsInput
-  upsert?: Prisma.TenantUpsertWithoutEmailConversationsInput
+export type TenantUpdateOneRequiredWithoutTimeEntryNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntryInput, Prisma.TenantUncheckedCreateWithoutTimeEntryInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutTimeEntryInput
+  upsert?: Prisma.TenantUpsertWithoutTimeEntryInput
   connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailConversationsInput, Prisma.TenantUpdateWithoutEmailConversationsInput>, Prisma.TenantUncheckedUpdateWithoutEmailConversationsInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutTimeEntryInput, Prisma.TenantUpdateWithoutTimeEntryInput>, Prisma.TenantUncheckedUpdateWithoutTimeEntryInput>
 }
 
-export type TenantCreateNestedOneWithoutEmailLogsInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogsInput, Prisma.TenantUncheckedCreateWithoutEmailLogsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailLogsInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutEmailLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogsInput, Prisma.TenantUncheckedCreateWithoutEmailLogsInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailLogsInput
-  upsert?: Prisma.TenantUpsertWithoutEmailLogsInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailLogsInput, Prisma.TenantUpdateWithoutEmailLogsInput>, Prisma.TenantUncheckedUpdateWithoutEmailLogsInput>
-}
-
-export type TenantCreateNestedOneWithoutEmailChunksInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunksInput, Prisma.TenantUncheckedCreateWithoutEmailChunksInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailChunksInput
-  connect?: Prisma.TenantWhereUniqueInput
-}
-
-export type TenantUpdateOneRequiredWithoutEmailChunksNestedInput = {
-  create?: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunksInput, Prisma.TenantUncheckedCreateWithoutEmailChunksInput>
-  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutEmailChunksInput
-  upsert?: Prisma.TenantUpsertWithoutEmailChunksInput
-  connect?: Prisma.TenantWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutEmailChunksInput, Prisma.TenantUpdateWithoutEmailChunksInput>, Prisma.TenantUncheckedUpdateWithoutEmailChunksInput>
-}
-
-export type TenantCreateWithoutMembershipsInput = {
+export type TenantCreateWithoutDocumentChunkInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutMembershipsInput = {
+export type TenantUncheckedCreateWithoutDocumentChunkInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutMembershipsInput = {
+export type TenantCreateOrConnectWithoutDocumentChunkInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutMembershipsInput, Prisma.TenantUncheckedCreateWithoutMembershipsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunkInput, Prisma.TenantUncheckedCreateWithoutDocumentChunkInput>
 }
 
-export type TenantUpsertWithoutMembershipsInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutMembershipsInput, Prisma.TenantUncheckedUpdateWithoutMembershipsInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutMembershipsInput, Prisma.TenantUncheckedCreateWithoutMembershipsInput>
+export type TenantUpsertWithoutDocumentChunkInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentChunkInput, Prisma.TenantUncheckedUpdateWithoutDocumentChunkInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunkInput, Prisma.TenantUncheckedCreateWithoutDocumentChunkInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutMembershipsInput = {
+export type TenantUpdateToOneWithWhereWithoutDocumentChunkInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutMembershipsInput, Prisma.TenantUncheckedUpdateWithoutMembershipsInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentChunkInput, Prisma.TenantUncheckedUpdateWithoutDocumentChunkInput>
 }
 
-export type TenantUpdateWithoutMembershipsInput = {
+export type TenantUpdateWithoutDocumentChunkInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutMembershipsInput = {
+export type TenantUncheckedUpdateWithoutDocumentChunkInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutInvitationsInput = {
+export type TenantCreateWithoutDocumentTemplateInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutInvitationsInput = {
+export type TenantUncheckedCreateWithoutDocumentTemplateInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutInvitationsInput = {
+export type TenantCreateOrConnectWithoutDocumentTemplateInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutInvitationsInput, Prisma.TenantUncheckedCreateWithoutInvitationsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplateInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplateInput>
 }
 
-export type TenantUpsertWithoutInvitationsInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutInvitationsInput, Prisma.TenantUncheckedUpdateWithoutInvitationsInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutInvitationsInput, Prisma.TenantUncheckedCreateWithoutInvitationsInput>
+export type TenantUpsertWithoutDocumentTemplateInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentTemplateInput, Prisma.TenantUncheckedUpdateWithoutDocumentTemplateInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplateInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplateInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutInvitationsInput = {
+export type TenantUpdateToOneWithWhereWithoutDocumentTemplateInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutInvitationsInput, Prisma.TenantUncheckedUpdateWithoutInvitationsInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentTemplateInput, Prisma.TenantUncheckedUpdateWithoutDocumentTemplateInput>
 }
 
-export type TenantUpdateWithoutInvitationsInput = {
+export type TenantUpdateWithoutDocumentTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutInvitationsInput = {
+export type TenantUncheckedUpdateWithoutDocumentTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutProjectsInput = {
+export type TenantCreateWithoutEmailChunkInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutProjectsInput = {
+export type TenantUncheckedCreateWithoutEmailChunkInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutProjectsInput = {
+export type TenantCreateOrConnectWithoutEmailChunkInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutProjectsInput, Prisma.TenantUncheckedCreateWithoutProjectsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunkInput, Prisma.TenantUncheckedCreateWithoutEmailChunkInput>
 }
 
-export type TenantUpsertWithoutProjectsInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutProjectsInput, Prisma.TenantUncheckedUpdateWithoutProjectsInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutProjectsInput, Prisma.TenantUncheckedCreateWithoutProjectsInput>
+export type TenantUpsertWithoutEmailChunkInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailChunkInput, Prisma.TenantUncheckedUpdateWithoutEmailChunkInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunkInput, Prisma.TenantUncheckedCreateWithoutEmailChunkInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutProjectsInput = {
+export type TenantUpdateToOneWithWhereWithoutEmailChunkInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutProjectsInput, Prisma.TenantUncheckedUpdateWithoutProjectsInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailChunkInput, Prisma.TenantUncheckedUpdateWithoutEmailChunkInput>
 }
 
-export type TenantUpdateWithoutProjectsInput = {
+export type TenantUpdateWithoutEmailChunkInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutProjectsInput = {
+export type TenantUncheckedUpdateWithoutEmailChunkInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutDocumentTemplatesInput = {
+export type TenantCreateWithoutEmailConversationInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutDocumentTemplatesInput = {
+export type TenantUncheckedCreateWithoutEmailConversationInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutDocumentTemplatesInput = {
+export type TenantCreateOrConnectWithoutEmailConversationInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplatesInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplatesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationInput, Prisma.TenantUncheckedCreateWithoutEmailConversationInput>
 }
 
-export type TenantUpsertWithoutDocumentTemplatesInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentTemplatesInput, Prisma.TenantUncheckedUpdateWithoutDocumentTemplatesInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentTemplatesInput, Prisma.TenantUncheckedCreateWithoutDocumentTemplatesInput>
+export type TenantUpsertWithoutEmailConversationInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailConversationInput, Prisma.TenantUncheckedUpdateWithoutEmailConversationInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationInput, Prisma.TenantUncheckedCreateWithoutEmailConversationInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutDocumentTemplatesInput = {
+export type TenantUpdateToOneWithWhereWithoutEmailConversationInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentTemplatesInput, Prisma.TenantUncheckedUpdateWithoutDocumentTemplatesInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailConversationInput, Prisma.TenantUncheckedUpdateWithoutEmailConversationInput>
 }
 
-export type TenantUpdateWithoutDocumentTemplatesInput = {
+export type TenantUpdateWithoutEmailConversationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutDocumentTemplatesInput = {
+export type TenantUncheckedUpdateWithoutEmailConversationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutFileAnalysesInput = {
+export type TenantCreateWithoutEmailLogInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutFileAnalysesInput = {
+export type TenantUncheckedCreateWithoutEmailLogInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutFileAnalysesInput = {
+export type TenantCreateOrConnectWithoutEmailLogInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogInput, Prisma.TenantUncheckedCreateWithoutEmailLogInput>
 }
 
-export type TenantUpsertWithoutFileAnalysesInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutFileAnalysesInput, Prisma.TenantUncheckedUpdateWithoutFileAnalysesInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysesInput, Prisma.TenantUncheckedCreateWithoutFileAnalysesInput>
+export type TenantUpsertWithoutEmailLogInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailLogInput, Prisma.TenantUncheckedUpdateWithoutEmailLogInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogInput, Prisma.TenantUncheckedCreateWithoutEmailLogInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutFileAnalysesInput = {
+export type TenantUpdateToOneWithWhereWithoutEmailLogInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutFileAnalysesInput, Prisma.TenantUncheckedUpdateWithoutFileAnalysesInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailLogInput, Prisma.TenantUncheckedUpdateWithoutEmailLogInput>
 }
 
-export type TenantUpdateWithoutFileAnalysesInput = {
+export type TenantUpdateWithoutEmailLogInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutFileAnalysesInput = {
+export type TenantUncheckedUpdateWithoutEmailLogInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutDocumentChunksInput = {
+export type TenantCreateWithoutEmailTemplateInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutDocumentChunksInput = {
+export type TenantUncheckedCreateWithoutEmailTemplateInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutDocumentChunksInput = {
+export type TenantCreateOrConnectWithoutEmailTemplateInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunksInput, Prisma.TenantUncheckedCreateWithoutDocumentChunksInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplateInput, Prisma.TenantUncheckedCreateWithoutEmailTemplateInput>
 }
 
-export type TenantUpsertWithoutDocumentChunksInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentChunksInput, Prisma.TenantUncheckedUpdateWithoutDocumentChunksInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutDocumentChunksInput, Prisma.TenantUncheckedCreateWithoutDocumentChunksInput>
+export type TenantUpsertWithoutEmailTemplateInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailTemplateInput, Prisma.TenantUncheckedUpdateWithoutEmailTemplateInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplateInput, Prisma.TenantUncheckedCreateWithoutEmailTemplateInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutDocumentChunksInput = {
+export type TenantUpdateToOneWithWhereWithoutEmailTemplateInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutDocumentChunksInput, Prisma.TenantUncheckedUpdateWithoutDocumentChunksInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailTemplateInput, Prisma.TenantUncheckedUpdateWithoutEmailTemplateInput>
 }
 
-export type TenantUpdateWithoutDocumentChunksInput = {
+export type TenantUpdateWithoutEmailTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutDocumentChunksInput = {
+export type TenantUncheckedUpdateWithoutEmailTemplateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutMessageChunksInput = {
+export type TenantCreateWithoutFileAnalysisInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutMessageChunksInput = {
+export type TenantUncheckedCreateWithoutFileAnalysisInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutMessageChunksInput = {
+export type TenantCreateOrConnectWithoutFileAnalysisInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunksInput, Prisma.TenantUncheckedCreateWithoutMessageChunksInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysisInput, Prisma.TenantUncheckedCreateWithoutFileAnalysisInput>
 }
 
-export type TenantUpsertWithoutMessageChunksInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutMessageChunksInput, Prisma.TenantUncheckedUpdateWithoutMessageChunksInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunksInput, Prisma.TenantUncheckedCreateWithoutMessageChunksInput>
+export type TenantUpsertWithoutFileAnalysisInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutFileAnalysisInput, Prisma.TenantUncheckedUpdateWithoutFileAnalysisInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutFileAnalysisInput, Prisma.TenantUncheckedCreateWithoutFileAnalysisInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutMessageChunksInput = {
+export type TenantUpdateToOneWithWhereWithoutFileAnalysisInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutMessageChunksInput, Prisma.TenantUncheckedUpdateWithoutMessageChunksInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutFileAnalysisInput, Prisma.TenantUncheckedUpdateWithoutFileAnalysisInput>
 }
 
-export type TenantUpdateWithoutMessageChunksInput = {
+export type TenantUpdateWithoutFileAnalysisInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutMessageChunksInput = {
+export type TenantUncheckedUpdateWithoutFileAnalysisInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutNotificationPreferencesInput = {
+export type TenantCreateWithoutInvitationInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutNotificationPreferencesInput = {
+export type TenantUncheckedCreateWithoutInvitationInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutNotificationPreferencesInput = {
+export type TenantCreateOrConnectWithoutInvitationInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferencesInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferencesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutInvitationInput, Prisma.TenantUncheckedCreateWithoutInvitationInput>
 }
 
-export type TenantUpsertWithoutNotificationPreferencesInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutNotificationPreferencesInput, Prisma.TenantUncheckedUpdateWithoutNotificationPreferencesInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferencesInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferencesInput>
+export type TenantUpsertWithoutInvitationInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutInvitationInput, Prisma.TenantUncheckedUpdateWithoutInvitationInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutInvitationInput, Prisma.TenantUncheckedCreateWithoutInvitationInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutNotificationPreferencesInput = {
+export type TenantUpdateToOneWithWhereWithoutInvitationInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutNotificationPreferencesInput, Prisma.TenantUncheckedUpdateWithoutNotificationPreferencesInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutInvitationInput, Prisma.TenantUncheckedUpdateWithoutInvitationInput>
 }
 
-export type TenantUpdateWithoutNotificationPreferencesInput = {
+export type TenantUpdateWithoutInvitationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutNotificationPreferencesInput = {
+export type TenantUncheckedUpdateWithoutInvitationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutEmailTemplatesInput = {
+export type TenantCreateWithoutMembershipInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutEmailTemplatesInput = {
+export type TenantUncheckedCreateWithoutMembershipInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutEmailTemplatesInput = {
+export type TenantCreateOrConnectWithoutMembershipInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutMembershipInput, Prisma.TenantUncheckedCreateWithoutMembershipInput>
 }
 
-export type TenantUpsertWithoutEmailTemplatesInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailTemplatesInput, Prisma.TenantUncheckedUpdateWithoutEmailTemplatesInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailTemplatesInput, Prisma.TenantUncheckedCreateWithoutEmailTemplatesInput>
+export type TenantUpsertWithoutMembershipInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutMembershipInput, Prisma.TenantUncheckedUpdateWithoutMembershipInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutMembershipInput, Prisma.TenantUncheckedCreateWithoutMembershipInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutEmailTemplatesInput = {
+export type TenantUpdateToOneWithWhereWithoutMembershipInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailTemplatesInput, Prisma.TenantUncheckedUpdateWithoutEmailTemplatesInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutMembershipInput, Prisma.TenantUncheckedUpdateWithoutMembershipInput>
 }
 
-export type TenantUpdateWithoutEmailTemplatesInput = {
+export type TenantUpdateWithoutMembershipInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutEmailTemplatesInput = {
+export type TenantUncheckedUpdateWithoutMembershipInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutPushSubscriptionsInput = {
+export type TenantCreateWithoutMessageChunkInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutPushSubscriptionsInput = {
+export type TenantUncheckedCreateWithoutMessageChunkInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutPushSubscriptionsInput = {
+export type TenantCreateOrConnectWithoutMessageChunkInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunkInput, Prisma.TenantUncheckedCreateWithoutMessageChunkInput>
 }
 
-export type TenantUpsertWithoutPushSubscriptionsInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionsInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionsInput>
+export type TenantUpsertWithoutMessageChunkInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutMessageChunkInput, Prisma.TenantUncheckedUpdateWithoutMessageChunkInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutMessageChunkInput, Prisma.TenantUncheckedCreateWithoutMessageChunkInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutPushSubscriptionsInput = {
+export type TenantUpdateToOneWithWhereWithoutMessageChunkInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutPushSubscriptionsInput, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionsInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutMessageChunkInput, Prisma.TenantUncheckedUpdateWithoutMessageChunkInput>
 }
 
-export type TenantUpdateWithoutPushSubscriptionsInput = {
+export type TenantUpdateWithoutMessageChunkInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutPushSubscriptionsInput = {
+export type TenantUncheckedUpdateWithoutMessageChunkInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutTimeEntriesInput = {
+export type TenantCreateWithoutNoteCategoryInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutTimeEntriesInput = {
+export type TenantUncheckedCreateWithoutNoteCategoryInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutTimeEntriesInput = {
+export type TenantCreateOrConnectWithoutNoteCategoryInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoryInput, Prisma.TenantUncheckedCreateWithoutNoteCategoryInput>
 }
 
-export type TenantUpsertWithoutTimeEntriesInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutTimeEntriesInput, Prisma.TenantUncheckedUpdateWithoutTimeEntriesInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntriesInput, Prisma.TenantUncheckedCreateWithoutTimeEntriesInput>
+export type TenantUpsertWithoutNoteCategoryInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutNoteCategoryInput, Prisma.TenantUncheckedUpdateWithoutNoteCategoryInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoryInput, Prisma.TenantUncheckedCreateWithoutNoteCategoryInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutTimeEntriesInput = {
+export type TenantUpdateToOneWithWhereWithoutNoteCategoryInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutTimeEntriesInput, Prisma.TenantUncheckedUpdateWithoutTimeEntriesInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutNoteCategoryInput, Prisma.TenantUncheckedUpdateWithoutNoteCategoryInput>
 }
 
-export type TenantUpdateWithoutTimeEntriesInput = {
+export type TenantUpdateWithoutNoteCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutTimeEntriesInput = {
+export type TenantUncheckedUpdateWithoutNoteCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutNoteCategoriesInput = {
+export type TenantCreateWithoutNotificationPreferenceInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutNoteCategoriesInput = {
+export type TenantUncheckedCreateWithoutNotificationPreferenceInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutNoteCategoriesInput = {
+export type TenantCreateOrConnectWithoutNotificationPreferenceInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoriesInput, Prisma.TenantUncheckedCreateWithoutNoteCategoriesInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferenceInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferenceInput>
 }
 
-export type TenantUpsertWithoutNoteCategoriesInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutNoteCategoriesInput, Prisma.TenantUncheckedUpdateWithoutNoteCategoriesInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutNoteCategoriesInput, Prisma.TenantUncheckedCreateWithoutNoteCategoriesInput>
+export type TenantUpsertWithoutNotificationPreferenceInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutNotificationPreferenceInput, Prisma.TenantUncheckedUpdateWithoutNotificationPreferenceInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutNotificationPreferenceInput, Prisma.TenantUncheckedCreateWithoutNotificationPreferenceInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutNoteCategoriesInput = {
+export type TenantUpdateToOneWithWhereWithoutNotificationPreferenceInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutNoteCategoriesInput, Prisma.TenantUncheckedUpdateWithoutNoteCategoriesInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutNotificationPreferenceInput, Prisma.TenantUncheckedUpdateWithoutNotificationPreferenceInput>
 }
 
-export type TenantUpdateWithoutNoteCategoriesInput = {
+export type TenantUpdateWithoutNotificationPreferenceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutNoteCategoriesInput = {
+export type TenantUncheckedUpdateWithoutNotificationPreferenceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutProjectInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutProjectInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutProjectInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutProjectInput, Prisma.TenantUncheckedCreateWithoutProjectInput>
+}
+
+export type TenantUpsertWithoutProjectInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutProjectInput, Prisma.TenantUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutProjectInput, Prisma.TenantUncheckedCreateWithoutProjectInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutProjectInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutProjectInput, Prisma.TenantUncheckedUpdateWithoutProjectInput>
+}
+
+export type TenantUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutPushSubscriptionInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutPushSubscriptionInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutPushSubscriptionInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionInput>
+}
+
+export type TenantUpsertWithoutPushSubscriptionInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutPushSubscriptionInput, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutPushSubscriptionInput, Prisma.TenantUncheckedCreateWithoutPushSubscriptionInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutPushSubscriptionInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutPushSubscriptionInput, Prisma.TenantUncheckedUpdateWithoutPushSubscriptionInput>
+}
+
+export type TenantUpdateWithoutPushSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutPushSubscriptionInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantCreateWithoutSubscriptionInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
 export type TenantUncheckedCreateWithoutSubscriptionInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
 export type TenantCreateOrConnectWithoutSubscriptionInput = {
@@ -2235,413 +2463,173 @@ export type TenantUpdateToOneWithWhereWithoutSubscriptionInput = {
 export type TenantUpdateWithoutSubscriptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
 export type TenantUncheckedUpdateWithoutSubscriptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
-export type TenantCreateWithoutEmailConversationsInput = {
+export type TenantCreateWithoutTimeEntryInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
 }
 
-export type TenantUncheckedCreateWithoutEmailConversationsInput = {
+export type TenantUncheckedCreateWithoutTimeEntryInput = {
   id?: string
   name: string
-  inboxCode?: string | null
   orgNumber?: string | null
-  address?: string | null
   stripeCustomerId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
 }
 
-export type TenantCreateOrConnectWithoutEmailConversationsInput = {
+export type TenantCreateOrConnectWithoutTimeEntryInput = {
   where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationsInput, Prisma.TenantUncheckedCreateWithoutEmailConversationsInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntryInput, Prisma.TenantUncheckedCreateWithoutTimeEntryInput>
 }
 
-export type TenantUpsertWithoutEmailConversationsInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailConversationsInput, Prisma.TenantUncheckedUpdateWithoutEmailConversationsInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailConversationsInput, Prisma.TenantUncheckedCreateWithoutEmailConversationsInput>
+export type TenantUpsertWithoutTimeEntryInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutTimeEntryInput, Prisma.TenantUncheckedUpdateWithoutTimeEntryInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutTimeEntryInput, Prisma.TenantUncheckedCreateWithoutTimeEntryInput>
   where?: Prisma.TenantWhereInput
 }
 
-export type TenantUpdateToOneWithWhereWithoutEmailConversationsInput = {
+export type TenantUpdateToOneWithWhereWithoutTimeEntryInput = {
   where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailConversationsInput, Prisma.TenantUncheckedUpdateWithoutEmailConversationsInput>
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutTimeEntryInput, Prisma.TenantUncheckedUpdateWithoutTimeEntryInput>
 }
 
-export type TenantUpdateWithoutEmailConversationsInput = {
+export type TenantUpdateWithoutTimeEntryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
 }
 
-export type TenantUncheckedUpdateWithoutEmailConversationsInput = {
+export type TenantUncheckedUpdateWithoutTimeEntryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
-}
-
-export type TenantCreateWithoutEmailLogsInput = {
-  id?: string
-  name: string
-  inboxCode?: string | null
-  orgNumber?: string | null
-  address?: string | null
-  stripeCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
-}
-
-export type TenantUncheckedCreateWithoutEmailLogsInput = {
-  id?: string
-  name: string
-  inboxCode?: string | null
-  orgNumber?: string | null
-  address?: string | null
-  stripeCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
-}
-
-export type TenantCreateOrConnectWithoutEmailLogsInput = {
-  where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogsInput, Prisma.TenantUncheckedCreateWithoutEmailLogsInput>
-}
-
-export type TenantUpsertWithoutEmailLogsInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailLogsInput, Prisma.TenantUncheckedUpdateWithoutEmailLogsInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailLogsInput, Prisma.TenantUncheckedCreateWithoutEmailLogsInput>
-  where?: Prisma.TenantWhereInput
-}
-
-export type TenantUpdateToOneWithWhereWithoutEmailLogsInput = {
-  where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailLogsInput, Prisma.TenantUncheckedUpdateWithoutEmailLogsInput>
-}
-
-export type TenantUpdateWithoutEmailLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
-}
-
-export type TenantUncheckedUpdateWithoutEmailLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
-}
-
-export type TenantCreateWithoutEmailChunksInput = {
-  id?: string
-  name: string
-  inboxCode?: string | null
-  orgNumber?: string | null
-  address?: string | null
-  stripeCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  memberships?: Prisma.MembershipCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
-}
-
-export type TenantUncheckedCreateWithoutEmailChunksInput = {
-  id?: string
-  name: string
-  inboxCode?: string | null
-  orgNumber?: string | null
-  address?: string | null
-  stripeCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
-  projects?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
-  invitations?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
-  subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
-  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
-  noteCategories?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
-  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
-  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
-  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
-  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
-}
-
-export type TenantCreateOrConnectWithoutEmailChunksInput = {
-  where: Prisma.TenantWhereUniqueInput
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunksInput, Prisma.TenantUncheckedCreateWithoutEmailChunksInput>
-}
-
-export type TenantUpsertWithoutEmailChunksInput = {
-  update: Prisma.XOR<Prisma.TenantUpdateWithoutEmailChunksInput, Prisma.TenantUncheckedUpdateWithoutEmailChunksInput>
-  create: Prisma.XOR<Prisma.TenantCreateWithoutEmailChunksInput, Prisma.TenantUncheckedCreateWithoutEmailChunksInput>
-  where?: Prisma.TenantWhereInput
-}
-
-export type TenantUpdateToOneWithWhereWithoutEmailChunksInput = {
-  where?: Prisma.TenantWhereInput
-  data: Prisma.XOR<Prisma.TenantUpdateWithoutEmailChunksInput, Prisma.TenantUncheckedUpdateWithoutEmailChunksInput>
-}
-
-export type TenantUpdateWithoutEmailChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
-}
-
-export type TenantUncheckedUpdateWithoutEmailChunksInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
-  projects?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
-  invitations?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
-  subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
-  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
-  emailTemplates?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
-  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
-  noteCategories?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
-  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
-  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
-  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
-  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
-  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
-  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
 }
 
 
@@ -2650,39 +2638,39 @@ export type TenantUncheckedUpdateWithoutEmailChunksInput = {
  */
 
 export type TenantCountOutputType = {
-  memberships: number
-  projects: number
-  invitations: number
-  notificationPreferences: number
-  pushSubscriptions: number
-  emailTemplates: number
-  documentChunks: number
-  noteCategories: number
-  fileAnalyses: number
-  timeEntries: number
-  emailLogs: number
-  emailChunks: number
-  emailConversations: number
-  messageChunks: number
-  documentTemplates: number
+  DocumentChunk: number
+  DocumentTemplate: number
+  EmailChunk: number
+  EmailConversation: number
+  EmailLog: number
+  EmailTemplate: number
+  FileAnalysis: number
+  Invitation: number
+  Membership: number
+  MessageChunk: number
+  NoteCategory: number
+  NotificationPreference: number
+  Project: number
+  PushSubscription: number
+  TimeEntry: number
 }
 
 export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  memberships?: boolean | TenantCountOutputTypeCountMembershipsArgs
-  projects?: boolean | TenantCountOutputTypeCountProjectsArgs
-  invitations?: boolean | TenantCountOutputTypeCountInvitationsArgs
-  notificationPreferences?: boolean | TenantCountOutputTypeCountNotificationPreferencesArgs
-  pushSubscriptions?: boolean | TenantCountOutputTypeCountPushSubscriptionsArgs
-  emailTemplates?: boolean | TenantCountOutputTypeCountEmailTemplatesArgs
-  documentChunks?: boolean | TenantCountOutputTypeCountDocumentChunksArgs
-  noteCategories?: boolean | TenantCountOutputTypeCountNoteCategoriesArgs
-  fileAnalyses?: boolean | TenantCountOutputTypeCountFileAnalysesArgs
-  timeEntries?: boolean | TenantCountOutputTypeCountTimeEntriesArgs
-  emailLogs?: boolean | TenantCountOutputTypeCountEmailLogsArgs
-  emailChunks?: boolean | TenantCountOutputTypeCountEmailChunksArgs
-  emailConversations?: boolean | TenantCountOutputTypeCountEmailConversationsArgs
-  messageChunks?: boolean | TenantCountOutputTypeCountMessageChunksArgs
-  documentTemplates?: boolean | TenantCountOutputTypeCountDocumentTemplatesArgs
+  DocumentChunk?: boolean | TenantCountOutputTypeCountDocumentChunkArgs
+  DocumentTemplate?: boolean | TenantCountOutputTypeCountDocumentTemplateArgs
+  EmailChunk?: boolean | TenantCountOutputTypeCountEmailChunkArgs
+  EmailConversation?: boolean | TenantCountOutputTypeCountEmailConversationArgs
+  EmailLog?: boolean | TenantCountOutputTypeCountEmailLogArgs
+  EmailTemplate?: boolean | TenantCountOutputTypeCountEmailTemplateArgs
+  FileAnalysis?: boolean | TenantCountOutputTypeCountFileAnalysisArgs
+  Invitation?: boolean | TenantCountOutputTypeCountInvitationArgs
+  Membership?: boolean | TenantCountOutputTypeCountMembershipArgs
+  MessageChunk?: boolean | TenantCountOutputTypeCountMessageChunkArgs
+  NoteCategory?: boolean | TenantCountOutputTypeCountNoteCategoryArgs
+  NotificationPreference?: boolean | TenantCountOutputTypeCountNotificationPreferenceArgs
+  Project?: boolean | TenantCountOutputTypeCountProjectArgs
+  PushSubscription?: boolean | TenantCountOutputTypeCountPushSubscriptionArgs
+  TimeEntry?: boolean | TenantCountOutputTypeCountTimeEntryArgs
 }
 
 /**
@@ -2698,188 +2686,188 @@ export type TenantCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
 /**
  * TenantCountOutputType without action
  */
-export type TenantCountOutputTypeCountMembershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MembershipWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountProjectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ProjectWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountInvitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.InvitationWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountNotificationPreferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NotificationPreferenceWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PushSubscriptionWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountEmailTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.EmailTemplateWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountDocumentChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TenantCountOutputTypeCountDocumentChunkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DocumentChunkWhereInput
 }
 
 /**
  * TenantCountOutputType without action
  */
-export type TenantCountOutputTypeCountNoteCategoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.NoteCategoryWhereInput
+export type TenantCountOutputTypeCountDocumentTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DocumentTemplateWhereInput
 }
 
 /**
  * TenantCountOutputType without action
  */
-export type TenantCountOutputTypeCountFileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.FileAnalysisWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountTimeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.TimeEntryWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountEmailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.EmailLogWhereInput
-}
-
-/**
- * TenantCountOutputType without action
- */
-export type TenantCountOutputTypeCountEmailChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TenantCountOutputTypeCountEmailChunkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EmailChunkWhereInput
 }
 
 /**
  * TenantCountOutputType without action
  */
-export type TenantCountOutputTypeCountEmailConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TenantCountOutputTypeCountEmailConversationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.EmailConversationWhereInput
 }
 
 /**
  * TenantCountOutputType without action
  */
-export type TenantCountOutputTypeCountMessageChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type TenantCountOutputTypeCountEmailLogArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailLogWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountEmailTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.EmailTemplateWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountFileAnalysisArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FileAnalysisWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountInvitationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InvitationWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountMembershipArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MembershipWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountMessageChunkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MessageChunkWhereInput
 }
 
 /**
  * TenantCountOutputType without action
  */
-export type TenantCountOutputTypeCountDocumentTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.DocumentTemplateWhereInput
+export type TenantCountOutputTypeCountNoteCategoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NoteCategoryWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountNotificationPreferenceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NotificationPreferenceWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountProjectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProjectWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountPushSubscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PushSubscriptionWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
+export type TenantCountOutputTypeCountTimeEntryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TimeEntryWhereInput
 }
 
 
 export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  inboxCode?: boolean
   orgNumber?: boolean
-  address?: boolean
   stripeCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  memberships?: boolean | Prisma.Tenant$membershipsArgs<ExtArgs>
-  projects?: boolean | Prisma.Tenant$projectsArgs<ExtArgs>
-  invitations?: boolean | Prisma.Tenant$invitationsArgs<ExtArgs>
-  subscription?: boolean | Prisma.Tenant$subscriptionArgs<ExtArgs>
-  notificationPreferences?: boolean | Prisma.Tenant$notificationPreferencesArgs<ExtArgs>
-  pushSubscriptions?: boolean | Prisma.Tenant$pushSubscriptionsArgs<ExtArgs>
-  emailTemplates?: boolean | Prisma.Tenant$emailTemplatesArgs<ExtArgs>
-  documentChunks?: boolean | Prisma.Tenant$documentChunksArgs<ExtArgs>
-  noteCategories?: boolean | Prisma.Tenant$noteCategoriesArgs<ExtArgs>
-  fileAnalyses?: boolean | Prisma.Tenant$fileAnalysesArgs<ExtArgs>
-  timeEntries?: boolean | Prisma.Tenant$timeEntriesArgs<ExtArgs>
-  emailLogs?: boolean | Prisma.Tenant$emailLogsArgs<ExtArgs>
-  emailChunks?: boolean | Prisma.Tenant$emailChunksArgs<ExtArgs>
-  emailConversations?: boolean | Prisma.Tenant$emailConversationsArgs<ExtArgs>
-  messageChunks?: boolean | Prisma.Tenant$messageChunksArgs<ExtArgs>
-  documentTemplates?: boolean | Prisma.Tenant$documentTemplatesArgs<ExtArgs>
+  address?: boolean
+  inboxCode?: boolean
+  DocumentChunk?: boolean | Prisma.Tenant$DocumentChunkArgs<ExtArgs>
+  DocumentTemplate?: boolean | Prisma.Tenant$DocumentTemplateArgs<ExtArgs>
+  EmailChunk?: boolean | Prisma.Tenant$EmailChunkArgs<ExtArgs>
+  EmailConversation?: boolean | Prisma.Tenant$EmailConversationArgs<ExtArgs>
+  EmailLog?: boolean | Prisma.Tenant$EmailLogArgs<ExtArgs>
+  EmailTemplate?: boolean | Prisma.Tenant$EmailTemplateArgs<ExtArgs>
+  FileAnalysis?: boolean | Prisma.Tenant$FileAnalysisArgs<ExtArgs>
+  Invitation?: boolean | Prisma.Tenant$InvitationArgs<ExtArgs>
+  Membership?: boolean | Prisma.Tenant$MembershipArgs<ExtArgs>
+  MessageChunk?: boolean | Prisma.Tenant$MessageChunkArgs<ExtArgs>
+  NoteCategory?: boolean | Prisma.Tenant$NoteCategoryArgs<ExtArgs>
+  NotificationPreference?: boolean | Prisma.Tenant$NotificationPreferenceArgs<ExtArgs>
+  Project?: boolean | Prisma.Tenant$ProjectArgs<ExtArgs>
+  PushSubscription?: boolean | Prisma.Tenant$PushSubscriptionArgs<ExtArgs>
+  Subscription?: boolean | Prisma.Tenant$SubscriptionArgs<ExtArgs>
+  TimeEntry?: boolean | Prisma.Tenant$TimeEntryArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["tenant"]>
 
 export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  inboxCode?: boolean
   orgNumber?: boolean
-  address?: boolean
   stripeCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  address?: boolean
+  inboxCode?: boolean
 }, ExtArgs["result"]["tenant"]>
 
 export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
-  inboxCode?: boolean
   orgNumber?: boolean
-  address?: boolean
   stripeCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  address?: boolean
+  inboxCode?: boolean
 }, ExtArgs["result"]["tenant"]>
 
 export type TenantSelectScalar = {
   id?: boolean
   name?: boolean
-  inboxCode?: boolean
   orgNumber?: boolean
-  address?: boolean
   stripeCustomerId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  address?: boolean
+  inboxCode?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "inboxCode" | "orgNumber" | "address" | "stripeCustomerId" | "createdAt" | "updatedAt", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "orgNumber" | "stripeCustomerId" | "createdAt" | "updatedAt" | "address" | "inboxCode", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  memberships?: boolean | Prisma.Tenant$membershipsArgs<ExtArgs>
-  projects?: boolean | Prisma.Tenant$projectsArgs<ExtArgs>
-  invitations?: boolean | Prisma.Tenant$invitationsArgs<ExtArgs>
-  subscription?: boolean | Prisma.Tenant$subscriptionArgs<ExtArgs>
-  notificationPreferences?: boolean | Prisma.Tenant$notificationPreferencesArgs<ExtArgs>
-  pushSubscriptions?: boolean | Prisma.Tenant$pushSubscriptionsArgs<ExtArgs>
-  emailTemplates?: boolean | Prisma.Tenant$emailTemplatesArgs<ExtArgs>
-  documentChunks?: boolean | Prisma.Tenant$documentChunksArgs<ExtArgs>
-  noteCategories?: boolean | Prisma.Tenant$noteCategoriesArgs<ExtArgs>
-  fileAnalyses?: boolean | Prisma.Tenant$fileAnalysesArgs<ExtArgs>
-  timeEntries?: boolean | Prisma.Tenant$timeEntriesArgs<ExtArgs>
-  emailLogs?: boolean | Prisma.Tenant$emailLogsArgs<ExtArgs>
-  emailChunks?: boolean | Prisma.Tenant$emailChunksArgs<ExtArgs>
-  emailConversations?: boolean | Prisma.Tenant$emailConversationsArgs<ExtArgs>
-  messageChunks?: boolean | Prisma.Tenant$messageChunksArgs<ExtArgs>
-  documentTemplates?: boolean | Prisma.Tenant$documentTemplatesArgs<ExtArgs>
+  DocumentChunk?: boolean | Prisma.Tenant$DocumentChunkArgs<ExtArgs>
+  DocumentTemplate?: boolean | Prisma.Tenant$DocumentTemplateArgs<ExtArgs>
+  EmailChunk?: boolean | Prisma.Tenant$EmailChunkArgs<ExtArgs>
+  EmailConversation?: boolean | Prisma.Tenant$EmailConversationArgs<ExtArgs>
+  EmailLog?: boolean | Prisma.Tenant$EmailLogArgs<ExtArgs>
+  EmailTemplate?: boolean | Prisma.Tenant$EmailTemplateArgs<ExtArgs>
+  FileAnalysis?: boolean | Prisma.Tenant$FileAnalysisArgs<ExtArgs>
+  Invitation?: boolean | Prisma.Tenant$InvitationArgs<ExtArgs>
+  Membership?: boolean | Prisma.Tenant$MembershipArgs<ExtArgs>
+  MessageChunk?: boolean | Prisma.Tenant$MessageChunkArgs<ExtArgs>
+  NoteCategory?: boolean | Prisma.Tenant$NoteCategoryArgs<ExtArgs>
+  NotificationPreference?: boolean | Prisma.Tenant$NotificationPreferenceArgs<ExtArgs>
+  Project?: boolean | Prisma.Tenant$ProjectArgs<ExtArgs>
+  PushSubscription?: boolean | Prisma.Tenant$PushSubscriptionArgs<ExtArgs>
+  Subscription?: boolean | Prisma.Tenant$SubscriptionArgs<ExtArgs>
+  TimeEntry?: boolean | Prisma.Tenant$TimeEntryArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type TenantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2888,32 +2876,32 @@ export type TenantIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Tenant"
   objects: {
-    memberships: Prisma.$MembershipPayload<ExtArgs>[]
-    projects: Prisma.$ProjectPayload<ExtArgs>[]
-    invitations: Prisma.$InvitationPayload<ExtArgs>[]
-    subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
-    notificationPreferences: Prisma.$NotificationPreferencePayload<ExtArgs>[]
-    pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
-    emailTemplates: Prisma.$EmailTemplatePayload<ExtArgs>[]
-    documentChunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
-    noteCategories: Prisma.$NoteCategoryPayload<ExtArgs>[]
-    fileAnalyses: Prisma.$FileAnalysisPayload<ExtArgs>[]
-    timeEntries: Prisma.$TimeEntryPayload<ExtArgs>[]
-    emailLogs: Prisma.$EmailLogPayload<ExtArgs>[]
-    emailChunks: Prisma.$EmailChunkPayload<ExtArgs>[]
-    emailConversations: Prisma.$EmailConversationPayload<ExtArgs>[]
-    messageChunks: Prisma.$MessageChunkPayload<ExtArgs>[]
-    documentTemplates: Prisma.$DocumentTemplatePayload<ExtArgs>[]
+    DocumentChunk: Prisma.$DocumentChunkPayload<ExtArgs>[]
+    DocumentTemplate: Prisma.$DocumentTemplatePayload<ExtArgs>[]
+    EmailChunk: Prisma.$EmailChunkPayload<ExtArgs>[]
+    EmailConversation: Prisma.$EmailConversationPayload<ExtArgs>[]
+    EmailLog: Prisma.$EmailLogPayload<ExtArgs>[]
+    EmailTemplate: Prisma.$EmailTemplatePayload<ExtArgs>[]
+    FileAnalysis: Prisma.$FileAnalysisPayload<ExtArgs>[]
+    Invitation: Prisma.$InvitationPayload<ExtArgs>[]
+    Membership: Prisma.$MembershipPayload<ExtArgs>[]
+    MessageChunk: Prisma.$MessageChunkPayload<ExtArgs>[]
+    NoteCategory: Prisma.$NoteCategoryPayload<ExtArgs>[]
+    NotificationPreference: Prisma.$NotificationPreferencePayload<ExtArgs>[]
+    Project: Prisma.$ProjectPayload<ExtArgs>[]
+    PushSubscription: Prisma.$PushSubscriptionPayload<ExtArgs>[]
+    Subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
+    TimeEntry: Prisma.$TimeEntryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
-    inboxCode: string | null
     orgNumber: string | null
-    address: string | null
     stripeCustomerId: string | null
     createdAt: Date
     updatedAt: Date
+    address: string | null
+    inboxCode: string | null
   }, ExtArgs["result"]["tenant"]>
   composites: {}
 }
@@ -3308,22 +3296,22 @@ readonly fields: TenantFieldRefs;
  */
 export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  memberships<T extends Prisma.Tenant$membershipsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$membershipsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  projects<T extends Prisma.Tenant$projectsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$projectsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  invitations<T extends Prisma.Tenant$invitationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$invitationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  subscription<T extends Prisma.Tenant$subscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$subscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  notificationPreferences<T extends Prisma.Tenant$notificationPreferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$notificationPreferencesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  pushSubscriptions<T extends Prisma.Tenant$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailTemplates<T extends Prisma.Tenant$emailTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$emailTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  documentChunks<T extends Prisma.Tenant$documentChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$documentChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  noteCategories<T extends Prisma.Tenant$noteCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$noteCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NoteCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  fileAnalyses<T extends Prisma.Tenant$fileAnalysesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$fileAnalysesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  timeEntries<T extends Prisma.Tenant$timeEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$timeEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimeEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailLogs<T extends Prisma.Tenant$emailLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$emailLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailChunks<T extends Prisma.Tenant$emailChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$emailChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  emailConversations<T extends Prisma.Tenant$emailConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$emailConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  messageChunks<T extends Prisma.Tenant$messageChunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$messageChunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  documentTemplates<T extends Prisma.Tenant$documentTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$documentTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  DocumentChunk<T extends Prisma.Tenant$DocumentChunkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$DocumentChunkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  DocumentTemplate<T extends Prisma.Tenant$DocumentTemplateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$DocumentTemplateArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  EmailChunk<T extends Prisma.Tenant$EmailChunkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$EmailChunkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  EmailConversation<T extends Prisma.Tenant$EmailConversationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$EmailConversationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  EmailLog<T extends Prisma.Tenant$EmailLogArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$EmailLogArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  EmailTemplate<T extends Prisma.Tenant$EmailTemplateArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$EmailTemplateArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$EmailTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  FileAnalysis<T extends Prisma.Tenant$FileAnalysisArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$FileAnalysisArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileAnalysisPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Invitation<T extends Prisma.Tenant$InvitationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$InvitationArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Membership<T extends Prisma.Tenant$MembershipArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$MembershipArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MembershipPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  MessageChunk<T extends Prisma.Tenant$MessageChunkArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$MessageChunkArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessageChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  NoteCategory<T extends Prisma.Tenant$NoteCategoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$NoteCategoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NoteCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  NotificationPreference<T extends Prisma.Tenant$NotificationPreferenceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$NotificationPreferenceArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPreferencePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Project<T extends Prisma.Tenant$ProjectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$ProjectArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  PushSubscription<T extends Prisma.Tenant$PushSubscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$PushSubscriptionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Subscription<T extends Prisma.Tenant$SubscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$SubscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  TimeEntry<T extends Prisma.Tenant$TimeEntryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$TimeEntryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimeEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3355,12 +3343,12 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
 export interface TenantFieldRefs {
   readonly id: Prisma.FieldRef<"Tenant", 'String'>
   readonly name: Prisma.FieldRef<"Tenant", 'String'>
-  readonly inboxCode: Prisma.FieldRef<"Tenant", 'String'>
   readonly orgNumber: Prisma.FieldRef<"Tenant", 'String'>
-  readonly address: Prisma.FieldRef<"Tenant", 'String'>
   readonly stripeCustomerId: Prisma.FieldRef<"Tenant", 'String'>
   readonly createdAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
+  readonly address: Prisma.FieldRef<"Tenant", 'String'>
+  readonly inboxCode: Prisma.FieldRef<"Tenant", 'String'>
 }
     
 
@@ -3749,172 +3737,9 @@ export type TenantDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
 }
 
 /**
- * Tenant.memberships
+ * Tenant.DocumentChunk
  */
-export type Tenant$membershipsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Membership
-   */
-  select?: Prisma.MembershipSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Membership
-   */
-  omit?: Prisma.MembershipOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MembershipInclude<ExtArgs> | null
-  where?: Prisma.MembershipWhereInput
-  orderBy?: Prisma.MembershipOrderByWithRelationInput | Prisma.MembershipOrderByWithRelationInput[]
-  cursor?: Prisma.MembershipWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
-}
-
-/**
- * Tenant.projects
- */
-export type Tenant$projectsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Project
-   */
-  select?: Prisma.ProjectSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Project
-   */
-  omit?: Prisma.ProjectOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ProjectInclude<ExtArgs> | null
-  where?: Prisma.ProjectWhereInput
-  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
-  cursor?: Prisma.ProjectWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
-}
-
-/**
- * Tenant.invitations
- */
-export type Tenant$invitationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Invitation
-   */
-  select?: Prisma.InvitationSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Invitation
-   */
-  omit?: Prisma.InvitationOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.InvitationInclude<ExtArgs> | null
-  where?: Prisma.InvitationWhereInput
-  orderBy?: Prisma.InvitationOrderByWithRelationInput | Prisma.InvitationOrderByWithRelationInput[]
-  cursor?: Prisma.InvitationWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
-}
-
-/**
- * Tenant.subscription
- */
-export type Tenant$subscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Subscription
-   */
-  select?: Prisma.SubscriptionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Subscription
-   */
-  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.SubscriptionInclude<ExtArgs> | null
-  where?: Prisma.SubscriptionWhereInput
-}
-
-/**
- * Tenant.notificationPreferences
- */
-export type Tenant$notificationPreferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the NotificationPreference
-   */
-  select?: Prisma.NotificationPreferenceSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the NotificationPreference
-   */
-  omit?: Prisma.NotificationPreferenceOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.NotificationPreferenceInclude<ExtArgs> | null
-  where?: Prisma.NotificationPreferenceWhereInput
-  orderBy?: Prisma.NotificationPreferenceOrderByWithRelationInput | Prisma.NotificationPreferenceOrderByWithRelationInput[]
-  cursor?: Prisma.NotificationPreferenceWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.NotificationPreferenceScalarFieldEnum | Prisma.NotificationPreferenceScalarFieldEnum[]
-}
-
-/**
- * Tenant.pushSubscriptions
- */
-export type Tenant$pushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the PushSubscription
-   */
-  select?: Prisma.PushSubscriptionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the PushSubscription
-   */
-  omit?: Prisma.PushSubscriptionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.PushSubscriptionInclude<ExtArgs> | null
-  where?: Prisma.PushSubscriptionWhereInput
-  orderBy?: Prisma.PushSubscriptionOrderByWithRelationInput | Prisma.PushSubscriptionOrderByWithRelationInput[]
-  cursor?: Prisma.PushSubscriptionWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PushSubscriptionScalarFieldEnum | Prisma.PushSubscriptionScalarFieldEnum[]
-}
-
-/**
- * Tenant.emailTemplates
- */
-export type Tenant$emailTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the EmailTemplate
-   */
-  select?: Prisma.EmailTemplateSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the EmailTemplate
-   */
-  omit?: Prisma.EmailTemplateOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.EmailTemplateInclude<ExtArgs> | null
-  where?: Prisma.EmailTemplateWhereInput
-  orderBy?: Prisma.EmailTemplateOrderByWithRelationInput | Prisma.EmailTemplateOrderByWithRelationInput[]
-  cursor?: Prisma.EmailTemplateWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.EmailTemplateScalarFieldEnum | Prisma.EmailTemplateScalarFieldEnum[]
-}
-
-/**
- * Tenant.documentChunks
- */
-export type Tenant$documentChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Tenant$DocumentChunkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the DocumentChunk
    */
@@ -3936,105 +3761,33 @@ export type Tenant$documentChunksArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * Tenant.noteCategories
+ * Tenant.DocumentTemplate
  */
-export type Tenant$noteCategoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Tenant$DocumentTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the NoteCategory
+   * Select specific fields to fetch from the DocumentTemplate
    */
-  select?: Prisma.NoteCategorySelect<ExtArgs> | null
+  select?: Prisma.DocumentTemplateSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the NoteCategory
+   * Omit specific fields from the DocumentTemplate
    */
-  omit?: Prisma.NoteCategoryOmit<ExtArgs> | null
+  omit?: Prisma.DocumentTemplateOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.NoteCategoryInclude<ExtArgs> | null
-  where?: Prisma.NoteCategoryWhereInput
-  orderBy?: Prisma.NoteCategoryOrderByWithRelationInput | Prisma.NoteCategoryOrderByWithRelationInput[]
-  cursor?: Prisma.NoteCategoryWhereUniqueInput
+  include?: Prisma.DocumentTemplateInclude<ExtArgs> | null
+  where?: Prisma.DocumentTemplateWhereInput
+  orderBy?: Prisma.DocumentTemplateOrderByWithRelationInput | Prisma.DocumentTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.DocumentTemplateWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.NoteCategoryScalarFieldEnum | Prisma.NoteCategoryScalarFieldEnum[]
+  distinct?: Prisma.DocumentTemplateScalarFieldEnum | Prisma.DocumentTemplateScalarFieldEnum[]
 }
 
 /**
- * Tenant.fileAnalyses
+ * Tenant.EmailChunk
  */
-export type Tenant$fileAnalysesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FileAnalysis
-   */
-  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the FileAnalysis
-   */
-  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
-  where?: Prisma.FileAnalysisWhereInput
-  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
-  cursor?: Prisma.FileAnalysisWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
-}
-
-/**
- * Tenant.timeEntries
- */
-export type Tenant$timeEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TimeEntry
-   */
-  select?: Prisma.TimeEntrySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the TimeEntry
-   */
-  omit?: Prisma.TimeEntryOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.TimeEntryInclude<ExtArgs> | null
-  where?: Prisma.TimeEntryWhereInput
-  orderBy?: Prisma.TimeEntryOrderByWithRelationInput | Prisma.TimeEntryOrderByWithRelationInput[]
-  cursor?: Prisma.TimeEntryWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.TimeEntryScalarFieldEnum | Prisma.TimeEntryScalarFieldEnum[]
-}
-
-/**
- * Tenant.emailLogs
- */
-export type Tenant$emailLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the EmailLog
-   */
-  select?: Prisma.EmailLogSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the EmailLog
-   */
-  omit?: Prisma.EmailLogOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.EmailLogInclude<ExtArgs> | null
-  where?: Prisma.EmailLogWhereInput
-  orderBy?: Prisma.EmailLogOrderByWithRelationInput | Prisma.EmailLogOrderByWithRelationInput[]
-  cursor?: Prisma.EmailLogWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.EmailLogScalarFieldEnum | Prisma.EmailLogScalarFieldEnum[]
-}
-
-/**
- * Tenant.emailChunks
- */
-export type Tenant$emailChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Tenant$EmailChunkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the EmailChunk
    */
@@ -4056,9 +3809,9 @@ export type Tenant$emailChunksArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
- * Tenant.emailConversations
+ * Tenant.EmailConversation
  */
-export type Tenant$emailConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Tenant$EmailConversationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the EmailConversation
    */
@@ -4080,9 +3833,129 @@ export type Tenant$emailConversationsArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
- * Tenant.messageChunks
+ * Tenant.EmailLog
  */
-export type Tenant$messageChunksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Tenant$EmailLogArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailLog
+   */
+  select?: Prisma.EmailLogSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailLog
+   */
+  omit?: Prisma.EmailLogOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailLogInclude<ExtArgs> | null
+  where?: Prisma.EmailLogWhereInput
+  orderBy?: Prisma.EmailLogOrderByWithRelationInput | Prisma.EmailLogOrderByWithRelationInput[]
+  cursor?: Prisma.EmailLogWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailLogScalarFieldEnum | Prisma.EmailLogScalarFieldEnum[]
+}
+
+/**
+ * Tenant.EmailTemplate
+ */
+export type Tenant$EmailTemplateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the EmailTemplate
+   */
+  select?: Prisma.EmailTemplateSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the EmailTemplate
+   */
+  omit?: Prisma.EmailTemplateOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.EmailTemplateInclude<ExtArgs> | null
+  where?: Prisma.EmailTemplateWhereInput
+  orderBy?: Prisma.EmailTemplateOrderByWithRelationInput | Prisma.EmailTemplateOrderByWithRelationInput[]
+  cursor?: Prisma.EmailTemplateWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.EmailTemplateScalarFieldEnum | Prisma.EmailTemplateScalarFieldEnum[]
+}
+
+/**
+ * Tenant.FileAnalysis
+ */
+export type Tenant$FileAnalysisArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FileAnalysis
+   */
+  select?: Prisma.FileAnalysisSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FileAnalysis
+   */
+  omit?: Prisma.FileAnalysisOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FileAnalysisInclude<ExtArgs> | null
+  where?: Prisma.FileAnalysisWhereInput
+  orderBy?: Prisma.FileAnalysisOrderByWithRelationInput | Prisma.FileAnalysisOrderByWithRelationInput[]
+  cursor?: Prisma.FileAnalysisWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FileAnalysisScalarFieldEnum | Prisma.FileAnalysisScalarFieldEnum[]
+}
+
+/**
+ * Tenant.Invitation
+ */
+export type Tenant$InvitationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Invitation
+   */
+  select?: Prisma.InvitationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Invitation
+   */
+  omit?: Prisma.InvitationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InvitationInclude<ExtArgs> | null
+  where?: Prisma.InvitationWhereInput
+  orderBy?: Prisma.InvitationOrderByWithRelationInput | Prisma.InvitationOrderByWithRelationInput[]
+  cursor?: Prisma.InvitationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InvitationScalarFieldEnum | Prisma.InvitationScalarFieldEnum[]
+}
+
+/**
+ * Tenant.Membership
+ */
+export type Tenant$MembershipArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Membership
+   */
+  select?: Prisma.MembershipSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Membership
+   */
+  omit?: Prisma.MembershipOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MembershipInclude<ExtArgs> | null
+  where?: Prisma.MembershipWhereInput
+  orderBy?: Prisma.MembershipOrderByWithRelationInput | Prisma.MembershipOrderByWithRelationInput[]
+  cursor?: Prisma.MembershipWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MembershipScalarFieldEnum | Prisma.MembershipScalarFieldEnum[]
+}
+
+/**
+ * Tenant.MessageChunk
+ */
+export type Tenant$MessageChunkArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the MessageChunk
    */
@@ -4104,27 +3977,142 @@ export type Tenant$messageChunksArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * Tenant.documentTemplates
+ * Tenant.NoteCategory
  */
-export type Tenant$documentTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Tenant$NoteCategoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the DocumentTemplate
+   * Select specific fields to fetch from the NoteCategory
    */
-  select?: Prisma.DocumentTemplateSelect<ExtArgs> | null
+  select?: Prisma.NoteCategorySelect<ExtArgs> | null
   /**
-   * Omit specific fields from the DocumentTemplate
+   * Omit specific fields from the NoteCategory
    */
-  omit?: Prisma.DocumentTemplateOmit<ExtArgs> | null
+  omit?: Prisma.NoteCategoryOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.DocumentTemplateInclude<ExtArgs> | null
-  where?: Prisma.DocumentTemplateWhereInput
-  orderBy?: Prisma.DocumentTemplateOrderByWithRelationInput | Prisma.DocumentTemplateOrderByWithRelationInput[]
-  cursor?: Prisma.DocumentTemplateWhereUniqueInput
+  include?: Prisma.NoteCategoryInclude<ExtArgs> | null
+  where?: Prisma.NoteCategoryWhereInput
+  orderBy?: Prisma.NoteCategoryOrderByWithRelationInput | Prisma.NoteCategoryOrderByWithRelationInput[]
+  cursor?: Prisma.NoteCategoryWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.DocumentTemplateScalarFieldEnum | Prisma.DocumentTemplateScalarFieldEnum[]
+  distinct?: Prisma.NoteCategoryScalarFieldEnum | Prisma.NoteCategoryScalarFieldEnum[]
+}
+
+/**
+ * Tenant.NotificationPreference
+ */
+export type Tenant$NotificationPreferenceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NotificationPreference
+   */
+  select?: Prisma.NotificationPreferenceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NotificationPreference
+   */
+  omit?: Prisma.NotificationPreferenceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NotificationPreferenceInclude<ExtArgs> | null
+  where?: Prisma.NotificationPreferenceWhereInput
+  orderBy?: Prisma.NotificationPreferenceOrderByWithRelationInput | Prisma.NotificationPreferenceOrderByWithRelationInput[]
+  cursor?: Prisma.NotificationPreferenceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NotificationPreferenceScalarFieldEnum | Prisma.NotificationPreferenceScalarFieldEnum[]
+}
+
+/**
+ * Tenant.Project
+ */
+export type Tenant$ProjectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
+  orderBy?: Prisma.ProjectOrderByWithRelationInput | Prisma.ProjectOrderByWithRelationInput[]
+  cursor?: Prisma.ProjectWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProjectScalarFieldEnum | Prisma.ProjectScalarFieldEnum[]
+}
+
+/**
+ * Tenant.PushSubscription
+ */
+export type Tenant$PushSubscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PushSubscription
+   */
+  select?: Prisma.PushSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PushSubscription
+   */
+  omit?: Prisma.PushSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PushSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.PushSubscriptionWhereInput
+  orderBy?: Prisma.PushSubscriptionOrderByWithRelationInput | Prisma.PushSubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.PushSubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PushSubscriptionScalarFieldEnum | Prisma.PushSubscriptionScalarFieldEnum[]
+}
+
+/**
+ * Tenant.Subscription
+ */
+export type Tenant$SubscriptionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+}
+
+/**
+ * Tenant.TimeEntry
+ */
+export type Tenant$TimeEntryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TimeEntry
+   */
+  select?: Prisma.TimeEntrySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TimeEntry
+   */
+  omit?: Prisma.TimeEntryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TimeEntryInclude<ExtArgs> | null
+  where?: Prisma.TimeEntryWhereInput
+  orderBy?: Prisma.TimeEntryOrderByWithRelationInput | Prisma.TimeEntryOrderByWithRelationInput[]
+  cursor?: Prisma.TimeEntryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TimeEntryScalarFieldEnum | Prisma.TimeEntryScalarFieldEnum[]
 }
 
 /**

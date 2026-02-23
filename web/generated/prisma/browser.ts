@@ -18,141 +18,30 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
- * Model Tenant
+ * Model KnowledgeEntity
  * 
  */
-export type Tenant = Prisma.TenantModel
+export type KnowledgeEntity = Prisma.KnowledgeEntityModel
 /**
- * Model User
+ * Model KnowledgeRelation
  * 
  */
-export type User = Prisma.UserModel
+export type KnowledgeRelation = Prisma.KnowledgeRelationModel
 /**
- * Model Membership
+ * Model AIMessage
  * 
  */
-export type Membership = Prisma.MembershipModel
+export type AIMessage = Prisma.AIMessageModel
 /**
  * Model Account
  * 
  */
 export type Account = Prisma.AccountModel
 /**
- * Model Session
- * 
- */
-export type Session = Prisma.SessionModel
-/**
- * Model VerificationToken
- * 
- */
-export type VerificationToken = Prisma.VerificationTokenModel
-/**
- * Model Invitation
- * 
- */
-export type Invitation = Prisma.InvitationModel
-/**
- * Model Project
- * 
- */
-export type Project = Prisma.ProjectModel
-/**
- * Model ProjectMember
- * 
- */
-export type ProjectMember = Prisma.ProjectMemberModel
-/**
- * Model Task
- * 
- */
-export type Task = Prisma.TaskModel
-/**
- * Model TaskAssignment
- * 
- */
-export type TaskAssignment = Prisma.TaskAssignmentModel
-/**
- * Model File
- * 
- */
-export type File = Prisma.FileModel
-/**
- * Model DocumentTemplate
- * 
- */
-export type DocumentTemplate = Prisma.DocumentTemplateModel
-/**
- * Model FileAnalysis
- * 
- */
-export type FileAnalysis = Prisma.FileAnalysisModel
-/**
- * Model DocumentChunk
- * Vektorsökning via pgvector. Se AI.md för arkitektur.
- * Tenant-isolerad: alla rader har tenantId. Projektfiler har projectId; personliga filer har userId.
- */
-export type DocumentChunk = Prisma.DocumentChunkModel
-/**
- * Model Conversation
- * 
- */
-export type Conversation = Prisma.ConversationModel
-/**
- * Model Message
- * 
- */
-export type Message = Prisma.MessageModel
-/**
- * Model MessageChunk
- * 
- */
-export type MessageChunk = Prisma.MessageChunkModel
-/**
- * Model AIMessage
- * Can be removed later if no longer needed for notifications.
- */
-export type AIMessage = Prisma.AIMessageModel
-/**
- * Model Notification
- * 
- */
-export type Notification = Prisma.NotificationModel
-/**
- * Model NotificationPreference
- * 
- */
-export type NotificationPreference = Prisma.NotificationPreferenceModel
-/**
- * Model EmailTemplate
- * 
- */
-export type EmailTemplate = Prisma.EmailTemplateModel
-/**
- * Model PushSubscription
- * 
- */
-export type PushSubscription = Prisma.PushSubscriptionModel
-/**
- * Model Comment
- * 
- */
-export type Comment = Prisma.CommentModel
-/**
  * Model ActivityLog
  * 
  */
 export type ActivityLog = Prisma.ActivityLogModel
-/**
- * Model TimeEntry
- * 
- */
-export type TimeEntry = Prisma.TimeEntryModel
-/**
- * Model Note
- * 
- */
-export type Note = Prisma.NoteModel
 /**
  * Model Automation
  * 
@@ -164,30 +53,25 @@ export type Automation = Prisma.AutomationModel
  */
 export type AutomationLog = Prisma.AutomationLogModel
 /**
- * Model NoteCategory
+ * Model Comment
  * 
  */
-export type NoteCategory = Prisma.NoteCategoryModel
+export type Comment = Prisma.CommentModel
 /**
- * Model Subscription
+ * Model Conversation
  * 
  */
-export type Subscription = Prisma.SubscriptionModel
+export type Conversation = Prisma.ConversationModel
 /**
- * Model EmailConversation
- * 
+ * Model DocumentChunk
+ * This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
  */
-export type EmailConversation = Prisma.EmailConversationModel
+export type DocumentChunk = Prisma.DocumentChunkModel
 /**
- * Model EmailMessage
+ * Model DocumentTemplate
  * 
  */
-export type EmailMessage = Prisma.EmailMessageModel
-/**
- * Model EmailLog
- * 
- */
-export type EmailLog = Prisma.EmailLogModel
+export type DocumentTemplate = Prisma.DocumentTemplateModel
 /**
  * Model EmailAttachment
  * 
@@ -198,3 +82,128 @@ export type EmailAttachment = Prisma.EmailAttachmentModel
  * 
  */
 export type EmailChunk = Prisma.EmailChunkModel
+/**
+ * Model EmailConversation
+ * 
+ */
+export type EmailConversation = Prisma.EmailConversationModel
+/**
+ * Model EmailLog
+ * 
+ */
+export type EmailLog = Prisma.EmailLogModel
+/**
+ * Model EmailMessage
+ * 
+ */
+export type EmailMessage = Prisma.EmailMessageModel
+/**
+ * Model EmailTemplate
+ * 
+ */
+export type EmailTemplate = Prisma.EmailTemplateModel
+/**
+ * Model File
+ * 
+ */
+export type File = Prisma.FileModel
+/**
+ * Model FileAnalysis
+ * 
+ */
+export type FileAnalysis = Prisma.FileAnalysisModel
+/**
+ * Model Invitation
+ * 
+ */
+export type Invitation = Prisma.InvitationModel
+/**
+ * Model Membership
+ * 
+ */
+export type Membership = Prisma.MembershipModel
+/**
+ * Model Message
+ * 
+ */
+export type Message = Prisma.MessageModel
+/**
+ * Model MessageChunk
+ * 
+ */
+export type MessageChunk = Prisma.MessageChunkModel
+/**
+ * Model Note
+ * 
+ */
+export type Note = Prisma.NoteModel
+/**
+ * Model NoteCategory
+ * 
+ */
+export type NoteCategory = Prisma.NoteCategoryModel
+/**
+ * Model Notification
+ * 
+ */
+export type Notification = Prisma.NotificationModel
+/**
+ * Model NotificationPreference
+ * 
+ */
+export type NotificationPreference = Prisma.NotificationPreferenceModel
+/**
+ * Model Project
+ * 
+ */
+export type Project = Prisma.ProjectModel
+/**
+ * Model ProjectMember
+ * 
+ */
+export type ProjectMember = Prisma.ProjectMemberModel
+/**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
+ * Model Session
+ * 
+ */
+export type Session = Prisma.SessionModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model Task
+ * 
+ */
+export type Task = Prisma.TaskModel
+/**
+ * Model TaskAssignment
+ * 
+ */
+export type TaskAssignment = Prisma.TaskAssignmentModel
+/**
+ * Model Tenant
+ * 
+ */
+export type Tenant = Prisma.TenantModel
+/**
+ * Model TimeEntry
+ * 
+ */
+export type TimeEntry = Prisma.TimeEntryModel
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model VerificationToken
+ * 
+ */
+export type VerificationToken = Prisma.VerificationTokenModel

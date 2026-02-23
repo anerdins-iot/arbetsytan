@@ -376,16 +376,6 @@ export type EmailAttachmentUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type EmailAttachmentListRelationFilter = {
-  every?: Prisma.EmailAttachmentWhereInput
-  some?: Prisma.EmailAttachmentWhereInput
-  none?: Prisma.EmailAttachmentWhereInput
-}
-
-export type EmailAttachmentOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
 export type EmailAttachmentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   filename?: Prisma.SortOrder
@@ -425,6 +415,24 @@ export type EmailAttachmentMinOrderByAggregateInput = {
 
 export type EmailAttachmentSumOrderByAggregateInput = {
   size?: Prisma.SortOrder
+}
+
+export type EmailAttachmentListRelationFilter = {
+  every?: Prisma.EmailAttachmentWhereInput
+  some?: Prisma.EmailAttachmentWhereInput
+  none?: Prisma.EmailAttachmentWhereInput
+}
+
+export type EmailAttachmentOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type EmailAttachmentCreateNestedManyWithoutEmailLogInput = {
