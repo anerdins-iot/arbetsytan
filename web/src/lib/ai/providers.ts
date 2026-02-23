@@ -79,8 +79,8 @@ const MODEL_IDS: Record<ProviderKey, string> = {
   CLAUDE_SONNET: "claude-sonnet-4-5-20250929",
   OPENAI: "gpt-4o",
   MISTRAL_LARGE: "mistral-large-2512",
-  MISTRAL_SMALL: "mistral-small-2506",
-  GROK_FAST: "grok-4-0709",
+  MISTRAL_SMALL: "mistral-small-latest",
+  GROK_FAST: "grok-4-1-fast-non-reasoning",
   GEMINI_PRO: "gemini-3.1-pro-preview",
   GEMINI_FLASH: "gemini-3-flash-preview",
 };
