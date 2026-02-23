@@ -314,6 +314,7 @@ export type UserWhereInput = {
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   shoppingLists?: Prisma.ShoppingListListRelationFilter
+  createdQuotes?: Prisma.QuoteListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -350,6 +351,7 @@ export type UserOrderByWithRelationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   shoppingLists?: Prisma.ShoppingListOrderByRelationAggregateInput
+  createdQuotes?: Prisma.QuoteOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -389,6 +391,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   shoppingLists?: Prisma.ShoppingListListRelationFilter
+  createdQuotes?: Prisma.QuoteListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -469,6 +472,7 @@ export type UserCreateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -505,6 +509,7 @@ export type UserUncheckedCreateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUpdateInput = {
@@ -541,6 +546,7 @@ export type UserUpdateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -577,6 +583,7 @@ export type UserUncheckedUpdateInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -961,6 +968,20 @@ export type UserUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSessionsInput, Prisma.UserUpdateWithoutSessionsInput>, Prisma.UserUncheckedUpdateWithoutSessionsInput>
 }
 
+export type UserCreateNestedOneWithoutCreatedQuotesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuotesInput, Prisma.UserUncheckedCreateWithoutCreatedQuotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedQuotesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCreatedQuotesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuotesInput, Prisma.UserUncheckedCreateWithoutCreatedQuotesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedQuotesInput
+  upsert?: Prisma.UserUpsertWithoutCreatedQuotesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedQuotesInput, Prisma.UserUpdateWithoutCreatedQuotesInput>, Prisma.UserUncheckedUpdateWithoutCreatedQuotesInput>
+}
+
 export type UserCreateWithoutAIMessageInput = {
   id?: string
   name?: string | null
@@ -994,6 +1015,7 @@ export type UserCreateWithoutAIMessageInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAIMessageInput = {
@@ -1029,6 +1051,7 @@ export type UserUncheckedCreateWithoutAIMessageInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAIMessageInput = {
@@ -1080,6 +1103,7 @@ export type UserUpdateWithoutAIMessageInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAIMessageInput = {
@@ -1115,6 +1139,7 @@ export type UserUncheckedUpdateWithoutAIMessageInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutAccountInput = {
@@ -1150,6 +1175,7 @@ export type UserCreateWithoutAccountInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutAccountInput = {
@@ -1185,6 +1211,7 @@ export type UserUncheckedCreateWithoutAccountInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutAccountInput = {
@@ -1236,6 +1263,7 @@ export type UserUpdateWithoutAccountInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountInput = {
@@ -1271,6 +1299,7 @@ export type UserUncheckedUpdateWithoutAccountInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutActivityLogInput = {
@@ -1306,6 +1335,7 @@ export type UserCreateWithoutActivityLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutActivityLogInput = {
@@ -1341,6 +1371,7 @@ export type UserUncheckedCreateWithoutActivityLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutActivityLogInput = {
@@ -1392,6 +1423,7 @@ export type UserUpdateWithoutActivityLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivityLogInput = {
@@ -1427,6 +1459,7 @@ export type UserUncheckedUpdateWithoutActivityLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutConversationInput = {
@@ -1462,6 +1495,7 @@ export type UserCreateWithoutConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutConversationInput = {
@@ -1497,6 +1531,7 @@ export type UserUncheckedCreateWithoutConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutConversationInput = {
@@ -1548,6 +1583,7 @@ export type UserUpdateWithoutConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConversationInput = {
@@ -1583,6 +1619,7 @@ export type UserUncheckedUpdateWithoutConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutDocumentChunkInput = {
@@ -1618,6 +1655,7 @@ export type UserCreateWithoutDocumentChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutDocumentChunkInput = {
@@ -1653,6 +1691,7 @@ export type UserUncheckedCreateWithoutDocumentChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutDocumentChunkInput = {
@@ -1704,6 +1743,7 @@ export type UserUpdateWithoutDocumentChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDocumentChunkInput = {
@@ -1739,6 +1779,7 @@ export type UserUncheckedUpdateWithoutDocumentChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutEmailChunkInput = {
@@ -1774,6 +1815,7 @@ export type UserCreateWithoutEmailChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutEmailChunkInput = {
@@ -1809,6 +1851,7 @@ export type UserUncheckedCreateWithoutEmailChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutEmailChunkInput = {
@@ -1860,6 +1903,7 @@ export type UserUpdateWithoutEmailChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailChunkInput = {
@@ -1895,6 +1939,7 @@ export type UserUncheckedUpdateWithoutEmailChunkInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutEmailConversationInput = {
@@ -1930,6 +1975,7 @@ export type UserCreateWithoutEmailConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutEmailConversationInput = {
@@ -1965,6 +2011,7 @@ export type UserUncheckedCreateWithoutEmailConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutEmailConversationInput = {
@@ -2016,6 +2063,7 @@ export type UserUpdateWithoutEmailConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailConversationInput = {
@@ -2051,6 +2099,7 @@ export type UserUncheckedUpdateWithoutEmailConversationInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutEmailLogInput = {
@@ -2086,6 +2135,7 @@ export type UserCreateWithoutEmailLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutEmailLogInput = {
@@ -2121,6 +2171,7 @@ export type UserUncheckedCreateWithoutEmailLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutEmailLogInput = {
@@ -2172,6 +2223,7 @@ export type UserUpdateWithoutEmailLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutEmailLogInput = {
@@ -2207,6 +2259,7 @@ export type UserUncheckedUpdateWithoutEmailLogInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutFileInput = {
@@ -2242,6 +2295,7 @@ export type UserCreateWithoutFileInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutFileInput = {
@@ -2277,6 +2331,7 @@ export type UserUncheckedCreateWithoutFileInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutFileInput = {
@@ -2328,6 +2383,7 @@ export type UserUpdateWithoutFileInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFileInput = {
@@ -2363,6 +2419,7 @@ export type UserUncheckedUpdateWithoutFileInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutFileAnalysisInput = {
@@ -2398,6 +2455,7 @@ export type UserCreateWithoutFileAnalysisInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutFileAnalysisInput = {
@@ -2433,6 +2491,7 @@ export type UserUncheckedCreateWithoutFileAnalysisInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutFileAnalysisInput = {
@@ -2484,6 +2543,7 @@ export type UserUpdateWithoutFileAnalysisInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFileAnalysisInput = {
@@ -2519,6 +2579,7 @@ export type UserUncheckedUpdateWithoutFileAnalysisInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutMembershipsInput = {
@@ -2554,6 +2615,7 @@ export type UserCreateWithoutMembershipsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutMembershipsInput = {
@@ -2589,6 +2651,7 @@ export type UserUncheckedCreateWithoutMembershipsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutMembershipsInput = {
@@ -2640,6 +2703,7 @@ export type UserUpdateWithoutMembershipsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMembershipsInput = {
@@ -2675,6 +2739,7 @@ export type UserUncheckedUpdateWithoutMembershipsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutMessageChunksInput = {
@@ -2710,6 +2775,7 @@ export type UserCreateWithoutMessageChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutMessageChunksInput = {
@@ -2745,6 +2811,7 @@ export type UserUncheckedCreateWithoutMessageChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutMessageChunksInput = {
@@ -2796,6 +2863,7 @@ export type UserUpdateWithoutMessageChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessageChunksInput = {
@@ -2831,6 +2899,7 @@ export type UserUncheckedUpdateWithoutMessageChunksInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutNotesInput = {
@@ -2866,6 +2935,7 @@ export type UserCreateWithoutNotesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutNotesInput = {
@@ -2901,6 +2971,7 @@ export type UserUncheckedCreateWithoutNotesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutNotesInput = {
@@ -2952,6 +3023,7 @@ export type UserUpdateWithoutNotesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotesInput = {
@@ -2987,6 +3059,7 @@ export type UserUncheckedUpdateWithoutNotesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutShoppingListsInput = {
@@ -3022,6 +3095,7 @@ export type UserCreateWithoutShoppingListsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutShoppingListsInput = {
@@ -3057,6 +3131,7 @@ export type UserUncheckedCreateWithoutShoppingListsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutShoppingListsInput = {
@@ -3108,6 +3183,7 @@ export type UserUpdateWithoutShoppingListsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutShoppingListsInput = {
@@ -3143,6 +3219,7 @@ export type UserUncheckedUpdateWithoutShoppingListsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -3178,6 +3255,7 @@ export type UserCreateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -3213,6 +3291,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -3264,6 +3343,7 @@ export type UserUpdateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -3299,6 +3379,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutNotificationPreferencesInput = {
@@ -3334,6 +3415,7 @@ export type UserCreateWithoutNotificationPreferencesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
@@ -3369,6 +3451,7 @@ export type UserUncheckedCreateWithoutNotificationPreferencesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutNotificationPreferencesInput = {
@@ -3420,6 +3503,7 @@ export type UserUpdateWithoutNotificationPreferencesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
@@ -3455,6 +3539,7 @@ export type UserUncheckedUpdateWithoutNotificationPreferencesInput = {
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -3490,6 +3575,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -3525,6 +3611,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -3576,6 +3663,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -3611,6 +3699,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -3646,6 +3735,7 @@ export type UserCreateWithoutSessionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -3681,6 +3771,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+  createdQuotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -3732,6 +3823,7 @@ export type UserUpdateWithoutSessionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUpdateManyWithoutCreatedByNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -3767,6 +3859,167 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdQuotes?: Prisma.QuoteUncheckedUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserCreateWithoutCreatedQuotesInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  failedLoginAttempts?: number
+  lockedAt?: Date | string | null
+  phone?: string | null
+  bio?: string | null
+  AIMessage?: Prisma.AIMessageCreateNestedManyWithoutUserInput
+  Account?: Prisma.AccountCreateNestedManyWithoutUserInput
+  ActivityLog?: Prisma.ActivityLogCreateNestedManyWithoutActorInput
+  Conversation?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutUserInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutUserInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutUserInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutUserInput
+  File?: Prisma.FileCreateNestedManyWithoutUserInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipCreateNestedManyWithoutUserInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteCreateNestedManyWithoutCreatedByInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserUncheckedCreateWithoutCreatedQuotesInput = {
+  id?: string
+  name?: string | null
+  email: string
+  emailVerified?: Date | string | null
+  image?: string | null
+  password?: string | null
+  isSuperAdmin?: boolean
+  locale?: string
+  pushToken?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  failedLoginAttempts?: number
+  lockedAt?: Date | string | null
+  phone?: string | null
+  bio?: string | null
+  AIMessage?: Prisma.AIMessageUncheckedCreateNestedManyWithoutUserInput
+  Account?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  ActivityLog?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutActorInput
+  Conversation?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutUserInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutUserInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutUserInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutUserInput
+  File?: Prisma.FileUncheckedCreateNestedManyWithoutUserInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutUserInput
+  memberships?: Prisma.MembershipUncheckedCreateNestedManyWithoutUserInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutUserInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutCreatedByInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutCreatedByInput
+}
+
+export type UserCreateOrConnectWithoutCreatedQuotesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuotesInput, Prisma.UserUncheckedCreateWithoutCreatedQuotesInput>
+}
+
+export type UserUpsertWithoutCreatedQuotesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedQuotesInput, Prisma.UserUncheckedUpdateWithoutCreatedQuotesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedQuotesInput, Prisma.UserUncheckedCreateWithoutCreatedQuotesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedQuotesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedQuotesInput, Prisma.UserUncheckedUpdateWithoutCreatedQuotesInput>
+}
+
+export type UserUpdateWithoutCreatedQuotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  AIMessage?: Prisma.AIMessageUpdateManyWithoutUserNestedInput
+  Account?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  ActivityLog?: Prisma.ActivityLogUpdateManyWithoutActorNestedInput
+  Conversation?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutUserNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutUserNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutUserNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutUserNestedInput
+  File?: Prisma.FileUpdateManyWithoutUserNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUpdateManyWithoutUserNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutCreatedByNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  shoppingLists?: Prisma.ShoppingListUpdateManyWithoutCreatedByNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedQuotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  password?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isSuperAdmin?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  pushToken?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bio?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  AIMessage?: Prisma.AIMessageUncheckedUpdateManyWithoutUserNestedInput
+  Account?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  ActivityLog?: Prisma.ActivityLogUncheckedUpdateManyWithoutActorNestedInput
+  Conversation?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutUserNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutUserNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutUserNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutUserNestedInput
+  File?: Prisma.FileUncheckedUpdateManyWithoutUserNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutUserNestedInput
+  memberships?: Prisma.MembershipUncheckedUpdateManyWithoutUserNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutUserNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutCreatedByNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  notificationPreferences?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 
@@ -3793,6 +4046,7 @@ export type UserCountOutputType = {
   pushSubscriptions: number
   sessions: number
   shoppingLists: number
+  createdQuotes: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3814,6 +4068,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   shoppingLists?: boolean | UserCountOutputTypeCountShoppingListsArgs
+  createdQuotes?: boolean | UserCountOutputTypeCountCreatedQuotesArgs
 }
 
 /**
@@ -3952,6 +4207,13 @@ export type UserCountOutputTypeCountShoppingListsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.ShoppingListWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedQuotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuoteWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3987,6 +4249,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   shoppingLists?: boolean | Prisma.User$shoppingListsArgs<ExtArgs>
+  createdQuotes?: boolean | Prisma.User$createdQuotesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4064,6 +4327,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   shoppingLists?: boolean | Prisma.User$shoppingListsArgs<ExtArgs>
+  createdQuotes?: boolean | Prisma.User$createdQuotesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -4090,6 +4354,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     shoppingLists: Prisma.$ShoppingListPayload<ExtArgs>[]
+    createdQuotes: Prisma.$QuotePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4519,6 +4784,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shoppingLists<T extends Prisma.User$shoppingListsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$shoppingListsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdQuotes<T extends Prisma.User$createdQuotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdQuotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5380,6 +5646,30 @@ export type User$shoppingListsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ShoppingListScalarFieldEnum | Prisma.ShoppingListScalarFieldEnum[]
+}
+
+/**
+ * User.createdQuotes
+ */
+export type User$createdQuotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Quote
+   */
+  select?: Prisma.QuoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Quote
+   */
+  omit?: Prisma.QuoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuoteInclude<ExtArgs> | null
+  where?: Prisma.QuoteWhereInput
+  orderBy?: Prisma.QuoteOrderByWithRelationInput | Prisma.QuoteOrderByWithRelationInput[]
+  cursor?: Prisma.QuoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuoteScalarFieldEnum | Prisma.QuoteScalarFieldEnum[]
 }
 
 /**

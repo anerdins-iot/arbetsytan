@@ -88,10 +88,20 @@ import {
   getShoppingListCore,
 } from "@/services/shopping-list-service";
 import {
+  getQuotesCore,
+  getQuoteCore,
+  getQuoteSuggestionsCore,
+} from "@/services/quote-service";
+import {
   createShoppingList as createShoppingListAction,
   addShoppingListItem as addShoppingListItemAction,
   toggleShoppingListItem as toggleShoppingListItemAction,
 } from "@/actions/shopping-list";
+import {
+  createQuote as createQuoteDbAction,
+  addQuoteItem as addQuoteItemAction,
+  updateQuoteStatus as updateQuoteStatusAction,
+} from "@/actions/quotes";
 import {
   getNotificationPreferences,
   updateNotificationPreferences,
@@ -3349,6 +3359,217 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Offerter (databas-backed) ──────────────────────────
+
+  const listQuotes = tool({
+    description:
+      "Hämta användarens offerter. Kan filtreras på status (DRAFT, SENT, ACCEPTED, REJECTED, EXPIRED) eller projekt-ID.",
+    inputSchema: toolInputSchema(
+      z.object({
+        status: z.enum(["DRAFT", "SENT", "ACCEPTED", "REJECTED", "EXPIRED"]).optional().describe("Filtrera på status"),
+        projectId: z.string().optional().describe("Filtrera på projekt-ID"),
+      })
+    ),
+    execute: async ({ status, projectId }) => {
+      const statusMap: Record<string, "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED"> = {
+        DRAFT: "DRAFT", SENT: "SENT", ACCEPTED: "ACCEPTED", REJECTED: "REJECTED", EXPIRED: "EXPIRED",
+      };
+      const quotes = await getQuotesCore(
+        { tenantId, userId },
+        { status: status ? statusMap[status] : undefined, projectId }
+      );
+      return {
+        quotes: quotes.map((q) => ({
+          id: q.id,
+          quoteNumber: q.quoteNumber,
+          title: q.title,
+          customerName: q.customerName,
+          status: q.status,
+          totalExVat: q.totalExVat,
+          itemCount: q.itemCount,
+          createdAt: q.createdAt.toISOString(),
+        })),
+        count: quotes.length,
+      };
+    },
+  });
+
+  const getQuoteDetail = tool({
+    description:
+      "Hämta en specifik offert med alla artiklar/rader. Ange offert-ID.",
+    inputSchema: toolInputSchema(
+      z.object({
+        quoteId: z.string().describe("Offert-ID"),
+      })
+    ),
+    execute: async ({ quoteId }) => {
+      const idCheck = validateDatabaseId(quoteId, "quoteId");
+      if (!idCheck.valid) return { error: idCheck.error };
+
+      const quote = await getQuoteCore({ tenantId, userId }, quoteId);
+      if (!quote) return { error: "Offerten hittades inte." };
+
+      return {
+        ...quote,
+        createdAt: quote.createdAt.toISOString(),
+        updatedAt: quote.updatedAt.toISOString(),
+        validUntil: quote.validUntil?.toISOString() ?? null,
+        sentAt: quote.sentAt?.toISOString() ?? null,
+        acceptedAt: quote.acceptedAt?.toISOString() ?? null,
+        rejectedAt: quote.rejectedAt?.toISOString() ?? null,
+        items: quote.items.map((i) => ({
+          ...i,
+          createdAt: i.createdAt.toISOString(),
+        })),
+      };
+    },
+  });
+
+  const createQuoteDb = tool({
+    description:
+      "Skapa en ny offert i databasen med offertnummer. Hämtar automatiskt historik-förslag baserat på tidigare inköp. " +
+      "Använd detta för att spara offerter permanent (till skillnad från createQuote som bara skapar en PDF-preview).",
+    inputSchema: toolInputSchema(
+      z.object({
+        title: z.string().describe("Offertens titel"),
+        projectId: z.string().optional().describe("Projekt-ID"),
+        customerName: z.string().optional().describe("Kundnamn"),
+        customerEmail: z.string().optional().describe("Kundens e-post"),
+        customerPhone: z.string().optional().describe("Kundens telefon"),
+        customerAddress: z.string().optional().describe("Kundens adress"),
+        validUntil: z.string().optional().describe("Giltig till (YYYY-MM-DD)"),
+        notes: z.string().optional().describe("Anteckningar/villkor"),
+      })
+    ),
+    execute: async (input) => {
+      // Get suggestions from shopping history
+      const suggestions = await getQuoteSuggestionsCore({ tenantId, userId }, { limit: 10 });
+
+      const result = await createQuoteDbAction({
+        title: input.title,
+        projectId: input.projectId,
+        customerName: input.customerName,
+        customerEmail: input.customerEmail,
+        customerPhone: input.customerPhone,
+        customerAddress: input.customerAddress,
+        validUntil: input.validUntil,
+        notes: input.notes,
+      });
+
+      if (!result.success) return { error: result.error };
+
+      return {
+        message: `Offert "${input.title}" skapad med nummer ${result.quoteNumber}.`,
+        quoteId: result.quoteId,
+        quoteNumber: result.quoteNumber,
+        suggestions: suggestions.length > 0
+          ? suggestions.map((s) => ({
+              name: s.name,
+              articleNo: s.articleNo,
+              avgPrice: s.avgPrice,
+              frequency: s.frequency,
+              unit: s.unit,
+            }))
+          : [],
+        hint: suggestions.length > 0
+          ? "Använd addQuoteItem för att lägga till artiklarna. Förslagen baseras på tidigare inköp."
+          : "Använd addQuoteItem för att lägga till artiklar.",
+      };
+    },
+  });
+
+  const addQuoteItemTool = tool({
+    description:
+      "Lägg till en artikel/rad på en befintlig offert.",
+    inputSchema: toolInputSchema(
+      z.object({
+        quoteId: z.string().describe("Offert-ID"),
+        name: z.string().describe("Artikelnamn"),
+        articleNo: z.string().optional().describe("Artikelnummer"),
+        brand: z.string().optional().describe("Varumärke"),
+        supplier: z.string().optional().describe("Leverantör"),
+        description: z.string().optional().describe("Beskrivning"),
+        quantity: z.number().optional().describe("Antal (default 1)"),
+        unit: z.string().optional().describe("Enhet (st, tim, m, m2)"),
+        unitPrice: z.number().describe("Enhetspris exkl. moms"),
+        discount: z.number().optional().describe("Rabatt i procent"),
+      })
+    ),
+    execute: async ({ quoteId, ...item }) => {
+      const result = await addQuoteItemAction(quoteId, item);
+      if (!result.success) return { error: result.error };
+      return {
+        message: `"${item.name}" tillagd på offerten.`,
+        itemId: result.itemId,
+      };
+    },
+  });
+
+  const suggestQuoteItems = tool({
+    description:
+      "Hämta förslag på artiklar baserat på inköpshistorik och sök hos grossister parallellt. " +
+      "Användbart när användaren bygger en offert och behöver inspiration eller priser.",
+    inputSchema: toolInputSchema(
+      z.object({
+        searchQuery: z.string().optional().describe("Sökfras för grossistsökning"),
+        limit: z.number().optional().describe("Max antal förslag (default 10)"),
+      })
+    ),
+    execute: async ({ searchQuery, limit: suggestLimit }) => {
+      // Parallel: get history suggestions + search wholesalers
+      const [suggestions, wholesalerResults] = await Promise.all([
+        getQuoteSuggestionsCore({ tenantId, userId }, { limit: suggestLimit ?? 10 }),
+        searchQuery
+          ? searchWholesalers(searchQuery, { limit: 5 })
+          : Promise.resolve({ elektroskandia: null, ahlsell: null }),
+      ]);
+
+      const wholesalerProducts = [
+        ...(wholesalerResults.elektroskandia?.products ?? []),
+        ...(wholesalerResults.ahlsell?.products ?? []),
+      ];
+
+      return {
+        historySuggestions: suggestions.map((s) => ({
+          name: s.name,
+          articleNo: s.articleNo,
+          brand: s.brand,
+          supplier: s.supplier,
+          avgPrice: s.avgPrice,
+          unit: s.unit,
+          frequency: s.frequency,
+        })),
+        wholesalerProducts: wholesalerProducts.map((p) => ({
+          supplier: p.supplier,
+          name: p.name,
+          articleNo: p.articleNo,
+          brand: p.brand,
+          price: p.price,
+          unit: p.unit,
+          imageUrl: p.imageUrl,
+          productUrl: p.productUrl,
+        })),
+        hint: "Använd addQuoteItem för att lägga till artiklarna på offerten.",
+      };
+    },
+  });
+
+  const updateQuoteStatusTool = tool({
+    description:
+      "Ändra status på en offert: DRAFT, SENT, ACCEPTED, REJECTED, EXPIRED. Datum (sentAt, acceptedAt, rejectedAt) sätts automatiskt.",
+    inputSchema: toolInputSchema(
+      z.object({
+        quoteId: z.string().describe("Offert-ID"),
+        status: z.enum(["DRAFT", "SENT", "ACCEPTED", "REJECTED", "EXPIRED"]).describe("Ny status"),
+      })
+    ),
+    execute: async ({ quoteId, status }) => {
+      const result = await updateQuoteStatusAction(quoteId, status);
+      if (!result.success) return { error: result.error };
+      return { message: `Offertens status ändrad till ${status}.` };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -3463,8 +3684,15 @@ Returnera ENBART JSON i följande format:
     searchMyEmails,
     getConversationContext,
     getMyRecentEmails,
-    // Offert
+    // Offert (preview)
     createQuote,
+    // Offerter (databas)
+    listQuotes,
+    getQuote: getQuoteDetail,
+    createQuoteDb,
+    addQuoteItem: addQuoteItemTool,
+    suggestQuoteItems,
+    updateQuoteStatus: updateQuoteStatusTool,
     // Grossistsökning
     searchSupplierProducts,
     // Inköpslistor

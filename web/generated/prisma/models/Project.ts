@@ -221,6 +221,7 @@ export type ProjectWhereInput = {
   notes?: Prisma.NoteListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   shoppingLists?: Prisma.ShoppingListListRelationFilter
+  quotes?: Prisma.QuoteListRelationFilter
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   projectMembers?: Prisma.ProjectMemberListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -251,6 +252,7 @@ export type ProjectOrderByWithRelationInput = {
   notes?: Prisma.NoteOrderByRelationAggregateInput
   notifications?: Prisma.NotificationOrderByRelationAggregateInput
   shoppingLists?: Prisma.ShoppingListOrderByRelationAggregateInput
+  quotes?: Prisma.QuoteOrderByRelationAggregateInput
   tenant?: Prisma.TenantOrderByWithRelationInput
   projectMembers?: Prisma.ProjectMemberOrderByRelationAggregateInput
   tasks?: Prisma.TaskOrderByRelationAggregateInput
@@ -284,6 +286,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   notes?: Prisma.NoteListRelationFilter
   notifications?: Prisma.NotificationListRelationFilter
   shoppingLists?: Prisma.ShoppingListListRelationFilter
+  quotes?: Prisma.QuoteListRelationFilter
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   projectMembers?: Prisma.ProjectMemberListRelationFilter
   tasks?: Prisma.TaskListRelationFilter
@@ -341,6 +344,7 @@ export type ProjectCreateInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -371,6 +375,7 @@ export type ProjectUncheckedCreateInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -399,6 +404,7 @@ export type ProjectUpdateInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -429,6 +435,7 @@ export type ProjectUncheckedUpdateInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -845,6 +852,22 @@ export type ProjectUpdateOneWithoutTimeEntriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutTimeEntriesInput, Prisma.ProjectUpdateWithoutTimeEntriesInput>, Prisma.ProjectUncheckedUpdateWithoutTimeEntriesInput>
 }
 
+export type ProjectCreateNestedOneWithoutQuotesInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutQuotesInput, Prisma.ProjectUncheckedCreateWithoutQuotesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutQuotesInput
+  connect?: Prisma.ProjectWhereUniqueInput
+}
+
+export type ProjectUpdateOneWithoutQuotesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProjectCreateWithoutQuotesInput, Prisma.ProjectUncheckedCreateWithoutQuotesInput>
+  connectOrCreate?: Prisma.ProjectCreateOrConnectWithoutQuotesInput
+  upsert?: Prisma.ProjectUpsertWithoutQuotesInput
+  disconnect?: Prisma.ProjectWhereInput | boolean
+  delete?: Prisma.ProjectWhereInput | boolean
+  connect?: Prisma.ProjectWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProjectUpdateToOneWithWhereWithoutQuotesInput, Prisma.ProjectUpdateWithoutQuotesInput>, Prisma.ProjectUncheckedUpdateWithoutQuotesInput>
+}
+
 export type ProjectCreateWithoutAIMessagesInput = {
   id?: string
   name: string
@@ -867,6 +890,7 @@ export type ProjectCreateWithoutAIMessagesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -896,6 +920,7 @@ export type ProjectUncheckedCreateWithoutAIMessagesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -939,6 +964,7 @@ export type ProjectUpdateWithoutAIMessagesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -968,6 +994,7 @@ export type ProjectUncheckedUpdateWithoutAIMessagesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -995,6 +1022,7 @@ export type ProjectCreateWithoutActivityLogsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1024,6 +1052,7 @@ export type ProjectUncheckedCreateWithoutActivityLogsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1067,6 +1096,7 @@ export type ProjectUpdateWithoutActivityLogsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1096,6 +1126,7 @@ export type ProjectUncheckedUpdateWithoutActivityLogsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1123,6 +1154,7 @@ export type ProjectCreateWithoutAutomationsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1152,6 +1184,7 @@ export type ProjectUncheckedCreateWithoutAutomationsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1195,6 +1228,7 @@ export type ProjectUpdateWithoutAutomationsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1224,6 +1258,7 @@ export type ProjectUncheckedUpdateWithoutAutomationsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1251,6 +1286,7 @@ export type ProjectCreateWithoutConversationsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1280,6 +1316,7 @@ export type ProjectUncheckedCreateWithoutConversationsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1323,6 +1360,7 @@ export type ProjectUpdateWithoutConversationsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1352,6 +1390,7 @@ export type ProjectUncheckedUpdateWithoutConversationsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1379,6 +1418,7 @@ export type ProjectCreateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1408,6 +1448,7 @@ export type ProjectUncheckedCreateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1451,6 +1492,7 @@ export type ProjectUpdateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1480,6 +1522,7 @@ export type ProjectUncheckedUpdateWithoutDocumentChunksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1507,6 +1550,7 @@ export type ProjectCreateWithoutEmailChunksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1536,6 +1580,7 @@ export type ProjectUncheckedCreateWithoutEmailChunksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1579,6 +1624,7 @@ export type ProjectUpdateWithoutEmailChunksInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1608,6 +1654,7 @@ export type ProjectUncheckedUpdateWithoutEmailChunksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1635,6 +1682,7 @@ export type ProjectCreateWithoutEmailConversationsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1664,6 +1712,7 @@ export type ProjectUncheckedCreateWithoutEmailConversationsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1707,6 +1756,7 @@ export type ProjectUpdateWithoutEmailConversationsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1736,6 +1786,7 @@ export type ProjectUncheckedUpdateWithoutEmailConversationsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1763,6 +1814,7 @@ export type ProjectCreateWithoutEmailLogsInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1792,6 +1844,7 @@ export type ProjectUncheckedCreateWithoutEmailLogsInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1835,6 +1888,7 @@ export type ProjectUpdateWithoutEmailLogsInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1864,6 +1918,7 @@ export type ProjectUncheckedUpdateWithoutEmailLogsInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -1891,6 +1946,7 @@ export type ProjectCreateWithoutFilesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -1920,6 +1976,7 @@ export type ProjectUncheckedCreateWithoutFilesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -1963,6 +2020,7 @@ export type ProjectUpdateWithoutFilesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -1992,6 +2050,7 @@ export type ProjectUncheckedUpdateWithoutFilesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2019,6 +2078,7 @@ export type ProjectCreateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -2048,6 +2108,7 @@ export type ProjectUncheckedCreateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -2091,6 +2152,7 @@ export type ProjectUpdateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -2120,6 +2182,7 @@ export type ProjectUncheckedUpdateWithoutFileAnalysesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2147,6 +2210,7 @@ export type ProjectCreateWithoutMessagesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -2176,6 +2240,7 @@ export type ProjectUncheckedCreateWithoutMessagesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -2219,6 +2284,7 @@ export type ProjectUpdateWithoutMessagesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -2248,6 +2314,7 @@ export type ProjectUncheckedUpdateWithoutMessagesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2275,6 +2342,7 @@ export type ProjectCreateWithoutMessageChunksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -2304,6 +2372,7 @@ export type ProjectUncheckedCreateWithoutMessageChunksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -2347,6 +2416,7 @@ export type ProjectUpdateWithoutMessageChunksInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -2376,6 +2446,7 @@ export type ProjectUncheckedUpdateWithoutMessageChunksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2403,6 +2474,7 @@ export type ProjectCreateWithoutNotesInput = {
   messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -2432,6 +2504,7 @@ export type ProjectUncheckedCreateWithoutNotesInput = {
   messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -2475,6 +2548,7 @@ export type ProjectUpdateWithoutNotesInput = {
   messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -2504,6 +2578,7 @@ export type ProjectUncheckedUpdateWithoutNotesInput = {
   messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2531,6 +2606,7 @@ export type ProjectCreateWithoutShoppingListsInput = {
   messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -2560,6 +2636,7 @@ export type ProjectUncheckedCreateWithoutShoppingListsInput = {
   messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -2603,6 +2680,7 @@ export type ProjectUpdateWithoutShoppingListsInput = {
   messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -2632,6 +2710,7 @@ export type ProjectUncheckedUpdateWithoutShoppingListsInput = {
   messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2659,6 +2738,7 @@ export type ProjectCreateWithoutNotificationsInput = {
   messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -2688,6 +2768,7 @@ export type ProjectUncheckedCreateWithoutNotificationsInput = {
   messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -2731,6 +2812,7 @@ export type ProjectUpdateWithoutNotificationsInput = {
   messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -2760,6 +2842,7 @@ export type ProjectUncheckedUpdateWithoutNotificationsInput = {
   messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -2788,6 +2871,7 @@ export type ProjectCreateWithoutProjectMembersInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
@@ -2817,6 +2901,7 @@ export type ProjectUncheckedCreateWithoutProjectMembersInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
 }
@@ -2860,6 +2945,7 @@ export type ProjectUpdateWithoutProjectMembersInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
@@ -2889,6 +2975,7 @@ export type ProjectUncheckedUpdateWithoutProjectMembersInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
@@ -2916,6 +3003,7 @@ export type ProjectCreateWithoutTasksInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
@@ -2945,6 +3033,7 @@ export type ProjectUncheckedCreateWithoutTasksInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
 }
@@ -2988,6 +3077,7 @@ export type ProjectUpdateWithoutTasksInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
@@ -3017,6 +3107,7 @@ export type ProjectUncheckedUpdateWithoutTasksInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
@@ -3044,6 +3135,7 @@ export type ProjectCreateWithoutTenantInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
@@ -3072,6 +3164,7 @@ export type ProjectUncheckedCreateWithoutTenantInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
   timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
@@ -3140,6 +3233,7 @@ export type ProjectCreateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteCreateNestedManyWithoutProjectInput
   tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
@@ -3169,6 +3263,7 @@ export type ProjectUncheckedCreateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
   notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
   shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  quotes?: Prisma.QuoteUncheckedCreateNestedManyWithoutProjectInput
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
   tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
 }
@@ -3212,6 +3307,7 @@ export type ProjectUpdateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
@@ -3241,8 +3337,141 @@ export type ProjectUncheckedUpdateWithoutTimeEntriesInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectCreateWithoutQuotesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aIMessages?: Prisma.AIMessageCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutProjectInput
+  shoppingLists?: Prisma.ShoppingListCreateNestedManyWithoutProjectInput
+  tenant: Prisma.TenantCreateNestedOneWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectUncheckedCreateWithoutQuotesInput = {
+  id?: string
+  name: string
+  description?: string | null
+  status?: $Enums.ProjectStatus
+  address?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenantId: string
+  aIMessages?: Prisma.AIMessageUncheckedCreateNestedManyWithoutProjectInput
+  activityLogs?: Prisma.ActivityLogUncheckedCreateNestedManyWithoutProjectInput
+  automations?: Prisma.AutomationUncheckedCreateNestedManyWithoutProjectInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutProjectInput
+  documentChunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailChunks?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutProjectInput
+  emailConversations?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutProjectInput
+  emailLogs?: Prisma.EmailLogUncheckedCreateNestedManyWithoutProjectInput
+  files?: Prisma.FileUncheckedCreateNestedManyWithoutProjectInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutProjectInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutProjectInput
+  messageChunks?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutProjectInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutProjectInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutProjectInput
+  shoppingLists?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutProjectInput
+  projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+  tasks?: Prisma.TaskUncheckedCreateNestedManyWithoutProjectInput
+  timeEntries?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutProjectInput
+}
+
+export type ProjectCreateOrConnectWithoutQuotesInput = {
+  where: Prisma.ProjectWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutQuotesInput, Prisma.ProjectUncheckedCreateWithoutQuotesInput>
+}
+
+export type ProjectUpsertWithoutQuotesInput = {
+  update: Prisma.XOR<Prisma.ProjectUpdateWithoutQuotesInput, Prisma.ProjectUncheckedUpdateWithoutQuotesInput>
+  create: Prisma.XOR<Prisma.ProjectCreateWithoutQuotesInput, Prisma.ProjectUncheckedCreateWithoutQuotesInput>
+  where?: Prisma.ProjectWhereInput
+}
+
+export type ProjectUpdateToOneWithWhereWithoutQuotesInput = {
+  where?: Prisma.ProjectWhereInput
+  data: Prisma.XOR<Prisma.ProjectUpdateWithoutQuotesInput, Prisma.ProjectUncheckedUpdateWithoutQuotesInput>
+}
+
+export type ProjectUpdateWithoutQuotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aIMessages?: Prisma.AIMessageUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
+  shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
+}
+
+export type ProjectUncheckedUpdateWithoutQuotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumProjectStatusFieldUpdateOperationsInput | $Enums.ProjectStatus
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  aIMessages?: Prisma.AIMessageUncheckedUpdateManyWithoutProjectNestedInput
+  activityLogs?: Prisma.ActivityLogUncheckedUpdateManyWithoutProjectNestedInput
+  automations?: Prisma.AutomationUncheckedUpdateManyWithoutProjectNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutProjectNestedInput
+  documentChunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailChunks?: Prisma.EmailChunkUncheckedUpdateManyWithoutProjectNestedInput
+  emailConversations?: Prisma.EmailConversationUncheckedUpdateManyWithoutProjectNestedInput
+  emailLogs?: Prisma.EmailLogUncheckedUpdateManyWithoutProjectNestedInput
+  files?: Prisma.FileUncheckedUpdateManyWithoutProjectNestedInput
+  fileAnalyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutProjectNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutProjectNestedInput
+  messageChunks?: Prisma.MessageChunkUncheckedUpdateManyWithoutProjectNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
+  shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+  tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
+  timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
 }
 
 export type ProjectCreateManyTenantInput = {
@@ -3278,6 +3507,7 @@ export type ProjectUpdateWithoutTenantInput = {
   notes?: Prisma.NoteUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUpdateManyWithoutProjectNestedInput
@@ -3306,6 +3536,7 @@ export type ProjectUncheckedUpdateWithoutTenantInput = {
   notes?: Prisma.NoteUncheckedUpdateManyWithoutProjectNestedInput
   notifications?: Prisma.NotificationUncheckedUpdateManyWithoutProjectNestedInput
   shoppingLists?: Prisma.ShoppingListUncheckedUpdateManyWithoutProjectNestedInput
+  quotes?: Prisma.QuoteUncheckedUpdateManyWithoutProjectNestedInput
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
   tasks?: Prisma.TaskUncheckedUpdateManyWithoutProjectNestedInput
   timeEntries?: Prisma.TimeEntryUncheckedUpdateManyWithoutProjectNestedInput
@@ -3342,6 +3573,7 @@ export type ProjectCountOutputType = {
   notes: number
   notifications: number
   shoppingLists: number
+  quotes: number
   projectMembers: number
   tasks: number
   timeEntries: number
@@ -3363,6 +3595,7 @@ export type ProjectCountOutputTypeSelect<ExtArgs extends runtime.Types.Extension
   notes?: boolean | ProjectCountOutputTypeCountNotesArgs
   notifications?: boolean | ProjectCountOutputTypeCountNotificationsArgs
   shoppingLists?: boolean | ProjectCountOutputTypeCountShoppingListsArgs
+  quotes?: boolean | ProjectCountOutputTypeCountQuotesArgs
   projectMembers?: boolean | ProjectCountOutputTypeCountProjectMembersArgs
   tasks?: boolean | ProjectCountOutputTypeCountTasksArgs
   timeEntries?: boolean | ProjectCountOutputTypeCountTimeEntriesArgs
@@ -3486,6 +3719,13 @@ export type ProjectCountOutputTypeCountShoppingListsArgs<ExtArgs extends runtime
 /**
  * ProjectCountOutputType without action
  */
+export type ProjectCountOutputTypeCountQuotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuoteWhereInput
+}
+
+/**
+ * ProjectCountOutputType without action
+ */
 export type ProjectCountOutputTypeCountProjectMembersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ProjectMemberWhereInput
 }
@@ -3529,6 +3769,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
   notifications?: boolean | Prisma.Project$notificationsArgs<ExtArgs>
   shoppingLists?: boolean | Prisma.Project$shoppingListsArgs<ExtArgs>
+  quotes?: boolean | Prisma.Project$quotesArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   projectMembers?: boolean | Prisma.Project$projectMembersArgs<ExtArgs>
   tasks?: boolean | Prisma.Project$tasksArgs<ExtArgs>
@@ -3588,6 +3829,7 @@ export type ProjectInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   notes?: boolean | Prisma.Project$notesArgs<ExtArgs>
   notifications?: boolean | Prisma.Project$notificationsArgs<ExtArgs>
   shoppingLists?: boolean | Prisma.Project$shoppingListsArgs<ExtArgs>
+  quotes?: boolean | Prisma.Project$quotesArgs<ExtArgs>
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   projectMembers?: boolean | Prisma.Project$projectMembersArgs<ExtArgs>
   tasks?: boolean | Prisma.Project$tasksArgs<ExtArgs>
@@ -3619,6 +3861,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     notes: Prisma.$NotePayload<ExtArgs>[]
     notifications: Prisma.$NotificationPayload<ExtArgs>[]
     shoppingLists: Prisma.$ShoppingListPayload<ExtArgs>[]
+    quotes: Prisma.$QuotePayload<ExtArgs>[]
     tenant: Prisma.$TenantPayload<ExtArgs>
     projectMembers: Prisma.$ProjectMemberPayload<ExtArgs>[]
     tasks: Prisma.$TaskPayload<ExtArgs>[]
@@ -4042,6 +4285,7 @@ export interface Prisma__ProjectClient<T, Null = never, ExtArgs extends runtime.
   notes<T extends Prisma.Project$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notifications<T extends Prisma.Project$notificationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   shoppingLists<T extends Prisma.Project$shoppingListsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$shoppingListsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  quotes<T extends Prisma.Project$quotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$quotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   projectMembers<T extends Prisma.Project$projectMembersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$projectMembersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectMemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   tasks<T extends Prisma.Project$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Project$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -4836,6 +5080,30 @@ export type Project$shoppingListsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.ShoppingListScalarFieldEnum | Prisma.ShoppingListScalarFieldEnum[]
+}
+
+/**
+ * Project.quotes
+ */
+export type Project$quotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Quote
+   */
+  select?: Prisma.QuoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Quote
+   */
+  omit?: Prisma.QuoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuoteInclude<ExtArgs> | null
+  where?: Prisma.QuoteWhereInput
+  orderBy?: Prisma.QuoteOrderByWithRelationInput | Prisma.QuoteOrderByWithRelationInput[]
+  cursor?: Prisma.QuoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuoteScalarFieldEnum | Prisma.QuoteScalarFieldEnum[]
 }
 
 /**

@@ -12,6 +12,7 @@
     "myTimes": "My time",
     "supplierSearch": "Search materials",
     "shoppingLists": "Shopping lists",
+    "quotes": "Quotes",
     "settings": "Settings"
   },
   "deleteConfirmation": {
@@ -1539,6 +1540,79 @@
     "supplier": {
       "elektroskandia": "Elektroskandia",
       "ahlsell": "Ahlsell"
+    }
+  },
+  "quotes": {
+    "title": "Quotes",
+    "newQuote": "New quote",
+    "emptyState": "No quotes yet — create your first",
+    "itemCount": "{count, plural, =0 {No items} =1 {1 item} other {# items}}",
+    "tabs": {
+      "all": "All",
+      "draft": "Draft",
+      "sent": "Sent",
+      "accepted": "Accepted"
+    },
+    "status": {
+      "DRAFT": "Draft",
+      "SENT": "Sent",
+      "ACCEPTED": "Accepted",
+      "REJECTED": "Rejected",
+      "EXPIRED": "Expired"
+    },
+    "form": {
+      "customerInfo": "Customer information",
+      "title": "Title",
+      "titlePlaceholder": "E.g. Bathroom renovation",
+      "project": "Project",
+      "noProject": "No project",
+      "customerName": "Customer name",
+      "customerEmail": "Email",
+      "customerPhone": "Phone",
+      "customerAddress": "Address",
+      "validUntil": "Valid until",
+      "notes": "Notes",
+      "notesPlaceholder": "Terms, delivery times or other notes...",
+      "items": "Items",
+      "searchWholesaler": "Search wholesaler",
+      "searchPlaceholder": "Search Elektroskandia/Ahlsell...",
+      "addItem": "Add",
+      "create": "Create quote",
+      "cancel": "Cancel"
+    },
+    "items": {
+      "name": "Name",
+      "articleNo": "Art.no",
+      "quantity": "Qty",
+      "unit": "Unit",
+      "unitPrice": "Unit price",
+      "total": "Total",
+      "defaultUnit": "pcs"
+    },
+    "suggestions": {
+      "title": "Suggestions from history",
+      "orderedTimes": "Ordered {count, plural, =1 {1 time} other {# times}}"
+    },
+    "summary": {
+      "subtotal": "Subtotal",
+      "laborCost": "Labor cost",
+      "discount": "Discount ({percent}%)",
+      "tax": "VAT (25%)",
+      "taxWithPercent": "VAT ({percent}%)",
+      "total": "Total incl. VAT"
+    },
+    "actions": {
+      "send": "Send",
+      "accept": "Accept",
+      "reject": "Reject",
+      "generatePdf": "Generate PDF",
+      "delete": "Delete"
+    },
+    "detail": {
+      "customerInfo": "Customer information",
+      "items": "Items",
+      "noItems": "No items added",
+      "notes": "Notes"
     }
   }
 }

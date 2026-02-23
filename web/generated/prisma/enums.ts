@@ -184,3 +184,14 @@ export const TimeEntryType = {
 } as const
 
 export type TimeEntryType = (typeof TimeEntryType)[keyof typeof TimeEntryType]
+
+
+export const QuoteStatus = {
+  DRAFT: 'DRAFT',
+  SENT: 'SENT',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type QuoteStatus = (typeof QuoteStatus)[keyof typeof QuoteStatus]
