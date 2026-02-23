@@ -267,3 +267,18 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Orsak:** Container-miljön hade `ANTHROPIC_API_KEY=` (tom sträng) satt som env-variabel. `dotenv.config()` överskriver INTE befintliga env-variabler — tomma strängar räknas som "satta".
 **Lösning:** Starta servern med `set -a; source .env; set +a` innan serverprocessen startas, så att .env-värden tvingade in i miljön och överskriver tomma container-värden. Uppdaterade `scripts/start-server.sh` med detta mönster.
 **Lärdom:** I containermiljöer kan API-nycklar vara tomma strängar i env. Använd `set -a; source .env; set +a` för att säkerställa att .env-värden vinner. `dotenv.config({ override: true })` är alternativet i Node.js-koden.
+
+---
+
+### RAG debug modal: åäö visas som mojibake (atob + UTF-8) (2026-02-23)
+**Problem:** RAG debug-modalen visade `fÃ¥retaget`, `tÃ¤nker` etc. istället för `företaget`, `tänker`.
+**Orsak:** `atob()` returnerar en Latin-1 binärsträng, inte UTF-8. Svenska tecken (åäö) är multibyte i UTF-8 och korrumperas vid direkt `atob()`-decode.
+**Lösning:** Ersätte `JSON.parse(atob(debugCtx))` med `Uint8Array.from(atob(debugCtx), c => c.charCodeAt(0))` + `new TextDecoder().decode(bytes)`. Backend kodar med `Buffer.from(json, 'utf-8').toString('base64')`.
+**Lärdom:** `atob()` är INTE UTF-8-safe. För base64-kodad JSON med icke-ASCII-tecken: använd alltid `TextDecoder` på klientsidan.
+
+---
+
+### Silent image upload i AI-chatten (2026-02-23)
+**Problem/Feature:** Bilder uppladdade i chatten triggade automatiskt OcrReviewDialog och skapade en fil-post som syntes i filfliken.
+**Lösning:** Ny `chatMode=true`-parameter i upload-routen hoppar över systemmeddelande-skapandet. `imageFileIds`-array i chat-requesten hämtar filerna från MinIO, konverterar till base64 och injicerar som AI SDK vision-parts i sista user-meddelandet. AI:n analyserar bilden och ställer en följdfråga. FolderPlus-knapp på skickade bilder öppnar OcrReviewDialog via nytt GET-endpoint `/api/ai/upload/file-info`.
+**Lärdom:** AI SDK v6 stödjer `{ type: "image", image: "data:..." }` parts direkt i `content`-arrayen för modelMessages — ingen extra konfiguration behövs för Claude vision.

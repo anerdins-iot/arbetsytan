@@ -305,6 +305,9 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `web/src/lib/ai/unified-search.ts` — Unified semantic search (KnowledgeEntity + MessageChunk + DocumentChunk)
 - `web/src/lib/ai/knowledge-extractor.ts` — Kunskapsextraktion från konversationer (fire-and-forget)
 - `web/src/components/ai/rag-debug-modal.tsx` — Debug-modal för RAG-sökresultat
+- `web/src/app/api/ai/upload/route.ts` — Filuppladdning för AI-chatten (inkl. `chatMode=true` för silent image upload)
+- `web/src/app/api/ai/upload/file-info/route.ts` — Filmetadata-endpoint för OcrReviewDialog (FolderPlus-knapp)
+- `web/src/components/ai/personal-ai-chat.tsx` — Personlig AI-chatt med bilduppladdning, thumbnails och RAG debug
 - `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation, RAG)
 - `mistral-api.md` — Mistral API och OCR-referens
 - `openai-api.md` — OpenAI bildgenerering och embeddings-referens

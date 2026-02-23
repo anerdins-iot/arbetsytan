@@ -269,13 +269,41 @@ Ny tabell `KnowledgeEntity`:
 
 ### RAG Debug Modal
 
-För felsökning och insyn: varje AI-svar har en info-ikon (ⓘ) som öppnar en modal med vad sökningen hittade — källtyp, text och similarity-poäng. Aktiverat via `X-Debug-Context`-header (base64-kodad JSON).
+För felsökning och insyn: varje AI-svar har en info-ikon (ⓘ) som öppnar en modal med vad sökningen hittade — källtyp, text och similarity-poäng. Aktiverat via `X-Debug-Context`-header (base64-kodad JSON, UTF-8-safe via `TextDecoder` i frontend).
 
 ### Multi-tenant-isolering
 
 - `KnowledgeEntity` filtreras på `tenantId` + `metadata->>'userId'` — ingen användare ser en annan användares kunskapsbas
 - `MessageChunk` filtreras på `tenantId` + `userId`
 - `DocumentChunk` filtreras på `tenantId` + `projectId` (accessibla projekt för användaren)
+
+## Bilduppladdning via AI Vision (Silent Mode)
+
+Bilder som användaren laddar upp i AI-chatten hanteras annorlunda än vanliga filer — de skickas via Claude vision istället för att visas som filbilagor.
+
+### Flöde
+
+1. Användaren väljer en bild i chatinputen
+2. Frontend laddar upp till `/api/ai/upload` med `chatMode=true` — inget systemmeddelande skapas, filen sparas dock i MinIO och DB
+3. Frontend visar en thumbnail i inputfältet (blob URL) och väntar på att användaren skickar meddelandet
+4. Vid submit skickas `imageFileIds: [id1, id2, ...]` med i chat-requesten till `/api/ai/chat`
+5. Backend hämtar filerna från MinIO, konverterar till base64 data URLs
+6. Base64-data injiceras som `{ type: "image", image: "data:..." }` parts i sista user-meddelandet (AI SDK format)
+7. Claude analyserar bilden via vision och instrueras att beskriva vad den ser och ställa EN konkret följdfråga
+8. Konversationen (inkl. bildbeskrivningen) extraheras sedan av `knowledge-extractor.ts` → bildens kontext indexeras i KnowledgeEntity
+
+### UI
+
+- Thumbnails visas i inputfältet, kan tas bort med hover-X
+- Skickade bilder visas i konversationen med en **FolderPlus**-knapp
+- FolderPlus öppnar OcrReviewDialog via GET `/api/ai/upload/file-info?fileId=xxx` för att spara bilden till ett projekt
+
+### Relevanta filer
+
+- `web/src/app/api/ai/upload/route.ts` — `chatMode` parameter
+- `web/src/app/api/ai/upload/file-info/route.ts` — metadata-endpoint för OcrReviewDialog
+- `web/src/app/api/ai/chat/route.ts` — `imageFileIds` hantering + vision-injektion
+- `web/src/components/ai/personal-ai-chat.tsx` — thumbnail UI, `pendingImageFileIdsRef`, `chatImageMap`
 
 ## Embeddings och semantisk sökning
 
