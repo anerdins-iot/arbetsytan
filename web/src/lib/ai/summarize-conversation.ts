@@ -44,7 +44,7 @@ export async function summarizeConversationIfNeeded(
     .map((m) => `${m.role === "USER" ? "Användare" : "Assistent"}: ${m.content}`)
     .join("\n\n");
 
-  const model = getModel("CLAUDE");
+  const model = getModel("CLAUDE_HAIKU");
   const { text } = await generateText({
     model,
     system: "Du sammanfattar konversationer på svenska. Var koncis, max 250 ord. Behåll viktiga beslut, uppgifter och fakta.",

@@ -19,8 +19,13 @@ export type AIDirection = (typeof AIDirection)[keyof typeof AIDirection]
 
 export const AIProvider = {
   CLAUDE: 'CLAUDE',
+  CLAUDE_HAIKU: 'CLAUDE_HAIKU',
+  CLAUDE_SONNET: 'CLAUDE_SONNET',
   OPENAI: 'OPENAI',
-  MISTRAL: 'MISTRAL'
+  MISTRAL: 'MISTRAL',
+  GROK_FAST: 'GROK_FAST',
+  GEMINI_PRO: 'GEMINI_PRO',
+  GEMINI_FLASH: 'GEMINI_FLASH'
 } as const
 
 export type AIProvider = (typeof AIProvider)[keyof typeof AIProvider]

@@ -96,7 +96,7 @@ export async function extractAndSaveKnowledge(
     let text: string;
     try {
       logger.info("extractAndSaveKnowledge: calling Claude for extraction");
-      const result = await generateText({ model: getModel("CLAUDE"), system, prompt });
+      const result = await generateText({ model: getModel("CLAUDE_HAIKU"), system, prompt });
       text = result.text;
       logger.info("extractAndSaveKnowledge: Claude responded", { textLength: text?.length ?? 0 });
     } catch (primaryErr) {

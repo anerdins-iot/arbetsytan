@@ -37,6 +37,8 @@ import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
 import { ProjectSelector } from "@/components/ai/project-selector";
+import { ModelSelector } from "@/components/ai/model-selector";
+import { type ProviderKey } from "@/lib/ai/providers";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
 import { FileCreatedCard, type FileCreatedData } from "@/components/ai/file-created-card";
 import { ReportPreviewCard, type ReportPreviewData } from "@/components/ai/report-preview-card";
@@ -260,6 +262,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const activeProjectIdRef = useRef<string | null>(null);
   activeProjectIdRef.current = activeProjectId;
 
+  // Model selector state
+  const [selectedModel, setSelectedModel] = useState<ProviderKey>("CLAUDE_HAIKU");
+  const selectedModelRef = useRef<ProviderKey>("CLAUDE_HAIKU");
+  selectedModelRef.current = selectedModel;
+
   // Pagination state
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
@@ -312,6 +319,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           ...(conversationId ? { conversationId } : {}),
           ...(activeProjectIdRef.current ? { projectId: activeProjectIdRef.current } : {}),
           ...(imageFileIds.length > 0 ? { imageFileIds } : {}),
+          provider: selectedModelRef.current,
         };
       },
       fetch: async (input, init) => {
@@ -898,6 +906,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             projects={projectList}
             currentProjectId={activeProjectId}
             onSelect={setActiveProjectId}
+            disabled={isLoading}
+          />
+          <ModelSelector
+            currentModel={selectedModel}
+            onSelect={setSelectedModel}
             disabled={isLoading}
           />
         </div>

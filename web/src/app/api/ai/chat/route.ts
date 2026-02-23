@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Debug: runtime ENV visibility (Next.js standalone may not load Coolify ENV at runtime)
-  const providerKey = provider ?? "CLAUDE";
+  const providerKey = provider ?? "CLAUDE_HAIKU";
   logger.info("AI chat ENV check", {
     hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
     anthropicKeyLength: process.env.ANTHROPIC_API_KEY?.length ?? 0,
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
       data: {
         type: "PERSONAL",
         title,
-        provider: provider ?? "CLAUDE",
+        provider: provider ?? "CLAUDE_HAIKU",
         userId,
         projectId: null,
       },
@@ -198,23 +198,24 @@ export async function POST(req: NextRequest) {
   // Always use personal tools (they accept projectId per call when user works in a project)
   const personalTools = createPersonalTools({ db, tenantId, userId, udb });
 
-  // Add web search tool
-  const webSearchTool = anthropic.tools.webSearch_20250305({
-    maxUses: 10,  // Max 10 sökningar per konversation
-    blockedDomains: [
-      // Sociala medier
-      'facebook.com', 'instagram.com', 'tiktok.com', 'twitter.com', 'x.com',
-      'snapchat.com', 'linkedin.com',
-      // Underhållning
-      'reddit.com', 'youtube.com', 'twitch.tv',
-      // Övrigt irrelevant
-      'pinterest.com', 'tumblr.com',
-    ],
-  });
+  // Add web search tool (Anthropic-only: uses anthropic.tools.webSearch)
+  const isAnthropicProvider = providerKey === "CLAUDE_HAIKU" || providerKey === "CLAUDE_SONNET";
 
   const tools = {
     ...personalTools,
-    web_search: webSearchTool,
+    ...(isAnthropicProvider
+      ? {
+          web_search: anthropic.tools.webSearch_20250305({
+            maxUses: 10,
+            blockedDomains: [
+              'facebook.com', 'instagram.com', 'tiktok.com', 'twitter.com', 'x.com',
+              'snapchat.com', 'linkedin.com',
+              'reddit.com', 'youtube.com', 'twitch.tv',
+              'pinterest.com', 'tumblr.com',
+            ],
+          }),
+        }
+      : {}),
   };
 
   // Project context for system prompt when request has projectId
@@ -521,12 +522,18 @@ export async function POST(req: NextRequest) {
 /** Env var name required for each chat provider. */
 function getRequiredEnvKeyForProvider(provider: ProviderKey): string | null {
   switch (provider) {
-    case "CLAUDE":
+    case "CLAUDE_HAIKU":
+    case "CLAUDE_SONNET":
       return "ANTHROPIC_API_KEY";
     case "OPENAI":
       return "OPENAI_API_KEY";
     case "MISTRAL":
       return "MISTRAL_API_KEY";
+    case "GROK_FAST":
+      return "XAI_API_KEY";
+    case "GEMINI_PRO":
+    case "GEMINI_FLASH":
+      return "GOOGLE_GENERATIVE_AI_API_KEY";
     default:
       return null;
   }
