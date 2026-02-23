@@ -43,7 +43,7 @@ export function ProjectSelector({
     >
       <SelectTrigger
         size="sm"
-        className="h-7 gap-1.5 border-border/50 bg-muted/50 text-xs"
+        className="h-7 gap-1.5 border-border/50 bg-muted/50 text-xs max-w-[140px]"
       >
         <SelectValue />
       </SelectTrigger>

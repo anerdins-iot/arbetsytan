@@ -919,7 +919,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     >
       {/* Projekt-väljare och historik-bar */}
       <div className="flex items-center justify-between gap-2 border-b border-border px-4 py-2">
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 shrink items-center gap-2 overflow-hidden">
           <ProjectSelector
             projects={projectList}
             currentProjectId={activeProjectId}
@@ -964,7 +964,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               {t("noConversations")}
             </p>
           ) : (
-            <div className="flex max-h-40 flex-col gap-1 overflow-y-auto">
+            <div className="flex max-h-72 flex-col gap-1 overflow-y-auto">
               {conversations.map((c) => (
                 <button
                   key={c.id}
