@@ -555,6 +555,7 @@ model Project {
   notes            Note[]
   notifications    Notification[]
   shoppingLists    ShoppingList[]
+  quotes           Quote[]
   tenant           Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   projectMembers   ProjectMember[]
   tasks            Task[]
@@ -663,6 +664,7 @@ model Tenant {
   Project                Project[]
   PushSubscription       PushSubscription[]
   ShoppingList           ShoppingList[]
+  Quote                  Quote[]
   Subscription           Subscription?
   TimeEntry              TimeEntry[]
 }
@@ -718,6 +720,7 @@ model User {
   pushSubscriptions      PushSubscription[]
   sessions               Session[]
   shoppingLists          ShoppingList[]
+  createdQuotes          Quote[]
 }
 
 model VerificationToken {
@@ -849,4 +852,70 @@ enum TimeEntryType {
   PARENTAL
   EDUCATION
   OTHER
+}
+
+model Quote {
+  id              String      @id @default(cuid())
+  quoteNumber     String
+  tenantId        String
+  projectId       String?
+  createdById     String
+  customerId      String?
+  customerName    String?
+  customerEmail   String?
+  customerPhone   String?
+  customerAddress String?
+  title           String
+  description     String?
+  status          QuoteStatus @default(DRAFT)
+  validUntil      DateTime?
+  notes           String?
+  laborCost       Float?
+  discountPercent Float?
+  taxPercent      Float       @default(25)
+  currency        String      @default("SEK")
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  sentAt          DateTime?
+  acceptedAt      DateTime?
+  rejectedAt      DateTime?
+  items           QuoteItem[]
+  createdBy       User        @relation(fields: [createdById], references: [id])
+  project         Project?    @relation(fields: [projectId], references: [id])
+  tenant          Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([projectId])
+  @@index([createdById])
+  @@index([status])
+  @@index([tenantId, status])
+}
+
+model QuoteItem {
+  id          String   @id @default(cuid())
+  quoteId     String
+  name        String
+  articleNo   String?
+  brand       String?
+  supplier    String?
+  description String?
+  quantity    Float    @default(1)
+  unit        String?
+  unitPrice   Float
+  discount    Float?
+  imageUrl    String?
+  productUrl  String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  quote       Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+
+  @@index([quoteId])
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
 }
