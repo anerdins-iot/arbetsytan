@@ -251,7 +251,7 @@ export async function POST(req: NextRequest) {
     if (entities.length > 0) {
       knowledgeContext = entities
         .map(
-          (e) =>
+          (e: { entityType: string; entityId: string; metadata: unknown }) =>
             `- ${e.entityType} ${e.entityId}: ${JSON.stringify(e.metadata)}`
         )
         .join("\n");
