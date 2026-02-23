@@ -396,10 +396,12 @@ export const ModelName = {
   Task: 'Task',
   TaskAssignment: 'TaskAssignment',
   File: 'File',
+  DocumentTemplate: 'DocumentTemplate',
   FileAnalysis: 'FileAnalysis',
   DocumentChunk: 'DocumentChunk',
   Conversation: 'Conversation',
   Message: 'Message',
+  MessageChunk: 'MessageChunk',
   AIMessage: 'AIMessage',
   Notification: 'Notification',
   NotificationPreference: 'NotificationPreference',
@@ -433,7 +435,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "fileAnalysis" | "documentChunk" | "conversation" | "message" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription" | "emailConversation" | "emailMessage" | "emailLog" | "emailAttachment" | "emailChunk"
+    modelProps: "tenant" | "user" | "membership" | "account" | "session" | "verificationToken" | "invitation" | "project" | "projectMember" | "task" | "taskAssignment" | "file" | "documentTemplate" | "fileAnalysis" | "documentChunk" | "conversation" | "message" | "messageChunk" | "aIMessage" | "notification" | "notificationPreference" | "emailTemplate" | "pushSubscription" | "comment" | "activityLog" | "timeEntry" | "note" | "automation" | "automationLog" | "noteCategory" | "subscription" | "emailConversation" | "emailMessage" | "emailLog" | "emailAttachment" | "emailChunk"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1325,6 +1327,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DocumentTemplate: {
+      payload: Prisma.$DocumentTemplatePayload<ExtArgs>
+      fields: Prisma.DocumentTemplateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DocumentTemplateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DocumentTemplateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>
+        }
+        findFirst: {
+          args: Prisma.DocumentTemplateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DocumentTemplateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>
+        }
+        findMany: {
+          args: Prisma.DocumentTemplateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>[]
+        }
+        create: {
+          args: Prisma.DocumentTemplateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>
+        }
+        createMany: {
+          args: Prisma.DocumentTemplateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DocumentTemplateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>[]
+        }
+        delete: {
+          args: Prisma.DocumentTemplateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>
+        }
+        update: {
+          args: Prisma.DocumentTemplateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>
+        }
+        deleteMany: {
+          args: Prisma.DocumentTemplateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DocumentTemplateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DocumentTemplateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>[]
+        }
+        upsert: {
+          args: Prisma.DocumentTemplateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DocumentTemplatePayload>
+        }
+        aggregate: {
+          args: Prisma.DocumentTemplateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDocumentTemplate>
+        }
+        groupBy: {
+          args: Prisma.DocumentTemplateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentTemplateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DocumentTemplateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DocumentTemplateCountAggregateOutputType> | number
+        }
+      }
+    }
     FileAnalysis: {
       payload: Prisma.$FileAnalysisPayload<ExtArgs>
       fields: Prisma.FileAnalysisFieldRefs
@@ -1618,6 +1694,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MessageCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MessageCountAggregateOutputType> | number
+        }
+      }
+    }
+    MessageChunk: {
+      payload: Prisma.$MessageChunkPayload<ExtArgs>
+      fields: Prisma.MessageChunkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MessageChunkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MessageChunkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+        }
+        findFirst: {
+          args: Prisma.MessageChunkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MessageChunkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+        }
+        findMany: {
+          args: Prisma.MessageChunkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>[]
+        }
+        create: {
+          args: Prisma.MessageChunkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+        }
+        createMany: {
+          args: Prisma.MessageChunkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MessageChunkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>[]
+        }
+        delete: {
+          args: Prisma.MessageChunkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+        }
+        update: {
+          args: Prisma.MessageChunkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+        }
+        deleteMany: {
+          args: Prisma.MessageChunkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MessageChunkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MessageChunkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>[]
+        }
+        upsert: {
+          args: Prisma.MessageChunkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MessageChunkPayload>
+        }
+        aggregate: {
+          args: Prisma.MessageChunkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMessageChunk>
+        }
+        groupBy: {
+          args: Prisma.MessageChunkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageChunkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MessageChunkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MessageChunkCountAggregateOutputType> | number
         }
       }
     }
@@ -3163,6 +3313,21 @@ export const FileScalarFieldEnum = {
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
 
 
+export const DocumentTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  fileId: 'fileId',
+  expectedVariables: 'expectedVariables',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DocumentTemplateScalarFieldEnum = (typeof DocumentTemplateScalarFieldEnum)[keyof typeof DocumentTemplateScalarFieldEnum]
+
+
 export const FileAnalysisScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -3219,6 +3384,21 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  chunkIndex: 'chunkIndex',
+  createdAt: 'createdAt',
+  messageId: 'messageId',
+  conversationId: 'conversationId',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId'
+} as const
+
+export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
 
 
 export const AIMessageScalarFieldEnum = {
@@ -4006,10 +4186,12 @@ export type GlobalOmitConfig = {
   task?: Prisma.TaskOmit
   taskAssignment?: Prisma.TaskAssignmentOmit
   file?: Prisma.FileOmit
+  documentTemplate?: Prisma.DocumentTemplateOmit
   fileAnalysis?: Prisma.FileAnalysisOmit
   documentChunk?: Prisma.DocumentChunkOmit
   conversation?: Prisma.ConversationOmit
   message?: Prisma.MessageOmit
+  messageChunk?: Prisma.MessageChunkOmit
   aIMessage?: Prisma.AIMessageOmit
   notification?: Prisma.NotificationOmit
   notificationPreference?: Prisma.NotificationPreferenceOmit

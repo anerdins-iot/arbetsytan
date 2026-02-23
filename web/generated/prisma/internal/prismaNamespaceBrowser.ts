@@ -63,10 +63,12 @@ export const ModelName = {
   Task: 'Task',
   TaskAssignment: 'TaskAssignment',
   File: 'File',
+  DocumentTemplate: 'DocumentTemplate',
   FileAnalysis: 'FileAnalysis',
   DocumentChunk: 'DocumentChunk',
   Conversation: 'Conversation',
   Message: 'Message',
+  MessageChunk: 'MessageChunk',
   AIMessage: 'AIMessage',
   Notification: 'Notification',
   NotificationPreference: 'NotificationPreference',
@@ -274,6 +276,21 @@ export const FileScalarFieldEnum = {
 export type FileScalarFieldEnum = (typeof FileScalarFieldEnum)[keyof typeof FileScalarFieldEnum]
 
 
+export const DocumentTemplateScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  category: 'category',
+  fileId: 'fileId',
+  expectedVariables: 'expectedVariables',
+  tenantId: 'tenantId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DocumentTemplateScalarFieldEnum = (typeof DocumentTemplateScalarFieldEnum)[keyof typeof DocumentTemplateScalarFieldEnum]
+
+
 export const FileAnalysisScalarFieldEnum = {
   id: 'id',
   content: 'content',
@@ -330,6 +347,21 @@ export const MessageScalarFieldEnum = {
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const MessageChunkScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  chunkIndex: 'chunkIndex',
+  createdAt: 'createdAt',
+  messageId: 'messageId',
+  conversationId: 'conversationId',
+  tenantId: 'tenantId',
+  userId: 'userId',
+  projectId: 'projectId'
+} as const
+
+export type MessageChunkScalarFieldEnum = (typeof MessageChunkScalarFieldEnum)[keyof typeof MessageChunkScalarFieldEnum]
 
 
 export const AIMessageScalarFieldEnum = {

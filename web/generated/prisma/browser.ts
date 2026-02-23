@@ -78,6 +78,11 @@ export type TaskAssignment = Prisma.TaskAssignmentModel
  */
 export type File = Prisma.FileModel
 /**
+ * Model DocumentTemplate
+ * 
+ */
+export type DocumentTemplate = Prisma.DocumentTemplateModel
+/**
  * Model FileAnalysis
  * 
  */
@@ -98,6 +103,11 @@ export type Conversation = Prisma.ConversationModel
  * 
  */
 export type Message = Prisma.MessageModel
+/**
+ * Model MessageChunk
+ * 
+ */
+export type MessageChunk = Prisma.MessageChunkModel
 /**
  * Model AIMessage
  * Can be removed later if no longer needed for notifications.
