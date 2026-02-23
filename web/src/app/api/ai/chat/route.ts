@@ -13,6 +13,10 @@ import { getModel, streamConfig, type ProviderKey } from "@/lib/ai/providers";
 import { searchDocuments } from "@/lib/ai/embeddings";
 import { createPersonalTools } from "@/lib/ai/tools/personal-tools";
 import { summarizeConversationIfNeeded } from "@/lib/ai/summarize-conversation";
+import {
+  extractAndSaveKnowledge,
+  cleanupOldKnowledge,
+} from "@/lib/ai/knowledge-extractor";
 import { MESSAGE_SUMMARY_THRESHOLD } from "@/lib/ai/conversation-config";
 import {
   type MessageEmbeddingsDb,
@@ -340,6 +344,24 @@ export async function POST(req: NextRequest) {
                 conversationId: activeConversationId,
                 error: err instanceof Error ? err.message : String(err),
               })
+          );
+        }
+        extractAndSaveKnowledge({
+          db,
+          conversationId: activeConversationId,
+          tenantId,
+          userId,
+        }).catch((err) =>
+          logger.warn("Knowledge extraction failed", {
+            conversationId: activeConversationId,
+            error: err instanceof Error ? err.message : String(err),
+          })
+        );
+        if (Math.random() < 0.01) {
+          cleanupOldKnowledge(tenantId, db).catch((err) =>
+            logger.warn("Knowledge cleanup failed", {
+              error: err instanceof Error ? err.message : String(err),
+            })
           );
         }
       }

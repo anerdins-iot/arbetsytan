@@ -1,44 +1,64 @@
 /**
- * Knowledge extraction from finished conversations.
- * Extracts structured entities (project, task, user, preference, common_question) via LLM
- * and stores them in KnowledgeEntity (tenant-scoped, userId in metadata).
- * Caller may run after conversation is summarized or closed.
+ * Extract structured knowledge from AI conversation messages and upsert into KnowledgeEntity.
+ * Called from chat route onFinish (fire-and-forget). Same pattern as summarize-conversation.
  */
 import { generateText } from "ai";
 import { getModel } from "@/lib/ai/providers";
-import { tenantDb, type TenantScopedClient, type UserScopedClient } from "@/lib/db";
+import type { TenantScopedClient } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
-const MIN_CONFIDENCE = 0.8;
-const TTL_DAYS = 90;
-
+const CONFIDENCE_THRESHOLD = 0.7;
 const ENTITY_TYPES = ["project", "task", "user", "preference", "common_question"] as const;
-export type KnowledgeEntityType = (typeof ENTITY_TYPES)[number];
+const CLEANUP_DAYS = 90;
 
-export type ExtractedEntity = {
+export type ExtractAndSaveKnowledgeOptions = {
+  db: TenantScopedClient;
+  conversationId: string;
+  tenantId: string;
+  userId: string;
+};
+
+type ExtractedEntity = {
   entityType: string;
   entityId: string;
   metadata: Record<string, unknown>;
   confidence: number;
 };
 
-export type ExtractAndSaveKnowledgeOptions = {
-  /** Client to read conversation and messages (e.g. userDb for personal AI). */
-  db: TenantScopedClient | UserScopedClient;
-  conversationId: string;
-  tenantId: string;
-  userId: string;
-};
+function parseExtractionResult(text: string): ExtractedEntity[] {
+  try {
+    const parsed = JSON.parse(text) as { entities?: unknown[] };
+    if (!Array.isArray(parsed?.entities)) return [];
+    return parsed.entities
+      .filter(
+        (e): e is ExtractedEntity =>
+          typeof e === "object" &&
+          e !== null &&
+          typeof (e as ExtractedEntity).entityType === "string" &&
+          typeof (e as ExtractedEntity).entityId === "string" &&
+          typeof (e as ExtractedEntity).confidence === "number"
+      )
+      .map((e) => ({
+        entityType: (e as ExtractedEntity).entityType,
+        entityId: (e as ExtractedEntity).entityId,
+        metadata: typeof (e as ExtractedEntity).metadata === "object" && (e as ExtractedEntity).metadata !== null
+          ? (e as ExtractedEntity).metadata as Record<string, unknown>
+          : {},
+        confidence: (e as ExtractedEntity).confidence,
+      }));
+  } catch {
+    return [];
+  }
+}
 
 /**
- * Loads a conversation with messages, extracts structured entities via LLM,
- * and persists them to KnowledgeEntity (tenant-scoped). Only entities with
- * confidence >= MIN_CONFIDENCE are saved. userId is stored in metadata.
- * Degrades gracefully: on any error, logs and returns { saved: 0 } without throwing.
+ * Fetch conversation messages, send transcript to LLM, extract entities (JSON),
+ * filter by confidence >= CONFIDENCE_THRESHOLD, add userId to metadata, upsert to KnowledgeEntity.
+ * Graceful degradation: no uncaught errors.
  */
 export async function extractAndSaveKnowledge(
   opts: ExtractAndSaveKnowledgeOptions
-): Promise<{ saved: number }> {
+): Promise<{ extracted: number }> {
   const { db, conversationId, tenantId, userId } = opts;
   try {
     const conversation = await db.conversation.findFirst({
@@ -50,51 +70,52 @@ export async function extractAndSaveKnowledge(
         },
       },
     });
-    if (!conversation || conversation.messages.length < 2) {
-      return { saved: 0 };
+    if (!conversation || conversation.messages.length === 0) {
+      return { extracted: 0 };
     }
+
     const transcript = conversation.messages
-      .map((m) => `${m.role === "USER" ? "Användare" : "Assistent"}: ${m.content}`)
+      .map((m) =>
+        `${m.role === "USER" ? "Användare" : "Assistent"}: ${m.content}`
+      )
       .join("\n\n");
 
     const model = getModel("CLAUDE");
     const { text } = await generateText({
       model,
-      system: `Du analyserar konversationer och extraherar strukturerad kunskap. Svara endast med ett enda JSON-objekt i formatet:
-{"entities":[{"entityType":"...","entityId":"...","metadata":{},"confidence":0.0-1.0}]}
-Tillåtna entityType: project, task, user, preference, common_question.
-- project: när projekt nämns (entityId = projekt-id eller namn/slug).
-- task: när uppgifter nämns (entityId = uppgifts-id eller kort beskrivning).
-- user: när personer/roller nämns (entityId = användar-id eller namn).
-- preference: användarpreferenser (språk, visning, etc.; entityId = t.ex. "language:sv").
-- common_question: återkommande frågetyper (entityId = kort etikett).
-metadata: fritextfält för typ-specifik info. confidence: 0–1, endast >= 0.8 lagras. Ingen annan text utöver JSON.`,
-      prompt: `Analysera konversationen och extrahera entiteter:\n\n${transcript.slice(0, 25000)}`,
+      system: `Du extraherar strukturerad kunskap från konversationer. Svara ENDAST med ett enda JSON-objekt i formatet: { "entities": [ { "entityType": "...", "entityId": "...", "metadata": {}, "confidence": 0.0-1.0 } ] }. entityType MÅSTE vara en av: ${ENTITY_TYPES.join(", ")}. entityId är ett ID eller kort identifierare. confidence är 0–1. Inga andra texter.`,
+      prompt: `Analysera konversationen och lista entiteter (projekt, uppgifter, användare, preferenser, vanliga frågor) som nämnts med hög tillförlitlighet.\n\nKonversation:\n\n${transcript}`,
     });
 
-    const parsed = parseEntitiesResponse(text);
-    if (!parsed.length) return { saved: 0 };
+    const entities = parseExtractionResult(text ?? "{}");
+    const toSave = entities.filter((e) => e.confidence >= CONFIDENCE_THRESHOLD);
+    if (toSave.length === 0) return { extracted: 0 };
 
-    const tdb = tenantDb(tenantId, { skipEmit: true });
     let saved = 0;
-    for (const e of parsed) {
-      if (e.confidence < MIN_CONFIDENCE) continue;
-      const entityType = normalizeEntityType(e.entityType);
-      if (!entityType) continue;
-      const metadata = { ...e.metadata, userId };
+    for (const e of toSave) {
       try {
-        const existing = await tdb.knowledgeEntity.findFirst({
-          where: { entityType, entityId: e.entityId },
+        const metadata = { ...e.metadata, userId };
+        const existing = await db.knowledgeEntity.findFirst({
+          where: {
+            tenantId,
+            entityType: e.entityType,
+            entityId: e.entityId,
+          },
         });
         if (existing) {
-          await tdb.knowledgeEntity.update({
+          await db.knowledgeEntity.update({
             where: { id: existing.id },
-            data: { lastSeen: new Date(), confidence: e.confidence, metadata },
+            data: {
+              lastSeen: new Date(),
+              confidence: e.confidence,
+              metadata,
+            },
           });
         } else {
-          await tdb.knowledgeEntity.create({
+          await db.knowledgeEntity.create({
             data: {
-              entityType,
+              tenantId,
+              entityType: e.entityType,
               entityId: e.entityId,
               metadata,
               confidence: e.confidence,
@@ -103,89 +124,42 @@ metadata: fritextfält för typ-specifik info. confidence: 0–1, endast >= 0.8 
         }
         saved++;
       } catch (err) {
-        logger.warn("Knowledge entity save failed", {
-          entityType,
+        logger.warn("Knowledge entity upsert failed", {
+          entityType: e.entityType,
           entityId: e.entityId,
           error: err instanceof Error ? err.message : String(err),
         });
       }
     }
-    if (saved > 0) {
-      logger.info("Knowledge extraction completed", { conversationId, tenantId, saved });
-    }
-    return { saved };
+    return { extracted: saved };
   } catch (err) {
     logger.warn("Knowledge extraction failed", {
       conversationId,
-      tenantId,
       error: err instanceof Error ? err.message : String(err),
     });
-    return { saved: 0 };
+    return { extracted: 0 };
   }
-}
-
-function parseEntitiesResponse(text: string): ExtractedEntity[] {
-  const trimmed = text.trim();
-  const jsonMatch = trimmed.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) return [];
-  try {
-    const data = JSON.parse(jsonMatch[0]) as { entities?: unknown[] };
-    if (!Array.isArray(data.entities)) return [];
-    return data.entities
-      .filter(
-        (e): e is ExtractedEntity =>
-          e != null &&
-          typeof e === "object" &&
-          typeof (e as ExtractedEntity).entityType === "string" &&
-          typeof (e as ExtractedEntity).entityId === "string" &&
-          typeof (e as ExtractedEntity).confidence === "number" &&
-          (e as ExtractedEntity).confidence >= 0 &&
-          (e as ExtractedEntity).confidence <= 1
-      )
-      .map((e) => ({
-        entityType: String(e.entityType),
-        entityId: String(e.entityId),
-        metadata:
-          e.metadata != null && typeof e.metadata === "object" && !Array.isArray(e.metadata)
-            ? (e.metadata as Record<string, unknown>)
-            : {},
-        confidence: Number(e.confidence),
-      }));
-  } catch {
-    return [];
-  }
-}
-
-function normalizeEntityType(value: string): KnowledgeEntityType | null {
-  const v = value.toLowerCase().trim();
-  if (ENTITY_TYPES.includes(v as KnowledgeEntityType)) return v as KnowledgeEntityType;
-  if (v === "common_question" || v === "common question") return "common_question";
-  return null;
 }
 
 /**
- * Deletes KnowledgeEntity rows for the tenant that are older than TTL_DAYS.
- * Use tenantDb(tenantId) so all operations are tenant-scoped.
+ * Remove KnowledgeEntity rows older than CLEANUP_DAYS. Call sporadically (e.g. 1% of requests).
  */
 export async function cleanupOldKnowledge(
   tenantId: string,
   db: TenantScopedClient
-): Promise<number> {
+): Promise<{ deleted: number }> {
   try {
     const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - TTL_DAYS);
+    cutoff.setDate(cutoff.getDate() - CLEANUP_DAYS);
     const result = await db.knowledgeEntity.deleteMany({
-      where: { lastSeen: { lt: cutoff } },
+      where: { tenantId, lastSeen: { lt: cutoff } },
     });
-    if (result.count > 0) {
-      logger.info("Knowledge cleanup completed", { tenantId, deleted: result.count });
-    }
-    return result.count;
+    return { deleted: result.count };
   } catch (err) {
     logger.warn("Knowledge cleanup failed", {
       tenantId,
       error: err instanceof Error ? err.message : String(err),
     });
-    return 0;
+    return { deleted: 0 };
   }
 }
