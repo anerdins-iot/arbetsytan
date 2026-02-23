@@ -240,9 +240,10 @@ export async function POST(req: NextRequest) {
   // Unified semantic search: search knowledge, conversations, and documents (with 500ms timeout)
   let knowledgeContext = "";
   try {
-    const lastUserMsgForSearch = [...messages].reverse().find(m => m.role === "user");
-    if (lastUserMsgForSearch) {
-      const queryText = extractTextFromParts(lastUserMsgForSearch);
+    // Use last 3 user messages as query to handle follow-up questions like "Och kontaktpersonen?"
+    const recentUserMsgs = [...messages].filter(m => m.role === "user").slice(-3);
+    if (recentUserMsgs.length > 0) {
+      const queryText = recentUserMsgs.map(extractTextFromParts).join(" ");
 
       if (queryText.trim()) {
         const searchPromise = searchAllSources({
