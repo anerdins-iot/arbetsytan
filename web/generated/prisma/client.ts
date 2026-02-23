@@ -239,3 +239,13 @@ export type User = Prisma.UserModel
  * 
  */
 export type VerificationToken = Prisma.VerificationTokenModel
+/**
+ * Model Quote
+ * 
+ */
+export type Quote = Prisma.QuoteModel
+/**
+ * Model QuoteItem
+ * 
+ */
+export type QuoteItem = Prisma.QuoteItemModel

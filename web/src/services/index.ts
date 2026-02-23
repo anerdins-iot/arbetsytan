@@ -11,3 +11,4 @@ export * from "./file-version-service";
 export * from "./email-conversations";
 export * from "./conversation-service";
 export * from "./shopping-list-service";
+export * from "./quote-service";

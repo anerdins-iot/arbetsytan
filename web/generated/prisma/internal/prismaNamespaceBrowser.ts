@@ -90,7 +90,9 @@ export const ModelName = {
   Tenant: 'Tenant',
   TimeEntry: 'TimeEntry',
   User: 'User',
-  VerificationToken: 'VerificationToken'
+  VerificationToken: 'VerificationToken',
+  Quote: 'Quote',
+  QuoteItem: 'QuoteItem'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -724,6 +726,57 @@ export const VerificationTokenScalarFieldEnum = {
 } as const
 
 export type VerificationTokenScalarFieldEnum = (typeof VerificationTokenScalarFieldEnum)[keyof typeof VerificationTokenScalarFieldEnum]
+
+
+export const QuoteScalarFieldEnum = {
+  id: 'id',
+  quoteNumber: 'quoteNumber',
+  tenantId: 'tenantId',
+  projectId: 'projectId',
+  createdById: 'createdById',
+  customerId: 'customerId',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  customerAddress: 'customerAddress',
+  title: 'title',
+  description: 'description',
+  status: 'status',
+  validUntil: 'validUntil',
+  notes: 'notes',
+  laborCost: 'laborCost',
+  discountPercent: 'discountPercent',
+  taxPercent: 'taxPercent',
+  currency: 'currency',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  sentAt: 'sentAt',
+  acceptedAt: 'acceptedAt',
+  rejectedAt: 'rejectedAt'
+} as const
+
+export type QuoteScalarFieldEnum = (typeof QuoteScalarFieldEnum)[keyof typeof QuoteScalarFieldEnum]
+
+
+export const QuoteItemScalarFieldEnum = {
+  id: 'id',
+  quoteId: 'quoteId',
+  name: 'name',
+  articleNo: 'articleNo',
+  brand: 'brand',
+  supplier: 'supplier',
+  description: 'description',
+  quantity: 'quantity',
+  unit: 'unit',
+  unitPrice: 'unitPrice',
+  discount: 'discount',
+  imageUrl: 'imageUrl',
+  productUrl: 'productUrl',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt'
+} as const
+
+export type QuoteItemScalarFieldEnum = (typeof QuoteItemScalarFieldEnum)[keyof typeof QuoteItemScalarFieldEnum]
 
 
 export const SortOrder = {

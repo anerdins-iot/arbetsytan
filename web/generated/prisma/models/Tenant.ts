@@ -221,6 +221,7 @@ export type TenantWhereInput = {
   Project?: Prisma.ProjectListRelationFilter
   PushSubscription?: Prisma.PushSubscriptionListRelationFilter
   ShoppingList?: Prisma.ShoppingListListRelationFilter
+  Quote?: Prisma.QuoteListRelationFilter
   Subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   TimeEntry?: Prisma.TimeEntryListRelationFilter
 }
@@ -249,6 +250,7 @@ export type TenantOrderByWithRelationInput = {
   Project?: Prisma.ProjectOrderByRelationAggregateInput
   PushSubscription?: Prisma.PushSubscriptionOrderByRelationAggregateInput
   ShoppingList?: Prisma.ShoppingListOrderByRelationAggregateInput
+  Quote?: Prisma.QuoteOrderByRelationAggregateInput
   Subscription?: Prisma.SubscriptionOrderByWithRelationInput
   TimeEntry?: Prisma.TimeEntryOrderByRelationAggregateInput
 }
@@ -280,6 +282,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   Project?: Prisma.ProjectListRelationFilter
   PushSubscription?: Prisma.PushSubscriptionListRelationFilter
   ShoppingList?: Prisma.ShoppingListListRelationFilter
+  Quote?: Prisma.QuoteListRelationFilter
   Subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   TimeEntry?: Prisma.TimeEntryListRelationFilter
 }, "id" | "stripeCustomerId" | "inboxCode">
@@ -336,6 +339,7 @@ export type TenantCreateInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -364,6 +368,7 @@ export type TenantUncheckedCreateInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -392,6 +397,7 @@ export type TenantUpdateInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -420,6 +426,7 @@ export type TenantUncheckedUpdateInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -733,6 +740,20 @@ export type TenantUpdateOneRequiredWithoutTimeEntryNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutTimeEntryInput, Prisma.TenantUpdateWithoutTimeEntryInput>, Prisma.TenantUncheckedUpdateWithoutTimeEntryInput>
 }
 
+export type TenantCreateNestedOneWithoutQuoteInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutQuoteInput, Prisma.TenantUncheckedCreateWithoutQuoteInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutQuoteInput
+  connect?: Prisma.TenantWhereUniqueInput
+}
+
+export type TenantUpdateOneRequiredWithoutQuoteNestedInput = {
+  create?: Prisma.XOR<Prisma.TenantCreateWithoutQuoteInput, Prisma.TenantUncheckedCreateWithoutQuoteInput>
+  connectOrCreate?: Prisma.TenantCreateOrConnectWithoutQuoteInput
+  upsert?: Prisma.TenantUpsertWithoutQuoteInput
+  connect?: Prisma.TenantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TenantUpdateToOneWithWhereWithoutQuoteInput, Prisma.TenantUpdateWithoutQuoteInput>, Prisma.TenantUncheckedUpdateWithoutQuoteInput>
+}
+
 export type TenantCreateWithoutDocumentChunkInput = {
   id?: string
   name: string
@@ -756,6 +777,7 @@ export type TenantCreateWithoutDocumentChunkInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -783,6 +805,7 @@ export type TenantUncheckedCreateWithoutDocumentChunkInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -826,6 +849,7 @@ export type TenantUpdateWithoutDocumentChunkInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -853,6 +877,7 @@ export type TenantUncheckedUpdateWithoutDocumentChunkInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -880,6 +905,7 @@ export type TenantCreateWithoutDocumentTemplateInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -907,6 +933,7 @@ export type TenantUncheckedCreateWithoutDocumentTemplateInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -950,6 +977,7 @@ export type TenantUpdateWithoutDocumentTemplateInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -977,6 +1005,7 @@ export type TenantUncheckedUpdateWithoutDocumentTemplateInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1004,6 +1033,7 @@ export type TenantCreateWithoutEmailChunkInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1031,6 +1061,7 @@ export type TenantUncheckedCreateWithoutEmailChunkInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1074,6 +1105,7 @@ export type TenantUpdateWithoutEmailChunkInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1101,6 +1133,7 @@ export type TenantUncheckedUpdateWithoutEmailChunkInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1128,6 +1161,7 @@ export type TenantCreateWithoutEmailConversationInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1155,6 +1189,7 @@ export type TenantUncheckedCreateWithoutEmailConversationInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1198,6 +1233,7 @@ export type TenantUpdateWithoutEmailConversationInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1225,6 +1261,7 @@ export type TenantUncheckedUpdateWithoutEmailConversationInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1252,6 +1289,7 @@ export type TenantCreateWithoutEmailLogInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1279,6 +1317,7 @@ export type TenantUncheckedCreateWithoutEmailLogInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1322,6 +1361,7 @@ export type TenantUpdateWithoutEmailLogInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1349,6 +1389,7 @@ export type TenantUncheckedUpdateWithoutEmailLogInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1376,6 +1417,7 @@ export type TenantCreateWithoutEmailTemplateInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1403,6 +1445,7 @@ export type TenantUncheckedCreateWithoutEmailTemplateInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1446,6 +1489,7 @@ export type TenantUpdateWithoutEmailTemplateInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1473,6 +1517,7 @@ export type TenantUncheckedUpdateWithoutEmailTemplateInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1500,6 +1545,7 @@ export type TenantCreateWithoutFileAnalysisInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1527,6 +1573,7 @@ export type TenantUncheckedCreateWithoutFileAnalysisInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1570,6 +1617,7 @@ export type TenantUpdateWithoutFileAnalysisInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1597,6 +1645,7 @@ export type TenantUncheckedUpdateWithoutFileAnalysisInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1624,6 +1673,7 @@ export type TenantCreateWithoutInvitationInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1651,6 +1701,7 @@ export type TenantUncheckedCreateWithoutInvitationInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1694,6 +1745,7 @@ export type TenantUpdateWithoutInvitationInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1721,6 +1773,7 @@ export type TenantUncheckedUpdateWithoutInvitationInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1748,6 +1801,7 @@ export type TenantCreateWithoutMembershipInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1775,6 +1829,7 @@ export type TenantUncheckedCreateWithoutMembershipInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1818,6 +1873,7 @@ export type TenantUpdateWithoutMembershipInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1845,6 +1901,7 @@ export type TenantUncheckedUpdateWithoutMembershipInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1872,6 +1929,7 @@ export type TenantCreateWithoutMessageChunkInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -1899,6 +1957,7 @@ export type TenantUncheckedCreateWithoutMessageChunkInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -1942,6 +2001,7 @@ export type TenantUpdateWithoutMessageChunkInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -1969,6 +2029,7 @@ export type TenantUncheckedUpdateWithoutMessageChunkInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -1996,6 +2057,7 @@ export type TenantCreateWithoutShoppingListInput = {
   NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -2023,6 +2085,7 @@ export type TenantUncheckedCreateWithoutShoppingListInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -2066,6 +2129,7 @@ export type TenantUpdateWithoutShoppingListInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -2093,6 +2157,7 @@ export type TenantUncheckedUpdateWithoutShoppingListInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -2120,6 +2185,7 @@ export type TenantCreateWithoutNoteCategoryInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -2147,6 +2213,7 @@ export type TenantUncheckedCreateWithoutNoteCategoryInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -2190,6 +2257,7 @@ export type TenantUpdateWithoutNoteCategoryInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -2217,6 +2285,7 @@ export type TenantUncheckedUpdateWithoutNoteCategoryInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -2244,6 +2313,7 @@ export type TenantCreateWithoutNotificationPreferenceInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -2271,6 +2341,7 @@ export type TenantUncheckedCreateWithoutNotificationPreferenceInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -2314,6 +2385,7 @@ export type TenantUpdateWithoutNotificationPreferenceInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -2341,6 +2413,7 @@ export type TenantUncheckedUpdateWithoutNotificationPreferenceInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -2368,6 +2441,7 @@ export type TenantCreateWithoutProjectInput = {
   NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -2395,6 +2469,7 @@ export type TenantUncheckedCreateWithoutProjectInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -2438,6 +2513,7 @@ export type TenantUpdateWithoutProjectInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -2465,6 +2541,7 @@ export type TenantUncheckedUpdateWithoutProjectInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -2492,6 +2569,7 @@ export type TenantCreateWithoutPushSubscriptionInput = {
   NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
@@ -2519,6 +2597,7 @@ export type TenantUncheckedCreateWithoutPushSubscriptionInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
@@ -2562,6 +2641,7 @@ export type TenantUpdateWithoutPushSubscriptionInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
@@ -2589,6 +2669,7 @@ export type TenantUncheckedUpdateWithoutPushSubscriptionInput = {
   NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
@@ -2617,6 +2698,7 @@ export type TenantCreateWithoutSubscriptionInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
 }
 
@@ -2644,6 +2726,7 @@ export type TenantUncheckedCreateWithoutSubscriptionInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
 }
 
@@ -2687,6 +2770,7 @@ export type TenantUpdateWithoutSubscriptionInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
 }
 
@@ -2714,6 +2798,7 @@ export type TenantUncheckedUpdateWithoutSubscriptionInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
@@ -2741,6 +2826,7 @@ export type TenantCreateWithoutTimeEntryInput = {
   Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
 }
 
@@ -2768,6 +2854,7 @@ export type TenantUncheckedCreateWithoutTimeEntryInput = {
   Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
   ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Quote?: Prisma.QuoteUncheckedCreateNestedManyWithoutTenantInput
   Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
 }
 
@@ -2811,6 +2898,7 @@ export type TenantUpdateWithoutTimeEntryInput = {
   Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
 }
 
@@ -2838,7 +2926,136 @@ export type TenantUncheckedUpdateWithoutTimeEntryInput = {
   Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
   PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
   ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Quote?: Prisma.QuoteUncheckedUpdateManyWithoutTenantNestedInput
   Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+}
+
+export type TenantCreateWithoutQuoteInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionCreateNestedManyWithoutTenantInput
+  ShoppingList?: Prisma.ShoppingListCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryCreateNestedManyWithoutTenantInput
+}
+
+export type TenantUncheckedCreateWithoutQuoteInput = {
+  id?: string
+  name: string
+  orgNumber?: string | null
+  stripeCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  address?: string | null
+  inboxCode?: string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
+  EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
+  EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
+  EmailLog?: Prisma.EmailLogUncheckedCreateNestedManyWithoutTenantInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedCreateNestedManyWithoutTenantInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutTenantInput
+  Invitation?: Prisma.InvitationUncheckedCreateNestedManyWithoutTenantInput
+  Membership?: Prisma.MembershipUncheckedCreateNestedManyWithoutTenantInput
+  MessageChunk?: Prisma.MessageChunkUncheckedCreateNestedManyWithoutTenantInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedCreateNestedManyWithoutTenantInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedCreateNestedManyWithoutTenantInput
+  Project?: Prisma.ProjectUncheckedCreateNestedManyWithoutTenantInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutTenantInput
+  ShoppingList?: Prisma.ShoppingListUncheckedCreateNestedManyWithoutTenantInput
+  Subscription?: Prisma.SubscriptionUncheckedCreateNestedOneWithoutTenantInput
+  TimeEntry?: Prisma.TimeEntryUncheckedCreateNestedManyWithoutTenantInput
+}
+
+export type TenantCreateOrConnectWithoutQuoteInput = {
+  where: Prisma.TenantWhereUniqueInput
+  create: Prisma.XOR<Prisma.TenantCreateWithoutQuoteInput, Prisma.TenantUncheckedCreateWithoutQuoteInput>
+}
+
+export type TenantUpsertWithoutQuoteInput = {
+  update: Prisma.XOR<Prisma.TenantUpdateWithoutQuoteInput, Prisma.TenantUncheckedUpdateWithoutQuoteInput>
+  create: Prisma.XOR<Prisma.TenantCreateWithoutQuoteInput, Prisma.TenantUncheckedCreateWithoutQuoteInput>
+  where?: Prisma.TenantWhereInput
+}
+
+export type TenantUpdateToOneWithWhereWithoutQuoteInput = {
+  where?: Prisma.TenantWhereInput
+  data: Prisma.XOR<Prisma.TenantUpdateWithoutQuoteInput, Prisma.TenantUncheckedUpdateWithoutQuoteInput>
+}
+
+export type TenantUpdateWithoutQuoteInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUpdateManyWithoutTenantNestedInput
+  ShoppingList?: Prisma.ShoppingListUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUpdateManyWithoutTenantNestedInput
+}
+
+export type TenantUncheckedUpdateWithoutQuoteInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  orgNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
+  DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
+  EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
+  EmailLog?: Prisma.EmailLogUncheckedUpdateManyWithoutTenantNestedInput
+  EmailTemplate?: Prisma.EmailTemplateUncheckedUpdateManyWithoutTenantNestedInput
+  FileAnalysis?: Prisma.FileAnalysisUncheckedUpdateManyWithoutTenantNestedInput
+  Invitation?: Prisma.InvitationUncheckedUpdateManyWithoutTenantNestedInput
+  Membership?: Prisma.MembershipUncheckedUpdateManyWithoutTenantNestedInput
+  MessageChunk?: Prisma.MessageChunkUncheckedUpdateManyWithoutTenantNestedInput
+  NoteCategory?: Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput
+  NotificationPreference?: Prisma.NotificationPreferenceUncheckedUpdateManyWithoutTenantNestedInput
+  Project?: Prisma.ProjectUncheckedUpdateManyWithoutTenantNestedInput
+  PushSubscription?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutTenantNestedInput
+  ShoppingList?: Prisma.ShoppingListUncheckedUpdateManyWithoutTenantNestedInput
+  Subscription?: Prisma.SubscriptionUncheckedUpdateOneWithoutTenantNestedInput
+  TimeEntry?: Prisma.TimeEntryUncheckedUpdateManyWithoutTenantNestedInput
 }
 
 
@@ -2862,6 +3079,7 @@ export type TenantCountOutputType = {
   Project: number
   PushSubscription: number
   ShoppingList: number
+  Quote: number
   TimeEntry: number
 }
 
@@ -2881,6 +3099,7 @@ export type TenantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   Project?: boolean | TenantCountOutputTypeCountProjectArgs
   PushSubscription?: boolean | TenantCountOutputTypeCountPushSubscriptionArgs
   ShoppingList?: boolean | TenantCountOutputTypeCountShoppingListArgs
+  Quote?: boolean | TenantCountOutputTypeCountQuoteArgs
   TimeEntry?: boolean | TenantCountOutputTypeCountTimeEntryArgs
 }
 
@@ -3002,6 +3221,13 @@ export type TenantCountOutputTypeCountShoppingListArgs<ExtArgs extends runtime.T
 /**
  * TenantCountOutputType without action
  */
+export type TenantCountOutputTypeCountQuoteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QuoteWhereInput
+}
+
+/**
+ * TenantCountOutputType without action
+ */
 export type TenantCountOutputTypeCountTimeEntryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.TimeEntryWhereInput
 }
@@ -3031,6 +3257,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   Project?: boolean | Prisma.Tenant$ProjectArgs<ExtArgs>
   PushSubscription?: boolean | Prisma.Tenant$PushSubscriptionArgs<ExtArgs>
   ShoppingList?: boolean | Prisma.Tenant$ShoppingListArgs<ExtArgs>
+  Quote?: boolean | Prisma.Tenant$QuoteArgs<ExtArgs>
   Subscription?: boolean | Prisma.Tenant$SubscriptionArgs<ExtArgs>
   TimeEntry?: boolean | Prisma.Tenant$TimeEntryArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
@@ -3086,6 +3313,7 @@ export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   Project?: boolean | Prisma.Tenant$ProjectArgs<ExtArgs>
   PushSubscription?: boolean | Prisma.Tenant$PushSubscriptionArgs<ExtArgs>
   ShoppingList?: boolean | Prisma.Tenant$ShoppingListArgs<ExtArgs>
+  Quote?: boolean | Prisma.Tenant$QuoteArgs<ExtArgs>
   Subscription?: boolean | Prisma.Tenant$SubscriptionArgs<ExtArgs>
   TimeEntry?: boolean | Prisma.Tenant$TimeEntryArgs<ExtArgs>
   _count?: boolean | Prisma.TenantCountOutputTypeDefaultArgs<ExtArgs>
@@ -3111,6 +3339,7 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     Project: Prisma.$ProjectPayload<ExtArgs>[]
     PushSubscription: Prisma.$PushSubscriptionPayload<ExtArgs>[]
     ShoppingList: Prisma.$ShoppingListPayload<ExtArgs>[]
+    Quote: Prisma.$QuotePayload<ExtArgs>[]
     Subscription: Prisma.$SubscriptionPayload<ExtArgs> | null
     TimeEntry: Prisma.$TimeEntryPayload<ExtArgs>[]
   }
@@ -3532,6 +3761,7 @@ export interface Prisma__TenantClient<T, Null = never, ExtArgs extends runtime.T
   Project<T extends Prisma.Tenant$ProjectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$ProjectArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   PushSubscription<T extends Prisma.Tenant$PushSubscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$PushSubscriptionArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   ShoppingList<T extends Prisma.Tenant$ShoppingListArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$ShoppingListArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ShoppingListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  Quote<T extends Prisma.Tenant$QuoteArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$QuoteArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QuotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   Subscription<T extends Prisma.Tenant$SubscriptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$SubscriptionArgs<ExtArgs>>): Prisma.Prisma__SubscriptionClient<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   TimeEntry<T extends Prisma.Tenant$TimeEntryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tenant$TimeEntryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TimeEntryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -4316,6 +4546,30 @@ export type Tenant$ShoppingListArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.ShoppingListScalarFieldEnum | Prisma.ShoppingListScalarFieldEnum[]
+}
+
+/**
+ * Tenant.Quote
+ */
+export type Tenant$QuoteArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Quote
+   */
+  select?: Prisma.QuoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Quote
+   */
+  omit?: Prisma.QuoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QuoteInclude<ExtArgs> | null
+  where?: Prisma.QuoteWhereInput
+  orderBy?: Prisma.QuoteOrderByWithRelationInput | Prisma.QuoteOrderByWithRelationInput[]
+  cursor?: Prisma.QuoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QuoteScalarFieldEnum | Prisma.QuoteScalarFieldEnum[]
 }
 
 /**

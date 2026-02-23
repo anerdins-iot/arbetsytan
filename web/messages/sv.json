@@ -12,6 +12,7 @@
     "myTimes": "Mina tider",
     "supplierSearch": "Sök material",
     "shoppingLists": "Inköpslistor",
+    "quotes": "Offerter",
     "settings": "Inställningar"
   },
   "deleteConfirmation": {
@@ -1550,6 +1551,79 @@
     "supplier": {
       "elektroskandia": "Elektroskandia",
       "ahlsell": "Ahlsell"
+    }
+  },
+  "quotes": {
+    "title": "Offerter",
+    "newQuote": "Ny offert",
+    "emptyState": "Inga offerter ännu — skapa din första",
+    "itemCount": "{count, plural, =0 {Inga artiklar} =1 {1 artikel} other {# artiklar}}",
+    "tabs": {
+      "all": "Alla",
+      "draft": "Utkast",
+      "sent": "Skickade",
+      "accepted": "Accepterade"
+    },
+    "status": {
+      "DRAFT": "Utkast",
+      "SENT": "Skickad",
+      "ACCEPTED": "Accepterad",
+      "REJECTED": "Avvisad",
+      "EXPIRED": "Utgången"
+    },
+    "form": {
+      "customerInfo": "Kundinformation",
+      "title": "Titel",
+      "titlePlaceholder": "T.ex. Badrumsrenovering",
+      "project": "Projekt",
+      "noProject": "Inget projekt",
+      "customerName": "Kundnamn",
+      "customerEmail": "E-post",
+      "customerPhone": "Telefon",
+      "customerAddress": "Adress",
+      "validUntil": "Giltig till",
+      "notes": "Anteckningar",
+      "notesPlaceholder": "Villkor, leveranstider eller andra anteckningar...",
+      "items": "Artiklar",
+      "searchWholesaler": "Sök hos grossist",
+      "searchPlaceholder": "Sök artikel hos Elektroskandia/Ahlsell...",
+      "addItem": "Lägg till",
+      "create": "Skapa offert",
+      "cancel": "Avbryt"
+    },
+    "items": {
+      "name": "Namn",
+      "articleNo": "Artnr",
+      "quantity": "Antal",
+      "unit": "Enhet",
+      "unitPrice": "À-pris",
+      "total": "Totalt",
+      "defaultUnit": "st"
+    },
+    "suggestions": {
+      "title": "Förslag från historik",
+      "orderedTimes": "Beställd {count, plural, =1 {1 gång} other {# gånger}}"
+    },
+    "summary": {
+      "subtotal": "Delsumma",
+      "laborCost": "Arbetskostnad",
+      "discount": "Rabatt ({percent}%)",
+      "tax": "Moms (25%)",
+      "taxWithPercent": "Moms ({percent}%)",
+      "total": "Totalt inkl. moms"
+    },
+    "actions": {
+      "send": "Skicka",
+      "accept": "Acceptera",
+      "reject": "Avvisa",
+      "generatePdf": "Generera PDF",
+      "delete": "Ta bort"
+    },
+    "detail": {
+      "customerInfo": "Kundinformation",
+      "items": "Artiklar",
+      "noItems": "Inga artiklar tillagda",
+      "notes": "Anteckningar"
     }
   }
 }
