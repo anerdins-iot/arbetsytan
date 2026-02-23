@@ -81,6 +81,7 @@ import {
 import {
   searchWholesalers,
   type WholesalerProduct,
+  type WholesalerSearchResult,
 } from "@/lib/wholesaler-search";
 import {
   getNotificationPreferences,
@@ -3150,12 +3151,19 @@ Returnera ENBART JSON i följande format:
       const suppliers: ("ELEKTROSKANDIA" | "AHLSELL")[] =
         supplier === "ALL" ? ["ELEKTROSKANDIA", "AHLSELL"] : [supplier];
 
-      const { results, totalFound } = await searchWholesalers(query, {
+      const { elektroskandia, ahlsell } = await searchWholesalers(query, {
         suppliers,
         limit: maxResults,
       });
 
-      if (results.length === 0) {
+      const allProducts = [
+        ...(elektroskandia?.products ?? []),
+        ...(ahlsell?.products ?? []),
+      ];
+      const totalFound =
+        (elektroskandia?.totalCount ?? 0) + (ahlsell?.totalCount ?? 0);
+
+      if (allProducts.length === 0) {
         return {
           message: `Inga produkter hittades för "${query}" hos ${suppliers.join(" och ")}.`,
           products: [],
@@ -3164,8 +3172,8 @@ Returnera ENBART JSON i följande format:
       }
 
       return {
-        message: `Hittade ${totalFound} produkter för "${query}". Visar ${results.length} resultat.`,
-        products: results.map((p) => ({
+        message: `Hittade ${totalFound} produkter för "${query}". Visar ${allProducts.length} resultat.`,
+        products: allProducts.map((p) => ({
           supplier: p.supplier,
           articleNo: p.articleNo,
           name: p.name,
@@ -3174,9 +3182,10 @@ Returnera ENBART JSON i följande format:
           unit: p.unit ?? "st",
           inStock: p.inStock ? "I lager" : "Ej i lager",
           url: p.productUrl,
+          imageUrl: p.imageUrl,
         })),
         totalFound,
-        hint: "Använd artikelnummer och pris för att lägga till produkter i offerter med createQuote.",
+        hint: "Använd artikelnummer och pris för att lägga till produkter i offerter, inköpslistor eller createQuote.",
       };
     },
   });

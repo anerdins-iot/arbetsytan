@@ -442,6 +442,48 @@ model Note {
   @@index([projectId, createdAt])
 }
 
+model ShoppingList {
+  id          String             @id @default(cuid())
+  title       String
+  projectId   String?
+  tenantId    String
+  createdById String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  isArchived  Boolean            @default(false)
+  items       ShoppingListItem[]
+  createdBy   User               @relation(fields: [createdById], references: [id])
+  project     Project?           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([projectId])
+  @@index([createdById])
+}
+
+model ShoppingListItem {
+  id            String       @id @default(cuid())
+  listId        String
+  name          String
+  articleNo     String?
+  brand         String?
+  supplier      String?
+  quantity      Float        @default(1)
+  unit          String?
+  price         Float?
+  imageUrl      String?
+  productUrl    String?
+  notes         String?
+  isChecked     Boolean      @default(false)
+  checkedAt     DateTime?
+  sortOrder     Int          @default(0)
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  list          ShoppingList @relation(fields: [listId], references: [id], onDelete: Cascade)
+
+  @@index([listId])
+}
+
 model NoteCategory {
   id        String   @id @default(cuid())
   name      String
@@ -512,6 +554,7 @@ model Project {
   messageChunks    MessageChunk[]
   notes            Note[]
   notifications    Notification[]
+  shoppingLists    ShoppingList[]
   tenant           Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   projectMembers   ProjectMember[]
   tasks            Task[]
@@ -619,6 +662,7 @@ model Tenant {
   NotificationPreference NotificationPreference[]
   Project                Project[]
   PushSubscription       PushSubscription[]
+  ShoppingList           ShoppingList[]
   Subscription           Subscription?
   TimeEntry              TimeEntry[]
 }
@@ -673,6 +717,7 @@ model User {
   notificationPreferences NotificationPreference[]
   pushSubscriptions      PushSubscription[]
   sessions               Session[]
+  shoppingLists          ShoppingList[]
 }
 
 model VerificationToken {
