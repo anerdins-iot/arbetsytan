@@ -4,7 +4,7 @@
  */
 import { generateText } from "ai";
 import { getModel } from "@/lib/ai/providers";
-import type { TenantScopedClient } from "@/lib/db";
+import type { TenantScopedClient, UserScopedClient } from "@/lib/db";
 import { logger } from "@/lib/logger";
 
 const CONFIDENCE_THRESHOLD = 0.7;
@@ -13,6 +13,7 @@ const CLEANUP_DAYS = 90;
 
 export type ExtractAndSaveKnowledgeOptions = {
   db: TenantScopedClient;
+  udb: UserScopedClient;
   conversationId: string;
   tenantId: string;
   userId: string;
@@ -59,10 +60,11 @@ function parseExtractionResult(text: string): ExtractedEntity[] {
 export async function extractAndSaveKnowledge(
   opts: ExtractAndSaveKnowledgeOptions
 ): Promise<{ extracted: number }> {
-  const { db, conversationId, tenantId, userId } = opts;
+  const { db, udb, conversationId, tenantId, userId } = opts;
   logger.info("extractAndSaveKnowledge: starting", { conversationId, tenantId, userId });
   try {
-    const conversation = await db.conversation.findFirst({
+    // Use userDb (udb) to fetch conversation — it's scoped to userId which is correct for personal conversations
+    const conversation = await udb.conversation.findFirst({
       where: { id: conversationId },
       include: {
         messages: {
@@ -83,12 +85,20 @@ export async function extractAndSaveKnowledge(
       )
       .join("\n\n");
 
-    const model = getModel("CLAUDE");
-    const { text } = await generateText({
-      model,
-      system: `Du extraherar strukturerad kunskap från konversationer. Svara ENDAST med ett enda JSON-objekt i formatet: { "entities": [ { "entityType": "...", "entityId": "...", "metadata": {}, "confidence": 0.0-1.0 } ] }. entityType MÅSTE vara en av: ${ENTITY_TYPES.join(", ")}. entityId är ett ID eller kort identifierare. confidence är 0–1. Inga andra texter.`,
-      prompt: `Analysera konversationen och lista entiteter (projekt, uppgifter, användare, preferenser, vanliga frågor) som nämnts med hög tillförlitlighet.\n\nKonversation:\n\n${transcript}`,
-    });
+    const system = `Du extraherar strukturerad kunskap från konversationer. Svara ENDAST med ett enda JSON-objekt i formatet: { "entities": [ { "entityType": "...", "entityId": "...", "metadata": {}, "confidence": 0.0-1.0 } ] }. entityType MÅSTE vara en av: ${ENTITY_TYPES.join(", ")}. entityId är ett ID eller kort identifierare. confidence är 0–1. Inga andra texter.`;
+    const prompt = `Analysera konversationen och lista entiteter (projekt, uppgifter, användare, preferenser, vanliga frågor) som nämnts med hög tillförlitlighet.\n\nKonversation:\n\n${transcript}`;
+
+    // Try Claude first, fall back to OpenAI if overloaded
+    let text: string;
+    try {
+      const result = await generateText({ model: getModel("CLAUDE"), system, prompt });
+      text = result.text;
+    } catch (primaryErr) {
+      const errMsg = primaryErr instanceof Error ? primaryErr.message : String(primaryErr);
+      logger.warn("extractAndSaveKnowledge: Claude failed, trying OpenAI fallback", { error: errMsg });
+      const result = await generateText({ model: getModel("OPENAI"), system, prompt });
+      text = result.text;
+    }
 
     const entities = parseExtractionResult(text ?? "{}");
     const toSave = entities.filter((e) => e.confidence >= CONFIDENCE_THRESHOLD);

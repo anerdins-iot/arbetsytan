@@ -315,6 +315,7 @@ export async function POST(req: NextRequest) {
       });
     },
     onFinish: async ({ text }) => {
+      logger.info("onFinish: triggered", { activeConversationId, textLength: text?.length ?? 0 });
       // Save assistant response to DB (personal AI: use userDb for auto-emit)
       if (text && activeConversationId) {
         const assistantMsg = await udb.message.create({
@@ -348,6 +349,7 @@ export async function POST(req: NextRequest) {
         }
         extractAndSaveKnowledge({
           db,
+          udb,
           conversationId: activeConversationId,
           tenantId,
           userId,
