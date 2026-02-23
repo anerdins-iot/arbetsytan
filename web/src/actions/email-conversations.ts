@@ -144,7 +144,7 @@ export async function createConversation(
 
     // Always use RESEND_FROM for verified domain
     // Fallback to Resend onboarding domain if not configured
-    const fromAddress = process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
+    const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
 
     // Send email FIRST - before creating anything in the database
     const sent = await sendEmail({
@@ -221,7 +221,7 @@ export async function replyToConversation(
 
     // Always use RESEND_FROM for verified domain
     // Fallback to Resend onboarding domain if not configured
-    const fromAddress = process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
+    const fromAddress = process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
 
     const sent = await sendEmail({
       to: conversation.externalEmail,

@@ -269,7 +269,7 @@ export async function processInboundEmail(
         },
       });
       const fromAddress =
-        process.env.RESEND_FROM ?? "ArbetsYtan <noreply@lowly.se>";
+        process.env.RESEND_FROM?.trim() || "ArbetsYtan <noreply@arbetsytan.anerd.in>";
       await sendEmail({
         from: fromAddress,
         to: user.email,

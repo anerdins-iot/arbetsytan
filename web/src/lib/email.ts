@@ -11,7 +11,7 @@ const resend = process.env.RESEND_API_KEY
 
 /** Default from address. Set RESEND_FROM or use Resend onboarding domain. */
 const DEFAULT_FROM =
-  process.env.RESEND_FROM ?? "ArbetsYtan <onboarding@resend.dev>";
+  process.env.RESEND_FROM?.trim() || "ArbetsYtan <onboarding@resend.dev>";
 
 export type EmailAttachment = {
   filename: string;
