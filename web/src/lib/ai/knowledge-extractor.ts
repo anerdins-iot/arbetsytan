@@ -5,6 +5,8 @@
 import { generateText } from "ai";
 import { getModel } from "@/lib/ai/providers";
 import type { TenantScopedClient, UserScopedClient } from "@/lib/db";
+import { prisma } from "@/lib/db";
+import { generateEmbedding } from "./embeddings";
 import { logger } from "@/lib/logger";
 
 const CONFIDENCE_THRESHOLD = 0.7;
@@ -122,6 +124,7 @@ export async function extractAndSaveKnowledge(
             entityId: e.entityId,
           },
         });
+        let recordId: string;
         if (existing) {
           await db.knowledgeEntity.update({
             where: { id: existing.id },
@@ -131,8 +134,9 @@ export async function extractAndSaveKnowledge(
               metadata,
             },
           });
+          recordId = existing.id;
         } else {
-          await db.knowledgeEntity.create({
+          const created = await db.knowledgeEntity.create({
             data: {
               tenantId,
               entityType: e.entityType,
@@ -140,9 +144,30 @@ export async function extractAndSaveKnowledge(
               metadata,
               confidence: e.confidence,
             },
+            select: { id: true },
           });
+          recordId = created.id;
         }
         saved++;
+
+        // Generate and store embedding (graceful degradation)
+        try {
+          const embeddingText = `${e.entityType} ${e.entityId} ${JSON.stringify(metadata)}`;
+          const embeddingVector = await generateEmbedding(embeddingText);
+          const vectorStr = `[${embeddingVector.join(",")}]`;
+          await prisma.$queryRawUnsafe(
+            `UPDATE "KnowledgeEntity" SET "embedding" = $1::vector WHERE "id" = $2 AND "tenantId" = $3`,
+            vectorStr,
+            recordId,
+            tenantId
+          );
+        } catch (embErr) {
+          logger.warn("Failed to generate/store knowledge embedding, entity saved without embedding", {
+            entityType: e.entityType,
+            entityId: e.entityId,
+            error: embErr instanceof Error ? embErr.message : String(embErr),
+          });
+        }
       } catch (err) {
         logger.warn("Knowledge entity upsert failed", {
           entityType: e.entityType,

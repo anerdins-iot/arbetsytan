@@ -11,6 +11,7 @@ import { getSession, requireProject } from "@/lib/auth";
 import { tenantDb, userDb } from "@/lib/db";
 import { getModel, streamConfig, type ProviderKey } from "@/lib/ai/providers";
 import { searchDocuments } from "@/lib/ai/embeddings";
+import { searchAllSources, type UnifiedSearchResult } from "@/lib/ai/unified-search";
 import { createPersonalTools } from "@/lib/ai/tools/personal-tools";
 import { summarizeConversationIfNeeded } from "@/lib/ai/summarize-conversation";
 import {
@@ -236,30 +237,76 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Knowledge base: fetch relevant entities for this user (tenantId + userId in metadata), max 15, lastSeen desc
+  // Unified semantic search: search knowledge, conversations, and documents (with 500ms timeout)
   let knowledgeContext = "";
   try {
-    const entities = await db.knowledgeEntity.findMany({
-      where: {
-        tenantId,
-        metadata: { path: ["userId"], equals: userId },
-      },
-      orderBy: { lastSeen: "desc" },
-      take: 15,
-      select: { entityType: true, entityId: true, metadata: true },
-    });
-    if (entities.length > 0) {
-      knowledgeContext = entities
-        .map(
-          (e: { entityType: string; entityId: string; metadata: unknown }) =>
-            `- ${e.entityType} ${e.entityId}: ${JSON.stringify(e.metadata)}`
-        )
-        .join("\n");
+    const lastUserMsgForSearch = [...messages].reverse().find(m => m.role === "user");
+    if (lastUserMsgForSearch) {
+      const queryText = extractTextFromParts(lastUserMsgForSearch);
+
+      if (queryText.trim()) {
+        const searchPromise = searchAllSources({
+          queryText,
+          userId,
+          tenantId,
+          projectId: projectId ?? undefined,
+          limit: 20,
+          threshold: 0.5,
+        });
+        const timeoutPromise = new Promise<UnifiedSearchResult[]>((resolve) =>
+          setTimeout(() => resolve([]), 500)
+        );
+        const searchResults = await Promise.race([searchPromise, timeoutPromise]);
+
+        if (searchResults.length > 0) {
+          const knowledge = searchResults.filter(r => r.source === "knowledge").slice(0, 10);
+          const conversations = searchResults.filter(r => r.source === "conversation").slice(0, 10);
+          const documents = searchResults.filter(r => r.source === "document").slice(0, 10);
+
+          const sections: string[] = [];
+          if (knowledge.length > 0) {
+            sections.push("Från kunskapsbas:\n" + knowledge.map(r => `- ${r.text}`).join("\n"));
+          }
+          if (conversations.length > 0) {
+            sections.push("Från tidigare konversationer:\n" + conversations.map(r => `- ${r.text}`).join("\n"));
+          }
+          if (documents.length > 0) {
+            sections.push("Från projektdokument:\n" + documents.map(r => `- ${r.text}`).join("\n"));
+          }
+          if (sections.length > 0) {
+            knowledgeContext = "=== AUTOMATISK KONTEXT ===\n" + sections.join("\n\n");
+          }
+        }
+      }
     }
-  } catch (knowledgeErr) {
-    logger.warn("Knowledge base fetch failed, continuing without context", {
-      error: knowledgeErr instanceof Error ? knowledgeErr.message : String(knowledgeErr),
+  } catch (searchErr) {
+    logger.warn("Unified search failed, continuing without context", {
+      error: searchErr instanceof Error ? searchErr.message : String(searchErr),
     });
+    // Fallback to time-based knowledge entities
+    try {
+      const entities = await db.knowledgeEntity.findMany({
+        where: {
+          tenantId,
+          metadata: { path: ["userId"], equals: userId },
+        },
+        orderBy: { lastSeen: "desc" },
+        take: 15,
+        select: { entityType: true, entityId: true, metadata: true },
+      });
+      if (entities.length > 0) {
+        knowledgeContext = entities
+          .map(
+            (e: { entityType: string; entityId: string; metadata: unknown }) =>
+              `- ${e.entityType} ${e.entityId}: ${JSON.stringify(e.metadata)}`
+          )
+          .join("\n");
+      }
+    } catch (fallbackErr) {
+      logger.warn("Fallback knowledge fetch also failed", {
+        error: fallbackErr instanceof Error ? fallbackErr.message : String(fallbackErr),
+      });
+    }
   }
 
   const isFirstTurn = messages.filter((m) => m.role === "user").length <= 1;

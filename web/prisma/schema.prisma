@@ -8,13 +8,14 @@ datasource db {
 }
 
 model KnowledgeEntity {
-  id         String   @id @default(cuid())
+  id         String                 @id @default(cuid())
   entityType String
   entityId   String
   metadata   Json
   confidence Float
-  lastSeen   DateTime @default(now())
+  lastSeen   DateTime               @default(now())
   tenantId   String
+  embedding  Unsupported("vector")?
 
   @@index([tenantId, entityType, entityId])
 }
