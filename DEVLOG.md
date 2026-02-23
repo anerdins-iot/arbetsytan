@@ -282,3 +282,35 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 **Problem/Feature:** Bilder uppladdade i chatten triggade automatiskt OcrReviewDialog och skapade en fil-post som syntes i filfliken.
 **Lösning:** Ny `chatMode=true`-parameter i upload-routen hoppar över systemmeddelande-skapandet. `imageFileIds`-array i chat-requesten hämtar filerna från MinIO, konverterar till base64 och injicerar som AI SDK vision-parts i sista user-meddelandet. AI:n analyserar bilden och ställer en följdfråga. FolderPlus-knapp på skickade bilder öppnar OcrReviewDialog via nytt GET-endpoint `/api/ai/upload/file-info`.
 **Lärdom:** AI SDK v6 stödjer `{ type: "image", image: "data:..." }` parts direkt i `content`-arrayen för modelMessages — ingen extra konfiguration behövs för Claude vision.
+
+---
+
+### Resend inbound email: webhook triggas inte trots Verified MX (2026-02-23)
+**Problem:** `email.received` webhook triggades aldrig trots att MX-recorden var Verified i Resend.
+**Orsak:** Resend kräver en explicit disable/enable-cykel på webhook efter att MX verifieras. Utan detta aktiveras inte inbound routing för webhook-events.
+**Lösning:** Disable → Enable på webhook i Resend-dashboarden. Events börjar triggas direkt.
+**Lärdom:** Efter MX-verifiering i Resend: alltid disable/enable webhook för att aktivera `email.received`.
+
+---
+
+### Resend webhook: INVALID_SIGNATURE — Svix signerar id.timestamp.body (2026-02-23)
+**Problem:** Alla webhook-anrop gav 401 INVALID_SIGNATURE.
+**Orsak:** Handrullad HMAC signerade bara `rawBody`. Svix signerar `svix-id.svix-timestamp.rawBody` med base64-avkodad `whsec_`-nyckel.
+**Lösning:** Ersatte handrullad HMAC med `new Webhook(secret).verify()` från `svix`-paketet i `/api/webhooks/resend/route.ts`.
+**Lärdom:** Använd alltid Svix SDK för webhook-verifiering, aldrig handrullad HMAC.
+
+---
+
+### Resend webhook: 500 på email.delivered — EmailLog saknar resendMessageId (2026-02-23)
+**Problem:** `email.delivered` webhook gav 500 WEBHOOK_HANDLER_FAILED.
+**Orsak:** `updateEmailStatus` kastade P2025 (record not found) när mail skickats utan EmailLog-post.
+**Lösning:** Fånga P2025 tyst i `updateEmailStatus` — returnera utan fel om ingen EmailLog finns.
+**Lärdom:** Webhook-handlers ska aldrig kasta 500 på "not found" — ignorera tyst och returnera 200.
+
+---
+
+### Resend inbound: tenant hittades inte för inboxCode (2026-02-23)
+**Problem:** `processInboundEmail` loggade "tenant not found" — mail kom fram men skapade inget meddelande.
+**Orsak:** `inboxCode` i databasen var `null` (ej satt på tenant), kod föll tillbaka på `tenantId` (t.ex. `seed-tenant-1`). Men sökningen gjordes med `findUnique({ where: { inboxCode } })` — hittade ingenting.
+**Lösning:** `findFirst({ where: { OR: [{ inboxCode }, { id: tenantCode }] } })` — söker på båda.
+**Permanent fix:** Se till att alla tenants har `inboxCode` satt i databasen (inte null).
