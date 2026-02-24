@@ -74,9 +74,9 @@
 
 ## Fas 8 – Header
 
-- [ ] Finns `personal-ai-chat-header.tsx` med title, isFullscreen, onToggleFullscreen, onClose, mode.
-- [ ] Huvudkomponenten använder PersonalAiChatHeader; chatBody är uppbyggd av header, toolbar/historik, message list, files strip, error, indicator, transcript, input.
-- [ ] Build passerar.
+- [x] Finns `personal-ai-chat-header.tsx` med title, isFullscreen, onToggleFullscreen, onClose, mode.
+- [x] Huvudkomponenten använder PersonalAiChatHeader; chatBody är uppbyggd av header, toolbar/historik, message list, files strip, error, indicator, transcript, input.
+- [x] Build passerar.
 
 ---
 
