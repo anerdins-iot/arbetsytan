@@ -17,7 +17,7 @@
   },
   "deleteConfirmation": {
     "title": "Bekräfta radering",
-    "description": "Följande {type} kommer att raderas permanent. Denna åtgärd kan inte ångras.",
+    "description": "Radera {type} permanent. Kan inte ångras.",
     "confirm": "Bekräfta radering",
     "cancel": "Avbryt",
     "deleting": "Raderar…",

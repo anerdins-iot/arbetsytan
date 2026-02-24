@@ -1451,6 +1451,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       __deleteConfirmation: true;
                       actionParams: Record<string, string>;
                     };
+                    const deleteSig = `${deleteData.type}:${deleteData.items.map((it) => it.id).sort().join(",")}`;
+                    if (seenTool("deleteConfirmation", deleteSig)) return null;
 
                     const handleDeleteConfirm = async () => {
                       const { type, actionParams } = deleteData;

@@ -66,71 +66,68 @@ export function DeleteConfirmationCard({ data, onConfirm, onCancel }: Props) {
   const typeLabel = t(`type.${data.type}`);
 
   return (
-    <Card className="w-full max-w-lg border-destructive/30 bg-card">
-      <CardHeader className="pb-3">
+    <Card className="w-full max-w-md border-destructive/30 bg-card">
+      <CardHeader className="pb-1.5 pt-3 px-3">
         <div className="flex items-center gap-2">
-          <div className="rounded-full bg-destructive/10 p-2">
-            <Trash2 className="h-4 w-4 text-destructive" />
+          <div className="rounded-full bg-destructive/10 p-1.5">
+            <Trash2 className="size-3.5 text-destructive" />
           </div>
-          <div>
-            <CardTitle className="text-base">{t("title")}</CardTitle>
-            <CardDescription className="text-xs">
+          <div className="min-w-0 flex-1">
+            <CardTitle className="text-sm">{t("title")}</CardTitle>
+            <CardDescription className="text-[11px] mt-0.5">
               {t("description", { type: typeLabel })}
             </CardDescription>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-3 pb-3">
-        <div className="space-y-1">
-          <p className="text-xs font-medium text-muted-foreground">{typeLabel}</p>
-          <ul className="rounded-md bg-muted/50 p-3 space-y-1">
-            {data.items.map((item) => (
-              <li key={item.id} className="text-sm font-medium truncate">
-                {item.label}
-              </li>
-            ))}
-          </ul>
-        </div>
+      <CardContent className="space-y-2 pb-2 px-3">
+        <ul className="rounded bg-muted/50 px-2.5 py-1.5 space-y-0.5">
+          {data.items.map((item) => (
+            <li key={item.id} className="text-xs font-medium truncate">
+              {item.label}
+            </li>
+          ))}
+        </ul>
 
         {status === "deleted" && (
-          <div className="flex items-center gap-2 rounded-md bg-success/10 p-3 text-success">
-            <Check className="h-4 w-4 shrink-0" />
-            <span className="text-sm font-medium">{t("deleted")}</span>
+          <div className="flex items-center gap-1.5 rounded bg-success/10 px-2 py-1.5 text-success">
+            <Check className="size-3.5 shrink-0" />
+            <span className="text-xs font-medium">{t("deleted")}</span>
           </div>
         )}
 
         {status === "error" && error && (
-          <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-destructive">
-            <X className="h-4 w-4 shrink-0" />
-            <span className="text-sm">{error}</span>
+          <div className="flex items-center gap-1.5 rounded bg-destructive/10 px-2 py-1.5 text-destructive">
+            <X className="size-3.5 shrink-0" />
+            <span className="text-xs">{error}</span>
           </div>
         )}
       </CardContent>
 
-      <CardFooter className="flex gap-2 pt-0">
+      <CardFooter className="flex gap-1.5 pt-0 px-3 pb-2">
         {status === "pending" && (
           <>
             {onCancel && (
-              <Button variant="ghost" size="sm" onClick={onCancel}>
+              <Button variant="ghost" size="sm" className="h-8 text-xs" onClick={onCancel}>
                 {t("cancel")}
               </Button>
             )}
             <Button
               variant="destructive"
               size="sm"
-              className="ml-auto gap-2"
+              className="ml-auto gap-1.5 h-8 text-xs"
               onClick={handleConfirm}
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="size-3.5" />
               {t("confirm")}
             </Button>
           </>
         )}
 
         {status === "deleting" && (
-          <Button size="sm" disabled className="ml-auto gap-2">
-            <Loader2 className="h-4 w-4 animate-spin" />
+          <Button size="sm" disabled className="ml-auto gap-1.5 h-8 text-xs">
+            <Loader2 className="size-3.5 animate-spin" />
             {t("deleting")}
           </Button>
         )}
@@ -139,7 +136,7 @@ export function DeleteConfirmationCard({ data, onConfirm, onCancel }: Props) {
           <Button
             variant="outline"
             size="sm"
-            className="ml-auto"
+            className="ml-auto h-8 text-xs"
             onClick={() => setStatus("pending")}
           >
             {t("retry")}

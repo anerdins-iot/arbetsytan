@@ -17,7 +17,7 @@
   },
   "deleteConfirmation": {
     "title": "Confirm deletion",
-    "description": "The following {type} will be permanently deleted. This action cannot be undone.",
+    "description": "Permanently delete {type}. Cannot be undone.",
     "confirm": "Confirm deletion",
     "cancel": "Cancel",
     "deleting": "Deleting…",
