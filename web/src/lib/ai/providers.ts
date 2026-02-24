@@ -110,8 +110,8 @@ export function getModel(provider: ProviderKey = "CLAUDE_HAIKU"): LanguageModel 
 /** The default model used for chat assistants (Claude Haiku). */
 export const defaultModel = getModel("CLAUDE_HAIKU");
 
-/** Shared streaming configuration. */
+/** Shared streaming configuration. Lower temperature = more factual, less creative/invented content. */
 export const streamConfig = {
   maxTokens: 4096,
-  temperature: 0.7,
+  temperature: 0.2,
 } as const;

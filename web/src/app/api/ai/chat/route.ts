@@ -617,6 +617,14 @@ function buildSystemPrompt(opts: {
     unreadHint,
   );
 
+  // Factual accuracy - never invent dates or numbers
+  const factualPolicy = `
+FAKTA OCH DATUM - KRITISKT:
+- Hitta ALDRIG på datum, deadlines eller tidsangivelser. Om källan säger "inom 3–4 veckor", skriv det — ange INTE ett konkret datum som "15 mars".
+- Ange endast datum och siffror som uttryckligen finns i källan (protokoll, dokument, uppgifter). Om något inte nämns, säg att det inte angavs — uppskatta inte.
+- Skapa inte "rimliga" eller "uppskattade" deadlines för att "ha något att följa upp". Användaren ska kunna lita på att allt du anger kommer från källan.
+`;
+
   // PROACTIVE POLICY - Strict rules for agent behavior
   const proactivePolicy = `
 PROAKTIV POLICY - Du MÅSTE följa dessa regler:
@@ -681,6 +689,7 @@ VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
     "Om du inte vet svaret efter att ha sökt ordentligt, säg det.",
+    factualPolicy,
     proactivePolicy,
     searchStrategy,
     emailSearchGuidance,
