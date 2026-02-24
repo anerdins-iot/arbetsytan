@@ -34,14 +34,14 @@ export function MarkdownMessage({ content }: MarkdownMessageProps) {
   const hasImages = imageUrls.length > 0;
 
   const markdownContent = (
-    <div className="prose prose-sm dark:prose-invert max-w-none break-words text-inherit prose-headings:text-inherit prose-strong:text-inherit prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-pre:my-2 prose-pre:bg-[#22272e] prose-pre:text-[#adbac7] prose-pre:rounded-md prose-code:before:content-none prose-code:after:content-none">
+    <div className="prose prose-sm dark:prose-invert max-w-none break-words text-inherit prose-headings:text-inherit prose-strong:text-inherit prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1 prose-li:my-0 prose-pre:my-2 prose-pre:bg-[#22272e] prose-pre:text-[#adbac7] prose-pre:rounded-md prose-code:before:content-none prose-code:after:content-none prose-a:text-inherit prose-a:underline hover:prose-a:opacity-90">
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeHighlight]}
         components={{
-          // Öppna länkar i ny flik
+          // Öppna länkar i ny flik; text-inherit så länkar syns i användarbubblan (mörk bakgrund)
           a: ({ children, ...props }) => (
-            <a {...props} target="_blank" rel="noopener noreferrer">
+            <a {...props} target="_blank" rel="noopener noreferrer" className="text-inherit underline hover:opacity-90">
               {children}
             </a>
           ),
