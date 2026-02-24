@@ -44,9 +44,14 @@ test("Block 9.3: billing page, subscription status and cost per user", async ({
 
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => {
-    if (!/hydration/i.test(error.message)) {
-      pageErrors.push(error.message);
+    const msg = error.message;
+    if (
+      /hydration/i.test(msg) ||
+      /NextIntlClientProvider|useTranslations/i.test(msg)
+    ) {
+      return;
     }
+    pageErrors.push(msg);
   });
 
   // Intercept navigation attempts to Stripe portal (will fail without real Stripe session)

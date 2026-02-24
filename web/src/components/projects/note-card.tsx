@@ -126,7 +126,7 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" size="icon" className="size-8 flex-shrink-0" disabled={isPending}>
+                <Button variant="ghost" size="icon" className="flex-shrink-0" disabled={isPending}>
                   <MoreVertical className="size-4" />
                   <span className="sr-only">{t("actions")}</span>
                 </Button>

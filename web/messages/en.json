@@ -245,6 +245,14 @@
     "fileTooLarge": "File is too large (max 50 MB)",
     "fileTypeNotAllowed": "File type not supported",
     "saveToProject": "Save to project",
+    "timeEntryListButton": "Found {count} time entries",
+    "timeEntryListOpen": "Open",
+    "timeEntryListSheetTitle": "My time entries",
+    "fileListPanel": {
+      "title": "Files",
+      "foundFiles": "Found {count, plural, =1 {1 file} other {# files}}",
+      "openButton": "Open"
+    },
     "projectSelector": {
       "personal": "Personal",
       "selectProject": "Select project"
@@ -314,6 +322,11 @@
       "next": "Next",
       "back": "Back"
     },
+    "taskList": {
+      "found": "Found {count} tasks",
+      "open": "Open",
+      "sheetTitle": "Tasks"
+    },
     "ocrReview": {
       "title": "Review file",
       "noTextHint": "Add text or description to make the file searchable.",
@@ -323,6 +336,13 @@
       "saving": "Saving…",
       "skip": "Skip",
       "uploading": "Uploading…"
+    },
+    "noteList": {
+      "found": "Found {count, plural, =0 {no notes} =1 {1 note} other {# notes}}",
+      "open": "Open",
+      "title": "Notes",
+      "titlePersonal": "My notes",
+      "personal": "My notes"
     }
   },
   "notifications": {
@@ -1535,6 +1555,8 @@
   },
   "shoppingList": {
     "title": "Shopping Lists",
+    "panelFoundLists": "Found {count} shopping list",
+    "openPanel": "Open",
     "newList": "New shopping list",
     "createList": "Create list",
     "listTitle": "List name",
@@ -1573,6 +1595,8 @@
   },
   "quotes": {
     "title": "Quotes",
+    "foundQuotes": "Found {count, plural, =1 {1 quote} other {# quotes}}",
+    "openList": "Open",
     "newQuote": "New quote",
     "emptyState": "No quotes yet — create your first",
     "itemCount": "{count, plural, =0 {No items} =1 {1 item} other {# items}}",

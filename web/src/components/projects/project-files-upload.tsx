@@ -2,18 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  Download,
-  FileImage,
-  FileSpreadsheet,
-  FileText,
-  Loader2,
-  PenLine,
-  ScanText,
-  Sparkles,
-  Trash2,
-  UploadCloud,
-} from "lucide-react";
+import { Loader2, UploadCloud } from "lucide-react";
 import {
   completeFileUpload,
   deleteFile,
@@ -24,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileDetailDialog } from "@/components/files/file-detail-dialog";
+import { FileListGrid } from "@/components/files/file-list-grid";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS } from "@/lib/socket-events";
 
@@ -45,28 +35,6 @@ const ACCEPTED_FILE_TYPES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 ].join(",");
-
-function formatBytes(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  const kb = bytes / 1024;
-  if (kb < 1024) return `${kb.toFixed(1)} KB`;
-  const mb = kb / 1024;
-  if (mb < 1024) return `${mb.toFixed(1)} MB`;
-  const gb = mb / 1024;
-  return `${gb.toFixed(1)} GB`;
-}
-
-function fileIcon(type: string) {
-  if (type.startsWith("image/")) {
-    return <FileImage className="size-4 text-muted-foreground" />;
-  }
-  if (
-    type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-  ) {
-    return <FileSpreadsheet className="size-4 text-muted-foreground" />;
-  }
-  return <FileText className="size-4 text-muted-foreground" />;
-}
 
 function isImageFile(file: FileItem): boolean {
   if (file.type.startsWith("image/")) {
@@ -313,43 +281,6 @@ export function ProjectFilesUpload({
     setIsDeletingFileId(null);
   }
 
-  function renderFileThumbnail(file: FileItem) {
-    if (isImageFile(file)) {
-      return (
-        <img
-          src={file.previewUrl}
-          alt={file.name}
-          className="h-32 w-full rounded-md border border-border object-cover"
-        />
-      );
-    }
-
-    if (isPdfFile(file)) {
-      return (
-        <div className="flex h-32 w-full items-center justify-center rounded-md border border-border bg-muted/50">
-          <FileText className="size-8 text-muted-foreground" />
-        </div>
-      );
-    }
-
-    if (
-      file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
-      /\.xlsx$/i.test(file.name)
-    ) {
-      return (
-        <div className="flex h-32 w-full items-center justify-center rounded-md border border-border bg-muted/50">
-          <FileSpreadsheet className="size-8 text-muted-foreground" />
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex h-32 w-full items-center justify-center rounded-md border border-border bg-muted/50">
-        <FileText className="size-8 text-muted-foreground" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       <Card>
@@ -450,84 +381,14 @@ export function ProjectFilesUpload({
           <CardTitle>{t("uploadedFilesTitle")}</CardTitle>
         </CardHeader>
         <CardContent>
-          {files.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{t("empty")}</p>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {files.map((file) => (
-                <div
-                  key={file.id}
-                  className="rounded-md border border-border bg-card p-3"
-                >
-                  <button
-                    type="button"
-                    className="w-full text-left"
-                    onClick={() => handlePreview(file)}
-                  >
-                    {renderFileThumbnail(file)}
-                  </button>
-                  <div className="mt-3 flex min-w-0 items-center gap-2">
-                    {fileIcon(file.type)}
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-foreground">
-                        {file.name}
-                      </p>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-xs text-muted-foreground">
-                          {formatBytes(file.size)}
-                        </p>
-                        {file.versionNumber > 1 ? (
-                          <span className="inline-flex items-center rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                            {t("versionBadge", { number: file.versionNumber })}
-                          </span>
-                        ) : null}
-                        {file.ocrText ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                            <ScanText className="size-2.5" />
-                            {t("ocrBadge")}
-                          </span>
-                        ) : null}
-                        {file.aiAnalysis ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                            <Sparkles className="size-2.5" />
-                            {t("aiAnalysisBadge")}
-                          </span>
-                        ) : null}
-                        {file.userDescription ? (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
-                            <PenLine className="size-2.5" />
-                            {t("userDescriptionBadge")}
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex items-center justify-end gap-2">
-                    <a href={file.downloadUrl} target="_blank" rel="noreferrer">
-                      <Button variant="outline" size="icon" type="button">
-                        <Download className="size-4" />
-                        <span className="sr-only">{t("downloadFile")}</span>
-                      </Button>
-                    </a>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      type="button"
-                      onClick={() => void handleDelete(file)}
-                      disabled={isDeletingFileId === file.id}
-                    >
-                      {isDeletingFileId === file.id ? (
-                        <Loader2 className="size-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="size-4" />
-                      )}
-                      <span className="sr-only">{t("deleteFile")}</span>
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+          <FileListGrid
+            files={files}
+            translationNamespace="projects.files"
+            onPreview={handlePreview}
+            onDelete={handleDelete}
+            isDeletingId={isDeletingFileId}
+            showActions
+          />
         </CardContent>
       </Card>
 

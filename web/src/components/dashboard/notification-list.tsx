@@ -90,7 +90,7 @@ export function NotificationList({ notifications }: NotificationListProps) {
               }
             }}
             disabled={isPending}
-            className={`flex w-full items-start gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-accent/50 ${
+            className={`flex min-h-[44px] w-full items-start gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-accent/50 ${
               !notification.read
                 ? "border-primary/20 bg-primary/5"
                 : ""

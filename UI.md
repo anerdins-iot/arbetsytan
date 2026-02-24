@@ -25,3 +25,7 @@ Hela appen ska fungera i både ljust och mörkt läge. Alla färger och bakgrund
 ## Ikoner
 
 Lucide Icons — ingår med shadcn/ui. Konsekvent ikonspråk genom hela appen.
+
+## Tillgänglighet
+
+Interaktiva element (knappar, länkar, klickbara ikoner) ska ha minst **44×44 px** touch-/klick-yta (WCAG 2.5.5 Target Size). Det gäller både webb och mobil.

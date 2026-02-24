@@ -261,7 +261,7 @@ export function FilePicker({
           return (
             <div
               key={file.id}
-              className={`flex items-center gap-3 rounded-md border border-border p-2 hover:bg-muted/50 cursor-pointer ${
+              className={`flex min-h-[44px] items-center gap-3 rounded-md border border-border p-2 hover:bg-muted/50 cursor-pointer ${
                 isDisabled ? "opacity-50 cursor-not-allowed" : ""
               } ${isSelected ? "bg-primary/5 border-primary/30" : ""}`}
               onClick={() => !isDisabled && toggleFile(file, source)}
@@ -312,7 +312,7 @@ export function FilePicker({
           return (
             <div
               key={project.id}
-              className="flex items-center gap-3 rounded-md border border-border p-3 hover:bg-muted/50 cursor-pointer"
+              className="flex min-h-[44px] items-center gap-3 rounded-md border border-border p-3 hover:bg-muted/50 cursor-pointer"
               onClick={() => setSelectedProjectId(project.id)}
             >
               <Folder className="h-5 w-5 text-primary" />
@@ -340,7 +340,7 @@ export function FilePicker({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] sm:max-w-xl">
+      <DialogContent className="max-h-[min(100dvh,90vh)] overflow-y-auto sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FolderOpen className="h-5 w-5" />

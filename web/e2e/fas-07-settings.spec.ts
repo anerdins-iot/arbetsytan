@@ -42,7 +42,7 @@ async function loginAsAdmin(page: Page) {
 
 async function openSelectAndChoose(trigger: Locator, optionText: RegExp) {
   await trigger.click();
-  await trigger.page().getByRole("option", { name: optionText }).click();
+  await trigger.page().getByRole("option", { name: optionText }).first().click();
 }
 
 test("Block 7.4: settings flow, language switch, dark mode and screenshots", async ({

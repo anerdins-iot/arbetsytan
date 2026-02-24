@@ -43,7 +43,7 @@ test("Block 4.5: login, project files tab, upload, lightbox and PDF preview", as
   await fileInput.setInputFiles(testImagePath);
 
   await expect(
-    page.getByText("test-image.png").or(page.getByText("Uppladdade filer"))
+    page.getByText("test-image.png", { exact: true }).first()
   ).toBeVisible({ timeout: 15000 });
   await page.waitForTimeout(1500);
 

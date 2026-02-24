@@ -223,12 +223,12 @@ export function FileCreatedCard({ data, onDownload }: Props) {
       {/* PDF Preview Dialog */}
       {data.fileType === "pdf" && (
         <Dialog open={showPreview} onOpenChange={setShowPreview}>
-          <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] sm:max-w-5xl">
+          <DialogContent className="max-w-[calc(100%-2rem)] max-h-[min(100dvh,90vh)] overflow-hidden sm:max-w-5xl">
             <DialogHeader>
               <DialogTitle>Förhandsgranskning</DialogTitle>
               <DialogDescription>{data.fileName}</DialogDescription>
             </DialogHeader>
-            <div className="rounded-md border border-border bg-white overflow-hidden">
+            <div className="min-w-0 overflow-hidden rounded-md border border-border bg-white">
               {(data.previewUrl || data.downloadUrl) && (
                 <iframe
                   src={data.previewUrl || data.downloadUrl}

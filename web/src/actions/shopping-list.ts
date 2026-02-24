@@ -4,8 +4,12 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
-import { getShoppingListCore } from "@/services/shopping-list-service";
-import type { ShoppingListDetail } from "@/services/shopping-list-service";
+import {
+  getShoppingListCore,
+  getShoppingListsCore,
+  type ShoppingListDetail,
+  type ShoppingListListItem,
+} from "@/services/shopping-list-service";
 
 // ─────────────────────────────────────────
 // Schemas
@@ -265,5 +269,29 @@ export async function getShoppingList(
     return { success: true, list };
   } catch {
     return { success: false, error: "Kunde inte hämta inköpslista." };
+  }
+}
+
+export type SerializedShoppingListItem = Omit<ShoppingListListItem, "createdAt" | "updatedAt"> & {
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function getShoppingLists(
+  options?: { projectId?: string; includeArchived?: boolean }
+): Promise<{ success: true; lists: SerializedShoppingListItem[] } | { success: false; error: string }> {
+  try {
+    const { userId, tenantId } = await requireAuth();
+    const lists = await getShoppingListsCore({ tenantId, userId }, options);
+    return {
+      success: true,
+      lists: lists.map((l) => ({
+        ...l,
+        createdAt: l.createdAt.toISOString(),
+        updatedAt: l.updatedAt.toISOString(),
+      })),
+    };
+  } catch {
+    return { success: false, error: "Kunde inte hämta inköpslistor." };
   }
 }

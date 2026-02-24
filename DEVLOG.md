@@ -18,16 +18,18 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 4. Knappen öppnar en Sheet-panel (side="right" desktop, side="bottom" mobil 85vh)
 5. Panelen använder EXAKT SAMMA komponenter som den dedikerade UI-sidan (ingen duplicering)
 
-**Pilotimplementation: Grossistsökning (pågår 2026-02-23)**
+**Pilotimplementation: Grossistsökning (implementerad 2026-02-23)**
 - `WholesalerSearchResultButton` — minimal knapp i chattflödet
 - `WholesalerSearchPanel` — Sheet-panel med sökfält + produktlista
 - `WholesalerSearchResults` — delad komponent (används av sök-UI-sidan OCH panelen)
 - `ProductCard` — återanvänds oförändrad i båda kontexterna
 - Status: agenten `wholesaler-panel-ui` (Opus) kör just nu och bygger detta
 
-**Nästa steg efter grossistsökning:** Applicera samma mönster på övriga dataintensiva verktyg (inköpslistor, offerter, tidrapporter, filer) när grossistsökningen är verifierad och fungerar.
+Mönstret appliceras på övriga dataintensiva verktyg (rapport/offert/dokumentsökning är implementerade; andra kan följa samma mönster vid behov).
 
 **Mobilkrav:** Bottom sheet på mobil, touch-targets minst 44px, native scroll i panelen.
+
+**Verifiering (2026-02-24):** Följer mönstret fullt ut (knapp + Sheet right/bottom 85vh): grossistsökning (`__wholesalerSearch`), rapportförhandsgranskning (`__reportPreview`), offertförhandsgranskning (`__quotePreview`), dokumentsökning (`__searchResults`). Alla fyra använder nu Sheet (höger desktop, botten mobil 85vh). Verktyg som returnerar listor utan __[feature]-payload (t.ex. listQuotes, getShoppingLists, listTasks, listTimeEntries) ger fortfarande data till modellen som kan skriva ut i text; för full paritet bör de antingen returnera __[feature]-payload + knapp/panel eller systemprompt begränsa att aldrig räkna upp poster.
 
 ## 2026-02-15: createTimeEntry – ID-validering och projektnamn i svar
 

@@ -74,10 +74,14 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 | `npm start` | Starta produktionsserver |
 | `/workspace/web/scripts/start-server.sh` | Starta server för tester (dödar befintlig process automatiskt) |
 | `/workspace/web/scripts/stop-server.sh` | Stoppa server efter tester |
+| `npx playwright test` (i `web/`) | Köra E2E-tester (kräver att servern körs, t.ex. via start-server.sh) |
+| `web/scripts/run-e2e.sh` (i `web/`) | Köra alla E2E (kräver att servern redan körs; använd t.ex. `start-server.sh` först) |
 | `npx prisma migrate dev --name namn` | Skapa migration vid schema-ändringar (nya tabeller/kolumner) |
 | `npx prisma migrate deploy` | Applicera migrationer i produktion |
 | `npx prisma studio` | Öppna DB-gui |
 | `npx prisma db seed` | Seed testdata |
+
+**E2E i CI:** Workflow `.github/workflows/ci.yml` har ett e2e-job som kör parallellt med build-and-lint. Det använder service containers (Postgres, Redis, MinIO), inte docker-compose. Stegen: install → playwright chromium → .env → build → MinIO-bucket → migrate → seed → starta server i bakgrunden → `scripts/run-e2e.sh`. Vid stabila gröna E2E kan `continue-on-error: true` tas bort.
 
 ## Prisma: Migrationer är obligatoriska
 
@@ -94,6 +98,21 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 
 - Bara uppdatera schema utan att skapa migration → produktion kraschar
 - Glömma att committa migrationsfilen → andra får inte tabellerna
+
+## När något strular
+
+Vanliga fel och snabblösningar:
+
+- **"column does not exist" / "relation does not exist"** — Schema är uppdaterat men migration saknas eller är inte körda. Kör `npx prisma migrate dev --name …` lokalt; i produktion `npx prisma migrate deploy`. Committa alltid migrationsfiler.
+- **Tenant-data visas inte eller fel data** — Använd aldrig global `prisma` för tenant-data. Använd `tenantDb(tenantId)` och se till att `tenantId` kommer från session/JWT och att `requireAuth`/`requireRole` har körts.
+- **"Project not found" eller åtkomst nekas** — Verifiera projektåtkomst med `requireProject(tenantId, projectId, userId)` innan alla operationer som tar `projectId`.
+- **UI-strängar som inte översätts** — Alla texter ska komma från `next-intl` (useTranslations eller getTranslations). Lägg nyckel i `web/messages/sv.json` och `web/messages/en.json`.
+- **Modaler/listor som "läcker" eller får horisontell scroll på mobil** — Använd `max-h-[100dvh]` eller `min-h-0` på flex-containers, `overflow-hidden` och `min-w-0` på innehåll som ska scrolla, och undvik fasta bredder som kan bli större än viewport.
+- **Knappar/links för små eller svåra att träffa** — Säkerställ minst 44px touch target på interaktiva element (se `UI.md`).
+
+### Screenshots och tillfälliga filer
+
+Spara skärmdumpar i mappen **screenshots** med undermapp per ärende (t.ex. `screenshots/bug-123/` eller `screenshots/login-flow/`). PNG-filer som ligger direkt i repo-rot ignoreras av git (se `.gitignore`).
 
 ## Arkitektur
 
@@ -220,6 +239,9 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Design tokens i CSS-variabler — inga hårdkodade färger/spacing
 - Responsiv design — mobil först
 - Stöd för dark mode
+- **Touch targets:** Interaktiva element måste ha minst 44px klick-/touch-yta (tillgänglighet, se `UI.md`).
+
+**AI-chatt och datarikt innehåll:** AI-chatten får aldrig rendera datarikt innehåll (listor, tabeller) direkt i chatten. Använd mönstret knapp + Sheet-panel med samma komponenter som på den vanliga UI-sidan (se `DEVLOG.md` 2026-02-23). Mönstret är implementerat för t.ex. grossistsökning, rapport-/offertförhandsgranskning och dokumentsökning.
 
 ## CRUD-paritet: AI + UI
 

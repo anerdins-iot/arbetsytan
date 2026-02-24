@@ -66,7 +66,7 @@ export function CreateProjectDialog() {
           {t("createProject")}
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[100dvh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t("createProjectTitle")}</DialogTitle>
           <DialogDescription>

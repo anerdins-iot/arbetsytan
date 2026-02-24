@@ -10,7 +10,7 @@ import { processFileEmbeddings } from "../src/lib/ai/embeddings";
 import { ensureTenantBucket, putObjectToMinio } from "../src/lib/minio";
 
 async function main() {
-  /** Shared test password for seed users: fredrik@anerdins.se, pm@example.com, montor@example.com → "password123" */
+  /** Shared test password for seed users: admin@example.com (e2e), fredrik@anerdins.se, pm@example.com, montor@example.com → "password123" */
   const testPasswordHash = await bcrypt.hash("password123", 12);
   const tenant = await prisma.tenant.upsert({
     where: { id: "seed-tenant-1" },
@@ -87,6 +87,18 @@ async function main() {
     },
   });
 
+  /** E2E admin used by all e2e/*.spec.ts (password: password123) */
+  const e2eAdminUser = await prisma.user.upsert({
+    where: { email: "admin@example.com" },
+    update: { password: testPasswordHash },
+    create: {
+      name: "E2E Admin",
+      email: "admin@example.com",
+      locale: "sv",
+      password: testPasswordHash,
+    },
+  });
+
   const adminMembership = await prisma.membership.upsert({
     where: {
       userId_tenantId: { userId: adminUser.id, tenantId: tenant.id },
@@ -94,6 +106,18 @@ async function main() {
     update: {},
     create: {
       userId: adminUser.id,
+      tenantId: tenant.id,
+      role: "ADMIN",
+    },
+  });
+
+  const e2eAdminMembership = await prisma.membership.upsert({
+    where: {
+      userId_tenantId: { userId: e2eAdminUser.id, tenantId: tenant.id },
+    },
+    update: {},
+    create: {
+      userId: e2eAdminUser.id,
       tenantId: tenant.id,
       role: "ADMIN",
     },
@@ -148,8 +172,8 @@ async function main() {
     },
   });
 
-  // Koppla medlemmar till projektet via ProjectMember
-  for (const membership of [adminMembership, pmMembership, workerMembership, malareMembership]) {
+  // Koppla medlemmar till projektet via ProjectMember (inkl. e2e-admin för E2E-tester)
+  for (const membership of [adminMembership, e2eAdminMembership, pmMembership, workerMembership, malareMembership]) {
     await prisma.projectMember.upsert({
       where: {
         projectId_membershipId: {
@@ -353,6 +377,66 @@ async function main() {
     },
   });
 
+  // --- E2E: aktivitetslogg, tidspost och anteckning så att Översikt, Tid och Anteckningar har innehåll ---
+  await prisma.activityLog.upsert({
+    where: { id: "seed-activity-1" },
+    update: {},
+    create: {
+      id: "seed-activity-1",
+      action: "created",
+      entity: "task",
+      entityId: task1.id,
+      metadata: {},
+      projectId: project.id,
+      actorId: e2eAdminUser.id,
+    },
+  });
+  await prisma.activityLog.upsert({
+    where: { id: "seed-activity-2" },
+    update: {},
+    create: {
+      id: "seed-activity-2",
+      action: "created",
+      entity: "note",
+      entityId: "seed-note-e2e",
+      metadata: {},
+      projectId: project.id,
+      actorId: e2eAdminUser.id,
+    },
+  });
+
+  const seedTimeDate = new Date();
+  seedTimeDate.setHours(0, 0, 0, 0);
+  await prisma.timeEntry.upsert({
+    where: { id: "seed-timeentry-e2e" },
+    update: {},
+    create: {
+      id: "seed-timeentry-e2e",
+      description: "E2E seed tidspost",
+      minutes: 60,
+      date: seedTimeDate,
+      taskId: task1.id,
+      projectId: project.id,
+      userId: e2eAdminUser.id,
+      tenantId: tenant.id,
+      entryType: "WORK",
+    },
+  });
+
+  await prisma.note.upsert({
+    where: { id: "seed-note-e2e" },
+    update: {},
+    create: {
+      id: "seed-note-e2e",
+      title: "E2E seed anteckning",
+      content: "Används för att fylla Anteckningar-fliken i E2E-tester.",
+      category: "ovrigt",
+      isPinned: false,
+      projectId: project.id,
+      createdById: e2eAdminUser.id,
+    },
+  });
+
   // --- QA personlig AI: seedade filer med full pipeline (OCR + chunks + embeddings + bildanalys), idempotent ---
   const seedFileIds = ["seed-file-ritning", "seed-file-senaste-bild"];
   const hasMinioEnv =
@@ -450,6 +534,34 @@ async function main() {
           console.warn("Seed: OPENAI_API_KEY saknas — embeddings hoppas över för", entry.id);
         }
       }
+
+      // Projektfil för E2E (t.ex. fas-04-files-mobile: filmodalen på projektfliken)
+      const projectFileKey = `${process.env.S3_BUCKET}/projects/${project.id}/seed-e2e-plan.pdf`;
+      const minimalPdf = Buffer.from(
+        "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R>>endobj\nxref\n0 4\n0000000000 65535 f\n0000000009 00000 n\n0000000052 00000 n\n0000000101 00000 n\ntrailer<</Size 4/Root 1 0 R>>\nstartxref\n178\n%%EOF",
+        "utf-8"
+      );
+      await prisma.file.upsert({
+        where: { id: "seed-project-file-e2e" },
+        update: {},
+        create: {
+          id: "seed-project-file-e2e",
+          name: "e2e-plan.pdf",
+          type: "application/pdf",
+          size: minimalPdf.length,
+          bucket,
+          key: projectFileKey,
+          projectId: project.id,
+          uploadedById: e2eAdminUser.id,
+        },
+      });
+      await putObjectToMinio({
+        bucket,
+        key: projectFileKey,
+        body: new Uint8Array(minimalPdf),
+        contentType: "application/pdf",
+      });
+
       console.log("Seed: personliga filer (OCR + chunks + embeddings + analys) klara.");
     } catch (e) {
       console.warn("Seed: filpipeline misslyckades (t.ex. Mistral/MinIO). Fortsätter utan filer.", e);

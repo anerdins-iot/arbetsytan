@@ -245,6 +245,14 @@
     "fileTooLarge": "Filen är för stor (max 50 MB)",
     "fileTypeNotAllowed": "Filtypen stöds inte",
     "saveToProject": "Spara till projekt",
+    "timeEntryListButton": "Hittade {count} tidrapporter",
+    "timeEntryListOpen": "Öppna",
+    "timeEntryListSheetTitle": "Mina tidrapporter",
+    "fileListPanel": {
+      "title": "Filer",
+      "foundFiles": "Hittade {count, plural, =1 {1 fil} other {# filer}}",
+      "openButton": "Öppna"
+    },
     "projectSelector": {
       "personal": "Personlig",
       "selectProject": "Välj projekt"
@@ -314,6 +322,11 @@
       "next": "Nästa",
       "back": "Tillbaka"
     },
+    "taskList": {
+      "found": "Hittade {count} uppgifter",
+      "open": "Öppna",
+      "sheetTitle": "Uppgifter"
+    },
     "ocrReview": {
       "title": "Granska fil",
       "noTextHint": "Lägg till text eller beskrivning för att göra filen sökbar.",
@@ -323,6 +336,13 @@
       "saving": "Sparar…",
       "skip": "Hoppa över",
       "uploading": "Laddar upp…"
+    },
+    "noteList": {
+      "found": "Hittade {count, plural, =0 {inga anteckningar} =1 {1 anteckning} other {# anteckningar}}",
+      "open": "Öppna",
+      "title": "Anteckningar",
+      "titlePersonal": "Mina anteckningar",
+      "personal": "Mina anteckningar"
     }
   },
   "notifications": {
@@ -1546,6 +1566,8 @@
   },
   "shoppingList": {
     "title": "Inköpslistor",
+    "panelFoundLists": "Hittade {count} inköpslista",
+    "openPanel": "Öppna",
     "newList": "Ny inköpslista",
     "createList": "Skapa lista",
     "listTitle": "Listnamn",
@@ -1584,6 +1606,8 @@
   },
   "quotes": {
     "title": "Offerter",
+    "foundQuotes": "Hittade {count, plural, =1 {1 offert} other {# offerter}}",
+    "openList": "Öppna",
     "newQuote": "Ny offert",
     "emptyState": "Inga offerter ännu — skapa din första",
     "itemCount": "{count, plural, =0 {Inga artiklar} =1 {1 artikel} other {# artiklar}}",

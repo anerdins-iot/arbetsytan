@@ -149,6 +149,10 @@ AI:n väljer kanal baserat på händelsens vikt. Användaren kan i sina inställ
 
 En ny uppgift med deadline imorgon — AI:n skapar en notis som går ut på alla aktiva kanaler. En fil laddas upp — AI:n skickar bara ett AIMessage till den personliga AI:n, ingen notis. En deadline ändras — AI:n bedömer och kan välja in-app plus push men inte e-post.
 
+## Datarikt innehåll i chatt-UI
+
+AI-chatten får aldrig rendera datarikt innehåll (listor, tabeller) direkt i chatten. Mönstret är: verktyget returnerar en `__[feature]`-payload, i chatten visas en minimal knapp (t.ex. "Hittade X — Öppna") som öppnar en Sheet-panel (höger på desktop, botten 85vh på mobil). Panelen använder samma komponenter som den dedikerade UI-sidan. Se `DEVLOG.md` (2026-02-23) för beslut och pilotimplementation (grossistsökning, rapport-/offertförhandsgranskning, dokumentsökning).
+
 ## Sammanfattning och komprimering
 
 När en konversation blir lång (över ett konfigurerbart antal meddelanden) triggas en komprimering. AI:n sammanfattar de äldre meddelandena till en kort text som sparas i Conversation.summary. De sammanfattade meddelandena behålls i databasen men skickas inte med till AI:n — bara sammanfattningen.

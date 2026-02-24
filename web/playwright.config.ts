@@ -14,6 +14,15 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "off",
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    {
+      name: "mobile",
+      use: {
+        ...devices["Pixel 5"],
+        viewport: { width: 375, height: 667 },
+      },
+    },
+  ],
   outputDir: "test-results",
 });

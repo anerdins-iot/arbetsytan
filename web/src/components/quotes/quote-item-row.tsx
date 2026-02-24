@@ -92,10 +92,10 @@ export function QuoteItemRow({ item, onRefresh }: QuoteItemRowProps) {
         </td>
         <td className="p-2">
           <div className="flex gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleSave} disabled={isPending}>
+            <Button variant="ghost" size="icon" onClick={handleSave} disabled={isPending}>
               <Check className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsEditing(false)} disabled={isPending}>
+            <Button variant="ghost" size="icon" onClick={() => setIsEditing(false)} disabled={isPending}>
               <X className="h-3.5 w-3.5" />
             </Button>
           </div>
@@ -117,10 +117,10 @@ export function QuoteItemRow({ item, onRefresh }: QuoteItemRowProps) {
       </td>
       <td className="p-2">
         <div className="flex gap-1">
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsEditing(true)} disabled={isPending}>
+          <Button variant="ghost" size="icon" onClick={() => setIsEditing(true)} disabled={isPending}>
             <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleDelete} disabled={isPending}>
+          <Button variant="ghost" size="icon" onClick={handleDelete} disabled={isPending}>
             <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
           </Button>
         </div>

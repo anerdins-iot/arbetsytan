@@ -17,9 +17,11 @@ type SerializedList = Omit<ShoppingListListItem, "createdAt" | "updatedAt"> & {
 
 interface ShoppingListsClientProps {
   initialLists: SerializedList[];
+  /** When provided (e.g. in AI panel), used instead of router.refresh() */
+  onRefresh?: () => void | Promise<void>;
 }
 
-export function ShoppingListsClient({ initialLists }: ShoppingListsClientProps) {
+export function ShoppingListsClient({ initialLists, onRefresh }: ShoppingListsClientProps) {
   const t = useTranslations("shoppingList");
   const router = useRouter();
   const [showCreate, setShowCreate] = useState(false);
@@ -37,7 +39,11 @@ export function ShoppingListsClient({ initialLists }: ShoppingListsClientProps) 
   };
 
   const handleRefresh = () => {
-    router.refresh();
+    if (onRefresh) {
+      void Promise.resolve(onRefresh());
+    } else {
+      router.refresh();
+    }
   };
 
   // Convert serialized dates back to Date objects for ShoppingListCard

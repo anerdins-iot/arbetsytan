@@ -21,6 +21,10 @@ import {
   Info,
   Search,
   BarChart2,
+  StickyNote,
+  Clock,
+  ListTodo,
+  List,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,12 +34,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import {
   getPersonalConversations,
   getConversationWithMessages,
@@ -61,23 +59,33 @@ import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import { DeleteConfirmationCard, type DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
 import { QuotePreviewCard, type QuotePreviewData } from "@/components/ai/quote-preview-card";
+import { QuoteList } from "@/components/quotes/quote-list";
 import { deleteFile } from "@/actions/files";
 import { deleteTask } from "@/actions/tasks";
 import { deleteComment } from "@/actions/comments";
-import { deleteNote } from "@/actions/notes";
-import { deletePersonalNote, deletePersonalFile } from "@/actions/personal";
-import { deleteTimeEntry } from "@/actions/time-entries";
+import { deleteNote, type NoteItem } from "@/actions/notes";
+import { deletePersonalNote, deletePersonalFile, type PersonalNoteItem } from "@/actions/personal";
+import { deleteTimeEntry, getMyTimeEntriesGrouped, type GroupedTimeEntries } from "@/actions/time-entries";
 import { deleteAutomation } from "@/actions/automations";
 import { deleteNoteCategory } from "@/actions/note-categories";
 import { generateQuotePdf } from "@/actions/quotes";
+import { getShoppingLists, type SerializedShoppingListItem } from "@/actions/shopping-list";
+import { ShoppingListsClient } from "@/app/[locale]/(dashboard)/shopping-lists/shopping-lists-client";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
 import { WholesalerSearchResultButton } from "@/components/ai/wholesaler-search-result-button";
 import { ChatResultButton } from "@/components/ai/chat-result-button";
+import { FileListGrid, type FileListGridItem } from "@/components/files/file-list-grid";
 import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { NoteCard } from "@/components/projects/note-card";
+import { getNoteCategories, type NoteCategoryItem } from "@/actions/note-categories";
+import { TimeEntryList } from "@/components/time/time-entry-list";
+import type { DashboardTask } from "@/actions/dashboard";
+import { TaskList } from "@/components/dashboard/task-list";
 
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
@@ -129,6 +137,14 @@ type AnalysisFileData = {
   ocrLoading?: boolean;
 };
 
+export type NoteListPanelData = {
+  notes: (NoteItem | PersonalNoteItem)[];
+  count: number;
+  projectId?: string;
+  projectName?: string;
+  isPersonal?: boolean;
+};
+
 type PersonalAiChatProps = {
   /** Kontrollera om chattpanelen är öppen */
   open: boolean;
@@ -149,6 +165,8 @@ const MAX_PANEL_WIDTH = 800;
 
 export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet", initialVoiceMode }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
+  const tShopping = useTranslations("shoppingList");
+  const tQuotes = useTranslations("quotes");
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -161,6 +179,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [isLoadingContext, setIsLoadingContext] = useState(false);
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
   const { openPanel: openWholesalerPanel } = useWholesalerPanel();
+  const isDesktopToolPanel = useMediaQuery("(min-width: 1024px)");
   const [messageDebugContext, setMessageDebugContext] = useState<Map<string, DebugContext>>(new Map());
   const [debugModalMessageId, setDebugModalMessageId] = useState<string | null>(null);
   const pendingDebugContextRef = useRef<DebugContext | null>(null);
@@ -170,6 +189,45 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [openQuoteData, setOpenQuoteData] = useState<QuotePreviewData | null>(null);
   const [openSearchResults, setOpenSearchResults] = useState<SearchResult[] | null>(null);
   const [openReportData, setOpenReportData] = useState<ReportPreviewData | null>(null);
+  const [openFileListData, setOpenFileListData] = useState<{
+    files: FileListGridItem[];
+    count: number;
+    projectId?: string;
+    projectName?: string;
+  } | null>(null);
+  const [openTaskListData, setOpenTaskListData] = useState<{
+    tasks: DashboardTask[];
+    count: number;
+    projectId?: string;
+    projectName?: string;
+  } | null>(null);
+  const [openShoppingListsData, setOpenShoppingListsData] = useState<{
+    lists: SerializedShoppingListItem[];
+    count: number;
+  } | null>(null);
+  const [openTimeEntryPanel, setOpenTimeEntryPanel] = useState(false);
+  const [timeEntryPanelData, setTimeEntryPanelData] = useState<{
+    groupedEntries: GroupedTimeEntries[];
+    tasks: Array<{ id: string; title: string }>;
+  } | null>(null);
+  const [timeEntryPanelLoading, setTimeEntryPanelLoading] = useState(false);
+  const [openQuoteListData, setOpenQuoteListData] = useState<{
+    quotes: Array<{
+      id: string;
+      quoteNumber: string;
+      title: string;
+      customerName: string | null;
+      status: string;
+      totalExVat: number;
+      itemCount: number;
+      projectId: string | null;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+    count: number;
+  } | null>(null);
+  const [openNoteListData, setOpenNoteListData] = useState<NoteListPanelData | null>(null);
+  const [noteListCategories, setNoteListCategories] = useState<NoteCategoryItem[]>([]);
   // Track which messages have attached images (messageIndex -> fileIds)
   const [chatImageMap, setChatImageMap] = useState<Map<number, string[]>>(new Map());
   // Pending image file IDs to be sent with the next message
@@ -515,6 +573,24 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   useEffect(() => {
     if (historyOpen) void loadConversations();
   }, [historyOpen, loadConversations]);
+
+  // Load note categories when note list panel opens (for NoteCard edit dropdown)
+  useEffect(() => {
+    if (!openNoteListData) return;
+    getNoteCategories().then((r) => {
+      if (r.success) setNoteListCategories(r.categories);
+    });
+  }, [openNoteListData]);
+
+  useEffect(() => {
+    if (!openTimeEntryPanel) return;
+    setTimeEntryPanelLoading(true);
+    getMyTimeEntriesGrouped()
+      .then((r) => {
+        if (r.success) setTimeEntryPanelData(r.data);
+      })
+      .finally(() => setTimeEntryPanelLoading(false));
+  }, [openTimeEntryPanel]);
 
   const startNewConversation = useCallback(() => {
     setConversationId(null);
@@ -1394,6 +1470,121 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       />
                     );
                   }
+
+                  if (result?.__quoteList) {
+                    const listData = result.__quoteList as {
+                      quotes: Array<{
+                        id: string;
+                        quoteNumber: string;
+                        title: string;
+                        customerName: string | null;
+                        status: string;
+                        totalExVat: number;
+                        itemCount: number;
+                        projectId: string | null;
+                        createdAt: string;
+                        updatedAt: string;
+                      }>;
+                      count: number;
+                    };
+                    return (
+                      <ChatResultButton
+                        key={i}
+                        icon={<FileText className="size-5 text-primary" />}
+                        title={tQuotes("foundQuotes", { count: listData.count })}
+                        buttonLabel={tQuotes("openList")}
+                        onOpen={() => setOpenQuoteListData(listData)}
+                      />
+                    );
+                  }
+
+                  if (result?.__noteList) {
+                    const noteData = result.__noteList as NoteListPanelData;
+                    return (
+                      <ChatResultButton
+                        key={i}
+                        icon={<StickyNote className="size-5 text-primary" />}
+                        title={t("noteList.found", { count: noteData.count })}
+                        subtitle={noteData.projectName ?? (noteData.isPersonal ? t("noteList.personal") : undefined)}
+                        buttonLabel={t("noteList.open")}
+                        onOpen={() => setOpenNoteListData(noteData)}
+                      />
+                    );
+                  }
+
+                  if (result?.__timeEntryList) {
+                    const teData = result.__timeEntryList as { entries: unknown[]; count: number };
+                    const count = teData.count ?? teData.entries?.length ?? 0;
+                    return (
+                      <ChatResultButton
+                        key={i}
+                        icon={<Clock className="size-5 text-primary" />}
+                        title={t("timeEntryListButton", { count })}
+                        buttonLabel={t("timeEntryListOpen")}
+                        onOpen={() => setOpenTimeEntryPanel(true)}
+                      />
+                    );
+                  }
+
+                  if (result?.__fileList) {
+                    const fileListData = result.__fileList as {
+                      files: FileListGridItem[];
+                      count: number;
+                      projectId?: string;
+                      projectName?: string;
+                    };
+                    return (
+                      <ChatResultButton
+                        key={i}
+                        icon={<FolderOpen className="size-5 text-primary" />}
+                        title={t("fileListPanel.foundFiles", { count: fileListData.count })}
+                        subtitle={fileListData.projectName}
+                        buttonLabel={t("fileListPanel.openButton")}
+                        onOpen={() => setOpenFileListData(fileListData)}
+                      />
+                    );
+                  }
+
+                  if (result?.__taskList) {
+                    const tlData = result.__taskList as {
+                      tasks: DashboardTask[];
+                      count: number;
+                      projectId?: string;
+                      projectName?: string;
+                    };
+                    return (
+                      <ChatResultButton
+                        key={i}
+                        icon={<ListTodo className="size-5 text-primary" />}
+                        title={t("taskList.found", { count: tlData.count })}
+                        buttonLabel={t("taskList.open")}
+                        onOpen={() => setOpenTaskListData({
+                          tasks: tlData.tasks,
+                          count: tlData.count,
+                          projectId: tlData.projectId,
+                          projectName: tlData.projectName,
+                        })}
+                      />
+                    );
+                  }
+
+                  if (result?.__shoppingLists) {
+                    const slData = result.__shoppingLists as {
+                      lists: SerializedShoppingListItem[];
+                      count: number;
+                    };
+                    return (
+                      <ChatResultButton
+                        key={i}
+                        icon={<List className="size-5 text-primary" />}
+                        title={tShopping("panelFoundLists", { count: slData.count })}
+                        buttonLabel={tShopping("openPanel")}
+                        onOpen={() =>
+                          setOpenShoppingListsData({ lists: slData.lists, count: slData.count })
+                        }
+                      />
+                    );
+                  }
                 }
 
                 return null;
@@ -1690,47 +1881,170 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   ) : null;
 
-  // Tool result modals (quote, search, report)
-  const toolResultDialogs = (
+  // Tool result panels: Sheet side=right desktop, side=bottom 85vh mobile (DEVLOG datarikt innehåll)
+  const toolResultSheetSide = isDesktopToolPanel ? "right" : "bottom";
+  const toolResultSheetClass = isDesktopToolPanel
+    ? "max-w-2xl"
+    : "max-h-[85vh] overflow-y-auto";
+
+  const toolResultPanels = (
     <>
-      <Dialog open={!!openQuoteData} onOpenChange={(o) => !o && setOpenQuoteData(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Offert</DialogTitle>
-          </DialogHeader>
-          {openQuoteData && (
-            <QuotePreviewCard
-              data={openQuoteData}
-              onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <Sheet open={!!openQuoteData} onOpenChange={(o) => !o && setOpenQuoteData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>Offert</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openQuoteData && (
+              <QuotePreviewCard
+                data={openQuoteData}
+                onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      <Dialog open={!!openSearchResults} onOpenChange={(o) => !o && setOpenSearchResults(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Sökresultat</DialogTitle>
-          </DialogHeader>
-          {openSearchResults && (
-            <SearchResultsCard results={openSearchResults} />
-          )}
-        </DialogContent>
-      </Dialog>
+      <Sheet open={!!openSearchResults} onOpenChange={(o) => !o && setOpenSearchResults(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>Sökresultat</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openSearchResults && (
+              <SearchResultsCard results={openSearchResults} />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
 
-      <Dialog open={!!openReportData} onOpenChange={(o) => !o && setOpenReportData(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Rapport</DialogTitle>
-          </DialogHeader>
-          {openReportData && (
-            <ReportPreviewCard
-              data={openReportData}
-              onGenerate={handleReportGenerate}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      <Sheet open={!!openReportData} onOpenChange={(o) => !o && setOpenReportData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>Rapport</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openReportData && (
+              <ReportPreviewCard
+                data={openReportData}
+                onGenerate={handleReportGenerate}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={!!openQuoteListData} onOpenChange={(o) => !o && setOpenQuoteListData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>{tQuotes("title")}</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openQuoteListData && (
+              <QuoteList initialQuotes={openQuoteListData.quotes} />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={!!openNoteListData} onOpenChange={(o) => !o && setOpenNoteListData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>
+              {openNoteListData?.projectName ?? (openNoteListData?.isPersonal ? t("noteList.titlePersonal") : t("noteList.title"))}
+            </SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openNoteListData && (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {openNoteListData.notes.map((note) => (
+                  <NoteCard
+                    key={note.id}
+                    note={note}
+                    projectId={openNoteListData.projectId ?? null}
+                    onUpdate={() => {}}
+                    categories={noteListCategories}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={openTimeEntryPanel} onOpenChange={(o) => !o && setOpenTimeEntryPanel(false)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>{t("timeEntryListSheetTitle")}</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {timeEntryPanelLoading ? (
+              <p className="text-sm text-muted-foreground">{t("loading")}</p>
+            ) : timeEntryPanelData ? (
+              <TimeEntryList
+                groupedEntries={timeEntryPanelData.groupedEntries}
+                tasks={timeEntryPanelData.tasks}
+              />
+            ) : null}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={!!openFileListData} onOpenChange={(o) => !o && setOpenFileListData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>{t("fileListPanel.title")}</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openFileListData && (
+              <FileListGrid
+                files={openFileListData.files}
+                translationNamespace="projects.files"
+                showActions
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet open={!!openTaskListData} onOpenChange={(o) => !o && setOpenTaskListData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>{t("taskList.sheetTitle")}</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openTaskListData && (
+              <TaskList tasks={openTaskListData.tasks} />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Sheet
+        open={!!openShoppingListsData}
+        onOpenChange={(o) => !o && setOpenShoppingListsData(null)}
+      >
+        <SheetContent
+          side={toolResultSheetSide}
+          className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}
+        >
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>{tShopping("title")}</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openShoppingListsData && (
+              <ShoppingListsClient
+                initialLists={openShoppingListsData.lists}
+                onRefresh={async () => {
+                  const r = await getShoppingLists();
+                  if (r.success)
+                    setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
+                }}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </>
   );
 
@@ -1756,7 +2070,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               {chatBody}
             </div>
           </div>
-          {toolResultDialogs}
+          {toolResultPanels}
           {fileAnalysisUI}
           {ragDebugUI}
         </>
@@ -1781,7 +2095,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           {headerContent}
           {chatBody}
         </div>
-        {toolResultDialogs}
+        {toolResultPanels}
         {fileAnalysisUI}
         {ragDebugUI}
       </>
@@ -1819,7 +2133,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         </Sheet>
       )}
 
-      {toolResultDialogs}
+      {toolResultPanels}
       {fileAnalysisUI}
       {ragDebugUI}
     </>

@@ -9,6 +9,7 @@ import {
   getMyTimeEntriesCore,
   getTimeSummaryCore,
 } from "@/services/time-entry-service";
+import { getProjectTasksCore } from "@/services/task-service";
 
 const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -263,6 +264,37 @@ export async function getMyTimeEntries(): Promise<ActionResult<TimeEntryItem[]>>
       isMine: true,
       entryType: entry.entryType,
     })),
+  };
+}
+
+export type MyTimeEntriesGroupedResult = {
+  groupedEntries: GroupedTimeEntries[];
+  tasks: Array<{ id: string; title: string }>;
+};
+
+export async function getMyTimeEntriesGrouped(): Promise<ActionResult<MyTimeEntriesGroupedResult>> {
+  const { tenantId, userId } = await requireAuth();
+
+  const entriesResult = await getMyTimeEntries();
+  if (!entriesResult.success) return entriesResult;
+
+  const groupedEntries = groupEntriesByDay(entriesResult.data);
+  const projectIds = [...new Set(entriesResult.data.map((e) => e.projectId).filter(Boolean))] as string[];
+
+  const taskOptions: Array<{ id: string; title: string }> = [];
+  for (const projectId of projectIds) {
+    try {
+      await requireProject(tenantId, projectId, userId);
+      const tasks = await getProjectTasksCore({ tenantId, userId }, projectId);
+      taskOptions.push(...tasks.map((t) => ({ id: t.id, title: t.title })));
+    } catch {
+      // Skip projects user no longer has access to
+    }
+  }
+
+  return {
+    success: true,
+    data: { groupedEntries, tasks: taskOptions },
   };
 }
 

@@ -303,7 +303,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
     })),
     execute: async ({ limit }) => {
       const tasks = await getUserTasksCore({ tenantId, userId }, { limit });
-      return tasks.map((t) => ({
+      const forModel = tasks.map((t) => ({
         id: t.id,
         title: t.title,
         status: t.status,
@@ -313,6 +313,23 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         projectId: t.projectId,
         assignees: t.assignments.map((a) => a.user.name ?? a.user.email),
       }));
+      const minimalForUi = tasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        status: t.status,
+        priority: t.priority,
+        deadline: t.deadline?.toISOString() ?? null,
+        projectId: t.projectId,
+        projectName: t.projectName ?? "",
+      }));
+      return {
+        tasks: forModel,
+        count: forModel.length,
+        __taskList: {
+          tasks: minimalForUi,
+          count: minimalForUi.length,
+        },
+      };
     },
   });
 
@@ -330,7 +347,7 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
         pid,
         { includeProject: true, limit }
       );
-      return tasks.map((t) => ({
+      const forModel = tasks.map((t) => ({
         id: t.id,
         title: t.title,
         description: t.description,
@@ -344,6 +361,26 @@ export function createPersonalTools(ctx: PersonalToolsContext) {
           email: a.user.email,
         })),
       }));
+      const projectName = tasks[0]?.projectName ?? "";
+      const minimalForUi = tasks.map((t) => ({
+        id: t.id,
+        title: t.title,
+        status: t.status,
+        priority: t.priority,
+        deadline: t.deadline?.toISOString() ?? null,
+        projectId: pid,
+        projectName,
+      }));
+      return {
+        tasks: forModel,
+        count: forModel.length,
+        __taskList: {
+          tasks: minimalForUi,
+          count: minimalForUi.length,
+          projectId: pid,
+          projectName,
+        },
+      };
     },
   });
 
@@ -936,8 +973,7 @@ Returnera ENBART JSON i följande format:
       }
 
       return {
-        fileId: pdfResult.fileId,
-        name: pdfResult.fileName,
+        ...pdfResult,
         message: `Rapporten "${pdfResult.fileName}" har sparats i projektets fillista.`,
       };
     },
@@ -995,7 +1031,7 @@ Returnera ENBART JSON i följande format:
     execute: async ({ projectId: pid, limit = 50 }) => {
       const idCheck = validateDatabaseId(pid, "projectId");
       if (!idCheck.valid) return { error: idCheck.error };
-      await requireProject(tenantId, pid, userId);
+      const project = await requireProject(tenantId, pid, userId);
 
       const files = await getProjectFilesCore(
         { tenantId, userId },
@@ -1021,21 +1057,41 @@ Returnera ENBART JSON i följande format:
               createdAt: a.createdAt.toISOString(),
             })),
           };
-          if (isImage(f.type)) {
-            try {
-              const previewUrl = await createPresignedDownloadUrl({
-                bucket: f.bucket,
-                key: f.objectKey,
-              });
-              return { ...base, previewUrl };
-            } catch {
-              return base;
-            }
+          let previewUrl: string | null = null;
+          let downloadUrl: string | null = null;
+          try {
+            const url = await createPresignedDownloadUrl({
+              bucket: f.bucket,
+              key: f.objectKey,
+            });
+            downloadUrl = url;
+            if (isImage(f.type)) previewUrl = url;
+          } catch {
+            // leave null
           }
-          return base;
+          return { ...base, previewUrl, downloadUrl };
         })
       );
-      return withPreview;
+
+      const minimalForUI = withPreview.map((f) => ({
+        id: f.id,
+        name: f.name,
+        type: f.type,
+        size: f.size,
+        createdAt: f.createdAt,
+        previewUrl: f.previewUrl ?? undefined,
+        downloadUrl: f.downloadUrl ?? undefined,
+      }));
+
+      return {
+        __fileList: {
+          files: minimalForUI,
+          count: minimalForUI.length,
+          projectId: pid,
+          projectName: project.name,
+        },
+        files: withPreview,
+      };
     },
   });
 
@@ -1584,7 +1640,7 @@ Returnera ENBART JSON i följande format:
       limit: z.number().min(1).max(50).optional().default(20),
     })),
     execute: async ({ projectId: pid, category, limit = 20 }) => {
-      await requireProject(tenantId, pid, userId);
+      const project = await requireProject(tenantId, pid, userId);
 
       const notes = await getProjectNotesCore(
         { tenantId, userId },
@@ -1592,15 +1648,26 @@ Returnera ENBART JSON i följande format:
         { category, limit }
       );
 
-      return notes.map((n) => ({
+      const noteItems = notes.map((n) => ({
         id: n.id,
         title: n.title,
         content: n.content,
         category: n.category,
         isPinned: n.isPinned,
-        createdBy: n.createdBy.name ?? n.createdBy.email,
+        createdBy: { id: n.createdBy.id, name: n.createdBy.name, email: n.createdBy.email },
         createdAt: n.createdAt.toISOString(),
+        updatedAt: n.updatedAt.toISOString(),
       }));
+
+      return {
+        __noteList: {
+          notes: noteItems,
+          count: noteItems.length,
+          projectId: pid,
+          projectName: project.name,
+          isPersonal: false,
+        },
+      };
     },
   });
 
@@ -1753,14 +1820,23 @@ Returnera ENBART JSON i följande format:
         { category, limit }
       );
 
-      return notes.map((n) => ({
+      const noteItems = notes.map((n) => ({
         id: n.id,
         title: n.title,
         content: n.content,
         category: n.category,
         isPinned: n.isPinned,
         createdAt: n.createdAt.toISOString(),
+        updatedAt: n.updatedAt.toISOString(),
       }));
+
+      return {
+        __noteList: {
+          notes: noteItems,
+          count: noteItems.length,
+          isPersonal: true,
+        },
+      };
     },
   });
 
@@ -2071,18 +2147,32 @@ Returnera ENBART JSON i följande format:
         { tenantId, userId },
         { limit }
       );
-      return entries.map((entry) => ({
+      const minimalEntries = entries.map((entry) => ({
         id: entry.id,
         taskId: entry.taskId,
         taskTitle: entry.taskTitle,
         projectId: entry.projectId,
         projectName: entry.projectName,
         minutes: entry.minutes,
-        hours: Math.floor(entry.minutes / 60),
-        remainingMinutes: entry.minutes % 60,
         date: entry.date.toISOString().split("T")[0],
         description: entry.description,
+        entryType: entry.entryType,
       }));
+      const count = minimalEntries.length;
+      return {
+        message: count === 0
+          ? "Inga tidrapporter hittades."
+          : `Hittade ${count} tidrapport${count !== 1 ? "er" : ""}.`,
+        entries: minimalEntries,
+        __timeEntryList: {
+          entries: minimalEntries,
+          count,
+        },
+        hint:
+          "VIKTIGT: SKRIV INTE UT listan i ditt svar — räkna ALDRIG upp tidrapporter. " +
+          "Skriv BARA 1–2 meningar (t.ex. 'Du har X tidrapporter.'). " +
+          "Hänvisa till knappen som visas i gränssnittet för att öppna listan.",
+      };
     },
   });
 
@@ -3317,7 +3407,7 @@ Returnera ENBART JSON i följande format:
         { tenantId, userId },
         { projectId, includeArchived }
       );
-      return { lists: lists.map((l) => ({
+      const serialized = lists.map((l) => ({
         id: l.id,
         title: l.title,
         projectId: l.projectId,
@@ -3325,7 +3415,19 @@ Returnera ENBART JSON i följande format:
         itemCount: l.itemCount,
         checkedCount: l.checkedCount,
         createdAt: l.createdAt.toISOString(),
-      })), count: lists.length };
+        updatedAt: l.updatedAt.toISOString(),
+        createdBy: l.createdBy,
+      }));
+      return {
+        message: lists.length === 0
+          ? "Inga inköpslistor hittades."
+          : `Hittade ${lists.length} inköpslista${lists.length !== 1 ? "r" : ""}.`,
+        __shoppingLists: { lists: serialized, count: lists.length },
+        hint:
+          "VIKTIGT: SKRIV INTE UT listan i ditt svar — räkna ALDRIG upp inköpslistor. " +
+          "Skriv BARA 1–2 meningar (t.ex. 'Du har X inköpslistor.'). " +
+          "Hänvisa till knappen som visas för att öppna panelen.",
+      };
     },
   });
 
@@ -3471,17 +3573,21 @@ Returnera ENBART JSON i följande format:
         { status: status ? statusMap[status] : undefined, projectId }
       );
       return {
-        quotes: quotes.map((q) => ({
-          id: q.id,
-          quoteNumber: q.quoteNumber,
-          title: q.title,
-          customerName: q.customerName,
-          status: q.status,
-          totalExVat: q.totalExVat,
-          itemCount: q.itemCount,
-          createdAt: q.createdAt.toISOString(),
-        })),
-        count: quotes.length,
+        __quoteList: {
+          quotes: quotes.map((q) => ({
+            id: q.id,
+            quoteNumber: q.quoteNumber,
+            title: q.title,
+            customerName: q.customerName,
+            status: q.status,
+            totalExVat: q.totalExVat,
+            itemCount: q.itemCount,
+            projectId: q.projectId,
+            createdAt: q.createdAt.toISOString(),
+            updatedAt: q.updatedAt.toISOString(),
+          })),
+          count: quotes.length,
+        },
       };
     },
   });

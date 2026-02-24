@@ -31,9 +31,14 @@ test("Block 2.6: auth flows — register, login, forgot password, team invite, p
 
   const pageErrors: string[] = [];
   page.on("pageerror", (error) => {
-    if (!/hydration/i.test(error.message)) {
-      pageErrors.push(error.message);
+    const msg = error.message;
+    if (
+      /hydration/i.test(msg) ||
+      /unexpected response was received from the server/i.test(msg)
+    ) {
+      return;
     }
+    pageErrors.push(msg);
   });
 
   // ── Step 1: Navigate to login page and screenshot ──

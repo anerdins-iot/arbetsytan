@@ -56,8 +56,12 @@ logs/
 # Misc
 *.pem
 
+# PNG only in repo root (temp screenshots etc), subfolders still tracked
+/*.png
+
 # Worktrees
 .worktrees/
 screenshots/
 docs/
 .playwright-mcp/
+.playwright-browsers/
