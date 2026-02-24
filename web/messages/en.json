@@ -1565,7 +1565,9 @@
     "outOfStock": "Out of stock",
     "stockUnknown": "Stock status unknown",
     "expandDetails": "Show details",
-    "collapseDetails": "Hide details"
+    "collapseDetails": "Hide details",
+    "panelFoundProducts": "Found {count, plural, =1 {1 product} other {# products}}",
+    "openResults": "Open results"
   },
   "quotes": {
     "title": "Quotes",

@@ -3283,10 +3283,15 @@ Returnera ENBART JSON i följande format:
       };
 
       return {
-        message: `Hittade ${totalFound} produkter för "${query}". Visar ${productsWithPopularity.length} resultat.`,
+        message: `Hittade ${totalFound} produkter för "${query}". Visar ${Math.min(productsWithPopularity.length, 10)} resultat.`,
         recommendation,
-        products: productsWithPopularity,
+        products: productsWithPopularity.slice(0, 10),
         totalFound,
+        __wholesalerSearch: {
+          query,
+          products: allProducts,
+          count: totalFound,
+        },
         hint:
           "PRESENTERA RESULTATET SÅ HÄR: " +
           "1. Visa den rekommenderade produkten FÖRST med produktbild (markdown ![namn](imageUrl)) och klickbar länk ([Visa på Grossist](url)). " +

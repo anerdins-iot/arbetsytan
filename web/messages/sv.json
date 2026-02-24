@@ -1576,7 +1576,9 @@
     "outOfStock": "Ej i lager",
     "stockUnknown": "Lagerstatus okänd",
     "expandDetails": "Visa detaljer",
-    "collapseDetails": "Dölj detaljer"
+    "collapseDetails": "Dölj detaljer",
+    "panelFoundProducts": "Hittade {count, plural, =1 {1 produkt} other {# produkter}}",
+    "openResults": "Öppna resultat"
   },
   "quotes": {
     "title": "Offerter",
