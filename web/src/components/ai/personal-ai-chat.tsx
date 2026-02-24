@@ -2139,21 +2139,35 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setOpenEmailPreviewData(null);
   }, []);
 
-  // Inline tool panel content for docked mode (rendered in the right column)
+  // Inline tool panel content for docked mode (left panel when chat collapsed, or reused in expanded left panel)
   const toolPanelContent = activeToolPanel ? (
     <div className="flex h-full flex-col">
-      {/* Panel header with close button */}
+      {/* Panel header with collapse (docked) and close button */}
       <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
         <h3 className="text-sm font-semibold">{activeToolPanel.title}</h3>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="size-7 text-muted-foreground hover:text-foreground"
-          onClick={closeActiveToolPanel}
-        >
-          <PanelLeftClose className="size-4" />
-        </Button>
+        <div className="flex items-center gap-1">
+          {mode === "docked" && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-7 text-muted-foreground hover:text-foreground"
+              onClick={() => setLeftPanelCollapsed(true)}
+              aria-label={t("strip.collapsePanel")}
+            >
+              <PanelLeftClose className="size-4" />
+            </Button>
+          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:text-foreground"
+            onClick={closeActiveToolPanel}
+          >
+            <X className="size-4" />
+          </Button>
+        </div>
       </div>
       {/* Panel body */}
       <div className="flex-1 min-h-0 overflow-y-auto p-4">
