@@ -42,12 +42,17 @@ export function WholesalerSearchPanel({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (open) {
-      setQuery(initialQuery ?? "");
-      setProducts(initialProducts ?? []);
-      setHasSearched(!!initialProducts?.length);
+    if (open && initialQuery) {
+      setQuery(initialQuery);
+      if (initialProducts && initialProducts.length > 0) {
+        setProducts(initialProducts);
+        setHasSearched(true);
+      } else {
+        doSearch(initialQuery);
+      }
     }
-  }, [open, initialQuery, initialProducts]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const doSearch = useCallback(async (q: string) => {
     if (q.length < 2) {

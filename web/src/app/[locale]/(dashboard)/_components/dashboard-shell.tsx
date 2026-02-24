@@ -17,6 +17,7 @@ function WholesalerPanelOutlet() {
   const { open, data, setOpen } = useWholesalerPanel()
   return (
     <WholesalerSearchPanel
+      key={open ? (data?.query ?? "open") : "closed"}
       open={open}
       onOpenChange={setOpen}
       initialQuery={data?.query}
