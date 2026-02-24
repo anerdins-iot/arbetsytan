@@ -164,6 +164,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const isNearBottomRef = useRef<boolean>(true);
+  const scrollRafRef = useRef<number | null>(null);
+  const isInitialLoadRef = useRef<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fullscreen state
@@ -302,8 +305,23 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const isSpeakingRef = useRef<boolean>(false);
   const lastSpokenMessageIdRef = useRef<string | null>(null);
 
-  const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
+    if (scrollRafRef.current !== null) {
+      cancelAnimationFrame(scrollRafRef.current);
+    }
+    scrollRafRef.current = requestAnimationFrame(() => {
+      scrollRafRef.current = null;
+      messagesEndRef.current?.scrollIntoView({ behavior });
+    });
+  }, []);
+
+  // Track if user is near the bottom of the chat
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const distanceFromBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight;
+    isNearBottomRef.current = distanceFromBottom < 120;
   }, []);
 
   const [inputValue, setInputValue] = useState("");
@@ -509,6 +527,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
         parts: [{ type: "text" as const, text: m.content }],
       }));
+      isInitialLoadRef.current = true;
+      isNearBottomRef.current = true;
       setMessages(uiMessages);
       setHistoryOpen(false);
       setUploadedFiles([]);
@@ -866,8 +886,19 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   );
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages, scrollToBottom]);
+    // During streaming use instant scroll to avoid smooth-scroll fighting itself.
+    // When loading an existing conversation use instant scroll (no animation).
+    // When a new message arrives (not streaming) use smooth scroll.
+    // Only scroll if the user is already near the bottom — don't hijack scroll position.
+    if (isNearBottomRef.current) {
+      if (isInitialLoadRef.current) {
+        isInitialLoadRef.current = false;
+        scrollToBottom("instant");
+      } else {
+        scrollToBottom(isLoading ? "instant" : "smooth");
+      }
+    }
+  }, [messages, isLoading, scrollToBottom]);
 
   // Ikon baserat på filtyp
   const getFileIcon = (fileType: string) => {
@@ -1006,6 +1037,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       <div
         ref={scrollContainerRef}
         className="flex-1 overflow-y-auto"
+        onScroll={handleScroll}
       >
         {/* Sentinel for infinite scroll (observer triggers load when visible near top) */}
         <div ref={sentinelRef} className="h-0 shrink-0" aria-hidden="true" />
