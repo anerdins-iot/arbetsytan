@@ -5,13 +5,12 @@ import { Search, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
-import { useMediaQuery } from "@/hooks/use-media-query";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { WholesalerSearchResults } from "./wholesaler-search-results";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
 
@@ -31,7 +30,6 @@ export function WholesalerSearchPanel({
   onAddToList,
 }: WholesalerSearchPanelProps) {
   const t = useTranslations("supplierSearch");
-  const isDesktop = useMediaQuery("(min-width: 640px)");
 
   const [query, setQuery] = useState(initialQuery ?? "");
   const [products, setProducts] = useState<WholesalerProduct[]>(
@@ -77,22 +75,14 @@ export function WholesalerSearchPanel({
   };
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side={isDesktop ? "right" : "bottom"}
-        showCloseButton
-        className={
-          isDesktop
-            ? "flex w-[600px] max-w-[90vw] flex-col gap-0 overflow-hidden p-0"
-            : "flex h-[85vh] flex-col gap-0 overflow-hidden p-0"
-        }
-      >
-        <SheetHeader className="shrink-0 border-b border-border px-4 py-3">
-          <SheetTitle>{t("title")}</SheetTitle>
-          <SheetDescription>{t("subtitle")}</SheetDescription>
-        </SheetHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[calc(100%-2rem)] max-h-[90vh] overflow-y-auto sm:max-w-5xl">
+        <DialogHeader>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("subtitle")}</DialogDescription>
+        </DialogHeader>
 
-        <div className="shrink-0 border-b border-border px-4 py-3">
+        <div className="border-b border-border pb-3">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -105,7 +95,7 @@ export function WholesalerSearchPanel({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="py-2">
           {isSearching && (
             <div className="flex flex-col items-center gap-2 py-8">
               <Loader2 className="size-5 animate-spin text-muted-foreground" />
@@ -126,7 +116,7 @@ export function WholesalerSearchPanel({
             />
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   );
 }
