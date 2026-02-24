@@ -1333,8 +1333,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                 return `quotePreview:${d.title ?? ""}:${d.projectId ?? ""}`;
               }
               if (result.__wholesalerSearch) {
-                const d = result.__wholesalerSearch as { query?: string; count?: number };
-                return `wholesaler:${d.query ?? ""}:${d.count ?? 0}`;
+                const d = result.__wholesalerSearch as { query?: string; products?: { articleNo?: string }[] };
+                const q = (d.query ?? "").trim();
+                const firstId = d.products?.[0]?.articleNo ?? "";
+                return `wholesaler:${q}:${firstId}`;
               }
               if (result.__deleteConfirmation) {
                 const d = result as { type: string; items?: { id: string }[] };
@@ -1349,10 +1351,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                 ? groups
                 : groups.filter((g) => {
                     if (g.type === "text") return true;
-                    const key = getToolDedupeKey(g.part);
-                    if (key === null) return true;
-                    if (seenToolKeys.has(key)) return false;
-                    seenToolKeys.add(key);
+                    if (g.type === "tool") {
+                      const part = g.part as { state?: string };
+                      if (part.state !== "output-available") return false;
+                      const key = getToolDedupeKey(g.part);
+                      if (key === null) return true;
+                      if (seenToolKeys.has(key)) return false;
+                      seenToolKeys.add(key);
+                      return true;
+                    }
                     return true;
                   });
 
@@ -1383,6 +1390,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                 const part = group.part;
                 const i = group.index;
+                const toolCardKey = getToolDedupeKey(part) ?? `tool-${message.id ?? messageIndex}-${i}`;
 
                 // Tool invocations with email preview
                 // AI SDK v6 uses "tool-{toolName}" as part.type, not "tool-invocation"
@@ -1425,7 +1433,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                     return (
                       <EmailPreviewCard
-                        key={i}
+                        key={toolCardKey}
                         data={{
                           type: emailData.type,
                           recipients: emailData.recipients,
@@ -1443,7 +1451,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const searchResults = result.results as SearchResult[];
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<Search className="size-5 text-primary" />}
                         title={`Hittade ${searchResults.length} dokument`}
                         buttonLabel="Visa resultat"
@@ -1459,7 +1467,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                     return (
                       <FileCreatedCard
-                        key={i}
+                        key={toolCardKey}
                         data={{
                           fileId: fileData.fileId,
                           fileName: fileData.fileName,
@@ -1479,7 +1487,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<BarChart2 className="size-5 text-primary" />}
                         title={`Rapport — ${reportData.title}`}
                         subtitle={reportData.projectName}
@@ -1554,7 +1562,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                     return (
                       <DeleteConfirmationCard
-                        key={i}
+                        key={toolCardKey}
                         data={{
                           type: deleteData.type,
                           items: deleteData.items,
@@ -1571,7 +1579,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<FileText className="size-5 text-primary" />}
                         title={`Offert — ${quoteData.title}`}
                         subtitle={quoteData.clientName}
@@ -1599,7 +1607,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <WholesalerSearchResultButton
-                        key={i}
+                        key={toolCardKey}
                         query={wsData.query}
                         count={wsData.count}
                         onOpen={() => {
@@ -1631,7 +1639,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<FileText className="size-5 text-primary" />}
                         title={tQuotes("foundQuotes", { count: listData.count })}
                         buttonLabel={tQuotes("openList")}
@@ -1644,7 +1652,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const noteData = result.__noteList as NoteListPanelData;
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<StickyNote className="size-5 text-primary" />}
                         title={t("noteList.found", { count: noteData.count })}
                         subtitle={noteData.projectName ?? (noteData.isPersonal ? t("noteList.personal") : undefined)}
@@ -1659,7 +1667,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const count = teData.count ?? teData.entries?.length ?? 0;
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<Clock className="size-5 text-primary" />}
                         title={t("timeEntryListButton", { count })}
                         buttonLabel={t("timeEntryListOpen")}
@@ -1677,7 +1685,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<FolderOpen className="size-5 text-primary" />}
                         title={t("fileListPanel.foundFiles", { count: fileListData.count })}
                         subtitle={fileListData.projectName}
@@ -1696,7 +1704,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<ListTodo className="size-5 text-primary" />}
                         title={t("taskList.found", { count: tlData.count })}
                         buttonLabel={t("taskList.open")}
@@ -1717,7 +1725,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     };
                     return (
                       <ChatResultButton
-                        key={i}
+                        key={toolCardKey}
                         icon={<List className="size-5 text-primary" />}
                         title={tShopping("panelFoundLists", { count: slData.count })}
                         buttonLabel={tShopping("openPanel")}
