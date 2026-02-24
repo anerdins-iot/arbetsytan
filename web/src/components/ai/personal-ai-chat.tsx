@@ -48,6 +48,25 @@ import type { ConversationListItem, ConversationWithMessagesResult } from "@/act
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
+import type { UploadedFile, AnalysisFileData, NoteListPanelData, PersonalAiChatProps } from "@/components/ai/personal-ai-chat-types";
+import {
+  ALLOWED_EXTENSIONS,
+  MAX_FILE_SIZE,
+  PANEL_WIDTH_STORAGE_KEY,
+  LEFT_PANEL_COLLAPSED_KEY,
+  CHAT_PANEL_COLLAPSED_KEY,
+  DEFAULT_PANEL_WIDTH,
+  MIN_PANEL_WIDTH,
+  MAX_PANEL_WIDTH,
+  LEFT_PANEL_WIDTH,
+  STRIP_WIDTH,
+} from "@/components/ai/personal-ai-chat-constants";
+import {
+  getChatErrorKey,
+  formatConversationDate,
+  generateAgentActionLog,
+} from "@/components/ai/personal-ai-chat-utils";
+export type { NoteListPanelData } from "@/components/ai/personal-ai-chat-types";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { ModelSelector } from "@/components/ai/model-selector";
 import { type ProviderKey, MODEL_OPTIONS } from "@/lib/ai/providers";
@@ -69,8 +88,8 @@ import { QuoteList, type SerializedQuote } from "@/components/quotes/quote-list"
 import { deleteFile } from "@/actions/files";
 import { deleteTask } from "@/actions/tasks";
 import { deleteComment } from "@/actions/comments";
-import { deleteNote, type NoteItem } from "@/actions/notes";
-import { deletePersonalNote, deletePersonalFile, type PersonalNoteItem } from "@/actions/personal";
+import { deleteNote } from "@/actions/notes";
+import { deletePersonalNote, deletePersonalFile } from "@/actions/personal";
 import { deleteTimeEntry, getMyTimeEntriesGrouped, type GroupedTimeEntries } from "@/actions/time-entries";
 import { deleteAutomation } from "@/actions/automations";
 import { deleteNoteCategory } from "@/actions/note-categories";
@@ -92,179 +111,6 @@ import { getNoteCategories, type NoteCategoryItem } from "@/actions/note-categor
 import { TimeEntryList } from "@/components/time/time-entry-list";
 import type { DashboardTask } from "@/actions/dashboard";
 import { TaskList } from "@/components/dashboard/task-list";
-
-/** Map a chat error message to a specific translation key. */
-function getChatErrorKey(error: Error | undefined): string {
-  if (!error) return "error";
-  const msg = error.message.toLowerCase();
-  if (msg.includes("rate limit") || msg.includes("429") || msg.includes("too many requests")) {
-    return "errorRateLimit";
-  }
-  if (msg.includes("overloaded") || msg.includes("capacity") || msg.includes("503")) {
-    return "errorOverloaded";
-  }
-  return "error";
-}
-
-// Formatera datum för konversationshistorik
-function formatConversationDate(date: Date): string {
-  const d = new Date(date);
-  const now = new Date();
-  const sameDay =
-    d.getFullYear() === now.getFullYear() &&
-    d.getMonth() === now.getMonth() &&
-    d.getDate() === now.getDate();
-  if (sameDay) {
-    return d.toLocaleTimeString("sv-SE", { hour: "2-digit", minute: "2-digit" });
-  }
-  return d.toLocaleDateString("sv-SE", {
-    day: "numeric",
-    month: "short",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-}
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-// Tillåtna filtyper
-const ALLOWED_EXTENSIONS = /\.(pdf|jpe?g|png|webp|docx|xlsx)$/i;
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
-
-type UploadedFile = {
-  id: string;
-  name: string;
-  type: string;
-  size: number;
-  status: "uploading" | "analyzing" | "done" | "error";
-  error?: string;
-  url?: string;
-  ocrText?: string | null;
-  thumbnailUrl?: string;
-};
-
-type AnalysisFileData = {
-  id: string;
-  name: string;
-  type: string;
-  url: string;
-  ocrText?: string | null;
-  ocrLoading?: boolean;
-};
-
-export type NoteListPanelData = {
-  notes: (NoteItem | PersonalNoteItem)[];
-  count: number;
-  projectId?: string;
-  projectName?: string;
-  isPersonal?: boolean;
-};
-
-type PersonalAiChatProps = {
-  /** Kontrollera om chattpanelen är öppen */
-  open: boolean;
-  /** Callback för att ändra öppet/stängt-tillstånd */
-  onOpenChange: (open: boolean) => void;
-  /** Projekt-ID från URL (synkas automatiskt) */
-  initialProjectId?: string | null;
-  /** Renderingsläge: sheet (overlay) eller docked (fast sidebar) */
-  mode?: "sheet" | "docked";
-  /** Initial voice mode when opening via voice CTA */
-  initialVoiceMode?: VoiceMode;
-};
-
-const PANEL_WIDTH_STORAGE_KEY = "ay-ai-chat-panel-width";
-const LEFT_PANEL_COLLAPSED_KEY = "ay-ai-left-panel-collapsed";
-const CHAT_PANEL_COLLAPSED_KEY = "ay-ai-chat-panel-collapsed";
-const DEFAULT_PANEL_WIDTH = 384; // 96 * 4 = w-96
-const MIN_PANEL_WIDTH = 320;
-const MAX_PANEL_WIDTH = 800;
-const LEFT_PANEL_WIDTH = 420;
-const STRIP_WIDTH = 44;
-
-/**
- * Helper function to generate a compact agent action log from tool parts.
- * Returns an array of Swedish action labels (e.g., "Skapade anteckning", "Listade 13 anteckningar").
- */
-function generateAgentActionLog(
-  parts: Array<{ type: string; state?: string; output?: unknown }>,
-  t: (key: string, values?: Record<string, string | number | Date>) => string
-): string[] {
-  const actions: string[] = [];
-
-  for (const part of parts) {
-    const isToolPart = part.type.startsWith("tool-") && part.type !== "tool-invocation";
-    if (!isToolPart || part.state !== "output-available") continue;
-
-    const result = part.output as Record<string, unknown> | undefined;
-    if (!result) continue;
-
-    // Detect tool action based on output markers
-    if (result.__noteList) {
-      const noteData = result.__noteList as { count: number };
-      actions.push(t("agentLog.listNotes", { count: noteData.count }));
-    } else if (result.__taskList) {
-      const taskData = result.__taskList as { count: number };
-      actions.push(t("agentLog.listTasks", { count: taskData.count }));
-    } else if (result.__searchResults) {
-      actions.push(t("agentLog.searchDocuments"));
-    } else if (result.__fileList) {
-      const fileData = result.__fileList as { count: number };
-      actions.push(t("agentLog.listFiles", { count: fileData.count }));
-    } else if (result.__fileCreated) {
-      actions.push(t("agentLog.createFile"));
-    } else if (result.__reportPreview) {
-      actions.push(t("agentLog.generateReport"));
-    } else if (result.__quotePreview) {
-      actions.push(t("agentLog.generateQuote"));
-    } else if (result.__quoteList) {
-      const quoteData = result.__quoteList as { count: number };
-      actions.push(t("agentLog.listQuotes", { count: quoteData.count }));
-    } else if (result.__emailPreview) {
-      actions.push(t("agentLog.emailPreview"));
-    } else if (result.__timeEntryList) {
-      const teData = result.__timeEntryList as { count: number };
-      actions.push(t("agentLog.listTimeEntries", { count: teData.count }));
-    } else if (result.__wholesalerSearch) {
-      actions.push(t("agentLog.wholesalerSearch"));
-    } else if (result.__shoppingLists) {
-      const slData = result.__shoppingLists as { count: number };
-      actions.push(t("agentLog.listShoppingLists", { count: slData.count }));
-    } else if (result.__deleteConfirmation) {
-      const delData = result as { type: string };
-      if (delData.type === "task") actions.push(t("agentLog.deleteTask"));
-      else if (delData.type === "file" || delData.type === "personalFile") actions.push(t("agentLog.deleteFile"));
-      else if (delData.type === "projectNote" || delData.type === "personalNote") actions.push(t("agentLog.deleteNote"));
-      else if (delData.type === "timeEntry") actions.push(t("agentLog.deleteTimeEntry"));
-      else if (delData.type === "automation") actions.push(t("agentLog.deleteAutomation"));
-      else if (delData.type === "noteCategory") actions.push(t("agentLog.deleteNoteCategory"));
-    } else if (result.message) {
-      // Generic tool result with message (createNote, updateNote, createTask, updateTask, logTime, etc.)
-      const msg = String(result.message).toLowerCase();
-      if (msg.includes("anteckning skapad") || msg.includes("note created")) {
-        actions.push(t("agentLog.createNote"));
-      } else if (msg.includes("anteckning uppdaterad") || msg.includes("note updated")) {
-        actions.push(t("agentLog.updateNote"));
-      } else if (msg.includes("uppgift skapad") || msg.includes("task created")) {
-        actions.push(t("agentLog.createTask"));
-      } else if (msg.includes("uppgift uppdaterad") || msg.includes("task updated")) {
-        actions.push(t("agentLog.updateTask"));
-      } else if (msg.includes("tid loggad") || msg.includes("time logged")) {
-        actions.push(t("agentLog.logTime"));
-      } else if (msg.includes("kategori skapad") || msg.includes("category created")) {
-        actions.push(t("agentLog.createNoteCategory"));
-      } else if (msg.includes("kategori uppdaterad") || msg.includes("category updated")) {
-        actions.push(t("agentLog.updateNoteCategory"));
-      }
-    }
-  }
-
-  return actions;
-}
 
 export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet", initialVoiceMode }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
