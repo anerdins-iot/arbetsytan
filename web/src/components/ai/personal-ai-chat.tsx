@@ -365,13 +365,21 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const isSpeakingRef = useRef<boolean>(false);
   const lastSpokenMessageIdRef = useRef<string | null>(null);
 
+  // Scroll only the chat container to bottom — never use scrollIntoView, as that
+  // scrolls the document/window too and pushes the whole page down on desktop.
   const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
     if (scrollRafRef.current !== null) {
       cancelAnimationFrame(scrollRafRef.current);
     }
     scrollRafRef.current = requestAnimationFrame(() => {
       scrollRafRef.current = null;
-      messagesEndRef.current?.scrollIntoView({ behavior });
+      const container = scrollContainerRef.current;
+      if (container) {
+        container.scrollTo({
+          top: container.scrollHeight - container.clientHeight,
+          behavior,
+        });
+      }
     });
   }, []);
 
