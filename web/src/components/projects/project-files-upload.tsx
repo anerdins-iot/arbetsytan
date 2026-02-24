@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileDetailDialog } from "@/components/files/file-detail-dialog";
-import { FileListGrid } from "@/components/files/file-list-grid";
+import { FileListGrid, type FileListGridItem } from "@/components/files/file-list-grid";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS } from "@/lib/socket-events";
 
@@ -245,7 +245,9 @@ export function ProjectFilesUpload({
   useSocketEvent(SOCKET_EVENTS.fileCreated, handleFileSocketEvent);
   useSocketEvent(SOCKET_EVENTS.fileDeleted, handleFileSocketEvent);
 
-  function handlePreview(file: FileItem): void {
+  function handlePreview(gridItem: FileListGridItem): void {
+    const file = files.find((f) => f.id === gridItem.id);
+    if (!file) return;
     if (isImageFile(file) || isPdfFile(file) || isExcelFile(file)) {
       setPreviewFile(file);
       return;
@@ -253,7 +255,9 @@ export function ProjectFilesUpload({
     window.open(file.downloadUrl, "_blank", "noopener,noreferrer");
   }
 
-  async function handleDelete(file: FileItem): Promise<void> {
+  async function handleDelete(gridItem: FileListGridItem): Promise<void> {
+    const file = files.find((f) => f.id === gridItem.id);
+    if (!file) return;
     const shouldDelete = window.confirm(t("deleteConfirm", { name: file.name }));
     if (!shouldDelete) {
       return;
@@ -382,7 +386,7 @@ export function ProjectFilesUpload({
         </CardHeader>
         <CardContent>
           <FileListGrid
-            files={files}
+            files={files as FileListGridItem[]}
             translationNamespace="projects.files"
             onPreview={handlePreview}
             onDelete={handleDelete}

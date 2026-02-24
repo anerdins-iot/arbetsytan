@@ -59,7 +59,7 @@ import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
 import { DeleteConfirmationCard, type DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
 import { QuotePreviewCard, type QuotePreviewData } from "@/components/ai/quote-preview-card";
-import { QuoteList } from "@/components/quotes/quote-list";
+import { QuoteList, type SerializedQuote } from "@/components/quotes/quote-list";
 import { deleteFile } from "@/actions/files";
 import { deleteTask } from "@/actions/tasks";
 import { deleteComment } from "@/actions/comments";
@@ -212,18 +212,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   } | null>(null);
   const [timeEntryPanelLoading, setTimeEntryPanelLoading] = useState(false);
   const [openQuoteListData, setOpenQuoteListData] = useState<{
-    quotes: Array<{
-      id: string;
-      quoteNumber: string;
-      title: string;
-      customerName: string | null;
-      status: string;
-      totalExVat: number;
-      itemCount: number;
-      projectId: string | null;
-      createdAt: string;
-      updatedAt: string;
-    }>;
+    quotes: SerializedQuote[];
     count: number;
   } | null>(null);
   const [openNoteListData, setOpenNoteListData] = useState<NoteListPanelData | null>(null);
@@ -1061,11 +1050,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     </div>
   );
 
-  // Chat body content shared by both modes
+  // Chat body content shared by both modes (min-h-0 so flex children can shrink in Sheet)
   const chatBody = (
     <div
       className={cn(
-        "flex flex-1 flex-col overflow-hidden",
+        "flex min-h-0 flex-1 flex-col overflow-hidden",
         isDragOver && "ring-2 ring-primary ring-inset bg-primary/5"
       )}
       onDragOver={handleDragOver}
@@ -1156,7 +1145,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       {/* Meddelandelista */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-y-auto"
+        className="min-h-0 flex-1 overflow-y-auto"
         onScroll={handleScroll}
       >
         {/* Sentinel for infinite scroll (observer triggers load when visible near top) */}
@@ -1213,6 +1202,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             if (textAcc.length > 0) {
               groups.push({ type: "text", text: textAcc.join("") });
             }
+
+            // Deduplicate __searchResults per message (same result set = one button only)
+            const seenSearchSignatures = new Set<string>();
 
             return (
             <div
@@ -1299,6 +1291,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                   if (result?.__searchResults && Array.isArray(result.results)) {
                     const searchResults = result.results as SearchResult[];
+                    const sig = `${searchResults.length}-${searchResults[0]?.fileId ?? ""}`;
+                    if (seenSearchSignatures.has(sig)) return null;
+                    seenSearchSignatures.add(sig);
                     return (
                       <ChatResultButton
                         key={i}
@@ -1472,7 +1467,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   }
 
                   if (result?.__quoteList) {
-                    const listData = result.__quoteList as {
+                    const raw = result.__quoteList as {
                       quotes: Array<{
                         id: string;
                         quoteNumber: string;
@@ -1486,6 +1481,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                         updatedAt: string;
                       }>;
                       count: number;
+                    };
+                    const listData: { quotes: SerializedQuote[]; count: number } = {
+                      quotes: raw.quotes as SerializedQuote[],
+                      count: raw.count,
                     };
                     return (
                       <ChatResultButton
@@ -1756,11 +1755,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         </div>
       )}
 
-      {/* Aktiv projektindikator */}
+      {/* Aktiv projektindikator (shrink-0 så den inte klipps; truncate på namn) */}
       {activeProjectId && (
-        <div className="flex items-center gap-1.5 border-t border-border bg-accent/50 px-4 py-1.5">
-          <FolderOpen className="size-3.5 text-accent-foreground/70" />
-          <span className="text-xs font-medium text-accent-foreground/70">
+        <div className="flex shrink-0 items-center gap-1.5 border-t border-border bg-accent/50 px-4 py-1.5 min-h-[44px]">
+          <FolderOpen className="size-3.5 shrink-0 text-accent-foreground/70" />
+          <span className="min-w-0 truncate text-xs font-medium text-accent-foreground/70">
             {projectList.find((p) => p.id === activeProjectId)?.name}
           </span>
         </div>
@@ -1768,17 +1767,17 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
       {/* Live interim transcript display */}
       {interimTranscript && (
-        <div className="border-t border-border bg-muted/30 px-4 py-2">
+        <div className="shrink-0 border-t border-border bg-muted/30 px-4 py-2">
           <p className="text-xs text-muted-foreground italic line-clamp-2">
             {interimTranscript}
           </p>
         </div>
       )}
 
-      {/* Inmatningsfält */}
+      {/* Inmatningsfält (shrink-0 så det alltid syns) */}
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-2 border-t border-border p-3"
+        className="flex shrink-0 flex-col gap-2 border-t border-border p-3"
       >
         {/* Textarea - större och full bredd */}
         <Textarea

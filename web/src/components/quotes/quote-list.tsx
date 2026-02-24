@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QuoteStatusBadge } from "./quote-status-badge";
 import type { QuoteListItem } from "@/services/quote-service";
 
-type SerializedQuote = Omit<QuoteListItem, "createdAt" | "updatedAt"> & {
+export type SerializedQuote = Omit<QuoteListItem, "createdAt" | "updatedAt"> & {
   createdAt: string;
   updatedAt: string;
 };
