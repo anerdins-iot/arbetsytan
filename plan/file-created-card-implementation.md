@@ -37,18 +37,18 @@ type FileCreatedData = {
 
 ### 2. Personal AI Chat Integration
 
-**Fil:** `web/src/components/ai/personal-ai-chat.tsx`
+**Filer:** `web/src/components/ai/personal-ai-chat-tool-card.tsx` (tool-rendering), `web/src/components/ai/personal-ai-chat-message-list.tsx` (anropar ToolCard), `web/src/components/ai/personal-ai-chat.tsx` (sammansättning).
 
 **Ändringar:**
-1. Import av FileCreatedCard
-2. Ny hantering av `__fileCreated` flagga i tool outputs (rad ~780)
+1. Import av FileCreatedCard i `personal-ai-chat-tool-card.tsx`
+2. Ny hantering av `__fileCreated`-flagga i tool outputs i ToolCard
 3. Renderar FileCreatedCard när `result.__fileCreated === true`
 
 **Flöde:**
 ```
 AI-verktyg returnerar __fileCreated
 ↓
-personal-ai-chat detekterar flaggan
+personal-ai-chat-tool-card detekterar flaggan
 ↓
 FileCreatedCard renderas i chatten
 ↓
@@ -232,7 +232,7 @@ await browser_snapshot(); // Verify card is visible
 ## Filer ändrade
 
 1. `/workspace/web/src/components/ai/file-created-card.tsx` (NY)
-2. `/workspace/web/src/components/ai/personal-ai-chat.tsx` (ÄNDRAD)
+2. `web/src/components/ai/personal-ai-chat-tool-card.tsx` (ÄNDRAD — tool-rendering för __fileCreated)
 3. `/workspace/web/src/lib/ai/save-generated-document.ts` (ÄNDRAD)
 4. `/workspace/web/src/lib/ai/tools/shared-tools.ts` (ÄNDRAD)
 5. `/workspace/web/src/lib/minio.ts` (ÄNDRAD - ny funktion)

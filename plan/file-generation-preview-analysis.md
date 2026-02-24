@@ -83,7 +83,7 @@ För filgenerering: **Preview-kort i chatten** (som EmailPreviewCard) som öppna
 
 ### Hur tool-resultat visas i chatten
 
-- `personal-ai-chat.tsx`: Tool-parts med `state === "output-available"` och `output` kollas för speciella flaggor:
+- Personlig AI-chatt (tool-rendering i `personal-ai-chat-tool-card.tsx`, anropas från `personal-ai-chat-message-list.tsx`): Tool-parts med `state === "output-available"` och `output` kollas för speciella flaggor:
   - `__emailPreview` → **EmailPreviewCard**
   - `__searchResults` → **SearchResultsCard**
   - `__deleteConfirmation` → **DeleteConfirmationCard**

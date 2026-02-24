@@ -307,7 +307,7 @@ Bilder som användaren laddar upp i AI-chatten hanteras annorlunda än vanliga f
 - `web/src/app/api/ai/upload/route.ts` — `chatMode` parameter
 - `web/src/app/api/ai/upload/file-info/route.ts` — metadata-endpoint för OcrReviewDialog
 - `web/src/app/api/ai/chat/route.ts` — `imageFileIds` hantering + vision-injektion
-- `web/src/components/ai/personal-ai-chat.tsx` — thumbnail UI, `pendingImageFileIdsRef`, `chatImageMap`
+- `web/src/components/ai/personal-ai-chat.tsx` — sammansättningskomponent; thumbnail UI i `chat-uploaded-files-strip.tsx`, `pendingImageFileIdsRef`/`chatImageMap` och meddelandelista i huvudkomponenten respektive `personal-ai-chat-message-list.tsx`
 
 ## Embeddings och semantisk sökning
 
