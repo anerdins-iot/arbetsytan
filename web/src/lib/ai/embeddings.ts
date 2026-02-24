@@ -161,6 +161,23 @@ async function searchFilesPlaintext(
     type: string;
   }>
 > {
+  const words = queryText
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 1)
+    .slice(0, 6);
+  const effectiveWords = words.length > 0 ? words : [queryText];
+  // $1=projectId, $2..N=word patterns, last=limit
+  let nextParam = 2;
+  const wordPatterns: string[] = effectiveWords.map(() => `$${nextParam++}`);
+  const wordConditions = wordPatterns
+    .map(
+      (p) =>
+        `("name" ILIKE ${p} OR "userDescription" ILIKE ${p} OR "ocrText" ILIKE ${p} OR "label" ILIKE ${p} OR "aiAnalysis" ILIKE ${p})`
+    )
+    .join(" AND ");
+  const limitParam = `$${nextParam}`;
+
   const files = await prisma.$queryRawUnsafe<
     Array<{
       id: string;
@@ -177,16 +194,10 @@ async function searchFilesPlaintext(
     `SELECT "id", "name", "userDescription", "ocrText", "label", "aiAnalysis", "bucket", "key", "type"
      FROM "File"
      WHERE "projectId" = $1
-       AND (
-         "name" ILIKE $2
-         OR "userDescription" ILIKE $2
-         OR "ocrText" ILIKE $2
-         OR "label" ILIKE $2
-         OR "aiAnalysis" ILIKE $2
-       )
-     LIMIT $3`,
+       AND (${wordConditions})
+     LIMIT ${limitParam}`,
     projectId,
-    `%${queryText}%`,
+    ...effectiveWords.map((w) => `%${w}%`),
     limit
   );
 
@@ -323,11 +334,21 @@ async function searchFilesPlaintextGlobal(
     return [];
   }
 
-  // Build dynamic SQL query for scope filtering
-  // $1=tenantId, $2=queryPattern, then dynamic params for scope, then limit
-  let nextParam = 3;
+  // Build dynamic SQL query for scope filtering.
+  // Split query into individual words so "rapporter" matches "rapport", "Projektrapport" etc.
+  // Each word must match at least one of the searchable columns (broad AND-per-word search).
+  const words = queryText
+    .trim()
+    .split(/\s+/)
+    .filter((w) => w.length > 1)
+    .slice(0, 6); // cap at 6 words to keep query manageable
+  const effectiveWords = words.length > 0 ? words : [queryText];
+
+  // $1=tenantId, then word patterns, then scope params, then limit
+  let nextParam = 2;
+  const wordPatterns: string[] = effectiveWords.map(() => `$${nextParam++}`);
   const scopeConditions: string[] = [];
-  const params: (string | number)[] = [tenantId, `%${queryText}%`];
+  const params: (string | number)[] = [tenantId, ...effectiveWords.map((w) => `%${w}%`)];
 
   if (hasProjects) {
     const projectPlaceholders = accessibleProjectIds.map(() => `$${nextParam++}`).join(", ");
@@ -342,6 +363,14 @@ async function searchFilesPlaintextGlobal(
 
   params.push(limit);
   const limitParam = `$${nextParam++}`;
+
+  // Each word must match at least one searchable column (AND between words, OR between columns)
+  const wordConditions = wordPatterns
+    .map(
+      (p) =>
+        `(f."name" ILIKE ${p} OR f."userDescription" ILIKE ${p} OR f."ocrText" ILIKE ${p} OR f."label" ILIKE ${p} OR f."aiAnalysis" ILIKE ${p})`
+    )
+    .join(" AND ");
 
   const files = await prisma.$queryRawUnsafe<
     Array<{
@@ -374,13 +403,7 @@ async function searchFilesPlaintextGlobal(
      LEFT JOIN "Project" p ON p."id" = f."projectId"
      WHERE (f."projectId" IS NULL OR p."tenantId" = $1)
        AND (${scopeConditions.join(" OR ")})
-       AND (
-         f."name" ILIKE $2
-         OR f."userDescription" ILIKE $2
-         OR f."ocrText" ILIKE $2
-         OR f."label" ILIKE $2
-         OR f."aiAnalysis" ILIKE $2
-       )
+       AND (${wordConditions})
      LIMIT ${limitParam}`,
     ...params
   );

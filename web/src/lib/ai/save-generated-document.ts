@@ -13,6 +13,9 @@ import {
 } from "@/lib/minio";
 import type { TenantScopedClient } from "@/lib/db";
 import { queueFileAnalysis } from "@/lib/ai/queue-file-analysis";
+import { chunkText } from "@/lib/ai/ocr";
+import { queueEmbeddingProcessing } from "@/lib/ai/embeddings";
+import { logger } from "@/lib/logger";
 
 export async function saveGeneratedDocumentToProject(params: {
   db: TenantScopedClient;
@@ -87,6 +90,40 @@ export async function saveGeneratedDocumentToProject(params: {
       fileType: file.type,
       source: "ai_generated",
     });
+
+    // Create DocumentChunks from content for semantic search
+    if (content && content.trim()) {
+      const pages = [{ index: 0, markdown: content }];
+      const textChunks = chunkText(pages);
+
+      logger.info("saveGeneratedDocumentToProject: creating chunks", {
+        fileId: file.id,
+        contentLength: content.length,
+        chunkCount: textChunks.length,
+      });
+
+      for (const chunk of textChunks) {
+        await db.documentChunk.create({
+          data: {
+            content: chunk.content,
+            page: chunk.page,
+            metadata: { position: chunk.position, source: "ai-generated" },
+            fileId: file.id,
+            tenantId,
+            projectId,
+          },
+        });
+      }
+
+      // Queue embedding generation for the chunks
+      if (process.env.OPENAI_API_KEY) {
+        queueEmbeddingProcessing(file.id, tenantId);
+      } else {
+        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for AI-generated file", {
+          fileId: file.id,
+        });
+      }
+    }
 
     // Köa filanalys i bakgrunden för att generera bättre label/description och embeddings
     queueFileAnalysis({
@@ -175,6 +212,40 @@ export async function saveGeneratedDocumentToPersonal(params: {
         versionNumber,
       },
     });
+
+    // Create DocumentChunks from content for semantic search
+    if (content && content.trim()) {
+      const pages = [{ index: 0, markdown: content }];
+      const textChunks = chunkText(pages);
+
+      logger.info("saveGeneratedDocumentToPersonal: creating chunks", {
+        fileId: file.id,
+        contentLength: content.length,
+        chunkCount: textChunks.length,
+      });
+
+      for (const chunk of textChunks) {
+        await db.documentChunk.create({
+          data: {
+            content: chunk.content,
+            page: chunk.page,
+            metadata: { position: chunk.position, source: "ai-generated" },
+            fileId: file.id,
+            tenantId,
+            userId,
+          },
+        });
+      }
+
+      // Queue embedding generation for the chunks
+      if (process.env.OPENAI_API_KEY) {
+        queueEmbeddingProcessing(file.id, tenantId);
+      } else {
+        logger.warn("OPENAI_API_KEY not set — skipping embedding queue for AI-generated personal file", {
+          fileId: file.id,
+        });
+      }
+    }
 
     queueFileAnalysis({
       fileId: file.id,

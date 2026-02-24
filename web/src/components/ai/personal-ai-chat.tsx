@@ -1781,6 +1781,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           {headerContent}
           {chatBody}
         </div>
+        {toolResultDialogs}
         {fileAnalysisUI}
         {ragDebugUI}
       </>
