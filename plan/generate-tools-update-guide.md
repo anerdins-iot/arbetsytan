@@ -102,7 +102,7 @@ Utan `__fileCreated: true` visar chatten bara ett vanligt textmeddelande från A
 
 ## Chatten - hur den hanterar __fileCreated
 
-I `personal-ai-chat.tsx` (rad ~780):
+I `personal-ai-chat-tool-card.tsx` (tool-rendering för personlig AI-chatt):
 
 ```typescript
 if (result?.__fileCreated) {

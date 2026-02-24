@@ -329,7 +329,7 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `web/src/components/ai/rag-debug-modal.tsx` — Debug-modal för RAG-sökresultat
 - `web/src/app/api/ai/upload/route.ts` — Filuppladdning för AI-chatten (inkl. `chatMode=true` för silent image upload)
 - `web/src/app/api/ai/upload/file-info/route.ts` — Filmetadata-endpoint för OcrReviewDialog (FolderPlus-knapp)
-- `web/src/components/ai/personal-ai-chat.tsx` — Personlig AI-chatt med bilduppladdning, thumbnails och RAG debug
+- `web/src/components/ai/personal-ai-chat.tsx` — Sammansättningskomponent för personlig AI-chatt (importerar hooks och underkomponenter: types, constants, utils, message-parts, tool-card, message-list, tool-panel-content, tool-panels, input, header, history-dropdown, file-upload-strip; innehåller OcrReviewDialog och RagDebugModal)
 - `AI.md` — AI-arkitektur (personlig AI, projekt-AI, kommunikation, RAG)
 - `mistral-api.md` — Mistral API och OCR-referens
 - `openai-api.md` — OpenAI bildgenerering och embeddings-referens

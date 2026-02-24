@@ -101,7 +101,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const pendingDebugContextRef = useRef<DebugContext | null>(null);
   const [messageModels, setMessageModels] = useState<Map<string, string>>(new Map());
   const pendingModelKeyRef = useRef<string | null>(null);
-  // Modal state for tool result previews
   const [openQuoteData, setOpenQuoteData] = useState<QuotePreviewData | null>(null);
   const [openSearchResults, setOpenSearchResults] = useState<SearchResult[] | null>(null);
   const [openReportData, setOpenReportData] = useState<ReportPreviewData | null>(null);
@@ -133,9 +132,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   } | null>(null);
   const [openNoteListData, setOpenNoteListData] = useState<NoteListPanelData | null>(null);
   const [noteListCategories, setNoteListCategories] = useState<NoteCategoryItem[]>([]);
-  // Email preview panel state
   const [openEmailPreviewData, setOpenEmailPreviewData] = useState<(EmailPreviewData & { memberIds?: string[] }) | null>(null);
-  // Collapsible left panel and chat panel states (persisted)
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(() => {
     if (typeof window === "undefined") return false;
     try {
@@ -152,9 +149,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       return false;
     }
   });
-  // Track which messages have attached images (messageIndex -> fileIds)
   const [chatImageMap, setChatImageMap] = useState<Map<number, string[]>>(new Map());
-  // Pending image file IDs to be sent with the next message
   const pendingImageFileIdsRef = useRef<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -164,27 +159,22 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const isInitialLoadRef = useRef<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fullscreen state
   const [isFullscreen, setIsFullscreen] = useState(false);
 
-  // Resizable panel state
   const { panelWidth, isResizing, handleResizeStart } = usePersonalAiChatPanelResize(mode);
 
-  // Persist left panel collapsed state
   useEffect(() => {
     try {
       localStorage.setItem(LEFT_PANEL_COLLAPSED_KEY, String(leftPanelCollapsed));
     } catch { /* ignore */ }
   }, [leftPanelCollapsed]);
 
-  // Persist chat panel collapsed state
   useEffect(() => {
     try {
       localStorage.setItem(CHAT_PANEL_COLLAPSED_KEY, String(chatPanelCollapsed));
     } catch { /* ignore */ }
   }, [chatPanelCollapsed]);
 
-  // Real-time file update via websocket
   const handleFileUpdated = useCallback((event: RealtimeFileEvent) => {
     setUploadedFiles((prev) =>
       prev.map((f) =>
@@ -202,12 +192,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   useSocketEvent(SOCKET_EVENTS.fileUpdated, handleFileUpdated);
 
-  // Fullscreen toggle
   const toggleFullscreen = useCallback(() => {
     setIsFullscreen((prev) => !prev);
   }, []);
 
-  // Close fullscreen on Escape key
   useEffect(() => {
     if (!isFullscreen) return;
     const handleEscape = (e: KeyboardEvent) => {
@@ -219,7 +207,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isFullscreen]);
 
-  // Project selector state
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [projectList, setProjectList] = useState<Array<{ id: string; name: string }>>([]);
   const activeProjectIdRef = useRef<string | null>(null);
@@ -233,30 +220,25 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     removeUploadedFile,
   } = useChatFileUpload(conversationId, activeProjectIdRef, t);
 
-  // Model selector state
   const [selectedModel, setSelectedModel] = useState<ProviderKey>("GEMINI_FLASH");
   const selectedModelRef = useRef<ProviderKey>("GEMINI_FLASH");
   selectedModelRef.current = selectedModel;
 
-  // Pagination state
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const lastScrollHeightRef = useRef<number>(0);
 
-  // Sync activeProjectId with URL-based initialProjectId
   useEffect(() => {
     if (initialProjectId) {
       setActiveProjectId(initialProjectId);
     }
   }, [initialProjectId]);
 
-  // Voice mode state
   const [voiceMode, setVoiceMode] = useState<VoiceMode>("off");
   const [triggerConversationRecording, setTriggerConversationRecording] = useState(false);
   const [interimTranscript, setInterimTranscript] = useState("");
 
-  // Apply initial voice mode when opening via voice CTA
   useEffect(() => {
     if (open && initialVoiceMode) {
       setVoiceMode(initialVoiceMode);
@@ -267,8 +249,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const isSpeakingRef = useRef<boolean>(false);
   const lastSpokenMessageIdRef = useRef<string | null>(null);
 
-  // Scroll only the chat container to bottom — never use scrollIntoView, as that
-  // scrolls the document/window too and pushes the whole page down on desktop.
   const scrollToBottom = useCallback((behavior: ScrollBehavior = "smooth") => {
     if (scrollRafRef.current !== null) {
       cancelAnimationFrame(scrollRafRef.current);
@@ -285,7 +265,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     });
   }, []);
 
-  // Track if user is near the bottom of the chat
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -362,7 +341,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     },
   });
 
-  // Associate pending debug context with assistant message once streaming finishes
   useEffect(() => {
     if (isLoading || !pendingDebugContextRef.current) return;
     const lastMsg = messages[messages.length - 1];
@@ -377,7 +355,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     }
   }, [isLoading, messages]);
 
-  // Associate pending model key with the last assistant message once streaming finishes
   useEffect(() => {
     if (isLoading || !pendingModelKeyRef.current) return;
     const lastMsg = messages[messages.length - 1];
@@ -388,7 +365,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     }
   }, [isLoading, messages]);
 
-  // Auto-speak assistant messages when voice mode includes TTS
   const ttsEnabled = voiceMode !== "off";
   const isConversationMode = voiceMode === "conversation-auto" || voiceMode === "conversation-manual";
 
@@ -430,7 +406,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     []
   );
 
-  // Load projects when chat opens
   useEffect(() => {
     if (!open) return;
     const loadProjects = async () => {
@@ -442,7 +417,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     void loadProjects();
   }, [open]);
 
-  // Load briefing when chat opens
   useEffect(() => {
     if (!open || briefingData) return;
     const loadBriefing = async () => {
@@ -459,7 +433,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     void loadBriefing();
   }, [open, briefingData]);
 
-  // Load project context when activeProjectId changes
   useEffect(() => {
     if (!activeProjectId) {
       setProjectContext(null);
@@ -479,7 +452,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     void loadContext();
   }, [activeProjectId]);
 
-  // Load note categories when note list panel opens (for NoteCard edit dropdown)
   useEffect(() => {
     if (!openNoteListData) return;
     getNoteCategories(null).then((r) => {
@@ -539,7 +511,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     }
   }, [conversationId, nextCursor, isLoadingMore, setMessages]);
 
-  // Adjust scroll position after loading more messages
   useEffect(() => {
     if (lastScrollHeightRef.current > 0 && scrollContainerRef.current && !isLoadingMore) {
       const newScrollHeight = scrollContainerRef.current.scrollHeight;
@@ -549,7 +520,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     }
   }, [messages, isLoadingMore]);
 
-  // Infinite scroll: load more when sentinel (top of list) becomes visible
   useEffect(() => {
     const scrollContainer = scrollContainerRef.current;
     const sentinel = sentinelRef.current;
@@ -625,12 +595,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     [handleFileSelect]
   );
 
-  // Handle interim transcript updates from Web Speech API
   const handleInterimTranscript = useCallback((text: string) => {
     setInterimTranscript(text);
   }, []);
 
-  // Handle voice input - send message directly (auto-send mode)
   const handleVoiceInput = useCallback(
     (text: string) => {
       if (!text.trim() || isLoading) return;
@@ -642,7 +610,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     [isLoading, sendMessage]
   );
 
-  // Handle voice input - put text in input field (manual mode)
   const handleVoiceInputManual = useCallback(
     (text: string) => {
       if (!text.trim()) return;
@@ -652,7 +619,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     []
   );
 
-  // Handle push-to-talk one-off recording result
   const handlePushToTalkResult = useCallback(
     (text: string) => {
       if (!text.trim()) return;
@@ -706,7 +672,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     [inputValue, isLoading, sendMessage, uploadedFiles, messages.length]
   );
 
-  // Report generation handler (shared by ChatResultButton → Dialog)
   const handleReportGenerate = useCallback(async (finalData: ReportPreviewData) => {
     const contentParts: string[] = [];
     for (const section of finalData.sections) {
@@ -807,7 +772,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     openWholesalerPanel,
   };
 
-  // Called when OCR review is complete - analysis runs in background
   const handleOcrReviewComplete = useCallback(
     (result: { ocrText: string; userDescription: string; skipped: boolean }) => {
       const file = analysisFile;
@@ -870,7 +834,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   );
 
-  // Chat body content shared by both modes (min-h-0 so flex children can shrink in Sheet)
   const chatBody = (
     <div
       className={cn(
@@ -1023,7 +986,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     </div>
   );
 
-  // RAG debug modal
   const debugModalContext = debugModalMessageId ? messageDebugContext.get(debugModalMessageId) : undefined;
   const ragDebugUI = debugModalContext ? (
     <RagDebugModal
@@ -1033,8 +995,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   ) : null;
 
-  // Determine active tool panel type for docked inline rendering
-  // Email has priority over search (only one visible at a time in left panel)
   const activeToolPanel: ActiveToolPanel = openEmailPreviewData
     ? { type: "email", title: t("emailPanel.title") }
     : openQuoteData
@@ -1057,7 +1017,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     ? { type: "shoppingList", title: tShopping("title") }
                     : null;
 
-  // Close the currently active tool panel
   const closeActiveToolPanel = useCallback(() => {
     setOpenQuoteData(null);
     setOpenSearchResults(null);
@@ -1071,7 +1030,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setOpenEmailPreviewData(null);
   }, []);
 
-  // Panel data for the currently active tool panel (for ToolPanels component)
   const panelData: PersonalAiChatPanelData | null = activeToolPanel
     ? (() => {
         switch (activeToolPanel.type) {
@@ -1133,7 +1091,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     },
   };
 
-  // OCR review dialog - simple review + save, analysis runs in background
   const fileAnalysisUI = analysisFile ? (
     <OcrReviewDialog
       open={!!analysisFile}
@@ -1143,9 +1100,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   ) : null;
 
-  // Docked mode: render as a static sidebar panel
   if (mode === "docked") {
-    // Fullscreen mode - overlay everything (use Sheet overlays for tool panels)
     if (isFullscreen) {
       return (
         <>
@@ -1177,11 +1132,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       );
     }
 
-    // Regular docked mode with layout: [Left panel (search/email)] [Chat column]
-    // Both panels are collapsible to a narrow strip.
-    // When chat is not open (open=false), render only a strip to reopen.
-
-    // Strip for reopening chat when open=false
     if (!open) {
       return (
         <div
@@ -1196,7 +1146,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       );
     }
 
-    // Chat panel collapsed to a strip (when open=true but user collapsed the chat)
     if (chatPanelCollapsed) {
       return (
         <>
@@ -1312,7 +1261,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     );
   }
 
-  // Sheet mode: render as overlay (default)
   return (
     <>
       {/* Fullscreen mode - overlay everything */}

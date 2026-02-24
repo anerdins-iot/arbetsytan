@@ -1,6 +1,6 @@
 # Plan: Refaktorering personal-ai-chat.tsx
 
-**Mål:** Bryta ut `web/src/components/ai/personal-ai-chat.tsx` (~2763 rader) till mindre moduler utan att ändra funktionalitet. DRY, tydlig dokumentation.
+**Mål:** Bryta ut `web/src/components/ai/personal-ai-chat.tsx` (~2763 rader) till mindre moduler utan att ändra funktionalitet. DRY, tydlig dokumentation. Efter refaktoreringen består den personliga AI-chatten av flera moduler (types, constants, utils, hooks, message-parts, tool-card, message-list, tool-panel-content, tool-panels, input, header, history-dropdown, file-upload-strip); `personal-ai-chat.tsx` är sammansättningskomponenten.
 
 **Källa:** Nuvarande fil inkl. senaste commits (collapse-knappar, dedupe, felmeddelanden, LEFT_PANEL_* / CHAT_PANEL_* / STRIP_WIDTH).
 
