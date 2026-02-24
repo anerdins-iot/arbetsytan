@@ -67,7 +67,7 @@ import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
 import { WholesalerSearchResultButton } from "@/components/ai/wholesaler-search-result-button";
-import { WholesalerSearchPanel } from "@/components/wholesaler/wholesaler-search-panel";
+import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
 
 // Formatera datum för konversationshistorik
@@ -151,12 +151,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [projectContext, setProjectContext] = useState<ProjectContextResult | null>(null);
   const [isLoadingContext, setIsLoadingContext] = useState(false);
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
-  const [wholesalerPanelOpen, setWholesalerPanelOpen] = useState(false);
-  const [wholesalerSearchData, setWholesalerSearchData] = useState<{
-    query: string;
-    products: WholesalerProduct[];
-    count: number;
-  } | null>(null);
+  const { openPanel: openWholesalerPanel } = useWholesalerPanel();
   const [messageDebugContext, setMessageDebugContext] = useState<Map<string, DebugContext>>(new Map());
   const [debugModalMessageId, setDebugModalMessageId] = useState<string | null>(null);
   const pendingDebugContextRef = useRef<DebugContext | null>(null);
@@ -1355,8 +1350,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                         query={wsData.query}
                         count={wsData.count}
                         onOpen={() => {
-                          setWholesalerSearchData(wsData);
-                          setWholesalerPanelOpen(true);
+                          openWholesalerPanel(wsData);
                         }}
                       />
                     );
@@ -1657,16 +1651,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   ) : null;
 
-  // Wholesaler search panel — opened from WholesalerSearchResultButton in chat
-  const wholesalerPanelUI = (
-    <WholesalerSearchPanel
-      open={wholesalerPanelOpen}
-      onOpenChange={setWholesalerPanelOpen}
-      initialQuery={wholesalerSearchData?.query}
-      initialProducts={wholesalerSearchData?.products}
-    />
-  );
-
   // OCR review dialog - simple review + save, analysis runs in background
   const fileAnalysisUI = analysisFile ? (
     <OcrReviewDialog
@@ -1691,7 +1675,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
           </div>
           {fileAnalysisUI}
           {ragDebugUI}
-          {wholesalerPanelUI}
         </>
       );
     }
@@ -1716,7 +1699,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         </div>
         {fileAnalysisUI}
         {ragDebugUI}
-        {wholesalerPanelUI}
       </>
     );
   }
@@ -1754,7 +1736,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
       {fileAnalysisUI}
       {ragDebugUI}
-      {wholesalerPanelUI}
     </>
   );
 }
