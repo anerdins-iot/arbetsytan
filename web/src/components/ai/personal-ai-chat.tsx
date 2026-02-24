@@ -1291,25 +1291,80 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               groups.push({ type: "text", text: textAcc.join("") });
             }
 
-            // Deduplicate tool result cards per message (same result = one button only; avoids duplicate cards when AI returns multiple identical tool calls)
-            const seenSearchSignatures = new Set<string>();
-            const seenToolSignatures = new Set<string>();
-            function seenTool(key: string, sig: string): boolean {
-              const full = `${key}:${sig}`;
-              if (seenToolSignatures.has(full)) return true;
-              seenToolSignatures.add(full);
-              return false;
-            }
+            // Centralized deduplication: filter tool groups so we only keep the first of each (type, signature).
+            // Prevents duplicate cards and "new button per keystroke" when re-renders or message refs change.
+            const getToolDedupeKey = (part: (typeof parts)[number]): string | null => {
+              const result = (part as { output?: Record<string, unknown> }).output;
+              if (!result || (part as { state?: string }).state !== "output-available") return null;
+              if (result.__searchResults && Array.isArray(result.results)) {
+                const r = result.results as SearchResult[];
+                return `search:${r.length}-${r[0]?.fileId ?? ""}`;
+              }
+              if (result.__noteList) {
+                const d = result.__noteList as { count: number; projectId?: string; notes?: { id?: string }[] };
+                return `noteList:${d.count}:${d.projectId ?? "p"}:${d.notes?.[0]?.id ?? ""}`;
+              }
+              if (result.__taskList) {
+                const d = result.__taskList as { count: number; projectId?: string; tasks?: { id?: string }[] };
+                return `taskList:${d.count}:${d.projectId ?? ""}:${d.tasks?.[0]?.id ?? ""}`;
+              }
+              if (result.__fileList) {
+                const d = result.__fileList as { count: number; projectId?: string; files?: { id?: string }[] };
+                return `fileList:${d.count}:${d.projectId ?? ""}:${d.files?.[0]?.id ?? ""}`;
+              }
+              if (result.__quoteList) {
+                const d = result.__quoteList as { count: number; quotes?: { id?: string }[] };
+                return `quoteList:${d.count}:${d.quotes?.[0]?.id ?? ""}`;
+              }
+              if (result.__timeEntryList) {
+                const d = result.__timeEntryList as { count?: number; entries?: unknown[] };
+                return `timeEntryList:${d.count ?? d.entries?.length ?? 0}`;
+              }
+              if (result.__shoppingLists) {
+                const d = result.__shoppingLists as { count?: number; lists?: { id?: string }[] };
+                return `shoppingLists:${d.count ?? 0}:${d.lists?.[0]?.id ?? ""}`;
+              }
+              if (result.__reportPreview) {
+                const d = result as { title?: string; projectId?: string };
+                return `report:${d.title ?? ""}:${d.projectId ?? ""}`;
+              }
+              if (result.__quotePreview) {
+                const d = result as { title?: string; projectId?: string };
+                return `quotePreview:${d.title ?? ""}:${d.projectId ?? ""}`;
+              }
+              if (result.__wholesalerSearch) {
+                const d = result.__wholesalerSearch as { query?: string; count?: number };
+                return `wholesaler:${d.query ?? ""}:${d.count ?? 0}`;
+              }
+              if (result.__deleteConfirmation) {
+                const d = result as { type: string; items?: { id: string }[] };
+                return `delete:${d.type}:${(d.items ?? []).map((it) => it.id).sort().join(",")}`;
+              }
+              return null;
+            };
+
+            const seenToolKeys = new Set<string>();
+            const filteredGroups: Array<TextGroup | ToolGroup> =
+              message.role !== "assistant"
+                ? groups
+                : groups.filter((g) => {
+                    if (g.type === "text") return true;
+                    const key = getToolDedupeKey(g.part);
+                    if (key === null) return true;
+                    if (seenToolKeys.has(key)) return false;
+                    seenToolKeys.add(key);
+                    return true;
+                  });
 
             return (
             <div
-              key={`${message.id}-${messageIndex}`}
+              key={message.id ?? `msg-${messageIndex}`}
               className={cn(
                 "flex flex-col gap-1",
                 message.role === "user" ? "items-end" : "items-start"
               )}
             >
-              {groups.map((group, groupIndex) => {
+              {filteredGroups.map((group, groupIndex) => {
                 if (group.type === "text") {
                   return (
                     <div
@@ -1386,9 +1441,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                   if (result?.__searchResults && Array.isArray(result.results)) {
                     const searchResults = result.results as SearchResult[];
-                    const sig = `${searchResults.length}-${searchResults[0]?.fileId ?? ""}`;
-                    if (seenSearchSignatures.has(sig)) return null;
-                    seenSearchSignatures.add(sig);
                     return (
                       <ChatResultButton
                         key={i}
@@ -1425,8 +1477,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const reportData = result as unknown as ReportPreviewData & {
                       __reportPreview: true;
                     };
-                    const sig = `${reportData.title ?? ""}:${reportData.projectId ?? ""}`;
-                    if (seenTool("report", sig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1451,9 +1501,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       __deleteConfirmation: true;
                       actionParams: Record<string, string>;
                     };
-                    const deleteSig = `${deleteData.type}:${deleteData.items.map((it) => it.id).sort().join(",")}`;
-                    if (seenTool("deleteConfirmation", deleteSig)) return null;
-
                     const handleDeleteConfirm = async () => {
                       const { type, actionParams } = deleteData;
                       switch (type) {
@@ -1522,8 +1569,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const quoteData = result as unknown as QuotePreviewData & {
                       __quotePreview: true;
                     };
-                    const sig = `${quoteData.title ?? ""}:${quoteData.projectId ?? ""}`;
-                    if (seenTool("quotePreview", sig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1552,8 +1597,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       products: WholesalerProduct[];
                       count: number;
                     };
-                    const sig = `${wsData.query}:${wsData.count}`;
-                    if (seenTool("wholesaler", sig)) return null;
                     return (
                       <WholesalerSearchResultButton
                         key={i}
@@ -1586,8 +1629,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       quotes: raw.quotes as SerializedQuote[],
                       count: raw.count,
                     };
-                    const quoteListSig = `${listData.count}:${raw.quotes[0]?.id ?? ""}`;
-                    if (seenTool("quoteList", quoteListSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1601,8 +1642,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                   if (result?.__noteList) {
                     const noteData = result.__noteList as NoteListPanelData;
-                    const noteSig = `${noteData.count}:${noteData.projectId ?? "personal"}:${(noteData.notes?.[0] as { id?: string } | undefined)?.id ?? ""}`;
-                    if (seenTool("noteList", noteSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1618,7 +1657,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   if (result?.__timeEntryList) {
                     const teData = result.__timeEntryList as { entries: unknown[]; count: number };
                     const count = teData.count ?? teData.entries?.length ?? 0;
-                    if (seenTool("timeEntryList", String(count))) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1637,8 +1675,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       projectId?: string;
                       projectName?: string;
                     };
-                    const fileListSig = `${fileListData.count}:${fileListData.projectId ?? ""}:${fileListData.files?.[0]?.id ?? ""}`;
-                    if (seenTool("fileList", fileListSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1658,8 +1694,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       projectId?: string;
                       projectName?: string;
                     };
-                    const taskListSig = `${tlData.count}:${tlData.projectId ?? ""}:${(tlData.tasks?.[0] as { id?: string } | undefined)?.id ?? ""}`;
-                    if (seenTool("taskList", taskListSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1681,8 +1715,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       lists: SerializedShoppingListItem[];
                       count: number;
                     };
-                    const slSig = `${slData.count}:${(slData.lists?.[0] as { id?: string } | undefined)?.id ?? ""}`;
-                    if (seenTool("shoppingLists", slSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
