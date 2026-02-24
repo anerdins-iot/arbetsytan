@@ -741,9 +741,17 @@ VIKTIGT: När du använder web_search, citera alltid källorna i ditt svar.`;
     ? "\n\nBILDANALYS: Användaren har bifogat en eller flera bilder. Analysera bilden/bilderna noggrant och beskriv vad du ser. Ställ EN konkret följdfråga för att förstå sammanhanget bättre — t.ex. vad bilden föreställer, var den togs, eller hur den relaterar till arbetet."
     : "";
 
+  // List formatting - chat renders markdown; pipe-separated lines look bad
+  const listFormatRule = `
+FORMAT FÖR LISTOR: När du listar dokument, alternativ eller val (t.ex. sökresultat), använd ALLTID markdown med ett alternativ per rad — antingen numrerad lista (1. 2. 3.) eller punktlista (- [1] ... - [2] ...). Skriv ALDRIG listan som en enda rad med "|" mellan alternativen; det blir oläsligt. Exempel rätt:
+- [1] Dokument A
+- [2] Dokument B
+Exempel fel: [1] Dokument A | [2] Dokument B`;
+
   parts.push(
     "Svara på svenska, var konkret och kort.",
     "När du använder information från dokument, citera källan med [1], [2] enligt numreringen nedan.",
+    listFormatRule,
     "Om du inte vet svaret efter att ha sökt ordentligt, säg det.",
     factualPolicy,
     proactivePolicy,
