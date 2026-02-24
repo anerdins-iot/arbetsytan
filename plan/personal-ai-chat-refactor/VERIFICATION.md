@@ -38,10 +38,10 @@
 
 ## Fas 4 – Konversationshistorik
 
-- [ ] Finns `web/src/hooks/use-conversation-history.ts` med conversations, loadingHistory, historyOpen, loadConversations, loadConversation, startNewConversation (eller motsvarande API som planen beskriver).
-- [ ] Finns `web/src/components/ai/personal-ai-chat-history-dropdown.tsx` med props enligt plan.
-- [ ] Huvudkomponenten använder hook + dropdown; conversationId, messages, nextCursor/hasMore styrs fortfarande från parent där det behövs.
-- [ ] Build passerar.
+- [x] Finns `web/src/hooks/use-conversation-history.ts` med conversations, loadingHistory, historyOpen, loadConversations, loadConversation, startNewConversation (eller motsvarande API som planen beskriver).
+- [x] Finns `web/src/components/ai/personal-ai-chat-history-dropdown.tsx` med props enligt plan.
+- [x] Huvudkomponenten använder hook + dropdown; conversationId, messages, nextCursor/hasMore styrs fortfarande från parent där det behövs.
+- [x] Build passerar.
 
 ---
 

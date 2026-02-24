@@ -8,11 +8,11 @@
 | 1 | Typer, konstanter, utils (1.1–1.4) | Cursor auto | Cursor auto | Orchestrator | Klar |
 | 2 | Panel resize hook (2.1–2.2) | Cursor auto | Cursor auto | Orchestrator | Klar |
 | 3 | Filuppladdning hook + strip (3.1–3.3) | Cursor auto | Cursor auto | Orchestrator | Klar |
-| 4 | Konversationshistorik hook + dropdown (4.1–4.3) | Cursor auto | Cursor auto | Orchestrator | Pågår |
-| 5 | Message parts + ToolCard + MessageList (5.1–5.4) | Cursor auto | Cursor auto | Orchestrator | Ej påbörjad |
+| 4 | Konversationshistorik hook + dropdown (4.1–4.3) | Cursor auto | Cursor auto | Orchestrator | Klar |
+| 5 | Message parts + ToolCard + MessageList (5.1–5.4) | Cursor auto | Cursor auto | Orchestrator | Pågår |
 | 6 | Tool panel content + ToolPanels (6.1–6.3) | Cursor auto | Cursor auto | Orchestrator | Ej påbörjad |
 | 7 | PersonalAiChatInput (7.1–7.2) | Cursor auto | Cursor auto | Orchestrator | Ej påbörjad |
 | 8 | PersonalAiChatHeader (8.1–8.3) | Cursor auto | Cursor auto | Orchestrator | Ej påbörjad |
 | 9 | Huvudkomponent + doc-svep (9.1–9.2) | Cursor auto | Cursor auto | Orchestrator | Ej påbörjad |
 
-**Senast uppdaterad:** Fas 3 mergad och avcheckad. Fas 4 impl startad.
+**Senast uppdaterad:** Fas 4 mergad och avcheckad. Fas 5 impl startad.
