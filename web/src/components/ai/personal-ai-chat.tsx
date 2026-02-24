@@ -50,13 +50,13 @@ import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
 import type { UploadedFile, AnalysisFileData, NoteListPanelData, PersonalAiChatProps } from "@/components/ai/personal-ai-chat-types";
 import {
-  ALLOWED_EXTENSIONS,
-  MAX_FILE_SIZE,
   LEFT_PANEL_COLLAPSED_KEY,
   CHAT_PANEL_COLLAPSED_KEY,
   LEFT_PANEL_WIDTH,
   STRIP_WIDTH,
 } from "@/components/ai/personal-ai-chat-constants";
+import { useChatFileUpload } from "@/hooks/use-chat-file-upload";
+import { ChatUploadedFilesStrip } from "@/components/ai/chat-uploaded-files-strip";
 import { usePersonalAiChatPanelResize } from "@/hooks/use-personal-ai-chat-panel-resize";
 import {
   getChatErrorKey,
@@ -117,7 +117,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [conversations, setConversations] = useState<ConversationListItem[]>([]);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [briefingData, setBriefingData] = useState<DailyBriefingData | null>(null);
   const [isLoadingBriefing, setIsLoadingBriefing] = useState(false);
@@ -254,6 +253,14 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [projectList, setProjectList] = useState<Array<{ id: string; name: string }>>([]);
   const activeProjectIdRef = useRef<string | null>(null);
   activeProjectIdRef.current = activeProjectId;
+
+  const {
+    uploadedFiles,
+    setUploadedFiles,
+    uploadFile,
+    handleFileSelect,
+    removeUploadedFile,
+  } = useChatFileUpload(conversationId, activeProjectIdRef, t);
 
   // Model selector state
   const [selectedModel, setSelectedModel] = useState<ProviderKey>("GEMINI_FLASH");
@@ -605,119 +612,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     return () => observer.disconnect();
   }, [conversationId, hasMore, isLoadingMore, loadMoreMessages]);
 
-  // Filuppladdning — chatMode: upload silently, show thumbnail, send via vision
-  const uploadFile = useCallback(
-    async (file: File) => {
-      const tempId = `temp-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const isImage = file.type.startsWith("image/");
-      const tempUrl = isImage ? URL.createObjectURL(file) : undefined;
-
-      const uploadEntry: UploadedFile = {
-        id: tempId,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        status: "uploading",
-        thumbnailUrl: tempUrl,
-      };
-
-      setUploadedFiles((prev) => [...prev, uploadEntry]);
-
-      try {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("chatMode", "true");
-        if (conversationId) {
-          formData.append("conversationId", conversationId);
-        }
-        if (activeProjectIdRef.current) {
-          formData.append("projectId", activeProjectIdRef.current);
-        }
-
-        const res = await fetch("/api/ai/upload", {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({ error: "Upload failed" }));
-          throw new Error(data.error || "Upload failed");
-        }
-
-        const data = await res.json();
-
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.id === tempId
-              ? {
-                  ...f,
-                  id: data.file.id,
-                  status: "done" as const,
-                  url: data.file.url,
-                  ocrText: data.file.ocrText ?? null,
-                  thumbnailUrl: isImage ? (data.file.url ?? tempUrl) : undefined,
-                }
-              : f
-          )
-        );
-
-        // Revoke temp blob URL if we got a real URL
-        if (tempUrl && data.file.url) {
-          URL.revokeObjectURL(tempUrl);
-        }
-      } catch (err) {
-        const errorMsg = err instanceof Error ? err.message : "Upload failed";
-        setUploadedFiles((prev) =>
-          prev.map((f) =>
-            f.id === tempId
-              ? { ...f, status: "error" as const, error: errorMsg }
-              : f
-          )
-        );
-        if (tempUrl) URL.revokeObjectURL(tempUrl);
-      }
-    },
-    [conversationId]
-  );
-
-  const handleFileSelect = useCallback(
-    (files: FileList | File[]) => {
-      const fileArray = Array.from(files);
-      for (const file of fileArray) {
-        if (file.size > MAX_FILE_SIZE) {
-          setUploadedFiles((prev) => [
-            ...prev,
-            {
-              id: `err-${Date.now()}`,
-              name: file.name,
-              type: file.type,
-              size: file.size,
-              status: "error",
-              error: t("fileTooLarge"),
-            },
-          ]);
-          continue;
-        }
-        if (!ALLOWED_EXTENSIONS.test(file.name)) {
-          setUploadedFiles((prev) => [
-            ...prev,
-            {
-              id: `err-${Date.now()}`,
-              name: file.name,
-              type: file.type,
-              size: file.size,
-              status: "error",
-              error: t("fileTypeNotAllowed"),
-            },
-          ]);
-          continue;
-        }
-        void uploadFile(file);
-      }
-    },
-    [uploadFile, t]
-  );
-
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragOver(true);
@@ -772,10 +666,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     },
     [handleFileSelect]
   );
-
-  const removeUploadedFile = useCallback((fileId: string) => {
-    setUploadedFiles((prev) => prev.filter((f) => f.id !== fileId));
-  }, []);
 
   // Handle interim transcript updates from Web Speech API
   const handleInterimTranscript = useCallback((text: string) => {
@@ -942,13 +832,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   }, [messages, isLoading, scrollToBottom]);
 
   // Ikon baserat på filtyp
-  const getFileIcon = (fileType: string) => {
-    if (fileType.startsWith("image/")) {
-      return <ImageIcon className="size-4 shrink-0" />;
-    }
-    return <FileText className="size-4 shrink-0" />;
-  };
-
   // Header content shared by both modes
   const headerContent = (
     <div className="flex items-center justify-between border-b border-border px-4 py-3">
@@ -1680,82 +1563,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       </div>
 
       {/* Uppladdade filer — thumbnails för bilder, kompakt chip för dokument */}
-      {uploadedFiles.length > 0 && (
-        <div className="border-t border-border px-3 py-2">
-          <div className="flex flex-wrap gap-2">
-            {uploadedFiles.map((file) => {
-              const isImage = file.type.startsWith("image/");
-              if (isImage && file.thumbnailUrl) {
-                return (
-                  <div
-                    key={file.id}
-                    className="group relative size-14 shrink-0 overflow-hidden rounded-md border border-border"
-                  >
-                    <img
-                      src={file.thumbnailUrl}
-                      alt={file.name}
-                      className="size-full object-cover"
-                    />
-                    {(file.status === "uploading" || file.status === "analyzing") && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/60">
-                        <Loader2 className="size-4 animate-spin text-muted-foreground" />
-                      </div>
-                    )}
-                    {file.status === "error" && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-destructive/20">
-                        <X className="size-4 text-destructive" />
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => removeUploadedFile(file.id)}
-                      className="absolute -right-1 -top-1 hidden rounded-full bg-background p-0.5 shadow-sm group-hover:block"
-                    >
-                      <X className="size-3" />
-                    </button>
-                  </div>
-                );
-              }
-              return (
-                <div
-                  key={file.id}
-                  className={cn(
-                    "flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs",
-                    file.status === "error"
-                      ? "border-destructive/50 bg-destructive/10 text-destructive"
-                      : file.status === "done"
-                        ? "border-border bg-muted text-foreground"
-                        : "border-border bg-muted/50 text-muted-foreground"
-                  )}
-                >
-                  {file.status === "uploading" || file.status === "analyzing" ? (
-                    <Loader2 className="size-3.5 animate-spin shrink-0" />
-                  ) : (
-                    getFileIcon(file.type)
-                  )}
-                  <span className="max-w-[120px] truncate">{file.name}</span>
-                  {file.status === "uploading" && (
-                    <span className="text-muted-foreground">{t("uploading")}</span>
-                  )}
-                  {file.status === "analyzing" && (
-                    <span className="text-muted-foreground">{t("analyzing")}</span>
-                  )}
-                  {file.error && (
-                    <span className="text-destructive">{file.error}</span>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => removeUploadedFile(file.id)}
-                    className="ml-auto rounded p-0.5 hover:bg-muted-foreground/20"
-                  >
-                    <X className="size-3" />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <ChatUploadedFilesStrip
+        files={uploadedFiles}
+        onRemove={removeUploadedFile}
+        t={t}
+      />
 
       {/* Felmeddelande */}
       {error && (
