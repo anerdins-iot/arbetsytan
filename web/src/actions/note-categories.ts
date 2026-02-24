@@ -41,6 +41,13 @@ const updateSchema = z.object({
 // Helpers
 // ─────────────────────────────────────────
 
+/** Inledande versal: första tecken stor bokstav, resten oförändrad (t.ex. "brandlarm" → "Brandlarm"). */
+function capitalizeFirstLetter(name: string): string {
+  const trimmed = name.trim();
+  if (!trimmed.length) return trimmed;
+  return trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+}
+
 function generateSlug(name: string): string {
   return name
     .toLowerCase()
@@ -107,7 +114,8 @@ export async function createNoteCategory(
     }
 
     const db = tenantDb(tenantId, { actorUserId: userId });
-    const slug = parsed.data.slug || generateSlug(parsed.data.name);
+    const displayName = capitalizeFirstLetter(parsed.data.name);
+    const slug = parsed.data.slug || generateSlug(displayName);
     const projectId = parsed.data.projectId ?? null;
 
     // Check for duplicate slug in same scope (tenantId + projectId)
@@ -120,7 +128,7 @@ export async function createNoteCategory(
 
     const category = await db.noteCategory.create({
       data: {
-        name: parsed.data.name,
+        name: displayName,
         slug,
         color: parsed.data.color ?? null,
         tenantId,
@@ -155,7 +163,8 @@ export async function updateNoteCategory(
     }
 
     const scopeProjectId = parsed.data.projectId !== undefined ? parsed.data.projectId : existing.projectId;
-    const newSlug = parsed.data.slug ?? (parsed.data.name ? generateSlug(parsed.data.name) : undefined);
+    const newName = parsed.data.name !== undefined ? capitalizeFirstLetter(parsed.data.name) : undefined;
+    const newSlug = parsed.data.slug ?? (newName ? generateSlug(newName) : undefined);
     if (newSlug && newSlug !== existing.slug) {
       const duplicate = await db.noteCategory.findFirst({
         where: { slug: newSlug, projectId: scopeProjectId },
@@ -166,7 +175,7 @@ export async function updateNoteCategory(
     }
 
     const updateData: Record<string, unknown> = {};
-    if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
+    if (newName !== undefined) updateData.name = newName;
     if (newSlug !== undefined) updateData.slug = newSlug;
     if (parsed.data.color !== undefined) updateData.color = parsed.data.color;
     if (parsed.data.projectId !== undefined) updateData.projectId = parsed.data.projectId;

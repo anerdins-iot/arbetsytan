@@ -147,7 +147,12 @@ import {
   deletePersonalFile as deletePersonalFileAction,
   moveProjectFileToPersonal as moveProjectFileToPersonalAction,
 } from "@/actions/personal";
-import { deleteNoteCategory as deleteNoteCategoryAction } from "@/actions/note-categories";
+import {
+  getNoteCategories as getNoteCategoriesAction,
+  createNoteCategory as createNoteCategoryAction,
+  updateNoteCategory as updateNoteCategoryAction,
+  deleteNoteCategory as deleteNoteCategoryAction,
+} from "@/actions/note-categories";
 
 export type PersonalToolsContext = {
   db: TenantScopedClient;
@@ -1673,13 +1678,13 @@ Returnera ENBART JSON i följande format:
 
   const createProjectNote = tool({
     description:
-      "Skapa en anteckning i ett projekt (beslut, teknisk info, kundönskemål etc.).",
+      "Skapa en anteckning i ett projekt (beslut, teknisk info, kundönskemål etc.). När du vill använda en tagg/kategori: anropa först listNoteCategories(projectId) – om taggen finns, använd dess slug som category; om den saknas, skapa den med createNoteCategory(name, projectId) (namn med inledande versal, t.ex. Brandlarm) och använd den returnerade slug. Så att taggen blir spårbar i systemet.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       content: z.string().describe("Anteckningens innehåll"),
       title: z.string().optional().describe("Valfri titel"),
       category: z.string().optional()
-        .describe("Kategori (slug)"),
+        .describe("Kategori: använd slug från listNoteCategories eller från createNoteCategory"),
     })),
     execute: async ({ projectId: pid, content, title, category }) => {
       const result = await createNoteAction(pid, { title, content, category });
@@ -1696,14 +1701,14 @@ Returnera ENBART JSON i följande format:
   });
 
   const updateProjectNote = tool({
-    description: "Uppdatera en befintlig anteckning i ett projekt.",
+    description: "Uppdatera en befintlig anteckning i ett projekt. Vid ny kategori: anropa listNoteCategories(projectId), använd befintlig slug eller createNoteCategory(name, projectId) och använd returnerad slug.",
     inputSchema: toolInputSchema(z.object({
       projectId: z.string().describe("Projektets ID"),
       noteId: z.string().describe("Anteckningens ID"),
       content: z.string().optional().describe("Nytt innehåll"),
       title: z.string().optional().describe("Ny titel"),
       category: z.string().optional()
-        .describe("Ny kategori (slug)"),
+        .describe("Ny kategori: slug från listNoteCategories eller createNoteCategory"),
     })),
     execute: async ({ projectId: pid, noteId, content, title, category }) => {
       const data: { content?: string; title?: string; category?: string | null } = {};
@@ -1842,12 +1847,12 @@ Returnera ENBART JSON i följande format:
 
   const createPersonalNote = tool({
     description:
-      "Skapa en personlig anteckning (inte kopplad till något projekt). Använd för att spara personliga tankar, idéer eller information.",
+      "Skapa en personlig anteckning (inte kopplad till något projekt). När du vill använda en tagg: anropa listNoteCategories() (utan projectId) – om taggen finns, använd dess slug; annars createNoteCategory(name) och använd returnerad slug.",
     inputSchema: toolInputSchema(z.object({
       content: z.string().describe("Anteckningens innehåll"),
       title: z.string().optional().describe("Valfri titel"),
       category: z.string().optional()
-        .describe("Kategori (slug)"),
+        .describe("Kategori: slug från listNoteCategories eller createNoteCategory"),
     })),
     execute: async ({ content, title, category }) => {
       const result = await createPersonalNoteAction({ title, content, category });
@@ -1864,13 +1869,13 @@ Returnera ENBART JSON i följande format:
   });
 
   const updatePersonalNote = tool({
-    description: "Uppdatera en personlig anteckning.",
+    description: "Uppdatera en personlig anteckning. Vid ny kategori: anropa listNoteCategories(), använd befintlig slug eller createNoteCategory(name) och använd returnerad slug.",
     inputSchema: toolInputSchema(z.object({
       noteId: z.string().describe("Anteckningens ID"),
       content: z.string().optional().describe("Nytt innehåll"),
       title: z.string().optional().describe("Ny titel"),
       category: z.string().optional()
-        .describe("Ny kategori (slug)"),
+        .describe("Ny kategori: slug från listNoteCategories eller createNoteCategory"),
     })),
     execute: async ({ noteId, content, title, category }) => {
       const result = await updatePersonalNoteAction(noteId, { content, title, category });
@@ -2670,96 +2675,65 @@ Returnera ENBART JSON i följande format:
 
   const listNoteCategories = tool({
     description:
-      "Hämta alla anteckningskategorier för tenanten.",
+      "Hämta anteckningskategorier (taggar). Anropa ALLTID detta innan du skapar eller uppdaterar en anteckning med kategori: om önskad tagg finns, använd dess slug; annars skapa först med createNoteCategory. För projektanteckningar: skicka projectId. För personliga anteckningar: skicka projectId null eller utelämna.",
     inputSchema: toolInputSchema(z.object({
-      _: z.string().optional().describe("Ignored"),
+      projectId: z.string().optional().nullable().describe("Projekt-ID för projektets kategorier; null eller utelämnad = personliga/tenant-kategorier"),
     })),
-    execute: async () => {
-      const categories = await db.noteCategory.findMany({
-        orderBy: { name: "asc" },
-      });
-      return categories.map((c: typeof categories[number]) => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-        color: c.color,
-      }));
+    execute: async ({ projectId }) => {
+      const result = await getNoteCategoriesAction(projectId ?? null);
+      if (!result.success) return { error: result.error };
+      return {
+        categories: result.categories.map((c) => ({ id: c.id, name: c.name, slug: c.slug, color: c.color })),
+        message: result.categories.length
+          ? `${result.categories.length} kategorier. Använd slug när du sätter category på en anteckning.`
+          : "Inga kategorier ännu. Skapa med createNoteCategory (namn med inledande versal, t.ex. Brandlarm) och använd sedan den returnerade slug.",
+      };
     },
   });
 
   const createNoteCategory = tool({
     description:
-      "Skapa en ny anteckningskategori. Slug genereras automatiskt från namnet.",
+      "Skapa en ny anteckningskategori (tagg) i systemet. Namnet normaliseras till inledande versal (t.ex. brandlarm → Brandlarm). Använd först listNoteCategories – om taggen redan finns, använd dess slug istället. För projektanteckning: skicka projectId; för personlig: utelämna projectId.",
     inputSchema: toolInputSchema(z.object({
-      name: z.string().min(1).max(50).describe("Kategorins namn"),
+      name: z.string().min(1).max(50).describe("Kategorins visningsnamn (t.ex. Brandlarm); blir inledande versal automatiskt"),
       color: z.string().optional().describe("Hex-färg, t.ex. #3b82f6"),
+      projectId: z.string().optional().nullable().describe("Projekt-ID om kategorin tillhör ett projekt; utelämna för personliga taggar"),
     })),
-    execute: async ({ name, color }) => {
-      const slug = name
-        .toLowerCase()
-        .replace(/[åä]/g, "a")
-        .replace(/ö/g, "o")
-        .replace(/[^a-z0-9]+/g, "_")
-        .replace(/^_|_$/g, "");
-
-      const existing = await db.noteCategory.findFirst({
-        where: { slug, projectId: null },
+    execute: async ({ name, color, projectId }) => {
+      if (projectId) {
+        await requireProject(tenantId, projectId, userId);
+      }
+      const result = await createNoteCategoryAction({
+        name,
+        color,
+        projectId: projectId ?? null,
       });
-      if (existing) return { error: `Kategori med slug "${slug}" finns redan.` };
-
-      // Use tenantDb with emitContext for auto-emit (personal scope = projectId null)
-      const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
-      const category = await dbWithEmit.noteCategory.create({
-        data: { name, slug, color: color ?? null, tenantId, projectId: null },
-      });
-
+      if (!result.success) return { error: result.error };
       return {
-        id: category.id,
-        name: category.name,
-        slug: category.slug,
-        color: category.color,
-        message: "Kategori skapad.",
+        id: result.category.id,
+        name: result.category.name,
+        slug: result.category.slug,
+        color: result.category.color,
+        message: `Kategori "${result.category.name}" skapad. Använd slug "${result.category.slug}" när du sätter category på anteckningen.`,
       };
     },
   });
 
   const updateNoteCategory = tool({
-    description: "Uppdatera en anteckningskategori.",
+    description: "Uppdatera en anteckningskategori. Namn normaliseras till inledande versal.",
     inputSchema: toolInputSchema(z.object({
       categoryId: z.string().describe("Kategorins ID"),
-      name: z.string().min(1).max(50).optional().describe("Nytt namn"),
+      name: z.string().min(1).max(50).optional().describe("Nytt visningsnamn (blir inledande versal)"),
       color: z.string().optional().nullable().describe("Ny hex-färg eller null för att ta bort"),
     })),
     execute: async ({ categoryId, name, color }) => {
-      const existing = await db.noteCategory.findFirst({
-        where: { id: categoryId },
-      });
-      if (!existing) return { error: "Kategorin hittades inte." };
-
-      const updateData: Record<string, unknown> = {};
-      if (name !== undefined) {
-        updateData.name = name;
-        updateData.slug = name
-          .toLowerCase()
-          .replace(/[åä]/g, "a")
-          .replace(/ö/g, "o")
-          .replace(/[^a-z0-9]+/g, "_")
-          .replace(/^_|_$/g, "");
-      }
-      if (color !== undefined) updateData.color = color;
-
-      // Use tenantDb with emitContext for auto-emit
-      const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
-      const category = await dbWithEmit.noteCategory.update({
-        where: { id: categoryId },
-        data: updateData,
-      });
-
+      const result = await updateNoteCategoryAction(categoryId, { name, color });
+      if (!result.success) return { error: result.error };
       return {
-        id: category.id,
-        name: category.name,
-        slug: category.slug,
-        color: category.color,
+        id: result.category.id,
+        name: result.category.name,
+        slug: result.category.slug,
+        color: result.category.color,
         message: "Kategori uppdaterad.",
       };
     },
