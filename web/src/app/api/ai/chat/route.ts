@@ -81,26 +81,35 @@ export async function POST(req: NextRequest) {
   }
 
   // Debug: runtime ENV visibility (Next.js standalone may not load Coolify ENV at runtime)
-  const providerKey = provider ?? "CLAUDE_HAIKU";
+  // Fallback priority: requested provider → GEMINI_FLASH → OPENAI → CLAUDE_HAIKU
+  const FALLBACK_ORDER: ProviderKey[] = ["GEMINI_FLASH", "OPENAI", "CLAUDE_HAIKU", "GEMINI_PRO", "MISTRAL_SMALL"];
+  const resolveProvider = (requested: ProviderKey | undefined): ProviderKey | null => {
+    const candidates = requested ? [requested, ...FALLBACK_ORDER.filter(p => p !== requested)] : FALLBACK_ORDER;
+    for (const candidate of candidates) {
+      const key = getRequiredEnvKeyForProvider(candidate);
+      if (key && process.env[key]?.trim()) return candidate;
+    }
+    return null;
+  };
+  const resolvedProvider = resolveProvider(provider as ProviderKey | undefined);
+
   logger.info("AI chat ENV check", {
+    requestedProvider: provider,
+    resolvedProvider,
     hasAnthropicKey: !!process.env.ANTHROPIC_API_KEY,
-    anthropicKeyLength: process.env.ANTHROPIC_API_KEY?.length ?? 0,
     hasOpenaiKey: !!process.env.OPENAI_API_KEY,
-    openaiKeyLength: process.env.OPENAI_API_KEY?.length ?? 0,
-    relevantEnvKeys: Object.keys(process.env).filter(
-      (k) => k.includes("ANTHROPIC") || k.includes("OPENAI") || k.includes("MISTRAL")
-    ),
+    hasGoogleKey: !!process.env.GOOGLE_GENERATIVE_AI_API_KEY,
   });
 
-  // Ensure AI provider API key is configured (fail fast with clear error)
-  const envKey = getRequiredEnvKeyForProvider(providerKey);
-  if (!envKey || !process.env[envKey]?.trim()) {
-    logger.warn("AI chat: missing API key for provider", { provider: providerKey, envKey });
+  if (!resolvedProvider) {
+    logger.warn("AI chat: no API key configured for any provider");
     return NextResponse.json(
       { error: "AI provider not configured. Check server environment variables." },
       { status: 503 }
     );
   }
+
+  const providerKey = resolvedProvider;
 
   // Get or create conversation
   let activeConversationId = conversationId;
