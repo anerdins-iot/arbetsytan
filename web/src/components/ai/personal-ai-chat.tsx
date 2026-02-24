@@ -12,7 +12,6 @@ import {
   X,
   FolderOpen,
   PanelRightClose,
-  PanelLeftClose,
   PanelRightOpen,
   PanelLeftOpen,
   Maximize2,
@@ -50,22 +49,26 @@ import { useConversationHistory } from "@/hooks/use-conversation-history";
 import { PersonalAiChatHistoryDropdown } from "@/components/ai/personal-ai-chat-history-dropdown";
 import { PersonalAiChatMessageList } from "@/components/ai/personal-ai-chat-message-list";
 import type { PersonalAiChatToolCardCallbacks } from "@/components/ai/personal-ai-chat-tool-card";
+import {
+  PersonalAiChatToolPanels,
+  type ActiveToolPanel,
+} from "@/components/ai/personal-ai-chat-tool-panels";
+import type { PersonalAiChatPanelData, PersonalAiChatToolPanelContentCallbacks } from "@/components/ai/personal-ai-chat-tool-panel-content";
 export type { NoteListPanelData } from "@/components/ai/personal-ai-chat-types";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { ModelSelector } from "@/components/ai/model-selector";
 import { type ProviderKey, MODEL_OPTIONS } from "@/lib/ai/providers";
-import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
-import { ReportPreviewCard, type ReportPreviewData } from "@/components/ai/report-preview-card";
+import type { EmailPreviewData } from "@/components/ai/email-preview-card";
+import type { ReportPreviewData } from "@/components/ai/report-preview-card";
 import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
 import { getProjects } from "@/actions/projects";
 import { getDailyBriefing } from "@/actions/briefing";
 import type { DailyBriefing as DailyBriefingData } from "@/actions/briefing";
 import { getProjectContext } from "@/actions/project-context";
 import type { ProjectContextResult } from "@/actions/project-context";
-import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
-import type { DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
-import { QuotePreviewCard, type QuotePreviewData } from "@/components/ai/quote-preview-card";
-import { QuoteList, type SerializedQuote } from "@/components/quotes/quote-list";
+import type { SearchResult } from "@/components/ai/search-results-card";
+import type { QuotePreviewData } from "@/components/ai/quote-preview-card";
+import type { SerializedQuote } from "@/components/quotes/quote-list";
 import { deleteFile } from "@/actions/files";
 import { deleteTask } from "@/actions/tasks";
 import { deleteComment } from "@/actions/comments";
@@ -76,20 +79,16 @@ import { deleteAutomation } from "@/actions/automations";
 import { deleteNoteCategory } from "@/actions/note-categories";
 import { generateQuotePdf } from "@/actions/quotes";
 import { getShoppingLists, type SerializedShoppingListItem } from "@/actions/shopping-list";
-import { ShoppingListsClient } from "@/app/[locale]/(dashboard)/shopping-lists/shopping-lists-client";
 import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
-import { FileListGrid, type FileListGridItem } from "@/components/files/file-list-grid";
+import type { FileListGridItem } from "@/components/files/file-list-grid";
 import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { NoteCard } from "@/components/projects/note-card";
 import { getNoteCategories, type NoteCategoryItem } from "@/actions/note-categories";
-import { TimeEntryList } from "@/components/time/time-entry-list";
 import type { DashboardTask } from "@/actions/dashboard";
-import { TaskList } from "@/components/dashboard/task-list";
 
 export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "sheet", initialVoiceMode }: PersonalAiChatProps) {
   const t = useTranslations("personalAi");
@@ -1148,7 +1147,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   // Determine active tool panel type for docked inline rendering
   // Email has priority over search (only one visible at a time in left panel)
-  const activeToolPanel: { type: string; title: string } | null = openEmailPreviewData
+  const activeToolPanel: ActiveToolPanel = openEmailPreviewData
     ? { type: "email", title: t("emailPanel.title") }
     : openQuoteData
     ? { type: "quote", title: "Offert" }
@@ -1184,337 +1183,67 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setOpenEmailPreviewData(null);
   }, []);
 
-  // Inline tool panel content for docked mode (left panel when chat collapsed, or reused in expanded left panel)
-  const toolPanelContent = activeToolPanel ? (
-    <div className="flex h-full flex-col">
-      {/* Panel header with collapse (docked) and close button */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
-        <h3 className="text-sm font-semibold">{activeToolPanel.title}</h3>
-        <div className="flex items-center gap-1">
-          {mode === "docked" && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-7 text-muted-foreground hover:text-foreground"
-              onClick={() => setLeftPanelCollapsed(true)}
-              aria-label={t("strip.collapsePanel")}
-            >
-              <PanelLeftClose className="size-4" />
-            </Button>
-          )}
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground hover:text-foreground"
-            onClick={closeActiveToolPanel}
-          >
-            <X className="size-4" />
-          </Button>
-        </div>
-      </div>
-      {/* Panel body */}
-      <div className="flex-1 min-h-0 overflow-y-auto p-4">
-        {activeToolPanel.type === "email" && openEmailPreviewData && (
-          <EmailPreviewCard
-            data={openEmailPreviewData}
-            onSend={async () => {
-              const attachmentInputs: EmailAttachmentInput[] = (openEmailPreviewData.attachments ?? []).map((a) => ({
-                fileId: a.fileId,
-                fileName: a.fileName,
-                source: a.source,
-                projectId: a.projectId,
-              }));
-              if (openEmailPreviewData.type === "external") {
-                const formData = new FormData();
-                formData.set("recipients", openEmailPreviewData.recipients.join(","));
-                formData.set("subject", openEmailPreviewData.subject);
-                formData.set("body", openEmailPreviewData.body);
-                if (openEmailPreviewData.replyTo) formData.set("replyTo", openEmailPreviewData.replyTo);
-                return sendExternalEmail(formData, attachmentInputs);
-              } else {
-                return sendToTeamMembers(
-                  openEmailPreviewData.memberIds ?? [],
-                  openEmailPreviewData.subject,
-                  openEmailPreviewData.body,
-                  attachmentInputs
-                );
-              }
-            }}
-            onCancel={() => setOpenEmailPreviewData(null)}
-          />
-        )}
-        {activeToolPanel.type === "quote" && openQuoteData && (
-          <QuotePreviewCard
-            data={openQuoteData}
-            onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
-          />
-        )}
-        {activeToolPanel.type === "search" && openSearchResults && (
-          <SearchResultsCard results={openSearchResults} />
-        )}
-        {activeToolPanel.type === "report" && openReportData && (
-          <ReportPreviewCard
-            data={openReportData}
-            onGenerate={handleReportGenerate}
-          />
-        )}
-        {activeToolPanel.type === "quoteList" && openQuoteListData && (
-          <QuoteList initialQuotes={openQuoteListData.quotes} />
-        )}
-        {activeToolPanel.type === "noteList" && openNoteListData && (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {openNoteListData.notes.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                projectId={openNoteListData.projectId ?? null}
-                onUpdate={() => {}}
-                categories={noteListCategories}
-              />
-            ))}
-          </div>
-        )}
-        {activeToolPanel.type === "timeEntry" && (
-          timeEntryPanelLoading ? (
-            <p className="text-sm text-muted-foreground">{t("loading")}</p>
-          ) : timeEntryPanelData ? (
-            <TimeEntryList
-              groupedEntries={timeEntryPanelData.groupedEntries}
-              tasks={timeEntryPanelData.tasks}
-            />
-          ) : null
-        )}
-        {activeToolPanel.type === "fileList" && openFileListData && (
-          <FileListGrid
-            files={openFileListData.files}
-            translationNamespace="projects.files"
-            showActions
-          />
-        )}
-        {activeToolPanel.type === "taskList" && openTaskListData && (
-          <TaskList tasks={openTaskListData.tasks} />
-        )}
-        {activeToolPanel.type === "shoppingList" && openShoppingListsData && (
-          <ShoppingListsClient
-            initialLists={openShoppingListsData.lists}
-            onRefresh={async () => {
-              const r = await getShoppingLists();
-              if (r.success)
-                setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
-            }}
-          />
-        )}
-      </div>
-    </div>
-  ) : null;
+  // Panel data for the currently active tool panel (for ToolPanels component)
+  const panelData: PersonalAiChatPanelData | null = activeToolPanel
+    ? (() => {
+        switch (activeToolPanel.type) {
+          case "email":
+            return openEmailPreviewData;
+          case "quote":
+            return openQuoteData;
+          case "search":
+            return openSearchResults;
+          case "report":
+            return openReportData;
+          case "quoteList":
+            return openQuoteListData;
+          case "noteList":
+            return openNoteListData;
+          case "timeEntry":
+            return timeEntryPanelData;
+          case "fileList":
+            return openFileListData;
+          case "taskList":
+            return openTaskListData;
+          case "shoppingList":
+            return openShoppingListsData;
+          default:
+            return null;
+        }
+      })()
+    : null;
 
-  // Tool result panels as Sheet overlays (used in sheet mode and fullscreen)
-  const toolResultSheetSide = isDesktopToolPanel ? "right" : "bottom";
-  const toolResultSheetClass = isDesktopToolPanel
-    ? "max-w-2xl"
-    : "max-h-[85vh] overflow-y-auto";
-
-  const toolResultPanels = (
-    <>
-      <Sheet open={!!openEmailPreviewData} onOpenChange={(o) => !o && setOpenEmailPreviewData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>{t("emailPanel.sheetTitle")}</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openEmailPreviewData && (
-              <EmailPreviewCard
-                data={openEmailPreviewData}
-                onSend={async () => {
-                  const attachmentInputs: EmailAttachmentInput[] = (openEmailPreviewData.attachments ?? []).map((a) => ({
-                    fileId: a.fileId,
-                    fileName: a.fileName,
-                    source: a.source,
-                    projectId: a.projectId,
-                  }));
-                  if (openEmailPreviewData.type === "external") {
-                    const formData = new FormData();
-                    formData.set("recipients", openEmailPreviewData.recipients.join(","));
-                    formData.set("subject", openEmailPreviewData.subject);
-                    formData.set("body", openEmailPreviewData.body);
-                    if (openEmailPreviewData.replyTo) formData.set("replyTo", openEmailPreviewData.replyTo);
-                    return sendExternalEmail(formData, attachmentInputs);
-                  } else {
-                    return sendToTeamMembers(
-                      openEmailPreviewData.memberIds ?? [],
-                      openEmailPreviewData.subject,
-                      openEmailPreviewData.body,
-                      attachmentInputs
-                    );
-                  }
-                }}
-                onCancel={() => setOpenEmailPreviewData(null)}
-              />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openQuoteData} onOpenChange={(o) => !o && setOpenQuoteData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>Offert</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openQuoteData && (
-              <QuotePreviewCard
-                data={openQuoteData}
-                onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
-              />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openSearchResults} onOpenChange={(o) => !o && setOpenSearchResults(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>Sökresultat</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openSearchResults && (
-              <SearchResultsCard results={openSearchResults} />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openReportData} onOpenChange={(o) => !o && setOpenReportData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>Rapport</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openReportData && (
-              <ReportPreviewCard
-                data={openReportData}
-                onGenerate={handleReportGenerate}
-              />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openQuoteListData} onOpenChange={(o) => !o && setOpenQuoteListData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>{tQuotes("title")}</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openQuoteListData && (
-              <QuoteList initialQuotes={openQuoteListData.quotes} />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openNoteListData} onOpenChange={(o) => !o && setOpenNoteListData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>
-              {openNoteListData?.projectName ?? (openNoteListData?.isPersonal ? t("noteList.titlePersonal") : t("noteList.title"))}
-            </SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openNoteListData && (
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {openNoteListData.notes.map((note) => (
-                  <NoteCard
-                    key={note.id}
-                    note={note}
-                    projectId={openNoteListData.projectId ?? null}
-                    onUpdate={() => {}}
-                    categories={noteListCategories}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={openTimeEntryPanel} onOpenChange={(o) => !o && setOpenTimeEntryPanel(false)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>{t("timeEntryListSheetTitle")}</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {timeEntryPanelLoading ? (
-              <p className="text-sm text-muted-foreground">{t("loading")}</p>
-            ) : timeEntryPanelData ? (
-              <TimeEntryList
-                groupedEntries={timeEntryPanelData.groupedEntries}
-                tasks={timeEntryPanelData.tasks}
-              />
-            ) : null}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openFileListData} onOpenChange={(o) => !o && setOpenFileListData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>{t("fileListPanel.title")}</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openFileListData && (
-              <FileListGrid
-                files={openFileListData.files}
-                translationNamespace="projects.files"
-                showActions
-              />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet open={!!openTaskListData} onOpenChange={(o) => !o && setOpenTaskListData(null)}>
-        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>{t("taskList.sheetTitle")}</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openTaskListData && (
-              <TaskList tasks={openTaskListData.tasks} />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-
-      <Sheet
-        open={!!openShoppingListsData}
-        onOpenChange={(o) => !o && setOpenShoppingListsData(null)}
-      >
-        <SheetContent
-          side={toolResultSheetSide}
-          className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}
-        >
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
-            <SheetTitle>{tShopping("title")}</SheetTitle>
-          </SheetHeader>
-          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
-            {openShoppingListsData && (
-              <ShoppingListsClient
-                initialLists={openShoppingListsData.lists}
-                onRefresh={async () => {
-                  const r = await getShoppingLists();
-                  if (r.success)
-                    setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
-                }}
-              />
-            )}
-          </div>
-        </SheetContent>
-      </Sheet>
-    </>
-  );
+  const toolPanelCallbacks: PersonalAiChatToolPanelContentCallbacks = {
+    onReportGenerate: handleReportGenerate,
+    generateQuotePdf: async (data) => generateQuotePdf({ ...data }),
+    onEmailSend: async (data) => {
+      const attachmentInputs: EmailAttachmentInput[] = (data.attachments ?? []).map((a) => ({
+        fileId: a.fileId,
+        fileName: a.fileName,
+        source: a.source,
+        projectId: a.projectId,
+      }));
+      if (data.type === "external") {
+        const formData = new FormData();
+        formData.set("recipients", data.recipients.join(","));
+        formData.set("subject", data.subject);
+        formData.set("body", data.body);
+        if (data.replyTo) formData.set("replyTo", data.replyTo);
+        return sendExternalEmail(formData, attachmentInputs);
+      }
+      return sendToTeamMembers(
+        data.memberIds ?? [],
+        data.subject,
+        data.body,
+        attachmentInputs
+      );
+    },
+    onEmailCancel: () => setOpenEmailPreviewData(null),
+    onShoppingListsRefresh: async () => {
+      const r = await getShoppingLists();
+      if (r.success) setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
+    },
+  };
 
   // OCR review dialog - simple review + save, analysis runs in background
   const fileAnalysisUI = analysisFile ? (
@@ -1538,7 +1267,22 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               {chatBody}
             </div>
           </div>
-          {toolResultPanels}
+          {(mode === "sheet" || isFullscreen) && (
+            <PersonalAiChatToolPanels
+              activeToolPanel={activeToolPanel}
+              panelData={panelData}
+              mode="sheet"
+              isDesktopToolPanel={isDesktopToolPanel}
+              noteListCategories={noteListCategories}
+              timeEntryPanelLoading={timeEntryPanelLoading}
+              timeEntryPanelData={timeEntryPanelData}
+              onClose={closeActiveToolPanel}
+              t={t}
+              tQuotes={tQuotes}
+              tShopping={tShopping}
+              callbacks={toolPanelCallbacks}
+            />
+          )}
           {fileAnalysisUI}
           {ragDebugUI}
         </>
@@ -1570,7 +1314,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         <>
           <div className="flex h-full shrink-0">
             {/* Left panel (search/email) — visible when content exists */}
-            {activeToolPanel && toolPanelContent && (
+            {activeToolPanel && (
               leftPanelCollapsed ? (
                 <div
                   className="flex h-full shrink-0 flex-col items-center justify-center border-l border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
@@ -1585,7 +1329,21 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                 </div>
               ) : (
                 <div className="flex h-full shrink-0 flex-col border-l border-border bg-card" style={{ width: `${LEFT_PANEL_WIDTH}px` }}>
-                  {toolPanelContent}
+                  <PersonalAiChatToolPanels
+                    activeToolPanel={activeToolPanel}
+                    panelData={panelData}
+                    mode="docked"
+                    isDesktopToolPanel={isDesktopToolPanel}
+                    noteListCategories={noteListCategories}
+                    timeEntryPanelLoading={timeEntryPanelLoading}
+                    timeEntryPanelData={timeEntryPanelData}
+                    onClose={closeActiveToolPanel}
+                    onCollapsePanel={() => setLeftPanelCollapsed(true)}
+                    t={t}
+                    tQuotes={tQuotes}
+                    tShopping={tShopping}
+                    callbacks={toolPanelCallbacks}
+                  />
                 </div>
               )
             )}
@@ -1610,7 +1368,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       <>
         <div className="flex h-full shrink-0">
           {/* Left panel (search/email) — visible when content exists */}
-          {activeToolPanel && toolPanelContent && (
+          {activeToolPanel && (
             leftPanelCollapsed ? (
               <div
                 className="flex h-full shrink-0 flex-col items-center justify-center border-l border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
@@ -1625,124 +1383,21 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               </div>
             ) : (
               <div className="flex h-full shrink-0 flex-col border-l border-border bg-card" style={{ width: `${LEFT_PANEL_WIDTH}px` }}>
-                {/* Add collapse button to panel header */}
-                <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
-                  <h3 className="text-sm font-semibold">{activeToolPanel.title}</h3>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="size-7 text-muted-foreground hover:text-foreground"
-                      onClick={() => setLeftPanelCollapsed(true)}
-                      aria-label={t("strip.collapsePanel")}
-                    >
-                      <PanelLeftClose className="size-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="size-7 text-muted-foreground hover:text-foreground"
-                      onClick={closeActiveToolPanel}
-                    >
-                      <X className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-                {/* Panel body */}
-                <div className="flex-1 min-h-0 overflow-y-auto p-4">
-                  {activeToolPanel.type === "email" && openEmailPreviewData && (
-                    <EmailPreviewCard
-                      data={openEmailPreviewData}
-                      onSend={async () => {
-                        const attachmentInputs: EmailAttachmentInput[] = (openEmailPreviewData.attachments ?? []).map((a) => ({
-                          fileId: a.fileId,
-                          fileName: a.fileName,
-                          source: a.source,
-                          projectId: a.projectId,
-                        }));
-                        if (openEmailPreviewData.type === "external") {
-                          const formData = new FormData();
-                          formData.set("recipients", openEmailPreviewData.recipients.join(","));
-                          formData.set("subject", openEmailPreviewData.subject);
-                          formData.set("body", openEmailPreviewData.body);
-                          if (openEmailPreviewData.replyTo) formData.set("replyTo", openEmailPreviewData.replyTo);
-                          return sendExternalEmail(formData, attachmentInputs);
-                        } else {
-                          return sendToTeamMembers(
-                            openEmailPreviewData.memberIds ?? [],
-                            openEmailPreviewData.subject,
-                            openEmailPreviewData.body,
-                            attachmentInputs
-                          );
-                        }
-                      }}
-                      onCancel={() => setOpenEmailPreviewData(null)}
-                    />
-                  )}
-                  {activeToolPanel.type === "quote" && openQuoteData && (
-                    <QuotePreviewCard
-                      data={openQuoteData}
-                      onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
-                    />
-                  )}
-                  {activeToolPanel.type === "search" && openSearchResults && (
-                    <SearchResultsCard results={openSearchResults} />
-                  )}
-                  {activeToolPanel.type === "report" && openReportData && (
-                    <ReportPreviewCard
-                      data={openReportData}
-                      onGenerate={handleReportGenerate}
-                    />
-                  )}
-                  {activeToolPanel.type === "quoteList" && openQuoteListData && (
-                    <QuoteList initialQuotes={openQuoteListData.quotes} />
-                  )}
-                  {activeToolPanel.type === "noteList" && openNoteListData && (
-                    <div className="grid gap-4 sm:grid-cols-2">
-                      {openNoteListData.notes.map((note) => (
-                        <NoteCard
-                          key={note.id}
-                          note={note}
-                          projectId={openNoteListData.projectId ?? null}
-                          onUpdate={() => {}}
-                          categories={noteListCategories}
-                        />
-                      ))}
-                    </div>
-                  )}
-                  {activeToolPanel.type === "timeEntry" && (
-                    timeEntryPanelLoading ? (
-                      <p className="text-sm text-muted-foreground">{t("loading")}</p>
-                    ) : timeEntryPanelData ? (
-                      <TimeEntryList
-                        groupedEntries={timeEntryPanelData.groupedEntries}
-                        tasks={timeEntryPanelData.tasks}
-                      />
-                    ) : null
-                  )}
-                  {activeToolPanel.type === "fileList" && openFileListData && (
-                    <FileListGrid
-                      files={openFileListData.files}
-                      translationNamespace="projects.files"
-                      showActions
-                    />
-                  )}
-                  {activeToolPanel.type === "taskList" && openTaskListData && (
-                    <TaskList tasks={openTaskListData.tasks} />
-                  )}
-                  {activeToolPanel.type === "shoppingList" && openShoppingListsData && (
-                    <ShoppingListsClient
-                      initialLists={openShoppingListsData.lists}
-                      onRefresh={async () => {
-                        const r = await getShoppingLists();
-                        if (r.success)
-                          setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
-                      }}
-                    />
-                  )}
-                </div>
+                <PersonalAiChatToolPanels
+                  activeToolPanel={activeToolPanel}
+                  panelData={panelData}
+                  mode="docked"
+                  isDesktopToolPanel={isDesktopToolPanel}
+                  noteListCategories={noteListCategories}
+                  timeEntryPanelLoading={timeEntryPanelLoading}
+                  timeEntryPanelData={timeEntryPanelData}
+                  onClose={closeActiveToolPanel}
+                  onCollapsePanel={() => setLeftPanelCollapsed(true)}
+                  t={t}
+                  tQuotes={tQuotes}
+                  tShopping={tShopping}
+                  callbacks={toolPanelCallbacks}
+                />
               </div>
             )
           )}
@@ -1800,7 +1455,22 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         </Sheet>
       )}
 
-      {toolResultPanels}
+      {(mode === "sheet" || isFullscreen) && (
+            <PersonalAiChatToolPanels
+              activeToolPanel={activeToolPanel}
+              panelData={panelData}
+              mode="sheet"
+              isDesktopToolPanel={isDesktopToolPanel}
+              noteListCategories={noteListCategories}
+              timeEntryPanelLoading={timeEntryPanelLoading}
+              timeEntryPanelData={timeEntryPanelData}
+              onClose={closeActiveToolPanel}
+              t={t}
+              tQuotes={tQuotes}
+              tShopping={tShopping}
+              callbacks={toolPanelCallbacks}
+            />
+          )}
       {fileAnalysisUI}
       {ragDebugUI}
     </>
