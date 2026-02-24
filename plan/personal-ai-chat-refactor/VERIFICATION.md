@@ -66,9 +66,9 @@
 
 ## Fas 7 – Input
 
-- [ ] Finns `personal-ai-chat-input.tsx` med form, Textarea, fil-knapp, VoiceModeToggle, Send/Stop. Props enligt plan.
-- [ ] Huvudkomponenten använder PersonalAiChatInput med rätt props; ingen kvarvarande input-form-JSX.
-- [ ] Build passerar.
+- [x] Finns `personal-ai-chat-input.tsx` med form, Textarea, fil-knapp, VoiceModeToggle, Send/Stop. Props enligt plan.
+- [x] Huvudkomponenten använder PersonalAiChatInput med rätt props; ingen kvarvarande input-form-JSX.
+- [x] Build passerar.
 
 ---
 
