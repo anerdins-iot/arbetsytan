@@ -15,13 +15,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import {
   Accordion,
   AccordionContent,
@@ -29,12 +23,14 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Mail, Edit, RotateCcw, Eye, Code, Check, X } from "lucide-react";
+import { Mail, Edit, RotateCcw, Eye, Code, Check, X, Sparkles, Loader2 } from "lucide-react";
 import {
   updateEmailTemplate,
   resetEmailTemplate,
   previewEmailTemplate,
+  aiEditEmailTemplate,
   type EmailTemplateItem,
+  type AiEditMessage,
 } from "@/actions/email-templates";
 import type { TemplateName } from "@/lib/email-templates";
 
@@ -55,6 +51,10 @@ const TEMPLATE_LABELS: Record<TemplateName, { sv: string; en: string }> = {
     sv: "Nytt mailsvar",
     en: "New Email Reply",
   },
+  outgoing: {
+    sv: "Utgående mail",
+    en: "Outgoing Email",
+  },
 };
 
 export function EmailTemplateManager({ templates }: Props) {
@@ -72,6 +72,12 @@ export function EmailTemplateManager({ templates }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  // AI editing state
+  const [aiInstruction, setAiInstruction] = useState("");
+  const [aiHistory, setAiHistory] = useState<AiEditMessage[]>([]);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
   // Sample data for live preview
   const sampleData: Record<string, string> = {
     appName: "ArbetsYtan",
@@ -88,6 +94,8 @@ export function EmailTemplateManager({ templates }: Props) {
     resetUrl: "https://app.arbetsytan.se/sv/reset-password?token=demo",
     locale: "sv",
     year: "2026",
+    subject: "Exempelämne",
+    content: "<p>Hej! Här är ett exempelmeddelande med <strong>formaterad text</strong>.</p>",
   };
 
   // Apply sample variables to preview
@@ -126,6 +134,9 @@ export function EmailTemplateManager({ templates }: Props) {
     setIsEditing(true);
     setError(null);
     setSuccess(false);
+    setAiInstruction("");
+    setAiHistory([]);
+    setAiError(null);
   };
 
   const handlePreview = async (template: EmailTemplateItem) => {
@@ -173,6 +184,40 @@ export function EmailTemplateManager({ templates }: Props) {
     startTransition(async () => {
       await resetEmailTemplate(formData);
     });
+  };
+
+  const handleAiEdit = async () => {
+    if (!aiInstruction.trim() || aiLoading) return;
+
+    setAiLoading(true);
+    setAiError(null);
+
+    try {
+      const result = await aiEditEmailTemplate({
+        currentSubject: editSubject,
+        currentHtmlTemplate: editHtml,
+        instruction: aiInstruction,
+        history: aiHistory.slice(-4), // last 4 messages for context
+      });
+
+      if (result.success && result.subject && result.htmlTemplate && result.comment) {
+        const comment = result.comment;
+        setEditSubject(result.subject);
+        setEditHtml(result.htmlTemplate);
+        setAiHistory((prev) => [
+          ...prev,
+          { role: "user" as const, content: aiInstruction },
+          { role: "assistant" as const, content: comment },
+        ]);
+        setAiInstruction("");
+      } else {
+        setAiError(result.error ?? t("emailTemplates.aiEdit.error"));
+      }
+    } catch {
+      setAiError(t("emailTemplates.aiEdit.error"));
+    } finally {
+      setAiLoading(false);
+    }
   };
 
   return (
@@ -345,6 +390,74 @@ export function EmailTemplateManager({ templates }: Props) {
                 </div>
               </TabsContent>
             </Tabs>
+
+            {/* AI Edit Section */}
+            <div className="rounded-lg border border-border bg-muted/50 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold">{t("emailTemplates.aiEdit.title")}</h3>
+              </div>
+
+              <div className="flex gap-2">
+                <Input
+                  value={aiInstruction}
+                  onChange={(e) => setAiInstruction(e.target.value)}
+                  placeholder={t("emailTemplates.aiEdit.placeholder")}
+                  disabled={aiLoading}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleAiEdit();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={handleAiEdit}
+                  disabled={aiLoading || !aiInstruction.trim()}
+                  size="sm"
+                  className="shrink-0"
+                >
+                  {aiLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      {t("emailTemplates.aiEdit.applying")}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-1" />
+                      {t("emailTemplates.aiEdit.apply")}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {aiError && (
+                <p className="text-sm text-destructive">{aiError}</p>
+              )}
+
+              {aiHistory.length > 0 && (
+                <div className="space-y-1.5 max-h-[120px] overflow-y-auto">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {t("emailTemplates.aiEdit.history")}
+                  </p>
+                  {aiHistory.map((msg, i) => (
+                    <div
+                      key={i}
+                      className={`text-xs px-2 py-1 rounded ${
+                        msg.role === "user"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      <span className="font-medium">
+                        {msg.role === "user" ? "Du: " : "AI: "}
+                      </span>
+                      {msg.content}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {error && (
               <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive flex items-center gap-2">

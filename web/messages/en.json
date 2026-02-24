@@ -1083,7 +1083,17 @@
         "invitation": "Company invitation",
         "task-assigned": "Task assigned",
         "deadline-reminder": "Deadline reminder",
-        "project-status-changed": "Project status changed"
+        "project-status-changed": "Project status changed",
+        "email-reply-notification": "New email reply",
+        "outgoing": "Outgoing email"
+      },
+      "aiEdit": {
+        "title": "AI editing",
+        "placeholder": "Describe the change, e.g. \"Change to blue style\" or \"Make the heading bigger\"",
+        "apply": "Apply with AI",
+        "applying": "AI processing...",
+        "error": "AI editing failed. Please try again.",
+        "history": "Change history"
       }
     },
     "profile": {

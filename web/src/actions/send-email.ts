@@ -8,6 +8,7 @@ import { markdownToHtml, markdownToPlainText } from "@/lib/email-body";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { logOutboundEmail } from "@/lib/email-log";
 import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
+import { renderEmailTemplate } from "@/lib/email-templates";
 
 // ─── S3/MinIO Client ────────────────────────────────────
 
@@ -284,12 +285,37 @@ export async function sendExternalEmail(
 
   // Get tenant branding and format body for email (markdown → html + plain text)
   const brand = await getTenantBrandTemplate(tenantId);
-  const { html, text } = buildBrandedEmail({
-    tenantName: brand.tenantName,
-    logoUrl: brand.logoUrl,
-    subject,
-    body,
-  });
+
+  // Use the "outgoing" template (editable in Settings → Email templates)
+  let html: string;
+  let text: string;
+  try {
+    const htmlBody = markdownToHtml(body);
+    const rendered = await renderEmailTemplate({
+      tenantId,
+      name: "outgoing",
+      locale: "sv",
+      variables: {
+        tenantName: brand.tenantName,
+        subject,
+        content: htmlBody,
+        year: new Date().getFullYear().toString(),
+      },
+    });
+    if (rendered.html) {
+      html = rendered.html;
+      text = markdownToPlainText(body);
+    } else {
+      const branded = buildBrandedEmail({ tenantName: brand.tenantName, logoUrl: brand.logoUrl, subject, body });
+      html = branded.html;
+      text = branded.text;
+    }
+  } catch {
+    // Fallback to legacy branded email if template rendering fails
+    const branded = buildBrandedEmail({ tenantName: brand.tenantName, logoUrl: brand.logoUrl, subject, body });
+    html = branded.html;
+    text = branded.text;
+  }
 
   // Get sender info
   const sender = await prisma.user.findUnique({
