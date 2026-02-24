@@ -346,6 +346,17 @@
       "titlePersonal": "My notes",
       "personal": "My notes"
     },
+    "emailPanel": {
+      "title": "Email",
+      "showEmail": "Show email",
+      "sheetTitle": "Email preview"
+    },
+    "strip": {
+      "openChat": "Open chat",
+      "expandPanel": "Expand panel",
+      "collapsePanel": "Collapse panel",
+      "collapseChat": "Collapse chat"
+    },
     "agentLog": {
       "prefix": "Agent:",
       "createNote": "Created note",

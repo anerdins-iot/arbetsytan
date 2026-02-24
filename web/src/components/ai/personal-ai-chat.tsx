@@ -17,6 +17,8 @@ import {
   FolderPlus,
   PanelRightClose,
   PanelLeftClose,
+  PanelRightOpen,
+  PanelLeftOpen,
   Maximize2,
   Minimize2,
   Info,
@@ -26,6 +28,9 @@ import {
   Clock,
   ListTodo,
   List,
+  Mail,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -173,9 +178,13 @@ type PersonalAiChatProps = {
 };
 
 const PANEL_WIDTH_STORAGE_KEY = "ay-ai-chat-panel-width";
+const LEFT_PANEL_COLLAPSED_KEY = "ay-ai-left-panel-collapsed";
+const CHAT_PANEL_COLLAPSED_KEY = "ay-ai-chat-panel-collapsed";
 const DEFAULT_PANEL_WIDTH = 384; // 96 * 4 = w-96
 const MIN_PANEL_WIDTH = 320;
 const MAX_PANEL_WIDTH = 800;
+const LEFT_PANEL_WIDTH = 420;
+const STRIP_WIDTH = 44;
 
 /**
  * Helper function to generate a compact agent action log from tool parts.
@@ -311,6 +320,25 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   } | null>(null);
   const [openNoteListData, setOpenNoteListData] = useState<NoteListPanelData | null>(null);
   const [noteListCategories, setNoteListCategories] = useState<NoteCategoryItem[]>([]);
+  // Email preview panel state
+  const [openEmailPreviewData, setOpenEmailPreviewData] = useState<(EmailPreviewData & { memberIds?: string[] }) | null>(null);
+  // Collapsible left panel and chat panel states (persisted)
+  const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem(LEFT_PANEL_COLLAPSED_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
+  const [chatPanelCollapsed, setChatPanelCollapsed] = useState(() => {
+    if (typeof window === "undefined") return false;
+    try {
+      return localStorage.getItem(CHAT_PANEL_COLLAPSED_KEY) === "true";
+    } catch {
+      return false;
+    }
+  });
   // Track which messages have attached images (messageIndex -> fileIds)
   const [chatImageMap, setChatImageMap] = useState<Map<number, string[]>>(new Map());
   // Pending image file IDs to be sent with the next message
@@ -350,6 +378,20 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       }
     }
   }, [panelWidth, mode]);
+
+  // Persist left panel collapsed state
+  useEffect(() => {
+    try {
+      localStorage.setItem(LEFT_PANEL_COLLAPSED_KEY, String(leftPanelCollapsed));
+    } catch { /* ignore */ }
+  }, [leftPanelCollapsed]);
+
+  // Persist chat panel collapsed state
+  useEffect(() => {
+    try {
+      localStorage.setItem(CHAT_PANEL_COLLAPSED_KEY, String(chatPanelCollapsed));
+    } catch { /* ignore */ }
+  }, [chatPanelCollapsed]);
 
   // Real-time file update via websocket
   const handleFileUpdated = useCallback((event: RealtimeFileEvent) => {
@@ -1127,6 +1169,18 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         {t("title")}
       </div>
       <div className="flex items-center gap-1">
+        {mode === "docked" && !isFullscreen && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-7 text-muted-foreground hover:text-foreground"
+            onClick={() => setChatPanelCollapsed(true)}
+            aria-label={t("strip.collapseChat")}
+          >
+            <PanelRightClose className="size-4" />
+          </Button>
+        )}
         <Button
           type="button"
           variant="ghost"
@@ -1145,7 +1199,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             className="size-7 text-muted-foreground hover:text-foreground"
             onClick={() => onOpenChange(false)}
           >
-            <PanelRightClose className="size-4" />
+            <X className="size-4" />
           </Button>
         )}
       </div>
@@ -1310,6 +1364,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             const getToolDedupeKey = (part: (typeof parts)[number]): string | null => {
               const result = (part as { output?: Record<string, unknown> }).output;
               if (!result || (part as { state?: string }).state !== "output-available") return null;
+              if (result.__emailPreview) {
+                const d = result as { subject?: string; recipients?: string[] };
+                return `email:${d.subject ?? ""}:${(d.recipients ?? []).join(",")}`;
+              }
               if (result.__searchResults && Array.isArray(result.results)) {
                 const r = result.results as SearchResult[];
                 return `search:${r.length}-${r[0]?.fileId ?? ""}`;
@@ -1418,45 +1476,29 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       attachments?: EmailAttachment[];
                     };
 
-                    // Convert EmailAttachment to EmailAttachmentInput for server action
-                    const attachmentInputs: EmailAttachmentInput[] = (emailData.attachments ?? []).map((a) => ({
-                      fileId: a.fileId,
-                      fileName: a.fileName,
-                      source: a.source,
-                      projectId: a.projectId,
-                    }));
-
-                    const handleSend = async () => {
-                      if (emailData.type === "external") {
-                        const formData = new FormData();
-                        formData.set("recipients", emailData.recipients.join(","));
-                        formData.set("subject", emailData.subject);
-                        formData.set("body", emailData.body);
-                        if (emailData.replyTo) formData.set("replyTo", emailData.replyTo);
-                        return sendExternalEmail(formData, attachmentInputs);
-                      } else {
-                        // Team email
-                        return sendToTeamMembers(
-                          emailData.memberIds ?? [],
-                          emailData.subject,
-                          emailData.body,
-                          attachmentInputs
-                        );
-                      }
-                    };
-
                     return (
-                      <EmailPreviewCard
+                      <ChatResultButton
                         key={toolCardKey}
-                        data={{
-                          type: emailData.type,
-                          recipients: emailData.recipients,
-                          subject: emailData.subject,
-                          body: emailData.body,
-                          replyTo: emailData.replyTo,
-                          attachments: emailData.attachments,
+                        icon={<Mail className="size-5 text-primary" />}
+                        title={emailData.subject || t("emailPanel.title")}
+                        subtitle={emailData.recipients.slice(0, 2).join(", ") + (emailData.recipients.length > 2 ? ` +${emailData.recipients.length - 2}` : "")}
+                        buttonLabel={t("emailPanel.showEmail")}
+                        onOpen={() => {
+                          setOpenSearchResults(null);
+                          setOpenEmailPreviewData({
+                            type: emailData.type,
+                            recipients: emailData.recipients,
+                            recipientNames: emailData.recipientNames,
+                            subject: emailData.subject,
+                            body: emailData.body,
+                            replyTo: emailData.replyTo,
+                            attachments: emailData.attachments,
+                            previewHtml: emailData.previewHtml,
+                            projectId: emailData.projectId,
+                            projectName: emailData.projectName,
+                            memberIds: emailData.memberIds,
+                          });
                         }}
-                        onSend={handleSend}
                       />
                     );
                   }
@@ -1469,7 +1511,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                         icon={<Search className="size-5 text-primary" />}
                         title={`Hittade ${searchResults.length} dokument`}
                         buttonLabel="Visa resultat"
-                        onOpen={() => setOpenSearchResults(searchResults)}
+                        onOpen={() => {
+                          setOpenEmailPreviewData(null);
+                          setOpenSearchResults(searchResults);
+                        }}
                       />
                     );
                   }
@@ -2057,7 +2102,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   ) : null;
 
   // Determine active tool panel type for docked inline rendering
-  const activeToolPanel: { type: string; title: string } | null = openQuoteData
+  // Email has priority over search (only one visible at a time in left panel)
+  const activeToolPanel: { type: string; title: string } | null = openEmailPreviewData
+    ? { type: "email", title: t("emailPanel.title") }
+    : openQuoteData
     ? { type: "quote", title: "Offert" }
     : openSearchResults
       ? { type: "search", title: "Sökresultat" }
@@ -2088,6 +2136,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setOpenFileListData(null);
     setOpenTaskListData(null);
     setOpenShoppingListsData(null);
+    setOpenEmailPreviewData(null);
   }, []);
 
   // Inline tool panel content for docked mode (rendered in the right column)
@@ -2108,6 +2157,35 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       </div>
       {/* Panel body */}
       <div className="flex-1 min-h-0 overflow-y-auto p-4">
+        {activeToolPanel.type === "email" && openEmailPreviewData && (
+          <EmailPreviewCard
+            data={openEmailPreviewData}
+            onSend={async () => {
+              const attachmentInputs: EmailAttachmentInput[] = (openEmailPreviewData.attachments ?? []).map((a) => ({
+                fileId: a.fileId,
+                fileName: a.fileName,
+                source: a.source,
+                projectId: a.projectId,
+              }));
+              if (openEmailPreviewData.type === "external") {
+                const formData = new FormData();
+                formData.set("recipients", openEmailPreviewData.recipients.join(","));
+                formData.set("subject", openEmailPreviewData.subject);
+                formData.set("body", openEmailPreviewData.body);
+                if (openEmailPreviewData.replyTo) formData.set("replyTo", openEmailPreviewData.replyTo);
+                return sendExternalEmail(formData, attachmentInputs);
+              } else {
+                return sendToTeamMembers(
+                  openEmailPreviewData.memberIds ?? [],
+                  openEmailPreviewData.subject,
+                  openEmailPreviewData.body,
+                  attachmentInputs
+                );
+              }
+            }}
+            onCancel={() => setOpenEmailPreviewData(null)}
+          />
+        )}
         {activeToolPanel.type === "quote" && openQuoteData && (
           <QuotePreviewCard
             data={openQuoteData}
@@ -2181,6 +2259,45 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   const toolResultPanels = (
     <>
+      <Sheet open={!!openEmailPreviewData} onOpenChange={(o) => !o && setOpenEmailPreviewData(null)}>
+        <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+            <SheetTitle>{t("emailPanel.sheetTitle")}</SheetTitle>
+          </SheetHeader>
+          <div className={cn("flex-1 min-h-0 overflow-y-auto p-4", toolResultSheetClass)}>
+            {openEmailPreviewData && (
+              <EmailPreviewCard
+                data={openEmailPreviewData}
+                onSend={async () => {
+                  const attachmentInputs: EmailAttachmentInput[] = (openEmailPreviewData.attachments ?? []).map((a) => ({
+                    fileId: a.fileId,
+                    fileName: a.fileName,
+                    source: a.source,
+                    projectId: a.projectId,
+                  }));
+                  if (openEmailPreviewData.type === "external") {
+                    const formData = new FormData();
+                    formData.set("recipients", openEmailPreviewData.recipients.join(","));
+                    formData.set("subject", openEmailPreviewData.subject);
+                    formData.set("body", openEmailPreviewData.body);
+                    if (openEmailPreviewData.replyTo) formData.set("replyTo", openEmailPreviewData.replyTo);
+                    return sendExternalEmail(formData, attachmentInputs);
+                  } else {
+                    return sendToTeamMembers(
+                      openEmailPreviewData.memberIds ?? [],
+                      openEmailPreviewData.subject,
+                      openEmailPreviewData.body,
+                      attachmentInputs
+                    );
+                  }
+                }}
+                onCancel={() => setOpenEmailPreviewData(null)}
+              />
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
       <Sheet open={!!openQuoteData} onOpenChange={(o) => !o && setOpenQuoteData(null)}>
         <SheetContent side={toolResultSheetSide} className={cn("flex flex-col gap-0 p-0", !isDesktopToolPanel && "max-h-[85vh]")}>
           <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
@@ -2369,10 +2486,207 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       );
     }
 
-    // Regular docked mode with resizable panel + inline tool result column
+    // Regular docked mode with layout: [Left panel (search/email)] [Chat column]
+    // Both panels are collapsible to a narrow strip.
+    // When chat is not open (open=false), render only a strip to reopen.
+
+    // Strip for reopening chat when open=false
+    if (!open) {
+      return (
+        <div
+          className="flex h-full shrink-0 flex-col items-center justify-center border-l border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+          style={{ width: `${STRIP_WIDTH}px` }}
+          onClick={() => onOpenChange(true)}
+          title={t("strip.openChat")}
+        >
+          <MessageCircle className="size-5 text-muted-foreground" />
+          <ChevronLeft className="size-4 text-muted-foreground mt-1" />
+        </div>
+      );
+    }
+
+    // Chat panel collapsed to a strip (when open=true but user collapsed the chat)
+    if (chatPanelCollapsed) {
+      return (
+        <>
+          <div className="flex h-full shrink-0">
+            {/* Left panel (search/email) — visible when content exists */}
+            {activeToolPanel && toolPanelContent && (
+              leftPanelCollapsed ? (
+                <div
+                  className="flex h-full shrink-0 flex-col items-center justify-center border-l border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+                  style={{ width: `${STRIP_WIDTH}px` }}
+                  onClick={() => setLeftPanelCollapsed(false)}
+                  title={t("strip.expandPanel")}
+                >
+                  <ChevronRight className="size-4 text-muted-foreground" />
+                  <span className="mt-1 text-[10px] text-muted-foreground [writing-mode:vertical-lr] rotate-180">
+                    {activeToolPanel.title}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex h-full shrink-0 flex-col border-l border-border bg-card" style={{ width: `${LEFT_PANEL_WIDTH}px` }}>
+                  {toolPanelContent}
+                </div>
+              )
+            )}
+            {/* Chat strip */}
+            <div
+              className="flex h-full shrink-0 flex-col items-center justify-center border-l border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+              style={{ width: `${STRIP_WIDTH}px` }}
+              onClick={() => setChatPanelCollapsed(false)}
+              title={t("strip.openChat")}
+            >
+              <MessageCircle className="size-5 text-muted-foreground" />
+              <ChevronLeft className="size-4 text-muted-foreground mt-1" />
+            </div>
+          </div>
+          {fileAnalysisUI}
+          {ragDebugUI}
+        </>
+      );
+    }
+
     return (
       <>
         <div className="flex h-full shrink-0">
+          {/* Left panel (search/email) — visible when content exists */}
+          {activeToolPanel && toolPanelContent && (
+            leftPanelCollapsed ? (
+              <div
+                className="flex h-full shrink-0 flex-col items-center justify-center border-l border-border bg-card cursor-pointer hover:bg-muted/50 transition-colors"
+                style={{ width: `${STRIP_WIDTH}px` }}
+                onClick={() => setLeftPanelCollapsed(false)}
+                title={t("strip.expandPanel")}
+              >
+                <ChevronRight className="size-4 text-muted-foreground" />
+                <span className="mt-1 text-[10px] text-muted-foreground [writing-mode:vertical-lr] rotate-180">
+                  {activeToolPanel.title}
+                </span>
+              </div>
+            ) : (
+              <div className="flex h-full shrink-0 flex-col border-l border-border bg-card" style={{ width: `${LEFT_PANEL_WIDTH}px` }}>
+                {/* Add collapse button to panel header */}
+                <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
+                  <h3 className="text-sm font-semibold">{activeToolPanel.title}</h3>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-7 text-muted-foreground hover:text-foreground"
+                      onClick={() => setLeftPanelCollapsed(true)}
+                      aria-label={t("strip.collapsePanel")}
+                    >
+                      <PanelLeftClose className="size-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="size-7 text-muted-foreground hover:text-foreground"
+                      onClick={closeActiveToolPanel}
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  </div>
+                </div>
+                {/* Panel body */}
+                <div className="flex-1 min-h-0 overflow-y-auto p-4">
+                  {activeToolPanel.type === "email" && openEmailPreviewData && (
+                    <EmailPreviewCard
+                      data={openEmailPreviewData}
+                      onSend={async () => {
+                        const attachmentInputs: EmailAttachmentInput[] = (openEmailPreviewData.attachments ?? []).map((a) => ({
+                          fileId: a.fileId,
+                          fileName: a.fileName,
+                          source: a.source,
+                          projectId: a.projectId,
+                        }));
+                        if (openEmailPreviewData.type === "external") {
+                          const formData = new FormData();
+                          formData.set("recipients", openEmailPreviewData.recipients.join(","));
+                          formData.set("subject", openEmailPreviewData.subject);
+                          formData.set("body", openEmailPreviewData.body);
+                          if (openEmailPreviewData.replyTo) formData.set("replyTo", openEmailPreviewData.replyTo);
+                          return sendExternalEmail(formData, attachmentInputs);
+                        } else {
+                          return sendToTeamMembers(
+                            openEmailPreviewData.memberIds ?? [],
+                            openEmailPreviewData.subject,
+                            openEmailPreviewData.body,
+                            attachmentInputs
+                          );
+                        }
+                      }}
+                      onCancel={() => setOpenEmailPreviewData(null)}
+                    />
+                  )}
+                  {activeToolPanel.type === "quote" && openQuoteData && (
+                    <QuotePreviewCard
+                      data={openQuoteData}
+                      onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
+                    />
+                  )}
+                  {activeToolPanel.type === "search" && openSearchResults && (
+                    <SearchResultsCard results={openSearchResults} />
+                  )}
+                  {activeToolPanel.type === "report" && openReportData && (
+                    <ReportPreviewCard
+                      data={openReportData}
+                      onGenerate={handleReportGenerate}
+                    />
+                  )}
+                  {activeToolPanel.type === "quoteList" && openQuoteListData && (
+                    <QuoteList initialQuotes={openQuoteListData.quotes} />
+                  )}
+                  {activeToolPanel.type === "noteList" && openNoteListData && (
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {openNoteListData.notes.map((note) => (
+                        <NoteCard
+                          key={note.id}
+                          note={note}
+                          projectId={openNoteListData.projectId ?? null}
+                          onUpdate={() => {}}
+                          categories={noteListCategories}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {activeToolPanel.type === "timeEntry" && (
+                    timeEntryPanelLoading ? (
+                      <p className="text-sm text-muted-foreground">{t("loading")}</p>
+                    ) : timeEntryPanelData ? (
+                      <TimeEntryList
+                        groupedEntries={timeEntryPanelData.groupedEntries}
+                        tasks={timeEntryPanelData.tasks}
+                      />
+                    ) : null
+                  )}
+                  {activeToolPanel.type === "fileList" && openFileListData && (
+                    <FileListGrid
+                      files={openFileListData.files}
+                      translationNamespace="projects.files"
+                      showActions
+                    />
+                  )}
+                  {activeToolPanel.type === "taskList" && openTaskListData && (
+                    <TaskList tasks={openTaskListData.tasks} />
+                  )}
+                  {activeToolPanel.type === "shoppingList" && openShoppingListsData && (
+                    <ShoppingListsClient
+                      initialLists={openShoppingListsData.lists}
+                      onRefresh={async () => {
+                        const r = await getShoppingLists();
+                        if (r.success)
+                          setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
+                      }}
+                    />
+                  )}
+                </div>
+              </div>
+            )
+          )}
           {/* Chat column */}
           <div
             className="relative flex h-full shrink-0 flex-col border-l border-border bg-card"
@@ -2389,12 +2703,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             {headerContent}
             {chatBody}
           </div>
-          {/* Tool result column (beside chat) */}
-          {activeToolPanel && toolPanelContent && (
-            <div className="flex h-full w-[420px] shrink-0 flex-col border-l border-border bg-card">
-              {toolPanelContent}
-            </div>
-          )}
         </div>
         {fileAnalysisUI}
         {ragDebugUI}

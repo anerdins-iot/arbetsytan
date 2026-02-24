@@ -346,6 +346,17 @@
       "titlePersonal": "Mina anteckningar",
       "personal": "Mina anteckningar"
     },
+    "emailPanel": {
+      "title": "E-post",
+      "showEmail": "Visa e-post",
+      "sheetTitle": "E-postförhandsgranskning"
+    },
+    "strip": {
+      "openChat": "Öppna chatt",
+      "expandPanel": "Expandera panel",
+      "collapsePanel": "Minimera panel",
+      "collapseChat": "Minimera chatt"
+    },
     "agentLog": {
       "prefix": "Agenten:",
       "createNote": "Skapade anteckning",

@@ -145,8 +145,8 @@ export function DashboardShell({
             </main>
           </div>
 
-          {/* Personlig AI-chatt: dockad på xl+, sheet på mindre skärmar */}
-          {isDesktop && aiChatOpen ? (
+          {/* Personlig AI-chatt: dockad på xl+ (always rendered for strip), sheet på mindre skärmar */}
+          {isDesktop ? (
             <PersonalAiChat
               open={aiChatOpen}
               onOpenChange={handleAiChatOpenChange}
@@ -156,7 +156,7 @@ export function DashboardShell({
             />
           ) : (
             <PersonalAiChat
-              open={!isDesktop && aiChatOpen}
+              open={aiChatOpen}
               onOpenChange={handleAiChatOpenChange}
               initialProjectId={urlProjectId}
               mode="sheet"
