@@ -13,7 +13,8 @@ export type TemplateName =
   | "task-assigned"
   | "deadline-reminder"
   | "project-status-changed"
-  | "email-reply-notification";
+  | "email-reply-notification"
+  | "outgoing";
 
 export type TemplateVariables = Record<string, string>;
 
@@ -26,6 +27,7 @@ export const EMAIL_TEMPLATE_NAMES = [
   "deadline-reminder",
   "project-status-changed",
   "email-reply-notification",
+  "outgoing",
 ] as const;
 
 export const EMAIL_TEMPLATE_LOCALES = ["sv", "en"] as const;
@@ -37,6 +39,7 @@ export const EMAIL_TEMPLATE_VARIABLES: Record<TemplateName, string[]> = {
   "deadline-reminder": ["taskTitle", "projectName", "deadline", "projectUrl"],
   "project-status-changed": ["projectName", "previousStatus", "newStatus", "projectUrl"],
   "email-reply-notification": ["senderName", "subject", "preview", "conversationUrl"],
+  "outgoing": ["tenantName", "subject", "content", "year"],
 };
 
 export type RenderOptions = {
@@ -763,6 +766,39 @@ const TEMPLATES: Record<TemplateName, Record<"sv" | "en", { subject: string; con
         </div>
       `,
       footerText: "This email was sent from ArbetsYtan. Please do not reply to this email.",
+    },
+  },
+
+  outgoing: {
+    sv: {
+      subject: "{{subject}}",
+      content: `
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h2 style="margin: 0; color: #111827; font-size: 24px; font-weight: 600;">
+            {{tenantName}}
+          </h2>
+        </div>
+
+        <div style="color: #374151; font-size: 16px; line-height: 1.6;">
+          {{content}}
+        </div>
+      `,
+      footerText: "Detta mail skickades via {{tenantName}} på ArbetsYtan. Du kan anpassa mallar under Inställningar → E-postmallar.",
+    },
+    en: {
+      subject: "{{subject}}",
+      content: `
+        <div style="text-align: center; margin-bottom: 32px;">
+          <h2 style="margin: 0; color: #111827; font-size: 24px; font-weight: 600;">
+            {{tenantName}}
+          </h2>
+        </div>
+
+        <div style="color: #374151; font-size: 16px; line-height: 1.6;">
+          {{content}}
+        </div>
+      `,
+      footerText: "This email was sent via {{tenantName}} on ArbetsYtan. You can customize templates under Settings → Email templates.",
     },
   },
 };

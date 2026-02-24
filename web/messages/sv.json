@@ -1094,7 +1094,17 @@
         "invitation": "Företagsinbjudan",
         "task-assigned": "Uppgift tilldelad",
         "deadline-reminder": "Deadline-påminnelse",
-        "project-status-changed": "Projektstatus ändrad"
+        "project-status-changed": "Projektstatus ändrad",
+        "email-reply-notification": "Nytt mailsvar",
+        "outgoing": "Utgående mail"
+      },
+      "aiEdit": {
+        "title": "AI-redigering",
+        "placeholder": "Beskriv ändringen, t.ex. \"Ändra till blå stil\" eller \"Gör rubriken större\"",
+        "apply": "Tillämpa med AI",
+        "applying": "AI bearbetar...",
+        "error": "AI-redigering misslyckades. Försök igen.",
+        "history": "Ändringshistorik"
       }
     },
     "profile": {

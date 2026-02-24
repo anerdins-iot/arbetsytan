@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { generateText } from "ai";
 import { requirePermission } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import {
@@ -11,6 +12,7 @@ import {
   applyTemplateVariables,
   type TemplateName,
 } from "@/lib/email-templates";
+import { getModel } from "@/lib/ai/providers";
 import { revalidatePath } from "next/cache";
 
 // ─── Types ─────────────────────────────────────────────
@@ -240,6 +242,11 @@ export async function previewEmailTemplate(
     tenantName: "Demo AB",
     inviterName: "Admin",
     resetUrl: "https://app.arbetsytan.se/sv/reset-password?token=demo",
+    subject: "Exempelämne",
+    content: "<p>Hej! Här är ett exempelmeddelande med <strong>formaterad text</strong>.</p>",
+    senderName: "Erik Johansson",
+    preview: "Tack för snabb återkoppling...",
+    conversationUrl: "https://app.arbetsytan.se/sv/email/demo",
   };
 
   const variables = { ...defaultTestData, ...(testData ?? {}) };
@@ -248,4 +255,106 @@ export async function previewEmailTemplate(
     subject: applyTemplateVariables(template.subject, variables),
     html: applyTemplateVariables(template.htmlTemplate, variables),
   };
+}
+
+// ─── AI Edit Template ───────────────────────────────────
+
+export type AiEditMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type AiEditResult = {
+  success: boolean;
+  subject?: string;
+  htmlTemplate?: string;
+  comment?: string;
+  error?: string;
+};
+
+const AI_EDIT_SYSTEM_PROMPT = `You are an expert email template editor. The user will give instructions to modify an HTML email template (and optionally its subject line).
+
+Return ONLY valid JSON with this exact structure:
+{
+  "subject": "<the updated subject line>",
+  "htmlTemplate": "<the updated HTML template>",
+  "comment": "<a one-liner in Swedish describing what was changed, e.g. 'Ändrat till blå färg på rubrik'>"
+}
+
+Rules:
+- Preserve template variables like {{content}}, {{tenantName}}, {{subject}}, {{year}}, {{locale}}, etc. Do NOT remove or rename them.
+- Only change styling, layout, or text content as requested by the user.
+- Output must be valid, safe HTML. Never include <script> tags or event handlers (onclick, onerror, etc.).
+- If the user says something like "ta rött istället" (use red instead), look at the conversation history to understand the previous change and apply the correction.
+- The "comment" field must always be a short one-liner in Swedish describing the change.
+- Do NOT wrap the JSON in markdown code fences. Return raw JSON only.`;
+
+export async function aiEditEmailTemplate(input: {
+  currentSubject: string;
+  currentHtmlTemplate: string;
+  instruction: string;
+  history?: AiEditMessage[];
+}): Promise<AiEditResult> {
+  await requirePermission("canManageTenantSettings");
+
+  const { currentSubject, currentHtmlTemplate, instruction, history } = input;
+
+  // Build the conversation messages for context
+  const historyContext =
+    history && history.length > 0
+      ? "\n\nPrevious conversation:\n" +
+        history
+          .map((m) =>
+            m.role === "user"
+              ? `User: ${m.content}`
+              : `AI: ${m.content}`
+          )
+          .join("\n")
+      : "";
+
+  const prompt = `Current subject: ${currentSubject}
+
+Current HTML template:
+${currentHtmlTemplate}
+${historyContext}
+
+User instruction: ${instruction}`;
+
+  try {
+    const result = await generateText({
+      model: getModel("GEMINI_PRO"),
+      system: AI_EDIT_SYSTEM_PROMPT,
+      prompt,
+      maxOutputTokens: 16384,
+      temperature: 0.3,
+    });
+
+    const text = result.text.trim();
+
+    // Try to extract JSON (handle potential markdown code fences)
+    let jsonStr = text;
+    const fenceMatch = text.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+    if (fenceMatch) {
+      jsonStr = fenceMatch[1].trim();
+    }
+
+    const parsed = JSON.parse(jsonStr);
+
+    if (!parsed.subject || !parsed.htmlTemplate || !parsed.comment) {
+      return { success: false, error: "AI returned incomplete response" };
+    }
+
+    return {
+      success: true,
+      subject: parsed.subject,
+      htmlTemplate: parsed.htmlTemplate,
+      comment: parsed.comment,
+    };
+  } catch (err) {
+    console.error("AI edit template failed:", err);
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "AI editing failed",
+    };
+  }
 }
