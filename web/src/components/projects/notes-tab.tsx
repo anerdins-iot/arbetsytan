@@ -27,14 +27,15 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
   const [categories, setCategories] = useState<NoteCategoryItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<"createdAt" | "updatedAt" | "title" | "category">("updatedAt");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCategoryManagerOpen, setIsCategoryManagerOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  // Ladda kategorier från DB
+  // Ladda kategorier för detta projekt
   const loadCategories = () => {
     startTransition(async () => {
-      const result = await getNoteCategories();
+      const result = await getNoteCategories(projectId);
       if (result.success) {
         setCategories(result.categories);
       }
@@ -93,8 +94,22 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
     loadCategories();
   };
 
-  // Filtrera och sortera anteckningar (pinnade först)
-  const filteredNotes = notes;
+  // Filtrera och sortera anteckningar (pinnade först, sedan enligt sortBy)
+  const filteredNotes = [...notes].sort((a, b) => {
+    if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
+    switch (sortBy) {
+      case "createdAt":
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case "updatedAt":
+        return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+      case "title":
+        return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: "base" });
+      case "category":
+        return (a.category || "").localeCompare(b.category || "", undefined, { sensitivity: "base" });
+      default:
+        return 0;
+    }
+  });
 
   return (
     <div className="space-y-6">
@@ -122,6 +137,17 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
                   {cat.name}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+          <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder={t("sortBy")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="createdAt">{t("sortCreatedAt")}</SelectItem>
+              <SelectItem value="updatedAt">{t("sortUpdatedAt")}</SelectItem>
+              <SelectItem value="title">{t("sortTitle")}</SelectItem>
+              <SelectItem value="category">{t("sortCategory")}</SelectItem>
             </SelectContent>
           </Select>
           <Button
@@ -163,7 +189,7 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
           )}
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filteredNotes.map((note) => (
             <NoteCard key={note.id} note={note} projectId={projectId} onUpdate={handleUpdate} categories={categories} />
           ))}
@@ -179,8 +205,9 @@ export function NotesTab({ projectId, initialNotes = [], socketNoteVersion = 0, 
         categories={categories}
       />
 
-      {/* Category manager */}
+      {/* Category manager: project-scoped */}
       <NoteCategoryManager
+        projectId={projectId}
         open={isCategoryManagerOpen}
         onOpenChange={setIsCategoryManagerOpen}
         onCategoriesChanged={loadCategories}

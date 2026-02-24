@@ -23,6 +23,8 @@ import {
 } from "@/actions/note-categories";
 
 type NoteCategoryManagerProps = {
+  /** null = personal (Mitt utrymme), string = project-scoped */
+  projectId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCategoriesChanged: () => void;
@@ -31,6 +33,7 @@ type NoteCategoryManagerProps = {
 };
 
 export function NoteCategoryManager({
+  projectId,
   open,
   onOpenChange,
   onCategoriesChanged,
@@ -49,7 +52,7 @@ export function NoteCategoryManager({
 
   const loadCategories = () => {
     startTransition(async () => {
-      const result = await getNoteCategories();
+      const result = await getNoteCategories(projectId);
       if (result.success) {
         setCategories(result.categories);
       }
@@ -60,7 +63,7 @@ export function NoteCategoryManager({
     if (open) {
       loadCategories();
     }
-  }, [open]);
+  }, [open, projectId]);
 
   // Reload categories when socket event triggers version bump
   useEffect(() => {
@@ -99,6 +102,7 @@ export function NoteCategoryManager({
         name: name.trim(),
         slug: slug.trim() || undefined,
         color: color.trim() || undefined,
+        projectId: projectId ?? undefined,
       });
 
       if (result.success) {
@@ -145,12 +149,14 @@ export function NoteCategoryManager({
     });
   };
 
+  const scopeLabel = projectId === null ? t("scopePersonal") : t("scopeProject");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{t("title")}</DialogTitle>
-          <DialogDescription>{t("description")}</DialogDescription>
+          <DialogDescription>{t("description")} {scopeLabel}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

@@ -13,6 +13,7 @@ export type NoteCategoryItem = {
   name: string;
   slug: string;
   color: string | null;
+  projectId: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -25,6 +26,7 @@ const createSchema = z.object({
   name: z.string().min(1).max(100),
   slug: z.string().max(100).optional(),
   color: z.string().max(20).optional(),
+  projectId: z.string().optional().nullable(),
 });
 
 const updateSchema = z.object({
@@ -32,6 +34,7 @@ const updateSchema = z.object({
   name: z.string().min(1).max(100).optional(),
   slug: z.string().max(100).optional(),
   color: z.string().max(20).optional().nullable(),
+  projectId: z.string().optional().nullable(),
 });
 
 // ─────────────────────────────────────────
@@ -52,6 +55,7 @@ function formatCategory(cat: {
   name: string;
   slug: string;
   color: string | null;
+  projectId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }): NoteCategoryItem {
@@ -60,6 +64,7 @@ function formatCategory(cat: {
     name: cat.name,
     slug: cat.slug,
     color: cat.color,
+    projectId: cat.projectId,
     createdAt: cat.createdAt.toISOString(),
     updatedAt: cat.updatedAt.toISOString(),
   };
@@ -69,7 +74,11 @@ function formatCategory(cat: {
 // Actions
 // ─────────────────────────────────────────
 
-export async function getNoteCategories(): Promise<
+/**
+ * Get note categories for a scope.
+ * @param projectId - When null, returns personal categories (Mitt utrymme). When set, returns categories for that project only.
+ */
+export async function getNoteCategories(projectId: string | null): Promise<
   { success: true; categories: NoteCategoryItem[] } | { success: false; error: string }
 > {
   try {
@@ -77,6 +86,7 @@ export async function getNoteCategories(): Promise<
     const db = tenantDb(tenantId);
 
     const categories = await db.noteCategory.findMany({
+      where: { projectId },
       orderBy: { name: "asc" },
     });
 
@@ -87,7 +97,7 @@ export async function getNoteCategories(): Promise<
 }
 
 export async function createNoteCategory(
-  data: { name: string; slug?: string; color?: string }
+  data: { name: string; slug?: string; color?: string; projectId?: string | null }
 ): Promise<{ success: true; category: NoteCategoryItem } | { success: false; error: string }> {
   try {
     const { tenantId, userId } = await requireAuth();
@@ -98,10 +108,11 @@ export async function createNoteCategory(
 
     const db = tenantDb(tenantId, { actorUserId: userId });
     const slug = parsed.data.slug || generateSlug(parsed.data.name);
+    const projectId = parsed.data.projectId ?? null;
 
-    // Check for duplicate slug
+    // Check for duplicate slug in same scope (tenantId + projectId)
     const existing = await db.noteCategory.findFirst({
-      where: { slug },
+      where: { slug, projectId },
     });
     if (existing) {
       return { success: false, error: "En kategori med detta slug finns redan." };
@@ -113,6 +124,7 @@ export async function createNoteCategory(
         slug,
         color: parsed.data.color ?? null,
         tenantId,
+        projectId,
       },
     });
 
@@ -124,7 +136,7 @@ export async function createNoteCategory(
 
 export async function updateNoteCategory(
   id: string,
-  data: { name?: string; slug?: string; color?: string | null }
+  data: { name?: string; slug?: string; color?: string | null; projectId?: string | null }
 ): Promise<{ success: true; category: NoteCategoryItem } | { success: false; error: string }> {
   try {
     const { tenantId, userId } = await requireAuth();
@@ -142,11 +154,11 @@ export async function updateNoteCategory(
       return { success: false, error: "Kategorin hittades inte." };
     }
 
-    // If slug is changing, check for duplicates
+    const scopeProjectId = parsed.data.projectId !== undefined ? parsed.data.projectId : existing.projectId;
     const newSlug = parsed.data.slug ?? (parsed.data.name ? generateSlug(parsed.data.name) : undefined);
     if (newSlug && newSlug !== existing.slug) {
       const duplicate = await db.noteCategory.findFirst({
-        where: { slug: newSlug },
+        where: { slug: newSlug, projectId: scopeProjectId },
       });
       if (duplicate) {
         return { success: false, error: "En kategori med detta slug finns redan." };
@@ -157,6 +169,7 @@ export async function updateNoteCategory(
     if (parsed.data.name !== undefined) updateData.name = parsed.data.name;
     if (newSlug !== undefined) updateData.slug = newSlug;
     if (parsed.data.color !== undefined) updateData.color = parsed.data.color;
+    if (parsed.data.projectId !== undefined) updateData.projectId = parsed.data.projectId;
 
     const category = await db.noteCategory.update({
       where: { id },

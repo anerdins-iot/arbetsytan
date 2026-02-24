@@ -2703,14 +2703,14 @@ Returnera ENBART JSON i följande format:
         .replace(/^_|_$/g, "");
 
       const existing = await db.noteCategory.findFirst({
-        where: { slug },
+        where: { slug, projectId: null },
       });
       if (existing) return { error: `Kategori med slug "${slug}" finns redan.` };
 
-      // Use tenantDb with emitContext for auto-emit
+      // Use tenantDb with emitContext for auto-emit (personal scope = projectId null)
       const dbWithEmit = tenantDb(tenantId, { actorUserId: userId });
       const category = await dbWithEmit.noteCategory.create({
-        data: { name, slug, color: color ?? null, tenantId },
+        data: { name, slug, color: color ?? null, tenantId, projectId: null },
       });
 
       return {

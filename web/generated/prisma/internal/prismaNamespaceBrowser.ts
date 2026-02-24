@@ -537,6 +537,7 @@ export const NoteCategoryScalarFieldEnum = {
   slug: 'slug',
   color: 'color',
   tenantId: 'tenantId',
+  projectId: 'projectId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
