@@ -13,6 +13,6 @@
 | 6 | Tool panel content + ToolPanels (6.1–6.3) | Cursor auto | Cursor auto | Orchestrator | Klar |
 | 7 | PersonalAiChatInput (7.1–7.2) | Cursor auto | Cursor auto | Orchestrator | Klar |
 | 8 | PersonalAiChatHeader (8.1–8.3) | Cursor auto | Cursor auto | Orchestrator | Klar |
-| 9 | Huvudkomponent + doc-svep (9.1–9.2) | Cursor auto | Cursor auto | Orchestrator | Pågår |
+| 9 | Huvudkomponent + doc-svep (9.1–9.2) | Cursor auto | Cursor auto | Orchestrator | Klar |
 
-**Senast uppdaterad:** Fas 8 mergad och avcheckad. Fas 9 pågår.
+**Senast uppdaterad:** Fas 9 mergad. Fas 8-verifiering: innehåll PASS, build FAIL pga email-templates.ts – nu fixat (tenantId i create). Fas 9-verifiering startad.

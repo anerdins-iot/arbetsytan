@@ -82,6 +82,6 @@
 
 ## Fas 9 – Huvudkomponent och dokumentation
 
-- [ ] personal-ai-chat.tsx är trimmat till sammansättning + kvarvarande state/callbacks; OcrReviewDialog och RagDebugModal kan ligga kvar.
-- [ ] AGENTS.md, AI.md och andra .md som nämner personal-ai-chat eller PersonalAiChat är uppdaterade så att beskrivningar stämmer (moduler, filstruktur).
+- [x] personal-ai-chat.tsx är trimmat till sammansättning + kvarvarande state/callbacks; OcrReviewDialog och RagDebugModal kan ligga kvar.
+- [x] AGENTS.md, AI.md och andra .md som nämner personal-ai-chat eller PersonalAiChat är uppdaterade så att beskrivningar stämmer (moduler, filstruktur).
 - [ ] Build passerar. Inga referenser till "en enda stor fil" kvar där vi nu har flera moduler.
