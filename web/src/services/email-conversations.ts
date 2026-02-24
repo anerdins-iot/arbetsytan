@@ -336,6 +336,63 @@ export async function createConversationCore(
   };
 }
 
+export type CreateOutboundConversationData = {
+  externalEmail: string;
+  externalName?: string | null;
+  subject: string;
+  bodyHtml: string;
+  bodyText?: string | null;
+  projectId?: string | null;
+  fromEmail: string;
+  fromName?: string | null;
+  /** When set, links the created EmailMessage to this EmailLog (e.g. when sending from AI). */
+  emailLogId?: string | null;
+};
+
+/**
+ * Create a new conversation with a single OUTBOUND message.
+ * Used when sending email from AI (sendExternalEmail / sendToTeamMembers) so the mail appears in Skickat.
+ */
+export async function createOutboundConversationCore(
+  tenantId: string,
+  userId: string,
+  data: CreateOutboundConversationData
+): Promise<void> {
+  const db = tenantDb(tenantId);
+  const code = generateTrackingCode();
+  const now = new Date();
+
+  await db.emailConversation.create({
+    data: {
+      tenantId,
+      userId,
+      projectId: data.projectId ?? null,
+      externalEmail: data.externalEmail,
+      externalName: data.externalName ?? null,
+      trackingCode: code,
+      subject: data.subject,
+      lastMessageAt: now,
+      unreadCount: 0,
+      isArchived: false,
+      messages: {
+        create: {
+          direction: "OUTBOUND",
+          fromEmail: data.fromEmail,
+          fromName: data.fromName ?? null,
+          toEmail: data.externalEmail,
+          subject: data.subject,
+          bodyHtml: data.bodyHtml ?? null,
+          bodyText: data.bodyText ?? null,
+          isRead: true,
+          sentAt: now,
+          receivedAt: null,
+          emailLogId: data.emailLogId ?? undefined,
+        },
+      },
+    },
+  });
+}
+
 /**
  * Reply to a conversation (create outbound message, update lastMessageAt).
  * Throws if conversation not found or not owned by user.

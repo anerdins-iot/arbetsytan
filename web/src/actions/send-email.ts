@@ -9,6 +9,7 @@ import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { logOutboundEmail } from "@/lib/email-log";
 import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
 import { renderEmailTemplate } from "@/lib/email-templates";
+import { createOutboundConversationCore } from "@/services/email-conversations";
 
 // ─── S3/MinIO Client ────────────────────────────────────
 
@@ -371,6 +372,22 @@ export async function sendExternalEmail(
 
         // Queue embedding processing
         queueEmailEmbeddingProcessing(emailLogId, tenantId);
+
+        // Record in EmailConversation + EmailMessage so it appears in Skickat (same as UI-sent mail)
+        try {
+          const sentSubject = `[${brand.tenantName}] ${subject}`;
+          await createOutboundConversationCore(tenantId, userId, {
+            externalEmail: recipient,
+            subject: sentSubject,
+            bodyHtml: markdownToHtml(body),
+            bodyText: markdownToPlainText(body),
+            fromEmail: sender?.email ?? fromAddress,
+            fromName: sender?.name ?? null,
+            emailLogId,
+          });
+        } catch (convError) {
+          console.error("Failed to create conversation for sent email:", convError);
+        }
       } catch (logError) {
         // Log error but don't fail the email send
         console.error("Failed to log email:", logError);
@@ -567,6 +584,23 @@ export async function sendToTeamMembers(
 
         // Queue embedding processing
         queueEmailEmbeddingProcessing(emailLogId, tenantId);
+
+        // Record in EmailConversation + EmailMessage so it appears in Skickat (same as UI-sent mail)
+        try {
+          const sentSubject = `[${brand.tenantName}] ${subject}`;
+          await createOutboundConversationCore(tenantId, userId, {
+            externalEmail: membership.user.email,
+            externalName: membership.user.name ?? null,
+            subject: sentSubject,
+            bodyHtml: markdownToHtml(body),
+            bodyText: markdownToPlainText(body),
+            fromEmail: sender?.email ?? fromAddress,
+            fromName: sender?.name ?? null,
+            emailLogId,
+          });
+        } catch (convError) {
+          console.error("Failed to create conversation for sent email:", convError);
+        }
       } catch (logError) {
         // Log error but don't fail the email send
         console.error("Failed to log email:", logError);
