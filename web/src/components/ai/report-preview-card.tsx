@@ -56,7 +56,7 @@ export type ReportPreviewData = {
 
 type Props = {
   data: ReportPreviewData;
-  onGenerate: (data: ReportPreviewData) => Promise<{ success: boolean; error?: string }>;
+  onGenerate: (data: ReportPreviewData) => Promise<{ success: boolean; error?: string; downloadUrl?: string; fileId?: string }>;
   onCancel?: () => void;
 };
 
@@ -96,6 +96,7 @@ function getSectionIcon(type: "text" | "table" | "list") {
 export function ReportPreviewCard({ data, onGenerate, onCancel }: Props) {
   const [status, setStatus] = useState<"pending" | "generating" | "done" | "error">("pending");
   const [error, setError] = useState<string | null>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editedData, setEditedData] = useState<ReportPreviewData>(data);
 
@@ -107,6 +108,7 @@ export function ReportPreviewCard({ data, onGenerate, onCancel }: Props) {
       const result = await onGenerate(editedData);
       if (result.success) {
         setStatus("done");
+        if (result.downloadUrl) setDownloadUrl(result.downloadUrl);
       } else {
         setStatus("error");
         setError(result.error ?? "Kunde inte generera rapporten");
@@ -244,9 +246,22 @@ export function ReportPreviewCard({ data, onGenerate, onCancel }: Props) {
           )}
 
           {status === "done" && (
-            <p className="ml-auto text-xs text-muted-foreground">
-              Rapporten har sparats i projektets fillista
-            </p>
+            <div className="flex items-center gap-2 w-full">
+              <p className="text-xs text-muted-foreground">Rapporten sparad i fillistan</p>
+              {downloadUrl && (
+                <Button
+                  size="sm"
+                  variant="default"
+                  className="ml-auto gap-2"
+                  asChild
+                >
+                  <a href={downloadUrl} download target="_blank" rel="noopener noreferrer">
+                    <Download className="h-4 w-4" />
+                    Ladda ner
+                  </a>
+                </Button>
+              )}
+            </div>
           )}
 
           {status === "error" && (

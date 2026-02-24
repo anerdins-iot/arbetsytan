@@ -20,7 +20,7 @@ import {
   TableRow,
   TableFooter,
 } from "@/components/ui/table";
-import { FileText, Check, X, Loader2, Pencil, FolderOpen } from "lucide-react";
+import { FileText, Check, X, Loader2, Pencil, FolderOpen, Download } from "lucide-react";
 
 export type QuoteLineItem = {
   description: string;
@@ -44,7 +44,7 @@ export type QuotePreviewData = {
 
 type Props = {
   data: QuotePreviewData;
-  onGenerate: () => Promise<{ success: boolean; error?: string }>;
+  onGenerate: () => Promise<{ success: boolean; error?: string; downloadUrl?: string; fileId?: string }>;
   onCancel?: () => void;
 };
 
@@ -68,6 +68,7 @@ function formatDate(iso: string): string {
 export function QuotePreviewCard({ data, onGenerate, onCancel }: Props) {
   const [status, setStatus] = useState<"pending" | "generating" | "done" | "error">("pending");
   const [error, setError] = useState<string | null>(null);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
   const handleGenerate = async () => {
     setStatus("generating");
@@ -77,6 +78,7 @@ export function QuotePreviewCard({ data, onGenerate, onCancel }: Props) {
       const result = await onGenerate();
       if (result.success) {
         setStatus("done");
+        if (result.downloadUrl) setDownloadUrl(result.downloadUrl);
       } else {
         setStatus("error");
         setError(result.error ?? "Kunde inte generera offert");
@@ -274,9 +276,22 @@ export function QuotePreviewCard({ data, onGenerate, onCancel }: Props) {
         )}
 
         {status === "done" && (
-          <p className="ml-auto text-xs text-muted-foreground">
-            Offert genererad och sparad
-          </p>
+          <div className="flex items-center gap-2 w-full">
+            <p className="text-xs text-muted-foreground">Offert sparad i fillistan</p>
+            {downloadUrl && (
+              <Button
+                size="sm"
+                variant="default"
+                className="ml-auto gap-2"
+                asChild
+              >
+                <a href={downloadUrl} download target="_blank" rel="noopener noreferrer">
+                  <Download className="h-4 w-4" />
+                  Ladda ner PDF
+                </a>
+              </Button>
+            )}
+          </div>
         )}
 
         {status === "error" && (

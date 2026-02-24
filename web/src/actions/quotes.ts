@@ -21,7 +21,7 @@ function formatCurrency(value: number): string {
  */
 export async function generateQuotePdf(
   data: QuotePreviewData
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; downloadUrl?: string; fileId?: string }> {
   const session = await requireAuth();
   const { tenantId, userId } = session;
 
@@ -100,7 +100,7 @@ export async function generateQuotePdf(
     return { success: false, error: result.error };
   }
 
-  return { success: true };
+  return { success: true, downloadUrl: result.downloadUrl, fileId: result.fileId };
 }
 
 // ─────────────────────────────────────────
