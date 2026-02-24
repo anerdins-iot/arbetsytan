@@ -2,6 +2,8 @@
 
 **Instruktion för verifierings-agent:** Läs alltid `plan/personal-ai-chat-refactor/PLAN.md` fullt ut. Verifiera ENDAST den fas som du får angiven. Rapportera PASS/FAIL och eventuella fel. Gör inga kodändringar utom om du explicit ska fixa ett fel som du rapporterar.
 
+**Checkav:** Orchestrator checkar av (byter `[ ]` till `[x]`) för den fas som just blivit verifierad och mergad – varje gång, även om verifieringsagenten inte uppdaterat denna fil.
+
 ---
 
 ## Fas 1 – Typer, konstanter, utils
