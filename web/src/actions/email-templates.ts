@@ -169,7 +169,7 @@ export async function updateEmailTemplate(
       subject,
       htmlTemplate,
       variables: EMAIL_TEMPLATE_VARIABLES[name as TemplateName],
-      tenant: { connect: { id: tenantId } },
+      // tenantId injiceras av tenantDb-extensionen i db.ts – skicka inte tenant/tenantId här
     },
   });
 
