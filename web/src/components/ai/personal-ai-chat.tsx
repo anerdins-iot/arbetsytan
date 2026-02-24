@@ -40,11 +40,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import {
-  getPersonalConversations,
-  getConversationWithMessages,
-} from "@/actions/conversations";
-import type { ConversationListItem, ConversationWithMessagesResult } from "@/actions/conversations";
+import { getConversationWithMessages } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
 import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
@@ -63,6 +59,8 @@ import {
   formatConversationDate,
   generateAgentActionLog,
 } from "@/components/ai/personal-ai-chat-utils";
+import { useConversationHistory } from "@/hooks/use-conversation-history";
+import { PersonalAiChatHistoryDropdown } from "@/components/ai/personal-ai-chat-history-dropdown";
 export type { NoteListPanelData } from "@/components/ai/personal-ai-chat-types";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { ModelSelector } from "@/components/ai/model-selector";
@@ -114,9 +112,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const tShopping = useTranslations("shoppingList");
   const tQuotes = useTranslations("quotes");
   const [conversationId, setConversationId] = useState<string | null>(null);
-  const [conversations, setConversations] = useState<ConversationListItem[]>([]);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [loadingHistory, setLoadingHistory] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
   const [briefingData, setBriefingData] = useState<DailyBriefingData | null>(null);
   const [isLoadingBriefing, setIsLoadingBriefing] = useState(false);
@@ -374,6 +369,23 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   const isLoading = status === "streaming" || status === "submitted";
 
+  const {
+    conversations,
+    loadingHistory,
+    historyOpen,
+    setHistoryOpen,
+    loadConversation: loadConversationFromHistory,
+    startNewConversation: startNewConversationFromHistory,
+  } = useConversationHistory({
+    setConversationId,
+    setMessages,
+    setNextCursor,
+    setHasMore,
+    onConversationLoaded: (lastMessageId) => {
+      lastSpokenMessageIdRef.current = lastMessageId;
+    },
+  });
+
   // Associate pending debug context with assistant message once streaming finishes
   useEffect(() => {
     if (isLoading || !pendingDebugContextRef.current) return;
@@ -491,17 +503,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     void loadContext();
   }, [activeProjectId]);
 
-  const loadConversations = useCallback(async () => {
-    setLoadingHistory(true);
-    const result = await getPersonalConversations();
-    setLoadingHistory(false);
-    if (result.success) setConversations(result.conversations);
-  }, []);
-
-  useEffect(() => {
-    if (historyOpen) void loadConversations();
-  }, [historyOpen, loadConversations]);
-
   // Load note categories when note list panel opens (for NoteCard edit dropdown)
   useEffect(() => {
     if (!openNoteListData) return;
@@ -521,40 +522,21 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   }, [openTimeEntryPanel]);
 
   const startNewConversation = useCallback(() => {
-    setConversationId(null);
-    setMessages([]);
-    setNextCursor(null);
-    setHasMore(false);
-    setHistoryOpen(false);
+    startNewConversationFromHistory();
     setUploadedFiles([]);
     setMessageDebugContext(new Map());
     setMessageModels(new Map());
     lastSpokenMessageIdRef.current = null;
-  }, [setMessages]);
+  }, [startNewConversationFromHistory]);
 
   const loadConversation = useCallback(
     async (convId: string) => {
-      const result = await getConversationWithMessages(convId);
-      if (!result.success) return;
-      setConversationId(result.conversation.id);
-      setNextCursor(result.nextCursor);
-      setHasMore(result.hasMore);
-      const uiMessages = result.messages.map((m) => ({
-        id: m.id,
-        role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
-        parts: [{ type: "text" as const, text: m.content }],
-      }));
       isInitialLoadRef.current = true;
       isNearBottomRef.current = true;
-      setMessages(uiMessages);
-      setHistoryOpen(false);
+      await loadConversationFromHistory(convId);
       setUploadedFiles([]);
-      // Don't auto-speak when loading old conversations
-      if (uiMessages.length > 0) {
-        lastSpokenMessageIdRef.current = uiMessages[uiMessages.length - 1].id;
-      }
     },
-    [setMessages]
+    [loadConversationFromHistory]
   );
 
   const loadMoreMessages = useCallback(async () => {
@@ -926,39 +908,16 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       </div>
 
       {/* Konversationshistorik-lista */}
-      {historyOpen && (
-        <div className="border-b border-border bg-muted/30 px-4 py-3">
-          {loadingHistory ? (
-            <p className="text-sm text-muted-foreground">{t("loading")}</p>
-          ) : conversations.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              {t("noConversations")}
-            </p>
-          ) : (
-            <div className="flex max-h-72 flex-col gap-1 overflow-y-auto">
-              {conversations.map((c) => (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => loadConversation(c.id)}
-                  className={cn(
-                    "flex flex-col items-start rounded-md border border-transparent px-3 py-2 text-left text-sm transition-colors hover:bg-muted hover:border-border",
-                    conversationId === c.id && "bg-muted border-border"
-                  )}
-                >
-                  <span className="line-clamp-1 font-medium text-foreground">
-                    {c.title || t("newConversation")}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {formatConversationDate(c.updatedAt)} ·{" "}
-                    {t("messageCount", { count: c.messageCount })}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      <PersonalAiChatHistoryDropdown
+        open={historyOpen}
+        loading={loadingHistory}
+        conversations={conversations}
+        selectedConversationId={conversationId}
+        onSelect={loadConversation}
+        onNewConversation={startNewConversation}
+        t={t}
+        formatDate={formatConversationDate}
+      />
 
       {/* Drag-and-drop overlay */}
       {isDragOver && (
