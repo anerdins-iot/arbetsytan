@@ -8,8 +8,8 @@
 
 ## Viktiga regler för agenter
 
-1. **Implementation-agent:** Du får ENDAST implementera den fas som är angiven i din uppgift. Läs HELA denna PLAN.md en gång, sedan utför BARA din fas. Ändra inga andra faser eller filer som inte tillhör din fas.
-2. **Verifierings-agent:** Du får ENDAST verifiera den fas som anges. Läs HELA PLAN.md och VERIFICATION.md. Kontrollera att implementationen matchar planen för just den fasen och att inget annat brutits.
+1. **Implementation-agent:** Du får ENDAST implementera den fas som är angiven i din uppgift. Läs HELA denna PLAN.md en gång, sedan utför BARA din fas. Ändra inga andra faser eller filer som inte tillhör din fas. **Kör INTE `npm run build`** – build körs endast av verifieringsagenten; i impl-miljön fungerar det oftast inte.
+2. **Verifierings-agent:** Du får ENDAST verifiera den fas som anges. Läs HELA PLAN.md och VERIFICATION.md. Kontrollera att implementationen matchar planen för just den fasen och att inget annat brutits. **Du ska köra `npm run build`** (se VERIFICATION.md för ev. npm install / miljövariabler).
 3. **Arbetskopia:** Implementation sker i worktree. Efter godkänd verifiering gör orchestrator merge.
 
 4. **Checkav – orchestrator:** Efter varje fas (oavsett om verifieringsagenten gör det) ska orchestrator alltid:

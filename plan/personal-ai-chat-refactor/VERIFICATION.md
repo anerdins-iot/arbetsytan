@@ -2,6 +2,8 @@
 
 **Instruktion för verifierings-agent:** Läs alltid `plan/personal-ai-chat-refactor/PLAN.md` fullt ut. Verifiera ENDAST den fas som du får angiven. Rapportera PASS/FAIL och eventuella fel. Gör inga kodändringar utom om du explicit ska fixa ett fel som du rapporterar.
 
+**Build:** Du ska köra `npm run build` i `web/` som del av verifieringen. Om build felar pga saknad miljö: kör först `npm install` (i workspace-rot eller `web/`). Om build kräver `DATABASE_URL` eller liknande, sätt en dummy (t.ex. `DATABASE_URL=postgresql://localhost:5432/dummy npm run build` i web/) så att kompilering/typkontroll går igenom; rapportera om du behövde dummy-env.
+
 **Checkav:** Orchestrator checkar av (byter `[ ]` till `[x]`) för den fas som just blivit verifierad och mergad – varje gång, även om verifieringsagenten inte uppdaterat denna fil.
 
 ---
@@ -27,10 +29,10 @@
 
 ## Fas 3 – Filuppladdning
 
-- [ ] Finns `web/src/hooks/use-chat-file-upload.ts` med uploadedFiles, uploadFile, handleFileSelect, removeUploadedFile, setUploadedFiles.
-- [ ] Finns `web/src/components/ai/chat-uploaded-files-strip.tsx` med props files, onRemove, t (och getFileIcon om det används).
-- [ ] Huvudkomponenten använder hooken och ChatUploadedFilesStrip; drag/paste anropar handleFileSelect. Ingen duplicerad upload-logik kvar i huvudfilen.
-- [ ] Build passerar. Inga nya lint-fel.
+- [x] Finns `web/src/hooks/use-chat-file-upload.ts` med uploadedFiles, uploadFile, handleFileSelect, removeUploadedFile, setUploadedFiles.
+- [x] Finns `web/src/components/ai/chat-uploaded-files-strip.tsx` med props files, onRemove, t (och getFileIcon om det används).
+- [x] Huvudkomponenten använder hooken och ChatUploadedFilesStrip; drag/paste anropar handleFileSelect. Ingen duplicerad upload-logik kvar i huvudfilen.
+- [x] Build passerar. Inga nya lint-fel.
 
 ---
 
