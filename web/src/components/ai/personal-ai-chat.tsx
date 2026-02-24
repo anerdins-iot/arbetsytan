@@ -7,11 +7,7 @@ import { DefaultChatTransport } from "ai";
 import {
   MessageCircle,
   History,
-  X,
   FolderOpen,
-  PanelRightClose,
-  Maximize2,
-  Minimize2,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
@@ -80,6 +76,7 @@ import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
 import type { FileListGridItem } from "@/components/files/file-list-grid";
+import { PersonalAiChatHeader } from "@/components/ai/personal-ai-chat-header";
 import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -862,50 +859,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     }
   }, [messages, isLoading, scrollToBottom]);
 
-  // Ikon baserat på filtyp
-  // Header content shared by both modes
   const headerContent = (
-    <div className="flex items-center justify-between border-b border-border px-4 py-3">
-      <div className="flex items-center gap-2 font-semibold">
-        <MessageCircle className="size-5 text-muted-foreground" />
-        {t("title")}
-      </div>
-      <div className="flex items-center gap-1">
-        {mode === "docked" && !isFullscreen && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground hover:text-foreground"
-            onClick={() => setChatPanelCollapsed(true)}
-            aria-label={t("strip.collapseChat")}
-          >
-            <PanelRightClose className="size-4" />
-          </Button>
-        )}
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="size-7 text-muted-foreground hover:text-foreground"
-          onClick={toggleFullscreen}
-          aria-label={isFullscreen ? "Minimize" : "Maximize"}
-        >
-          {isFullscreen ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
-        </Button>
-        {mode === "docked" && !isFullscreen && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="size-7 text-muted-foreground hover:text-foreground"
-            onClick={() => onOpenChange(false)}
-          >
-            <X className="size-4" />
-          </Button>
-        )}
-      </div>
-    </div>
+    <PersonalAiChatHeader
+      title={t("title")}
+      isFullscreen={isFullscreen}
+      onToggleFullscreen={toggleFullscreen}
+      onClose={mode === "docked" && !isFullscreen ? () => onOpenChange(false) : undefined}
+      mode={mode}
+      closeButtonAriaLabel={t("strip.collapseChat")}
+    />
   );
 
   // Chat body content shared by both modes (min-h-0 so flex children can shrink in Sheet)
