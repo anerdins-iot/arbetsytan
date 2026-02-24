@@ -19,6 +19,8 @@ import {
   Maximize2,
   Minimize2,
   Info,
+  Search,
+  BarChart2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -28,6 +30,12 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   getPersonalConversations,
   getConversationWithMessages,
@@ -67,6 +75,7 @@ import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
 import { WholesalerSearchResultButton } from "@/components/ai/wholesaler-search-result-button";
+import { ChatResultButton } from "@/components/ai/chat-result-button";
 import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
 
@@ -157,6 +166,10 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const pendingDebugContextRef = useRef<DebugContext | null>(null);
   const [messageModels, setMessageModels] = useState<Map<string, string>>(new Map());
   const pendingModelKeyRef = useRef<string | null>(null);
+  // Modal state for tool result previews
+  const [openQuoteData, setOpenQuoteData] = useState<QuotePreviewData | null>(null);
+  const [openSearchResults, setOpenSearchResults] = useState<SearchResult[] | null>(null);
+  const [openReportData, setOpenReportData] = useState<ReportPreviewData | null>(null);
   // Track which messages have attached images (messageIndex -> fileIds)
   const [chatImageMap, setChatImageMap] = useState<Map<number, string[]>>(new Map());
   // Pending image file IDs to be sent with the next message
@@ -848,6 +861,37 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     [inputValue, isLoading, sendMessage, uploadedFiles, messages.length]
   );
 
+  // Report generation handler (shared by ChatResultButton → Dialog)
+  const handleReportGenerate = useCallback(async (finalData: ReportPreviewData) => {
+    const contentParts: string[] = [];
+    for (const section of finalData.sections) {
+      contentParts.push(`## ${section.title}\n`);
+      if (section.type === "table" && section.data && section.data.length > 0) {
+        const headers = section.data[0];
+        if (headers) {
+          contentParts.push(`| ${headers.join(" | ")} |`);
+          contentParts.push(`| ${headers.map(() => "---").join(" | ")} |`);
+          for (const row of section.data.slice(1)) {
+            contentParts.push(`| ${row.join(" | ")} |`);
+          }
+        }
+        contentParts.push("");
+      } else {
+        contentParts.push(section.content);
+        contentParts.push("");
+      }
+    }
+    const fullContent = contentParts.join("\n");
+
+    sendMessage({
+      text: `Generera rapporten "${finalData.title}" som ${finalData.format.toUpperCase()}. ` +
+        `${finalData.projectId ? `Projekt-ID: ${finalData.projectId}. ` : ""}` +
+        `Innehåll:\n\n${finalData.summary}\n\n${fullContent}`,
+    });
+
+    return { success: true };
+  }, [sendMessage]);
+
   // Called when OCR review is complete - analysis runs in background
   const handleOcrReviewComplete = useCallback(
     (result: { ocrText: string; userDescription: string; skipped: boolean }) => {
@@ -1178,10 +1222,14 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   }
 
                   if (result?.__searchResults && Array.isArray(result.results)) {
+                    const searchResults = result.results as SearchResult[];
                     return (
-                      <SearchResultsCard
+                      <ChatResultButton
                         key={i}
-                        results={result.results as SearchResult[]}
+                        icon={<Search className="size-5 text-primary" />}
+                        title={`Hittade ${searchResults.length} dokument`}
+                        buttonLabel="Visa resultat"
+                        onOpen={() => setOpenSearchResults(searchResults)}
                       />
                     );
                   }
@@ -1212,51 +1260,21 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       __reportPreview: true;
                     };
 
-                    const handleReportGenerate = async (finalData: ReportPreviewData) => {
-                      // Build content from sections
-                      const contentParts: string[] = [];
-                      for (const section of finalData.sections) {
-                        contentParts.push(`## ${section.title}\n`);
-                        if (section.type === "table" && section.data && section.data.length > 0) {
-                          // Build markdown table
-                          const headers = section.data[0];
-                          if (headers) {
-                            contentParts.push(`| ${headers.join(" | ")} |`);
-                            contentParts.push(`| ${headers.map(() => "---").join(" | ")} |`);
-                            for (const row of section.data.slice(1)) {
-                              contentParts.push(`| ${row.join(" | ")} |`);
-                            }
-                          }
-                          contentParts.push("");
-                        } else {
-                          contentParts.push(section.content);
-                          contentParts.push("");
-                        }
-                      }
-                      const fullContent = contentParts.join("\n");
-
-                      // Send a message to the AI to generate the document
-                      sendMessage({
-                        text: `Generera rapporten "${finalData.title}" som ${finalData.format.toUpperCase()}. ` +
-                          `${finalData.projectId ? `Projekt-ID: ${finalData.projectId}. ` : ""}` +
-                          `Innehåll:\n\n${finalData.summary}\n\n${fullContent}`,
-                      });
-
-                      return { success: true };
-                    };
-
                     return (
-                      <ReportPreviewCard
+                      <ChatResultButton
                         key={i}
-                        data={{
+                        icon={<BarChart2 className="size-5 text-primary" />}
+                        title={`Rapport — ${reportData.title}`}
+                        subtitle={reportData.projectName}
+                        buttonLabel="Öppna rapport"
+                        onOpen={() => setOpenReportData({
                           title: reportData.title,
                           summary: reportData.summary,
                           sections: reportData.sections,
                           projectId: reportData.projectId,
                           projectName: reportData.projectName,
                           format: reportData.format,
-                        }}
-                        onGenerate={handleReportGenerate}
+                        })}
                       />
                     );
                   }
@@ -1336,24 +1354,14 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       __quotePreview: true;
                     };
 
-                    const handleGenerate = async () => {
-                      return generateQuotePdf({
-                        projectId: quoteData.projectId,
-                        projectName: quoteData.projectName,
-                        clientName: quoteData.clientName,
-                        clientEmail: quoteData.clientEmail,
-                        title: quoteData.title,
-                        items: quoteData.items,
-                        validUntil: quoteData.validUntil,
-                        notes: quoteData.notes,
-                        includeRot: quoteData.includeRot,
-                      });
-                    };
-
                     return (
-                      <QuotePreviewCard
+                      <ChatResultButton
                         key={i}
-                        data={{
+                        icon={<FileText className="size-5 text-primary" />}
+                        title={`Offert — ${quoteData.title}`}
+                        subtitle={quoteData.clientName}
+                        buttonLabel="Öppna offert"
+                        onOpen={() => setOpenQuoteData({
                           projectId: quoteData.projectId,
                           projectName: quoteData.projectName,
                           clientName: quoteData.clientName,
@@ -1363,8 +1371,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                           validUntil: quoteData.validUntil,
                           notes: quoteData.notes,
                           includeRot: quoteData.includeRot,
-                        }}
-                        onGenerate={handleGenerate}
+                        })}
                       />
                     );
                   }
@@ -1683,6 +1690,50 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   ) : null;
 
+  // Tool result modals (quote, search, report)
+  const toolResultDialogs = (
+    <>
+      <Dialog open={!!openQuoteData} onOpenChange={(o) => !o && setOpenQuoteData(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Offert</DialogTitle>
+          </DialogHeader>
+          {openQuoteData && (
+            <QuotePreviewCard
+              data={openQuoteData}
+              onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!openSearchResults} onOpenChange={(o) => !o && setOpenSearchResults(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Sökresultat</DialogTitle>
+          </DialogHeader>
+          {openSearchResults && (
+            <SearchResultsCard results={openSearchResults} />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!openReportData} onOpenChange={(o) => !o && setOpenReportData(null)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Rapport</DialogTitle>
+          </DialogHeader>
+          {openReportData && (
+            <ReportPreviewCard
+              data={openReportData}
+              onGenerate={handleReportGenerate}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+
   // OCR review dialog - simple review + save, analysis runs in background
   const fileAnalysisUI = analysisFile ? (
     <OcrReviewDialog
@@ -1705,6 +1756,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               {chatBody}
             </div>
           </div>
+          {toolResultDialogs}
           {fileAnalysisUI}
           {ragDebugUI}
         </>
@@ -1766,6 +1818,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
         </Sheet>
       )}
 
+      {toolResultDialogs}
       {fileAnalysisUI}
       {ragDebugUI}
     </>
