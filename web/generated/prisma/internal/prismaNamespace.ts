@@ -408,6 +408,7 @@ export const ModelName = {
   Message: 'Message',
   MessageChunk: 'MessageChunk',
   Note: 'Note',
+  NoteAttachment: 'NoteAttachment',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
   NoteCategory: 'NoteCategory',
@@ -441,7 +442,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "knowledgeEntity" | "knowledgeRelation" | "aIMessage" | "account" | "activityLog" | "automation" | "automationLog" | "comment" | "conversation" | "documentChunk" | "documentTemplate" | "emailAttachment" | "emailChunk" | "emailConversation" | "emailLog" | "emailMessage" | "emailTemplate" | "file" | "fileAnalysis" | "invitation" | "membership" | "message" | "messageChunk" | "note" | "shoppingList" | "shoppingListItem" | "noteCategory" | "notification" | "notificationPreference" | "project" | "projectMember" | "pushSubscription" | "session" | "subscription" | "task" | "taskAssignment" | "tenant" | "timeEntry" | "user" | "verificationToken" | "quote" | "quoteItem"
+    modelProps: "knowledgeEntity" | "knowledgeRelation" | "aIMessage" | "account" | "activityLog" | "automation" | "automationLog" | "comment" | "conversation" | "documentChunk" | "documentTemplate" | "emailAttachment" | "emailChunk" | "emailConversation" | "emailLog" | "emailMessage" | "emailTemplate" | "file" | "fileAnalysis" | "invitation" | "membership" | "message" | "messageChunk" | "note" | "noteAttachment" | "shoppingList" | "shoppingListItem" | "noteCategory" | "notification" | "notificationPreference" | "project" | "projectMember" | "pushSubscription" | "session" | "subscription" | "task" | "taskAssignment" | "tenant" | "timeEntry" | "user" | "verificationToken" | "quote" | "quoteItem"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2221,6 +2222,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    NoteAttachment: {
+      payload: Prisma.$NoteAttachmentPayload<ExtArgs>
+      fields: Prisma.NoteAttachmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.NoteAttachmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.NoteAttachmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>
+        }
+        findFirst: {
+          args: Prisma.NoteAttachmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.NoteAttachmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>
+        }
+        findMany: {
+          args: Prisma.NoteAttachmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>[]
+        }
+        create: {
+          args: Prisma.NoteAttachmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>
+        }
+        createMany: {
+          args: Prisma.NoteAttachmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.NoteAttachmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>[]
+        }
+        delete: {
+          args: Prisma.NoteAttachmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>
+        }
+        update: {
+          args: Prisma.NoteAttachmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.NoteAttachmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.NoteAttachmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.NoteAttachmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.NoteAttachmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NoteAttachmentPayload>
+        }
+        aggregate: {
+          args: Prisma.NoteAttachmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNoteAttachment>
+        }
+        groupBy: {
+          args: Prisma.NoteAttachmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NoteAttachmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.NoteAttachmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NoteAttachmentCountAggregateOutputType> | number
+        }
+      }
+    }
     ShoppingList: {
       payload: Prisma.$ShoppingListPayload<ExtArgs>
       fields: Prisma.ShoppingListFieldRefs
@@ -3975,6 +4050,16 @@ export const NoteScalarFieldEnum = {
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
 
 
+export const NoteAttachmentScalarFieldEnum = {
+  id: 'id',
+  noteId: 'noteId',
+  fileId: 'fileId',
+  createdAt: 'createdAt'
+} as const
+
+export type NoteAttachmentScalarFieldEnum = (typeof NoteAttachmentScalarFieldEnum)[keyof typeof NoteAttachmentScalarFieldEnum]
+
+
 export const ShoppingListScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -4776,6 +4861,7 @@ export type GlobalOmitConfig = {
   message?: Prisma.MessageOmit
   messageChunk?: Prisma.MessageChunkOmit
   note?: Prisma.NoteOmit
+  noteAttachment?: Prisma.NoteAttachmentOmit
   shoppingList?: Prisma.ShoppingListOmit
   shoppingListItem?: Prisma.ShoppingListItemOmit
   noteCategory?: Prisma.NoteCategoryOmit

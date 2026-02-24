@@ -329,6 +329,7 @@ model File {
   versionNumber   Int             @default(1)
   chunks             DocumentChunk[]
   documentTemplates  DocumentTemplate[]
+  noteAttachments    NoteAttachment[]
   parentFile         File?           @relation("FileToFile", fields: [parentFileId], references: [id])
   childVersions      File[]          @relation("FileToFile")
   project            Project?        @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -425,21 +426,35 @@ model MessageChunk {
 }
 
 model Note {
-  id          String   @id @default(cuid())
-  title       String   @default("")
+  id          String           @id @default(cuid())
+  title       String           @default("")
   content     String
   category    String?
-  isPinned    Boolean  @default(false)
+  isPinned    Boolean          @default(false)
   projectId   String?
   createdById String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime   @updatedAt
-  createdBy   User     @relation(fields: [createdById], references: [id])
-  project     Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  createdBy   User             @relation(fields: [createdById], references: [id])
+  project     Project?         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  attachments NoteAttachment[]
 
   @@index([createdById, projectId])
   @@index([projectId, category])
   @@index([projectId, createdAt])
+}
+
+model NoteAttachment {
+  id        String   @id @default(cuid())
+  noteId    String
+  fileId    String
+  createdAt DateTime @default(now())
+  note      Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  file      File     @relation(fields: [fileId], references: [id], onDelete: Cascade)
+
+  @@unique([noteId, fileId])
+  @@index([noteId])
+  @@index([fileId])
 }
 
 model ShoppingList {

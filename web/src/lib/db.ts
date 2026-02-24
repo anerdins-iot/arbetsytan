@@ -295,7 +295,19 @@ function createTenantExtension(tenantId: string) {
     // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
   };
 
-  // 2a2. Note: can be personal (projectId null) or project-scoped
+  // 2a2. NoteAttachment: scoped via note.project.tenantId
+  query.noteAttachment = {
+    findMany: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
+    findFirst: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
+    findFirstOrThrow: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
+    count: ({ args, query: run }) =>
+      run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
+  };
+
+  // 2a3. Note: can be personal (projectId null) or project-scoped
   query.note = {
     findMany: ({ args, query: run }) =>
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
@@ -497,6 +509,7 @@ export type TenantScopedClient = Omit<
   | "conversation"
   | "message"
   | "note"
+  | "noteAttachment"
   | "emailTemplate"
   | "automationLog"
   | "noteCategory"
@@ -523,6 +536,7 @@ export type TenantScopedClient = Omit<
   conversation: PrismaClient["conversation"];
   message: PrismaClient["message"];
   note: PrismaClient["note"];
+  noteAttachment: PrismaClient["noteAttachment"];
   emailTemplate: PrismaClient["emailTemplate"];
   automationLog: PrismaClient["automationLog"];
   noteCategory: PrismaClient["noteCategory"];

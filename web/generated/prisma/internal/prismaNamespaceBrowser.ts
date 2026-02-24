@@ -75,6 +75,7 @@ export const ModelName = {
   Message: 'Message',
   MessageChunk: 'MessageChunk',
   Note: 'Note',
+  NoteAttachment: 'NoteAttachment',
   ShoppingList: 'ShoppingList',
   ShoppingListItem: 'ShoppingListItem',
   NoteCategory: 'NoteCategory',
@@ -492,6 +493,16 @@ export const NoteScalarFieldEnum = {
 } as const
 
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const NoteAttachmentScalarFieldEnum = {
+  id: 'id',
+  noteId: 'noteId',
+  fileId: 'fileId',
+  createdAt: 'createdAt'
+} as const
+
+export type NoteAttachmentScalarFieldEnum = (typeof NoteAttachmentScalarFieldEnum)[keyof typeof NoteAttachmentScalarFieldEnum]
 
 
 export const ShoppingListScalarFieldEnum = {

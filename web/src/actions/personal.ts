@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb, userDb } from "@/lib/db";
-import { getPersonalNotesCore, getPersonalFilesCore } from "@/services";
+import { getPersonalNotesCore, getPersonalFilesCore, getPersonalNoteAttachmentsCore } from "@/services";
 import {
   createPresignedDownloadUrl,
   createPresignedUploadUrl,
@@ -613,5 +613,125 @@ export async function completePersonalFileUpload(input: {
   } catch (error) {
     const message = error instanceof Error ? error.message : "UPLOAD_COMPLETE_FAILED";
     return { success: false, error: message };
+  }
+}
+
+// ─────────────────────────────────────────
+// Personal Note Attachments
+// ─────────────────────────────────────────
+
+export type PersonalNoteAttachmentItemWithUrl = {
+  id: string;
+  fileId: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string;
+  downloadUrl: string;
+};
+
+export async function getPersonalNoteAttachments(
+  noteId: string
+): Promise<{ success: true; attachments: PersonalNoteAttachmentItemWithUrl[] } | { success: false; error: string }> {
+  try {
+    const { userId, tenantId } = await requireAuth();
+
+    const attachments = await getPersonalNoteAttachmentsCore(
+      { tenantId, userId },
+      noteId
+    );
+
+    const udb = userDb(userId, {});
+    const results = await Promise.allSettled(
+      attachments.map(async (a) => {
+        const file = await udb.file.findFirst({
+          where: { id: a.fileId },
+          select: { bucket: true, key: true },
+        });
+        const downloadUrl = file
+          ? await createPresignedDownloadUrl({ bucket: file.bucket, key: file.key })
+          : "#";
+        return {
+          id: a.id,
+          fileId: a.fileId,
+          fileName: a.fileName,
+          fileType: a.fileType,
+          fileSize: a.fileSize,
+          createdAt: a.createdAt.toISOString(),
+          downloadUrl,
+        };
+      })
+    );
+
+    return {
+      success: true,
+      attachments: results.map((r, i) =>
+        r.status === "fulfilled"
+          ? r.value
+          : {
+              id: attachments[i].id,
+              fileId: attachments[i].fileId,
+              fileName: attachments[i].fileName,
+              fileType: attachments[i].fileType,
+              fileSize: attachments[i].fileSize,
+              createdAt: attachments[i].createdAt.toISOString(),
+              downloadUrl: "#",
+            }
+      ),
+    };
+  } catch {
+    return { success: false, error: "Kunde inte hämta bilagor." };
+  }
+}
+
+export async function attachFileToPersonalNote(
+  noteId: string,
+  fileId: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const { userId } = await requireAuth();
+    const udb = userDb(userId, {});
+
+    // Verify note belongs to user
+    const note = await udb.note.findFirst({ where: { id: noteId } });
+    if (!note) return { success: false, error: "Anteckningen hittades inte." };
+
+    // Verify file belongs to user (personal file)
+    const file = await udb.file.findFirst({ where: { id: fileId } });
+    if (!file) return { success: false, error: "Filen hittades inte." };
+
+    const { prisma } = await import("@/lib/db");
+    await prisma.noteAttachment.upsert({
+      where: { noteId_fileId: { noteId, fileId } },
+      create: { noteId, fileId },
+      update: {},
+    });
+
+    return { success: true };
+  } catch {
+    return { success: false, error: "Kunde inte bifoga fil." };
+  }
+}
+
+export async function detachFileFromPersonalNote(
+  noteId: string,
+  fileId: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const { userId } = await requireAuth();
+    const udb = userDb(userId, {});
+
+    // Verify note belongs to user
+    const note = await udb.note.findFirst({ where: { id: noteId } });
+    if (!note) return { success: false, error: "Anteckningen hittades inte." };
+
+    const { prisma } = await import("@/lib/db");
+    await prisma.noteAttachment.deleteMany({
+      where: { noteId, fileId },
+    });
+
+    return { success: true };
+  } catch {
+    return { success: false, error: "Kunde inte ta bort bilaga." };
   }
 }

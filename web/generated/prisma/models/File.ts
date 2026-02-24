@@ -310,6 +310,7 @@ export type FileWhereInput = {
   versionNumber?: Prisma.IntFilter<"File"> | number
   chunks?: Prisma.DocumentChunkListRelationFilter
   documentTemplates?: Prisma.DocumentTemplateListRelationFilter
+  noteAttachments?: Prisma.NoteAttachmentListRelationFilter
   parentFile?: Prisma.XOR<Prisma.FileNullableScalarRelationFilter, Prisma.FileWhereInput> | null
   childVersions?: Prisma.FileListRelationFilter
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
@@ -336,6 +337,7 @@ export type FileOrderByWithRelationInput = {
   versionNumber?: Prisma.SortOrder
   chunks?: Prisma.DocumentChunkOrderByRelationAggregateInput
   documentTemplates?: Prisma.DocumentTemplateOrderByRelationAggregateInput
+  noteAttachments?: Prisma.NoteAttachmentOrderByRelationAggregateInput
   parentFile?: Prisma.FileOrderByWithRelationInput
   childVersions?: Prisma.FileOrderByRelationAggregateInput
   project?: Prisma.ProjectOrderByWithRelationInput
@@ -365,6 +367,7 @@ export type FileWhereUniqueInput = Prisma.AtLeast<{
   versionNumber?: Prisma.IntFilter<"File"> | number
   chunks?: Prisma.DocumentChunkListRelationFilter
   documentTemplates?: Prisma.DocumentTemplateListRelationFilter
+  noteAttachments?: Prisma.NoteAttachmentListRelationFilter
   parentFile?: Prisma.XOR<Prisma.FileNullableScalarRelationFilter, Prisma.FileWhereInput> | null
   childVersions?: Prisma.FileListRelationFilter
   project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
@@ -434,6 +437,7 @@ export type FileCreateInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
@@ -460,6 +464,7 @@ export type FileUncheckedCreateInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
@@ -480,6 +485,7 @@ export type FileUpdateInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
@@ -506,6 +512,7 @@ export type FileUncheckedUpdateInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -751,6 +758,20 @@ export type FileUpdateOneRequiredWithoutAnalysesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.FileUpdateToOneWithWhereWithoutAnalysesInput, Prisma.FileUpdateWithoutAnalysesInput>, Prisma.FileUncheckedUpdateWithoutAnalysesInput>
 }
 
+export type FileCreateNestedOneWithoutNoteAttachmentsInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutNoteAttachmentsInput, Prisma.FileUncheckedCreateWithoutNoteAttachmentsInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutNoteAttachmentsInput
+  connect?: Prisma.FileWhereUniqueInput
+}
+
+export type FileUpdateOneRequiredWithoutNoteAttachmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.FileCreateWithoutNoteAttachmentsInput, Prisma.FileUncheckedCreateWithoutNoteAttachmentsInput>
+  connectOrCreate?: Prisma.FileCreateOrConnectWithoutNoteAttachmentsInput
+  upsert?: Prisma.FileUpsertWithoutNoteAttachmentsInput
+  connect?: Prisma.FileWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.FileUpdateToOneWithWhereWithoutNoteAttachmentsInput, Prisma.FileUpdateWithoutNoteAttachmentsInput>, Prisma.FileUncheckedUpdateWithoutNoteAttachmentsInput>
+}
+
 export type FileCreateNestedManyWithoutProjectInput = {
   create?: Prisma.XOR<Prisma.FileCreateWithoutProjectInput, Prisma.FileUncheckedCreateWithoutProjectInput> | Prisma.FileCreateWithoutProjectInput[] | Prisma.FileUncheckedCreateWithoutProjectInput[]
   connectOrCreate?: Prisma.FileCreateOrConnectWithoutProjectInput | Prisma.FileCreateOrConnectWithoutProjectInput[]
@@ -850,6 +871,7 @@ export type FileCreateWithoutChunksInput = {
   userDescription?: string | null
   versionNumber?: number
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
@@ -875,6 +897,7 @@ export type FileUncheckedCreateWithoutChunksInput = {
   parentFileId?: string | null
   versionNumber?: number
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
@@ -910,6 +933,7 @@ export type FileUpdateWithoutChunksInput = {
   userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
@@ -935,6 +959,7 @@ export type FileUncheckedUpdateWithoutChunksInput = {
   parentFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -954,6 +979,7 @@ export type FileCreateWithoutDocumentTemplatesInput = {
   userDescription?: string | null
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
@@ -979,6 +1005,7 @@ export type FileUncheckedCreateWithoutDocumentTemplatesInput = {
   parentFileId?: string | null
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
@@ -1014,6 +1041,7 @@ export type FileUpdateWithoutDocumentTemplatesInput = {
   userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
@@ -1039,6 +1067,7 @@ export type FileUncheckedUpdateWithoutDocumentTemplatesInput = {
   parentFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -1059,6 +1088,7 @@ export type FileCreateWithoutChildVersionsInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   user: Prisma.UserCreateNestedOneWithoutFileInput
@@ -1084,6 +1114,7 @@ export type FileUncheckedCreateWithoutChildVersionsInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
 
@@ -1108,6 +1139,7 @@ export type FileCreateWithoutParentFileInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
   user: Prisma.UserCreateNestedOneWithoutFileInput
@@ -1132,6 +1164,7 @@ export type FileUncheckedCreateWithoutParentFileInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
@@ -1173,6 +1206,7 @@ export type FileUpdateWithoutChildVersionsInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutFileNestedInput
@@ -1198,6 +1232,7 @@ export type FileUncheckedUpdateWithoutChildVersionsInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
 
@@ -1255,6 +1290,7 @@ export type FileCreateWithoutAnalysesInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
@@ -1280,6 +1316,7 @@ export type FileUncheckedCreateWithoutAnalysesInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
 }
 
@@ -1315,6 +1352,7 @@ export type FileUpdateWithoutAnalysesInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
@@ -1340,7 +1378,116 @@ export type FileUncheckedUpdateWithoutAnalysesInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
+}
+
+export type FileCreateWithoutNoteAttachmentsInput = {
+  id?: string
+  name: string
+  type: string
+  size: number
+  bucket: string
+  key: string
+  ocrText?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  aiAnalysis?: string | null
+  label?: string | null
+  userDescription?: string | null
+  versionNumber?: number
+  chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
+  documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
+  childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
+  project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
+  user: Prisma.UserCreateNestedOneWithoutFileInput
+  analyses?: Prisma.FileAnalysisCreateNestedManyWithoutFileInput
+}
+
+export type FileUncheckedCreateWithoutNoteAttachmentsInput = {
+  id?: string
+  name: string
+  type: string
+  size: number
+  bucket: string
+  key: string
+  ocrText?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  projectId?: string | null
+  uploadedById: string
+  aiAnalysis?: string | null
+  label?: string | null
+  userDescription?: string | null
+  parentFileId?: string | null
+  versionNumber?: number
+  chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
+  documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
+  analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
+}
+
+export type FileCreateOrConnectWithoutNoteAttachmentsInput = {
+  where: Prisma.FileWhereUniqueInput
+  create: Prisma.XOR<Prisma.FileCreateWithoutNoteAttachmentsInput, Prisma.FileUncheckedCreateWithoutNoteAttachmentsInput>
+}
+
+export type FileUpsertWithoutNoteAttachmentsInput = {
+  update: Prisma.XOR<Prisma.FileUpdateWithoutNoteAttachmentsInput, Prisma.FileUncheckedUpdateWithoutNoteAttachmentsInput>
+  create: Prisma.XOR<Prisma.FileCreateWithoutNoteAttachmentsInput, Prisma.FileUncheckedCreateWithoutNoteAttachmentsInput>
+  where?: Prisma.FileWhereInput
+}
+
+export type FileUpdateToOneWithWhereWithoutNoteAttachmentsInput = {
+  where?: Prisma.FileWhereInput
+  data: Prisma.XOR<Prisma.FileUpdateWithoutNoteAttachmentsInput, Prisma.FileUncheckedUpdateWithoutNoteAttachmentsInput>
+}
+
+export type FileUpdateWithoutNoteAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
+  documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
+  childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
+  user?: Prisma.UserUpdateOneRequiredWithoutFileNestedInput
+  analyses?: Prisma.FileAnalysisUpdateManyWithoutFileNestedInput
+}
+
+export type FileUncheckedUpdateWithoutNoteAttachmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.IntFieldUpdateOperationsInput | number
+  bucket?: Prisma.StringFieldUpdateOperationsInput | string
+  key?: Prisma.StringFieldUpdateOperationsInput | string
+  ocrText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  uploadedById?: Prisma.StringFieldUpdateOperationsInput | string
+  aiAnalysis?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  parentFileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
+  chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
+  documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
+  analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
 
 export type FileCreateWithoutProjectInput = {
@@ -1359,6 +1506,7 @@ export type FileCreateWithoutProjectInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   user: Prisma.UserCreateNestedOneWithoutFileInput
@@ -1383,6 +1531,7 @@ export type FileUncheckedCreateWithoutProjectInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
@@ -1429,6 +1578,7 @@ export type FileCreateWithoutUserInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentCreateNestedManyWithoutFileInput
   parentFile?: Prisma.FileCreateNestedOneWithoutChildVersionsInput
   childVersions?: Prisma.FileCreateNestedManyWithoutParentFileInput
   project?: Prisma.ProjectCreateNestedOneWithoutFilesInput
@@ -1453,6 +1603,7 @@ export type FileUncheckedCreateWithoutUserInput = {
   versionNumber?: number
   chunks?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutFileInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutFileInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedCreateNestedManyWithoutFileInput
   childVersions?: Prisma.FileUncheckedCreateNestedManyWithoutParentFileInput
   analyses?: Prisma.FileAnalysisUncheckedCreateNestedManyWithoutFileInput
 }
@@ -1517,6 +1668,7 @@ export type FileUpdateWithoutParentFileInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutFileNestedInput
@@ -1541,6 +1693,7 @@ export type FileUncheckedUpdateWithoutParentFileInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -1597,6 +1750,7 @@ export type FileUpdateWithoutProjectInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutFileNestedInput
@@ -1621,6 +1775,7 @@ export type FileUncheckedUpdateWithoutProjectInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -1677,6 +1832,7 @@ export type FileUpdateWithoutUserInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUpdateManyWithoutFileNestedInput
   parentFile?: Prisma.FileUpdateOneWithoutChildVersionsNestedInput
   childVersions?: Prisma.FileUpdateManyWithoutParentFileNestedInput
   project?: Prisma.ProjectUpdateOneWithoutFilesNestedInput
@@ -1701,6 +1857,7 @@ export type FileUncheckedUpdateWithoutUserInput = {
   versionNumber?: Prisma.IntFieldUpdateOperationsInput | number
   chunks?: Prisma.DocumentChunkUncheckedUpdateManyWithoutFileNestedInput
   documentTemplates?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutFileNestedInput
+  noteAttachments?: Prisma.NoteAttachmentUncheckedUpdateManyWithoutFileNestedInput
   childVersions?: Prisma.FileUncheckedUpdateManyWithoutParentFileNestedInput
   analyses?: Prisma.FileAnalysisUncheckedUpdateManyWithoutFileNestedInput
 }
@@ -1731,6 +1888,7 @@ export type FileUncheckedUpdateManyWithoutUserInput = {
 export type FileCountOutputType = {
   chunks: number
   documentTemplates: number
+  noteAttachments: number
   childVersions: number
   analyses: number
 }
@@ -1738,6 +1896,7 @@ export type FileCountOutputType = {
 export type FileCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   chunks?: boolean | FileCountOutputTypeCountChunksArgs
   documentTemplates?: boolean | FileCountOutputTypeCountDocumentTemplatesArgs
+  noteAttachments?: boolean | FileCountOutputTypeCountNoteAttachmentsArgs
   childVersions?: boolean | FileCountOutputTypeCountChildVersionsArgs
   analyses?: boolean | FileCountOutputTypeCountAnalysesArgs
 }
@@ -1764,6 +1923,13 @@ export type FileCountOutputTypeCountChunksArgs<ExtArgs extends runtime.Types.Ext
  */
 export type FileCountOutputTypeCountDocumentTemplatesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DocumentTemplateWhereInput
+}
+
+/**
+ * FileCountOutputType without action
+ */
+export type FileCountOutputTypeCountNoteAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.NoteAttachmentWhereInput
 }
 
 /**
@@ -1800,6 +1966,7 @@ export type FileSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   versionNumber?: boolean
   chunks?: boolean | Prisma.File$chunksArgs<ExtArgs>
   documentTemplates?: boolean | Prisma.File$documentTemplatesArgs<ExtArgs>
+  noteAttachments?: boolean | Prisma.File$noteAttachmentsArgs<ExtArgs>
   parentFile?: boolean | Prisma.File$parentFileArgs<ExtArgs>
   childVersions?: boolean | Prisma.File$childVersionsArgs<ExtArgs>
   project?: boolean | Prisma.File$projectArgs<ExtArgs>
@@ -1875,6 +2042,7 @@ export type FileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type FileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   chunks?: boolean | Prisma.File$chunksArgs<ExtArgs>
   documentTemplates?: boolean | Prisma.File$documentTemplatesArgs<ExtArgs>
+  noteAttachments?: boolean | Prisma.File$noteAttachmentsArgs<ExtArgs>
   parentFile?: boolean | Prisma.File$parentFileArgs<ExtArgs>
   childVersions?: boolean | Prisma.File$childVersionsArgs<ExtArgs>
   project?: boolean | Prisma.File$projectArgs<ExtArgs>
@@ -1898,6 +2066,7 @@ export type $FilePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     chunks: Prisma.$DocumentChunkPayload<ExtArgs>[]
     documentTemplates: Prisma.$DocumentTemplatePayload<ExtArgs>[]
+    noteAttachments: Prisma.$NoteAttachmentPayload<ExtArgs>[]
     parentFile: Prisma.$FilePayload<ExtArgs> | null
     childVersions: Prisma.$FilePayload<ExtArgs>[]
     project: Prisma.$ProjectPayload<ExtArgs> | null
@@ -2317,6 +2486,7 @@ export interface Prisma__FileClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   chunks<T extends Prisma.File$chunksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$chunksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentChunkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   documentTemplates<T extends Prisma.File$documentTemplatesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$documentTemplatesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DocumentTemplatePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  noteAttachments<T extends Prisma.File$noteAttachmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$noteAttachmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NoteAttachmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   parentFile<T extends Prisma.File$parentFileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$parentFileArgs<ExtArgs>>): Prisma.Prisma__FileClient<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   childVersions<T extends Prisma.File$childVersionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$childVersionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FilePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   project<T extends Prisma.File$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.File$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -2808,6 +2978,30 @@ export type File$documentTemplatesArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.DocumentTemplateScalarFieldEnum | Prisma.DocumentTemplateScalarFieldEnum[]
+}
+
+/**
+ * File.noteAttachments
+ */
+export type File$noteAttachmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the NoteAttachment
+   */
+  select?: Prisma.NoteAttachmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the NoteAttachment
+   */
+  omit?: Prisma.NoteAttachmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.NoteAttachmentInclude<ExtArgs> | null
+  where?: Prisma.NoteAttachmentWhereInput
+  orderBy?: Prisma.NoteAttachmentOrderByWithRelationInput | Prisma.NoteAttachmentOrderByWithRelationInput[]
+  cursor?: Prisma.NoteAttachmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.NoteAttachmentScalarFieldEnum | Prisma.NoteAttachmentScalarFieldEnum[]
 }
 
 /**

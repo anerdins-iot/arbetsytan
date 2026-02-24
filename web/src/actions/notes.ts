@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { getProjectNotesCore } from "@/services/note-service";
+import { getProjectNoteAttachmentsCore, type NoteAttachmentItem } from "@/services/note-attachment-service";
+import { createPresignedDownloadUrl } from "@/lib/minio";
 
 // ─────────────────────────────────────────
 // Types
@@ -281,5 +283,135 @@ export async function toggleNotePin(
     return { success: true, isPinned: updated.isPinned };
   } catch {
     return { success: false, error: "Kunde inte ändra fäststatus." };
+  }
+}
+
+// ─────────────────────────────────────────
+// Note Attachments
+// ─────────────────────────────────────────
+
+export type NoteAttachmentItemWithUrl = {
+  id: string;
+  fileId: string;
+  fileName: string;
+  fileType: string;
+  fileSize: number;
+  createdAt: string;
+  downloadUrl: string;
+};
+
+export async function getNoteAttachments(
+  projectId: string,
+  noteId: string
+): Promise<{ success: true; attachments: NoteAttachmentItemWithUrl[] } | { success: false; error: string }> {
+  try {
+    const { userId, tenantId } = await requireAuth();
+    await requireProject(tenantId, projectId, userId);
+
+    const attachments = await getProjectNoteAttachmentsCore(
+      { tenantId, userId },
+      projectId,
+      noteId
+    );
+
+    const db = tenantDb(tenantId);
+    const results = await Promise.allSettled(
+      attachments.map(async (a) => {
+        const file = await db.file.findFirst({
+          where: { id: a.fileId, projectId },
+          select: { bucket: true, key: true },
+        });
+        const downloadUrl = file
+          ? await createPresignedDownloadUrl({ bucket: file.bucket, key: file.key })
+          : "#";
+        return {
+          id: a.id,
+          fileId: a.fileId,
+          fileName: a.fileName,
+          fileType: a.fileType,
+          fileSize: a.fileSize,
+          createdAt: a.createdAt.toISOString(),
+          downloadUrl,
+        };
+      })
+    );
+
+    return {
+      success: true,
+      attachments: results.map((r, i) =>
+        r.status === "fulfilled"
+          ? r.value
+          : {
+              id: attachments[i].id,
+              fileId: attachments[i].fileId,
+              fileName: attachments[i].fileName,
+              fileType: attachments[i].fileType,
+              fileSize: attachments[i].fileSize,
+              createdAt: attachments[i].createdAt.toISOString(),
+              downloadUrl: "#",
+            }
+      ),
+    };
+  } catch {
+    return { success: false, error: "Kunde inte hämta bilagor." };
+  }
+}
+
+export async function attachFileToNote(
+  projectId: string,
+  noteId: string,
+  fileId: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const { userId, tenantId } = await requireAuth();
+    await requireProject(tenantId, projectId, userId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
+
+    // Verify note exists and belongs to project
+    const note = await db.note.findFirst({ where: { id: noteId, projectId } });
+    if (!note) return { success: false, error: "Anteckningen hittades inte." };
+
+    // Verify file exists and belongs to project
+    const file = await db.file.findFirst({ where: { id: fileId, projectId } });
+    if (!file) return { success: false, error: "Filen hittades inte i projektet." };
+
+    // Create the attachment (upsert-like: skip if already exists)
+    const { prisma } = await import("@/lib/db");
+    await prisma.noteAttachment.upsert({
+      where: { noteId_fileId: { noteId, fileId } },
+      create: { noteId, fileId },
+      update: {},
+    });
+
+    revalidatePath(`/[locale]/projects/${projectId}`, "page");
+    return { success: true };
+  } catch {
+    return { success: false, error: "Kunde inte bifoga fil." };
+  }
+}
+
+export async function detachFileFromNote(
+  projectId: string,
+  noteId: string,
+  fileId: string
+): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    const { userId, tenantId } = await requireAuth();
+    await requireProject(tenantId, projectId, userId);
+    const db = tenantDb(tenantId, { actorUserId: userId, projectId });
+
+    // Verify note exists and belongs to project
+    const note = await db.note.findFirst({ where: { id: noteId, projectId } });
+    if (!note) return { success: false, error: "Anteckningen hittades inte." };
+
+    const { prisma } = await import("@/lib/db");
+    await prisma.noteAttachment.deleteMany({
+      where: { noteId, fileId },
+    });
+
+    revalidatePath(`/[locale]/projects/${projectId}`, "page");
+    return { success: true };
+  } catch {
+    return { success: false, error: "Kunde inte ta bort bilaga." };
   }
 }

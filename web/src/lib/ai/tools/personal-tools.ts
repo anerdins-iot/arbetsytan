@@ -1955,6 +1955,159 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Bilagor till anteckningar ───────────────────────
+
+  const getNoteAttachmentsTool = tool({
+    description:
+      "Hämta bilagor (filer) kopplade till en projektanteckning.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      noteId: z.string().describe("Anteckningens ID"),
+    })),
+    execute: async ({ projectId: pid, noteId }) => {
+      await requireProject(tenantId, pid, userId);
+      const note = await db.note.findFirst({
+        where: { id: noteId, projectId: pid },
+        select: { id: true },
+      });
+      if (!note) return { error: "Anteckningen hittades inte." };
+
+      const attachments = await prisma.noteAttachment.findMany({
+        where: { noteId },
+        include: { file: { select: { id: true, name: true, type: true, size: true } } },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return {
+        attachments: attachments.map((a: typeof attachments[number]) => ({
+          id: a.id,
+          fileId: a.file.id,
+          fileName: a.file.name,
+          fileType: a.file.type,
+          fileSize: a.file.size,
+          createdAt: a.createdAt.toISOString(),
+        })),
+      };
+    },
+  });
+
+  const attachFileToProjectNote = tool({
+    description:
+      "Koppla en befintlig projektfil som bilaga till en projektanteckning.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      noteId: z.string().describe("Anteckningens ID"),
+      fileId: z.string().describe("Filens ID"),
+    })),
+    execute: async ({ projectId: pid, noteId, fileId }) => {
+      await requireProject(tenantId, pid, userId);
+      const note = await db.note.findFirst({ where: { id: noteId, projectId: pid } });
+      if (!note) return { error: "Anteckningen hittades inte." };
+      const file = await db.file.findFirst({ where: { id: fileId, projectId: pid } });
+      if (!file) return { error: "Filen hittades inte i projektet." };
+
+      await prisma.noteAttachment.upsert({
+        where: { noteId_fileId: { noteId, fileId } },
+        create: { noteId, fileId },
+        update: {},
+      });
+
+      return { message: "Filen har kopplats som bilaga till anteckningen." };
+    },
+  });
+
+  const detachFileFromProjectNote = tool({
+    description:
+      "Ta bort en bilaga (fil-koppling) från en projektanteckning. Filen raderas inte.",
+    inputSchema: toolInputSchema(z.object({
+      projectId: z.string().describe("Projektets ID"),
+      noteId: z.string().describe("Anteckningens ID"),
+      fileId: z.string().describe("Filens ID"),
+    })),
+    execute: async ({ projectId: pid, noteId, fileId }) => {
+      await requireProject(tenantId, pid, userId);
+      const note = await db.note.findFirst({ where: { id: noteId, projectId: pid } });
+      if (!note) return { error: "Anteckningen hittades inte." };
+
+      await prisma.noteAttachment.deleteMany({ where: { noteId, fileId } });
+      return { message: "Bilagan har tagits bort från anteckningen." };
+    },
+  });
+
+  const getPersonalNoteAttachmentsTool = tool({
+    description:
+      "Hämta bilagor (filer) kopplade till en personlig anteckning.",
+    inputSchema: toolInputSchema(z.object({
+      noteId: z.string().describe("Anteckningens ID"),
+    })),
+    execute: async ({ noteId }) => {
+      const udb = userDb(userId, {});
+      const note = await udb.note.findFirst({
+        where: { id: noteId },
+        select: { id: true },
+      });
+      if (!note) return { error: "Anteckningen hittades inte." };
+
+      const attachments = await prisma.noteAttachment.findMany({
+        where: { noteId },
+        include: { file: { select: { id: true, name: true, type: true, size: true } } },
+        orderBy: { createdAt: "desc" },
+      });
+
+      return {
+        attachments: attachments.map((a: typeof attachments[number]) => ({
+          id: a.id,
+          fileId: a.file.id,
+          fileName: a.file.name,
+          fileType: a.file.type,
+          fileSize: a.file.size,
+          createdAt: a.createdAt.toISOString(),
+        })),
+      };
+    },
+  });
+
+  const attachFileToPersonalNoteTool = tool({
+    description:
+      "Koppla en personlig fil som bilaga till en personlig anteckning.",
+    inputSchema: toolInputSchema(z.object({
+      noteId: z.string().describe("Anteckningens ID"),
+      fileId: z.string().describe("Filens ID"),
+    })),
+    execute: async ({ noteId, fileId }) => {
+      const udb = userDb(userId, {});
+      const note = await udb.note.findFirst({ where: { id: noteId } });
+      if (!note) return { error: "Anteckningen hittades inte." };
+      const file = await udb.file.findFirst({ where: { id: fileId } });
+      if (!file) return { error: "Filen hittades inte." };
+
+      await prisma.noteAttachment.upsert({
+        where: { noteId_fileId: { noteId, fileId } },
+        create: { noteId, fileId },
+        update: {},
+      });
+
+      return { message: "Filen har kopplats som bilaga till anteckningen." };
+    },
+  });
+
+  const detachFileFromPersonalNoteTool = tool({
+    description:
+      "Ta bort en bilaga (fil-koppling) från en personlig anteckning. Filen raderas inte.",
+    inputSchema: toolInputSchema(z.object({
+      noteId: z.string().describe("Anteckningens ID"),
+      fileId: z.string().describe("Filens ID"),
+    })),
+    execute: async ({ noteId, fileId }) => {
+      const udb = userDb(userId, {});
+      const note = await udb.note.findFirst({ where: { id: noteId } });
+      if (!note) return { error: "Anteckningen hittades inte." };
+
+      await prisma.noteAttachment.deleteMany({ where: { noteId, fileId } });
+      return { message: "Bilagan har tagits bort från anteckningen." };
+    },
+  });
+
   // ─── Automations (valfritt projectId) ─────────────────
 
   const createAutomation = tool({
@@ -3840,6 +3993,9 @@ Returnera ENBART JSON i följande format:
     deleteNote: deleteProjectNote,
     toggleNotePin,
     searchNotes: searchProjectNotes,
+    getNoteAttachments: getNoteAttachmentsTool,
+    attachFileToNote: attachFileToProjectNote,
+    detachFileFromNote: detachFileFromProjectNote,
     // Personliga anteckningar
     getPersonalNotes,
     createPersonalNote,
@@ -3847,6 +4003,9 @@ Returnera ENBART JSON i följande format:
     deletePersonalNote,
     togglePersonalNotePin,
     searchPersonalNotes,
+    getPersonalNoteAttachments: getPersonalNoteAttachmentsTool,
+    attachFileToPersonalNote: attachFileToPersonalNoteTool,
+    detachFileFromPersonalNote: detachFileFromPersonalNoteTool,
     createAutomation,
     listAutomations,
     getAutomation,

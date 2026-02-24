@@ -552,6 +552,21 @@
       "contentRequired": "Innehåll krävs",
       "characters": "tecken",
       "preview": "Förhandsgranska",
+      "attachments": {
+        "title": "Bilagor",
+        "attach": "Bifoga fil",
+        "attachFile": "Bifoga fil",
+        "remove": "Ta bort",
+        "download": "Ladda ner",
+        "copyImageUrl": "Kopiera bild-URL",
+        "copiedImageUrl": "Bild-URL kopierad",
+        "insertImage": "Infoga i text",
+        "noAttachments": "Inga bilagor",
+        "uploading": "Laddar upp...",
+        "attachError": "Kunde inte bifoga fil",
+        "removeError": "Kunde inte ta bort bilaga",
+        "confirmRemove": "Vill du ta bort denna bilaga från anteckningen?"
+      },
       "categoryManager": {
         "title": "Hantera kategorier",
         "description": "Skapa och redigera kategorier för dina anteckningar.",
@@ -1205,6 +1220,21 @@
       "contentRequired": "Innehåll krävs",
       "characters": "tecken",
       "preview": "Förhandsgranska",
+      "attachments": {
+        "title": "Bilagor",
+        "attach": "Bifoga fil",
+        "attachFile": "Bifoga fil",
+        "remove": "Ta bort",
+        "download": "Ladda ner",
+        "copyImageUrl": "Kopiera bild-URL",
+        "copiedImageUrl": "Bild-URL kopierad",
+        "insertImage": "Infoga i text",
+        "noAttachments": "Inga bilagor",
+        "uploading": "Laddar upp...",
+        "attachError": "Kunde inte bifoga fil",
+        "removeError": "Kunde inte ta bort bilaga",
+        "confirmRemove": "Vill du ta bort denna bilaga från anteckningen?"
+      },
       "categoryManager": {
         "title": "Hantera kategorier",
         "description": "Skapa och redigera kategorier för dina anteckningar.",
