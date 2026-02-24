@@ -3293,11 +3293,10 @@ Returnera ENBART JSON i följande format:
           count: totalFound,
         },
         hint:
-          "PRESENTERA RESULTATET SÅ HÄR: " +
-          "1. Visa den rekommenderade produkten FÖRST med produktbild (markdown ![namn](imageUrl)) och klickbar länk ([Visa på Grossist](url)). " +
-          "2. Om produkten har previouslyOrdered=true, nämn att den beställts tidigare av företaget. " +
-          "3. Lista sedan resterande produkter kortfattat. " +
-          "4. Använd artikelnummer och pris för att lägga till produkter i offerter, inköpslistor eller createQuote.",
+          "VIKTIGT: SKRIV INTE UT produktlistan i ditt svar — lista ALDRIG produkter, tabeller eller uppräkningar. " +
+          "Skriv BARA 1-2 meningar om vad du hittade (t.ex. 'Jag hittade X produkter hos grossisterna.'). " +
+          "Hänvisa sedan till knappen som visas automatiskt i gränssnittet för att se alla resultat. " +
+          "Du kan använda produktdata (artikelnummer, pris) internt om användaren vill lägga till något i en offert eller inköpslista.",
       };
     },
   });
