@@ -413,6 +413,11 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  // Mistral API requires tool call IDs to be exactly 9 alphanumeric characters
+  if (providerKey === "MISTRAL_LARGE" || providerKey === "MISTRAL_SMALL") {
+    normalizeMistralToolCallIds(modelMessages);
+  }
+
   // Stream the response (with tools for project and personal AI)
   const result = streamText({
     model,
@@ -548,6 +553,50 @@ function getRequiredEnvKeyForProvider(provider: ProviderKey): string | null {
       return "GOOGLE_GENERATIVE_AI_API_KEY";
     default:
       return null;
+  }
+}
+
+/**
+ * Mistral API requires tool call IDs to be exactly 9 characters, a-z, A-Z, 0-9.
+ * Normalize IDs in model messages so multi-turn conversations with tool calls work.
+ */
+function normalizeMistralToolCallIds(messages: Array<{ role: string; content: unknown }>): void {
+  const ALPHANUM = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const idMap = new Map<string, string>();
+  let counter = 0;
+
+  function toMistralId(id: string): string {
+    let mapped = idMap.get(id);
+    if (mapped == null) {
+      // Deterministic 9-char id from counter (a-z, A-Z, 0-9)
+      let n = counter++;
+      let s = "";
+      for (let i = 0; i < 9; i++) {
+        s += ALPHANUM[n % ALPHANUM.length];
+        n = Math.floor(n / ALPHANUM.length);
+      }
+      mapped = s;
+      idMap.set(id, mapped);
+    }
+    return mapped;
+  }
+
+  function processPart(part: Record<string, unknown>): void {
+    if (typeof part.toolCallId === "string") {
+      part.toolCallId = toMistralId(part.toolCallId);
+    }
+  }
+
+  for (const msg of messages) {
+    if (msg.role === "assistant" && Array.isArray(msg.content)) {
+      for (const part of msg.content as Array<Record<string, unknown>>) {
+        if (part && typeof part === "object") processPart(part);
+      }
+    } else if (msg.role === "tool" && Array.isArray(msg.content)) {
+      for (const part of msg.content as Array<Record<string, unknown>>) {
+        if (part && typeof part === "object") processPart(part);
+      }
+    }
   }
 }
 
