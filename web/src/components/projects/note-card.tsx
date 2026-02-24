@@ -90,16 +90,16 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
   return (
     <>
       <Card
-        className="relative flex h-[220px] cursor-pointer flex-col transition-colors hover:bg-accent/50"
+        className="relative flex h-[200px] cursor-pointer flex-col transition-colors hover:bg-accent/50"
         onClick={() => openModal("view")}
       >
-        <CardHeader className="flex-shrink-0 pb-1">
+        <CardHeader className="flex-shrink-0 px-3 pt-2.5 pb-0">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               {note.title && (
-                <h3 className="mb-0.5 truncate font-semibold text-foreground">{note.title}</h3>
+                <h3 className="truncate text-sm font-semibold text-foreground">{note.title}</h3>
               )}
-              <div className="flex flex-wrap items-center gap-1.5">
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
                 {note.category && (
                   <Badge
                     variant="secondary"
@@ -149,10 +149,10 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
             </DropdownMenu>
           </div>
         </CardHeader>
-        <CardContent className="min-h-0 flex-1 overflow-hidden pt-1 pb-2">
+        <CardContent className="min-h-0 flex-1 overflow-hidden px-3 py-1.5">
           <NoteCardMarkdown content={note.content} />
         </CardContent>
-        <CardFooter className="flex-shrink-0 pt-0 text-xs text-muted-foreground">
+        <CardFooter className="flex-shrink-0 px-3 pb-2 pt-0 text-xs text-muted-foreground">
           <div className="flex w-full items-center justify-between">
             <span className="truncate">
               {isPersonal ? null : "createdBy" in note ? (note.createdBy.name || note.createdBy.email) : null}

@@ -30,7 +30,7 @@ export function PersonalNotesTab({ initialNotes = [], socketNoteVersion = 0 }: P
 
   const loadCategories = () => {
     startTransition(async () => {
-      const result = await getNoteCategories();
+      const result = await getNoteCategories(null);
       if (result.success) {
         setCategories(result.categories);
       }
@@ -165,6 +165,7 @@ export function PersonalNotesTab({ initialNotes = [], socketNoteVersion = 0 }: P
       />
 
       <NoteCategoryManager
+        projectId={null}
         open={isCategoryManagerOpen}
         onOpenChange={setIsCategoryManagerOpen}
         onCategoriesChanged={loadCategories}

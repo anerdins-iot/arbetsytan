@@ -485,17 +485,20 @@ model ShoppingListItem {
 }
 
 model NoteCategory {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   name      String
   slug      String
   color     String?
   tenantId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime   @updatedAt
-  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  projectId String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  project   Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@unique([tenantId, slug])
+  @@unique([tenantId, projectId, slug])
   @@index([tenantId])
+  @@index([tenantId, projectId])
 }
 
 model Notification {
@@ -553,6 +556,7 @@ model Project {
   messages         Message[]
   messageChunks    MessageChunk[]
   notes            Note[]
+  noteCategories   NoteCategory[]
   notifications    Notification[]
   shoppingLists    ShoppingList[]
   quotes           Quote[]

@@ -496,6 +496,11 @@
         "övrigt": "Övrigt"
       },
       "searchPlaceholder": "Sök anteckningar...",
+      "sortBy": "Sortera",
+      "sortCreatedAt": "Tillagd",
+      "sortUpdatedAt": "Ändrad",
+      "sortTitle": "Namn",
+      "sortCategory": "Kategori",
       "noNotes": "Inga anteckningar ännu",
       "noNotesDescription": "Skapa din första anteckning för att komma igång.",
       "noNotesFiltered": "Inga anteckningar matchar filtret",
@@ -521,7 +526,9 @@
       "preview": "Förhandsgranska",
       "categoryManager": {
         "title": "Hantera kategorier",
-        "description": "Skapa och redigera kategorier för dina anteckningar",
+        "description": "Skapa och redigera kategorier för dina anteckningar.",
+        "scopePersonal": "(Mina kategorier)",
+        "scopeProject": "(Projektkategorier)",
         "create": "Skapa kategori",
         "edit": "Redigera",
         "delete": "Ta bort",
@@ -1172,7 +1179,9 @@
       "preview": "Förhandsgranska",
       "categoryManager": {
         "title": "Hantera kategorier",
-        "description": "Skapa och redigera kategorier för dina anteckningar",
+        "description": "Skapa och redigera kategorier för dina anteckningar.",
+        "scopePersonal": "(Mina kategorier)",
+        "scopeProject": "(Projektkategorier)",
         "create": "Skapa kategori",
         "edit": "Redigera",
         "delete": "Ta bort",

@@ -574,7 +574,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   // Load note categories when note list panel opens (for NoteCard edit dropdown)
   useEffect(() => {
     if (!openNoteListData) return;
-    getNoteCategories().then((r) => {
+    getNoteCategories(null).then((r) => {
       if (r.success) setNoteListCategories(r.categories);
     });
   }, [openNoteListData]);

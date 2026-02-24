@@ -496,6 +496,11 @@
         "övrigt": "Other"
       },
       "searchPlaceholder": "Search notes...",
+      "sortBy": "Sort by",
+      "sortCreatedAt": "Added",
+      "sortUpdatedAt": "Modified",
+      "sortTitle": "Name",
+      "sortCategory": "Category",
       "noNotes": "No notes yet",
       "noNotesDescription": "Create your first note to get started.",
       "noNotesFiltered": "No notes match the filter",
@@ -521,7 +526,9 @@
       "preview": "Preview",
       "categoryManager": {
         "title": "Manage categories",
-        "description": "Create and edit categories for your notes",
+        "description": "Create and edit categories for your notes.",
+        "scopePersonal": "(My categories)",
+        "scopeProject": "(Project categories)",
         "create": "Create category",
         "edit": "Edit",
         "delete": "Delete",
@@ -1161,7 +1168,9 @@
       "preview": "Preview",
       "categoryManager": {
         "title": "Manage categories",
-        "description": "Create and edit categories for your notes",
+        "description": "Create and edit categories for your notes.",
+        "scopePersonal": "(My categories)",
+        "scopeProject": "(Project categories)",
         "create": "Create category",
         "edit": "Edit",
         "delete": "Delete",

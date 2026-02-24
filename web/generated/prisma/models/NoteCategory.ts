@@ -30,6 +30,7 @@ export type NoteCategoryMinAggregateOutputType = {
   slug: string | null
   color: string | null
   tenantId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +41,7 @@ export type NoteCategoryMaxAggregateOutputType = {
   slug: string | null
   color: string | null
   tenantId: string | null
+  projectId: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +52,7 @@ export type NoteCategoryCountAggregateOutputType = {
   slug: number
   color: number
   tenantId: number
+  projectId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -62,6 +65,7 @@ export type NoteCategoryMinAggregateInputType = {
   slug?: true
   color?: true
   tenantId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +76,7 @@ export type NoteCategoryMaxAggregateInputType = {
   slug?: true
   color?: true
   tenantId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +87,7 @@ export type NoteCategoryCountAggregateInputType = {
   slug?: true
   color?: true
   tenantId?: true
+  projectId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -165,6 +171,7 @@ export type NoteCategoryGroupByOutputType = {
   slug: string
   color: string | null
   tenantId: string
+  projectId: string | null
   createdAt: Date
   updatedAt: Date
   _count: NoteCategoryCountAggregateOutputType | null
@@ -196,9 +203,11 @@ export type NoteCategoryWhereInput = {
   slug?: Prisma.StringFilter<"NoteCategory"> | string
   color?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
   tenantId?: Prisma.StringFilter<"NoteCategory"> | string
+  projectId?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
 }
 
 export type NoteCategoryOrderByWithRelationInput = {
@@ -207,14 +216,16 @@ export type NoteCategoryOrderByWithRelationInput = {
   slug?: Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
+  project?: Prisma.ProjectOrderByWithRelationInput
 }
 
 export type NoteCategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  tenantId_slug?: Prisma.NoteCategoryTenantIdSlugCompoundUniqueInput
+  tenantId_projectId_slug?: Prisma.NoteCategoryTenantIdProjectIdSlugCompoundUniqueInput
   AND?: Prisma.NoteCategoryWhereInput | Prisma.NoteCategoryWhereInput[]
   OR?: Prisma.NoteCategoryWhereInput[]
   NOT?: Prisma.NoteCategoryWhereInput | Prisma.NoteCategoryWhereInput[]
@@ -222,10 +233,12 @@ export type NoteCategoryWhereUniqueInput = Prisma.AtLeast<{
   slug?: Prisma.StringFilter<"NoteCategory"> | string
   color?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
   tenantId?: Prisma.StringFilter<"NoteCategory"> | string
+  projectId?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
   createdAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
-}, "id" | "tenantId_slug">
+  project?: Prisma.XOR<Prisma.ProjectNullableScalarRelationFilter, Prisma.ProjectWhereInput> | null
+}, "id" | "tenantId_projectId_slug">
 
 export type NoteCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -233,6 +246,7 @@ export type NoteCategoryOrderByWithAggregationInput = {
   slug?: Prisma.SortOrder
   color?: Prisma.SortOrderInput | Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.NoteCategoryCountOrderByAggregateInput
@@ -249,6 +263,7 @@ export type NoteCategoryScalarWhereWithAggregatesInput = {
   slug?: Prisma.StringWithAggregatesFilter<"NoteCategory"> | string
   color?: Prisma.StringNullableWithAggregatesFilter<"NoteCategory"> | string | null
   tenantId?: Prisma.StringWithAggregatesFilter<"NoteCategory"> | string
+  projectId?: Prisma.StringNullableWithAggregatesFilter<"NoteCategory"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"NoteCategory"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"NoteCategory"> | Date | string
 }
@@ -261,6 +276,7 @@ export type NoteCategoryCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenant: Prisma.TenantCreateNestedOneWithoutNoteCategoryInput
+  project?: Prisma.ProjectCreateNestedOneWithoutNoteCategoriesInput
 }
 
 export type NoteCategoryUncheckedCreateInput = {
@@ -269,6 +285,7 @@ export type NoteCategoryUncheckedCreateInput = {
   slug: string
   color?: string | null
   tenantId: string
+  projectId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -281,6 +298,7 @@ export type NoteCategoryUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenant?: Prisma.TenantUpdateOneRequiredWithoutNoteCategoryNestedInput
+  project?: Prisma.ProjectUpdateOneWithoutNoteCategoriesNestedInput
 }
 
 export type NoteCategoryUncheckedUpdateInput = {
@@ -289,6 +307,7 @@ export type NoteCategoryUncheckedUpdateInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -299,6 +318,7 @@ export type NoteCategoryCreateManyInput = {
   slug: string
   color?: string | null
   tenantId: string
+  projectId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -318,12 +338,14 @@ export type NoteCategoryUncheckedUpdateManyInput = {
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type NoteCategoryTenantIdSlugCompoundUniqueInput = {
+export type NoteCategoryTenantIdProjectIdSlugCompoundUniqueInput = {
   tenantId: string
+  projectId: string
   slug: string
 }
 
@@ -333,6 +355,7 @@ export type NoteCategoryCountOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   color?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -343,6 +366,7 @@ export type NoteCategoryMaxOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   color?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -353,6 +377,7 @@ export type NoteCategoryMinOrderByAggregateInput = {
   slug?: Prisma.SortOrder
   color?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  projectId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -365,6 +390,48 @@ export type NoteCategoryListRelationFilter = {
 
 export type NoteCategoryOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type NoteCategoryCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.NoteCategoryCreateWithoutProjectInput, Prisma.NoteCategoryUncheckedCreateWithoutProjectInput> | Prisma.NoteCategoryCreateWithoutProjectInput[] | Prisma.NoteCategoryUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.NoteCategoryCreateOrConnectWithoutProjectInput | Prisma.NoteCategoryCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.NoteCategoryCreateManyProjectInputEnvelope
+  connect?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+}
+
+export type NoteCategoryUncheckedCreateNestedManyWithoutProjectInput = {
+  create?: Prisma.XOR<Prisma.NoteCategoryCreateWithoutProjectInput, Prisma.NoteCategoryUncheckedCreateWithoutProjectInput> | Prisma.NoteCategoryCreateWithoutProjectInput[] | Prisma.NoteCategoryUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.NoteCategoryCreateOrConnectWithoutProjectInput | Prisma.NoteCategoryCreateOrConnectWithoutProjectInput[]
+  createMany?: Prisma.NoteCategoryCreateManyProjectInputEnvelope
+  connect?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+}
+
+export type NoteCategoryUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.NoteCategoryCreateWithoutProjectInput, Prisma.NoteCategoryUncheckedCreateWithoutProjectInput> | Prisma.NoteCategoryCreateWithoutProjectInput[] | Prisma.NoteCategoryUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.NoteCategoryCreateOrConnectWithoutProjectInput | Prisma.NoteCategoryCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.NoteCategoryUpsertWithWhereUniqueWithoutProjectInput | Prisma.NoteCategoryUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.NoteCategoryCreateManyProjectInputEnvelope
+  set?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  disconnect?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  delete?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  connect?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  update?: Prisma.NoteCategoryUpdateWithWhereUniqueWithoutProjectInput | Prisma.NoteCategoryUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.NoteCategoryUpdateManyWithWhereWithoutProjectInput | Prisma.NoteCategoryUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
+}
+
+export type NoteCategoryUncheckedUpdateManyWithoutProjectNestedInput = {
+  create?: Prisma.XOR<Prisma.NoteCategoryCreateWithoutProjectInput, Prisma.NoteCategoryUncheckedCreateWithoutProjectInput> | Prisma.NoteCategoryCreateWithoutProjectInput[] | Prisma.NoteCategoryUncheckedCreateWithoutProjectInput[]
+  connectOrCreate?: Prisma.NoteCategoryCreateOrConnectWithoutProjectInput | Prisma.NoteCategoryCreateOrConnectWithoutProjectInput[]
+  upsert?: Prisma.NoteCategoryUpsertWithWhereUniqueWithoutProjectInput | Prisma.NoteCategoryUpsertWithWhereUniqueWithoutProjectInput[]
+  createMany?: Prisma.NoteCategoryCreateManyProjectInputEnvelope
+  set?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  disconnect?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  delete?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  connect?: Prisma.NoteCategoryWhereUniqueInput | Prisma.NoteCategoryWhereUniqueInput[]
+  update?: Prisma.NoteCategoryUpdateWithWhereUniqueWithoutProjectInput | Prisma.NoteCategoryUpdateWithWhereUniqueWithoutProjectInput[]
+  updateMany?: Prisma.NoteCategoryUpdateManyWithWhereWithoutProjectInput | Prisma.NoteCategoryUpdateManyWithWhereWithoutProjectInput[]
+  deleteMany?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
 }
 
 export type NoteCategoryCreateNestedManyWithoutTenantInput = {
@@ -409,6 +476,66 @@ export type NoteCategoryUncheckedUpdateManyWithoutTenantNestedInput = {
   deleteMany?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
 }
 
+export type NoteCategoryCreateWithoutProjectInput = {
+  id?: string
+  name: string
+  slug: string
+  color?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  tenant: Prisma.TenantCreateNestedOneWithoutNoteCategoryInput
+}
+
+export type NoteCategoryUncheckedCreateWithoutProjectInput = {
+  id?: string
+  name: string
+  slug: string
+  color?: string | null
+  tenantId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type NoteCategoryCreateOrConnectWithoutProjectInput = {
+  where: Prisma.NoteCategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.NoteCategoryCreateWithoutProjectInput, Prisma.NoteCategoryUncheckedCreateWithoutProjectInput>
+}
+
+export type NoteCategoryCreateManyProjectInputEnvelope = {
+  data: Prisma.NoteCategoryCreateManyProjectInput | Prisma.NoteCategoryCreateManyProjectInput[]
+  skipDuplicates?: boolean
+}
+
+export type NoteCategoryUpsertWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.NoteCategoryWhereUniqueInput
+  update: Prisma.XOR<Prisma.NoteCategoryUpdateWithoutProjectInput, Prisma.NoteCategoryUncheckedUpdateWithoutProjectInput>
+  create: Prisma.XOR<Prisma.NoteCategoryCreateWithoutProjectInput, Prisma.NoteCategoryUncheckedCreateWithoutProjectInput>
+}
+
+export type NoteCategoryUpdateWithWhereUniqueWithoutProjectInput = {
+  where: Prisma.NoteCategoryWhereUniqueInput
+  data: Prisma.XOR<Prisma.NoteCategoryUpdateWithoutProjectInput, Prisma.NoteCategoryUncheckedUpdateWithoutProjectInput>
+}
+
+export type NoteCategoryUpdateManyWithWhereWithoutProjectInput = {
+  where: Prisma.NoteCategoryScalarWhereInput
+  data: Prisma.XOR<Prisma.NoteCategoryUpdateManyMutationInput, Prisma.NoteCategoryUncheckedUpdateManyWithoutProjectInput>
+}
+
+export type NoteCategoryScalarWhereInput = {
+  AND?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
+  OR?: Prisma.NoteCategoryScalarWhereInput[]
+  NOT?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
+  id?: Prisma.StringFilter<"NoteCategory"> | string
+  name?: Prisma.StringFilter<"NoteCategory"> | string
+  slug?: Prisma.StringFilter<"NoteCategory"> | string
+  color?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
+  tenantId?: Prisma.StringFilter<"NoteCategory"> | string
+  projectId?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
+}
+
 export type NoteCategoryCreateWithoutTenantInput = {
   id?: string
   name: string
@@ -416,6 +543,7 @@ export type NoteCategoryCreateWithoutTenantInput = {
   color?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  project?: Prisma.ProjectCreateNestedOneWithoutNoteCategoriesInput
 }
 
 export type NoteCategoryUncheckedCreateWithoutTenantInput = {
@@ -423,6 +551,7 @@ export type NoteCategoryUncheckedCreateWithoutTenantInput = {
   name: string
   slug: string
   color?: string | null
+  projectId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -453,17 +582,44 @@ export type NoteCategoryUpdateManyWithWhereWithoutTenantInput = {
   data: Prisma.XOR<Prisma.NoteCategoryUpdateManyMutationInput, Prisma.NoteCategoryUncheckedUpdateManyWithoutTenantInput>
 }
 
-export type NoteCategoryScalarWhereInput = {
-  AND?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
-  OR?: Prisma.NoteCategoryScalarWhereInput[]
-  NOT?: Prisma.NoteCategoryScalarWhereInput | Prisma.NoteCategoryScalarWhereInput[]
-  id?: Prisma.StringFilter<"NoteCategory"> | string
-  name?: Prisma.StringFilter<"NoteCategory"> | string
-  slug?: Prisma.StringFilter<"NoteCategory"> | string
-  color?: Prisma.StringNullableFilter<"NoteCategory"> | string | null
-  tenantId?: Prisma.StringFilter<"NoteCategory"> | string
-  createdAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"NoteCategory"> | Date | string
+export type NoteCategoryCreateManyProjectInput = {
+  id?: string
+  name: string
+  slug: string
+  color?: string | null
+  tenantId: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type NoteCategoryUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tenant?: Prisma.TenantUpdateOneRequiredWithoutNoteCategoryNestedInput
+}
+
+export type NoteCategoryUncheckedUpdateWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type NoteCategoryUncheckedUpdateManyWithoutProjectInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NoteCategoryCreateManyTenantInput = {
@@ -471,6 +627,7 @@ export type NoteCategoryCreateManyTenantInput = {
   name: string
   slug: string
   color?: string | null
+  projectId?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -482,6 +639,7 @@ export type NoteCategoryUpdateWithoutTenantInput = {
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  project?: Prisma.ProjectUpdateOneWithoutNoteCategoriesNestedInput
 }
 
 export type NoteCategoryUncheckedUpdateWithoutTenantInput = {
@@ -489,6 +647,7 @@ export type NoteCategoryUncheckedUpdateWithoutTenantInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -498,6 +657,7 @@ export type NoteCategoryUncheckedUpdateManyWithoutTenantInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  projectId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -510,9 +670,11 @@ export type NoteCategorySelect<ExtArgs extends runtime.Types.Extensions.Internal
   slug?: boolean
   color?: boolean
   tenantId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.NoteCategory$projectArgs<ExtArgs>
 }, ExtArgs["result"]["noteCategory"]>
 
 export type NoteCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -521,9 +683,11 @@ export type NoteCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   slug?: boolean
   color?: boolean
   tenantId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.NoteCategory$projectArgs<ExtArgs>
 }, ExtArgs["result"]["noteCategory"]>
 
 export type NoteCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -532,9 +696,11 @@ export type NoteCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   slug?: boolean
   color?: boolean
   tenantId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.NoteCategory$projectArgs<ExtArgs>
 }, ExtArgs["result"]["noteCategory"]>
 
 export type NoteCategorySelectScalar = {
@@ -543,25 +709,30 @@ export type NoteCategorySelectScalar = {
   slug?: boolean
   color?: boolean
   tenantId?: boolean
+  projectId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type NoteCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "color" | "tenantId" | "createdAt" | "updatedAt", ExtArgs["result"]["noteCategory"]>
+export type NoteCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "color" | "tenantId" | "projectId" | "createdAt" | "updatedAt", ExtArgs["result"]["noteCategory"]>
 export type NoteCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.NoteCategory$projectArgs<ExtArgs>
 }
 export type NoteCategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.NoteCategory$projectArgs<ExtArgs>
 }
 export type NoteCategoryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
+  project?: boolean | Prisma.NoteCategory$projectArgs<ExtArgs>
 }
 
 export type $NoteCategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "NoteCategory"
   objects: {
     tenant: Prisma.$TenantPayload<ExtArgs>
+    project: Prisma.$ProjectPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -569,6 +740,7 @@ export type $NoteCategoryPayload<ExtArgs extends runtime.Types.Extensions.Intern
     slug: string
     color: string | null
     tenantId: string
+    projectId: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["noteCategory"]>
@@ -966,6 +1138,7 @@ readonly fields: NoteCategoryFieldRefs;
 export interface Prisma__NoteCategoryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   tenant<T extends Prisma.TenantDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TenantDefaultArgs<ExtArgs>>): Prisma.Prisma__TenantClient<runtime.Types.Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  project<T extends Prisma.NoteCategory$projectArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.NoteCategory$projectArgs<ExtArgs>>): Prisma.Prisma__ProjectClient<runtime.Types.Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1000,6 +1173,7 @@ export interface NoteCategoryFieldRefs {
   readonly slug: Prisma.FieldRef<"NoteCategory", 'String'>
   readonly color: Prisma.FieldRef<"NoteCategory", 'String'>
   readonly tenantId: Prisma.FieldRef<"NoteCategory", 'String'>
+  readonly projectId: Prisma.FieldRef<"NoteCategory", 'String'>
   readonly createdAt: Prisma.FieldRef<"NoteCategory", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"NoteCategory", 'DateTime'>
 }
@@ -1395,6 +1569,25 @@ export type NoteCategoryDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many NoteCategories to delete.
    */
   limit?: number
+}
+
+/**
+ * NoteCategory.project
+ */
+export type NoteCategory$projectArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Project
+   */
+  select?: Prisma.ProjectSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Project
+   */
+  omit?: Prisma.ProjectOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProjectInclude<ExtArgs> | null
+  where?: Prisma.ProjectWhereInput
 }
 
 /**
