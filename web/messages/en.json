@@ -552,6 +552,21 @@
       "contentRequired": "Content is required",
       "characters": "characters",
       "preview": "Preview",
+      "attachments": {
+        "title": "Attachments",
+        "attach": "Attach file",
+        "attachFile": "Attach file",
+        "remove": "Remove",
+        "download": "Download",
+        "copyImageUrl": "Copy image URL",
+        "copiedImageUrl": "Image URL copied",
+        "insertImage": "Insert in text",
+        "noAttachments": "No attachments",
+        "uploading": "Uploading...",
+        "attachError": "Could not attach file",
+        "removeError": "Could not remove attachment",
+        "confirmRemove": "Do you want to remove this attachment from the note?"
+      },
       "categoryManager": {
         "title": "Manage categories",
         "description": "Create and edit categories for your notes.",
@@ -1194,6 +1209,21 @@
       "contentRequired": "Content is required",
       "characters": "characters",
       "preview": "Preview",
+      "attachments": {
+        "title": "Attachments",
+        "attach": "Attach file",
+        "attachFile": "Attach file",
+        "remove": "Remove",
+        "download": "Download",
+        "copyImageUrl": "Copy image URL",
+        "copiedImageUrl": "Image URL copied",
+        "insertImage": "Insert in text",
+        "noAttachments": "No attachments",
+        "uploading": "Uploading...",
+        "attachError": "Could not attach file",
+        "removeError": "Could not remove attachment",
+        "confirmRemove": "Do you want to remove this attachment from the note?"
+      },
       "categoryManager": {
         "title": "Manage categories",
         "description": "Create and edit categories for your notes.",

@@ -44,6 +44,7 @@ import {
   updatePersonalNote,
   type PersonalNoteItem,
 } from "@/actions/personal";
+import { NoteAttachments } from "./note-attachments";
 
 type NoteModalMode = "view" | "create" | "edit";
 
@@ -520,6 +521,17 @@ export function NoteModal({
 
           <Separator className="my-2" />
 
+          {/* Attachments */}
+          <div className="flex-shrink-0">
+            <NoteAttachments
+              projectId={projectId}
+              noteId={note.id}
+              editable={true}
+            />
+          </div>
+
+          <Separator className="my-2" />
+
           {/* Category selector */}
           <div className="flex-shrink-0 space-y-3">
             <div className="flex items-center gap-3">
@@ -701,6 +713,18 @@ export function NoteModal({
             </div>
             <CategoryManager />
           </div>
+
+          {/* Attachments (only in edit mode, when note already exists) */}
+          {mode === "edit" && note && (
+            <NoteAttachments
+              projectId={projectId}
+              noteId={note.id}
+              editable={true}
+              onInsertImage={(markdown) => {
+                setContent((prev) => prev + "\n" + markdown);
+              }}
+            />
+          )}
         </div>
 
         <Separator className="my-2" />

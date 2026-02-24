@@ -7,6 +7,7 @@ export * from "./comment-service";
 export * from "./time-entry-service";
 export * from "./member-service";
 export * from "./note-service";
+export * from "./note-attachment-service";
 export * from "./file-version-service";
 export * from "./email-conversations";
 export * from "./conversation-service";
