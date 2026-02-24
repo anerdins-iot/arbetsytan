@@ -285,8 +285,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   activeProjectIdRef.current = activeProjectId;
 
   // Model selector state
-  const [selectedModel, setSelectedModel] = useState<ProviderKey>("CLAUDE_HAIKU");
-  const selectedModelRef = useRef<ProviderKey>("CLAUDE_HAIKU");
+  const [selectedModel, setSelectedModel] = useState<ProviderKey>("GEMINI_FLASH");
+  const selectedModelRef = useRef<ProviderKey>("GEMINI_FLASH");
   selectedModelRef.current = selectedModel;
 
   // Pagination state
@@ -1140,7 +1140,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
             return (
             <div
-              key={message.id}
+              key={`${message.id}-${messageIndex}`}
               className={cn(
                 "flex flex-col gap-1",
                 message.role === "user" ? "items-end" : "items-start"
