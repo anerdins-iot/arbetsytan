@@ -149,7 +149,7 @@ export function NoteCard({ note, projectId, onUpdate, categories }: NoteCardProp
             </DropdownMenu>
           </div>
         </CardHeader>
-        <CardContent className="min-h-0 flex-1 overflow-hidden px-3 py-1.5">
+        <CardContent className="min-h-[2.5rem] flex-1 overflow-hidden px-3 py-1.5">
           <NoteCardMarkdown content={note.content} />
         </CardContent>
         <CardFooter className="flex-shrink-0 px-3 pb-2 pt-0 text-xs text-muted-foreground">
