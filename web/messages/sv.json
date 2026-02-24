@@ -586,7 +586,8 @@
       "templateGenerating": "Genererar...",
       "templateAddRow": "Lägg till rad",
       "templateRemoveRow": "Ta bort rad",
-      "templateCancel": "Avbryt"
+      "templateCancel": "Avbryt",
+      "openInNewTab": "Öppna i ny flik"
     },
     "overview": {
       "projectInfo": "Projektinfo",
@@ -1236,7 +1237,8 @@
       "templateGenerating": "Genererar...",
       "templateAddRow": "Lägg till rad",
       "templateRemoveRow": "Ta bort rad",
-      "templateCancel": "Avbryt"
+      "templateCancel": "Avbryt",
+      "openInNewTab": "Öppna i ny flik"
     }
   },
   "sidebar": {

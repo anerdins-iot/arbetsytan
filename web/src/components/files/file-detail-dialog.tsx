@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import {
   Download,
   FileText,
@@ -147,6 +148,7 @@ export function FileDetailDialog({
   onSaved,
 }: FileDetailDialogProps) {
   const t = useTranslations(translationNamespace);
+  const isNarrowViewport = useMediaQuery("(max-width: 640px)");
   const [ocrText, setOcrText] = useState("");
   const [userDescription, setUserDescription] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -288,8 +290,8 @@ export function FileDetailDialog({
   if (showTemplateFiller && templateAnalysis && projectId) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-3xl" showCloseButton={false}>
-          <div className="flex max-h-[90vh] flex-col">
+        <DialogContent className="max-w-[calc(100%-2rem)] max-h-[100dvh] p-0 sm:max-w-3xl" showCloseButton={false}>
+          <div className="flex max-h-[min(90dvh,100dvh)] flex-col overflow-hidden">
             <TemplateFiller
               analysis={templateAnalysis}
               projectId={projectId}
@@ -314,8 +316,8 @@ export function FileDetailDialog({
   if (isEditing && isWord) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-5xl" showCloseButton={false}>
-          <div className="max-h-[90vh] overflow-hidden">
+        <DialogContent className="max-w-[calc(100%-2rem)] max-h-[100dvh] p-0 sm:max-w-5xl" showCloseButton={false}>
+          <div className="max-h-[min(90dvh,100dvh)] overflow-hidden">
             <WordEditor
               fileId={file.id}
               fileName={file.name}
@@ -359,11 +361,11 @@ export function FileDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100%-2rem)] p-0 sm:max-w-7xl" showCloseButton={false}>
-        <div className="flex max-h-[90vh] flex-col">
+      <DialogContent className="max-h-[100dvh] max-w-[calc(100%-2rem)] p-0 sm:max-w-7xl" showCloseButton={false}>
+        <div className="flex max-h-[min(90dvh,100dvh)] flex-col overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-border px-5 py-3">
-            <div className="flex min-w-0 items-center gap-3">
+          <div className="flex min-h-0 shrink-0 flex-wrap items-center justify-between gap-2 border-b border-border px-3 py-3 sm:px-5">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
               <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
                 <Icon className="size-5 text-muted-foreground" />
               </div>
@@ -371,7 +373,7 @@ export function FileDetailDialog({
                 <p className="truncate text-sm font-medium text-foreground">
                   {file.name}
                 </p>
-                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <span>{formatBytes(file.size)}</span>
                   {ext && (
                     <>
@@ -384,7 +386,7 @@ export function FileDetailDialog({
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
               {isExcel && excelData.length > 0 && (
                 <Button
                   variant="outline"
@@ -392,9 +394,10 @@ export function FileDetailDialog({
                   type="button"
                   onClick={() => setIsEditing(true)}
                   disabled={loadingPreview}
+                  className="sm:gap-2"
                 >
-                  <Pencil className="mr-2 size-4" />
-                  {t("editExcel")}
+                  <Pencil className="mr-0 size-4 sm:mr-2" />
+                  <span className="hidden sm:inline">{t("editExcel")}</span>
                 </Button>
               )}
               {isWord && (
@@ -404,9 +407,10 @@ export function FileDetailDialog({
                   type="button"
                   onClick={() => setIsEditing(true)}
                   disabled={loadingPreview || !wordText}
+                  className="sm:gap-2"
                 >
-                  <Pencil className="mr-2 size-4" />
-                  {t("editDocument")}
+                  <Pencil className="mr-0 size-4 sm:mr-2" />
+                  <span className="hidden sm:inline">{t("editDocument")}</span>
                 </Button>
               )}
               <a
@@ -414,9 +418,9 @@ export function FileDetailDialog({
                 target="_blank"
                 rel="noreferrer"
               >
-                <Button variant="outline" size="sm" type="button">
-                  <Download className="mr-2 size-4" />
-                  {t("download")}
+                <Button variant="outline" size="sm" type="button" className="sm:gap-2">
+                  <Download className="mr-0 size-4 sm:mr-2" />
+                  <span className="hidden sm:inline">{t("download")}</span>
                 </Button>
               </a>
               <Button
@@ -432,9 +436,9 @@ export function FileDetailDialog({
           </div>
 
           {/* Tabbed content */}
-          <Tabs defaultValue={defaultTab} className="flex min-h-0 flex-1 flex-col">
-            <div className="border-b border-border px-5">
-              <TabsList variant="line" className="h-10">
+          <Tabs defaultValue={defaultTab} className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <div className="shrink-0 border-b border-border px-3 sm:px-5">
+              <TabsList variant="line" className="h-10 w-full justify-start overflow-x-auto">
                 <TabsTrigger value="preview" className="gap-1.5">
                   <Eye className="size-3.5" />
                   {t("tabPreview")}
@@ -455,21 +459,41 @@ export function FileDetailDialog({
             </div>
 
             {/* Preview Tab */}
-            <TabsContent value="preview" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(90vh-8rem)]">
-                <div className="p-5">
+            <TabsContent value="preview" className="flex min-h-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden">
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="min-w-0 overflow-hidden p-3 sm:p-5">
                   {isImage ? (
                     <img
                       src={file.previewUrl}
                       alt={file.name}
-                      className="mx-auto max-h-[65vh] w-auto rounded-md border border-border object-contain"
+                      className="mx-auto max-h-[65vh] w-auto max-w-full rounded-md border border-border object-contain"
                     />
                   ) : isPdf ? (
-                    <iframe
-                      title={file.name}
-                      src={file.previewUrl}
-                      className="h-[65vh] w-full rounded-md border border-border bg-background"
-                    />
+                    isNarrowViewport ? (
+                      <div className="flex min-w-0 flex-col gap-4 overflow-hidden rounded-md border border-border bg-muted/30 p-4">
+                        <p className="truncate text-sm font-medium text-foreground" title={file.name}>
+                          {file.name}
+                        </p>
+                        <a
+                          href={file.previewUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex shrink-0"
+                        >
+                          <Button type="button" className="w-full sm:w-auto">
+                            {t("openInNewTab")}
+                          </Button>
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="min-h-0 min-w-0 overflow-hidden rounded-md border border-border bg-background">
+                        <iframe
+                          title={file.name}
+                          src={file.previewUrl}
+                          className="h-[65vh] min-h-[200px] w-full max-w-full rounded-md border-0 object-contain"
+                        />
+                      </div>
+                    )
                   ) : isExcel ? (
                     <div className="overflow-hidden rounded-md border border-border bg-background">
                       {loadingPreview ? (
@@ -572,9 +596,9 @@ export function FileDetailDialog({
             </TabsContent>
 
             {/* OCR Text Tab */}
-            <TabsContent value="ocr" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(90vh-8rem)]">
-                <div className="space-y-4 p-5">
+            <TabsContent value="ocr" className="flex min-h-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden">
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="min-w-0 space-y-4 p-3 sm:p-5">
                   {/* Editable OCR text - shows existing text or empty for editing */}
                   <div className="flex flex-col gap-2">
                     <Label htmlFor="ocr-text" className="text-sm font-medium">
@@ -635,9 +659,9 @@ export function FileDetailDialog({
             </TabsContent>
 
             {/* AI Analysis Tab */}
-            <TabsContent value="ai" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(90vh-8rem)]">
-                <div className="p-5">
+            <TabsContent value="ai" className="flex min-h-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden">
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="min-w-0 p-3 sm:p-5">
                   {hasAiAnalysis ? (
                     <div className="space-y-4">
                       {file.label && (
@@ -669,9 +693,9 @@ export function FileDetailDialog({
             </TabsContent>
 
             {/* Info Tab */}
-            <TabsContent value="info" className="min-h-0 overflow-hidden">
-              <ScrollArea className="h-[calc(90vh-8rem)]">
-                <div className="p-5">
+            <TabsContent value="info" className="flex min-h-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden">
+              <ScrollArea className="min-h-0 flex-1">
+                <div className="min-w-0 p-3 sm:p-5">
                   <div className="space-y-3 rounded-md border border-border p-4">
                     <div className="flex items-center justify-between border-b border-border pb-3">
                       <span className="text-sm text-muted-foreground">{t("fileType")}</span>

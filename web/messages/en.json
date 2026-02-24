@@ -586,7 +586,8 @@
       "templateGenerating": "Generating...",
       "templateAddRow": "Add row",
       "templateRemoveRow": "Remove row",
-      "templateCancel": "Cancel"
+      "templateCancel": "Cancel",
+      "openInNewTab": "Open in new tab"
     },
     "overview": {
       "projectInfo": "Project info",
@@ -1225,7 +1226,8 @@
       "templateGenerating": "Generating...",
       "templateAddRow": "Add row",
       "templateRemoveRow": "Remove row",
-      "templateCancel": "Cancel"
+      "templateCancel": "Cancel",
+      "openInNewTab": "Open in new tab"
     }
   },
   "sidebar": {
