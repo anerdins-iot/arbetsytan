@@ -1658,7 +1658,18 @@
     "expandDetails": "Show details",
     "collapseDetails": "Hide details",
     "panelFoundProducts": "Found {count, plural, =1 {1 product} other {# products}}",
-    "openResults": "Open results"
+    "openResults": "Open results",
+    "addToListDialog": {
+      "title": "Select shopping list",
+      "description": "Choose which list to add the product to",
+      "emptyState": "You have no shopping lists yet",
+      "loading": "Loading lists…",
+      "adding": "Adding…",
+      "added": "Added to \"{listTitle}\"",
+      "error": "Could not add the product",
+      "errorLoadLists": "Could not load shopping lists",
+      "items": "{count, plural, =0 {No items} =1 {1 item} other {# items}}"
+    }
   },
   "quotes": {
     "title": "Quotes",
