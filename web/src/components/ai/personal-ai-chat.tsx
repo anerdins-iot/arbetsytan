@@ -7,20 +7,15 @@ import { DefaultChatTransport } from "ai";
 import {
   MessageCircle,
   History,
-  Send,
-  Paperclip,
   X,
   FolderOpen,
   PanelRightClose,
-  PanelRightOpen,
-  PanelLeftOpen,
   Maximize2,
   Minimize2,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Sheet,
   SheetContent,
@@ -29,7 +24,8 @@ import {
 } from "@/components/ui/sheet";
 import { getConversationWithMessages } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
-import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
+import { type VoiceMode } from "@/components/ai/voice-mode-toggle";
+import { PersonalAiChatInput } from "@/components/ai/personal-ai-chat-input";
 import type { UploadedFile, AnalysisFileData, NoteListPanelData, PersonalAiChatProps } from "@/components/ai/personal-ai-chat-types";
 import {
   LEFT_PANEL_COLLAPSED_KEY,
@@ -1040,98 +1036,28 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       )}
 
       {/* Inmatningsfält (shrink-0 så det alltid syns) */}
-      <form
+      <PersonalAiChatInput
+        inputValue={inputValue}
+        onInputChange={handleInputChange}
         onSubmit={handleSubmit}
-        className="flex shrink-0 flex-col gap-2 border-t border-border p-3"
-      >
-        {/* Textarea - större och full bredd */}
-        <Textarea
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder={t("placeholder")}
-          rows={3}
-          className="min-h-20 w-full resize-none"
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey && !isLoading) {
-              e.preventDefault();
-              handleSubmit();
-            }
-          }}
-          onPaste={handlePaste}
-        />
-
-        {/* Verktygsfält under textarea */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            {/* Gem-ikon för filuppladdning */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              accept=".pdf,.jpg,.jpeg,.png,.webp,.docx,.xlsx"
-              multiple
-              onChange={(e) => {
-                if (e.target.files && e.target.files.length > 0) {
-                  handleFileSelect(e.target.files);
-                  e.target.value = "";
-                }
-              }}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="size-8 text-muted-foreground hover:text-foreground"
-              onClick={() => fileInputRef.current?.click()}
-              aria-label={t("attachFile")}
-              disabled={isLoading}
-            >
-              <Paperclip className="size-4" />
-            </Button>
-
-            {/* Voice mode controls */}
-            <VoiceModeToggle
-              voiceMode={voiceMode}
-              onVoiceModeChange={setVoiceMode}
-              onVoiceInput={handleVoiceInput}
-              onVoiceInputManual={handleVoiceInputManual}
-              onPushToTalkResult={handlePushToTalkResult}
-              onInterimTranscript={handleInterimTranscript}
-              speakRef={speakRef}
-              stopRef={stopSpeakingRef}
-              isSpeakingRef={isSpeakingRef}
-              triggerConversationRecording={triggerConversationRecording}
-              disabled={isLoading}
-            />
-          </div>
-
-          {/* Skicka-knapp */}
-          {isLoading ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="gap-2"
-              onClick={() => stop()}
-              aria-label={t("loading")}
-            >
-              <span className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              {t("loading")}
-            </Button>
-          ) : (
-            <Button
-              type="submit"
-              size="sm"
-              className="gap-2"
-              disabled={!inputValue.trim() && !uploadedFiles.some((f) => f.status === "done" && f.type.startsWith("image/"))}
-              aria-label={t("send")}
-            >
-              <Send className="size-4" />
-              {t("send")}
-            </Button>
-          )}
-        </div>
-      </form>
+        onPaste={handlePaste}
+        isLoading={isLoading}
+        uploadedFiles={uploadedFiles}
+        voiceMode={voiceMode}
+        setVoiceMode={setVoiceMode}
+        onVoiceInput={handleVoiceInput}
+        onVoiceInputManual={handleVoiceInputManual}
+        onPushToTalkResult={handlePushToTalkResult}
+        onInterimTranscript={handleInterimTranscript}
+        speakRef={speakRef}
+        stopRef={stopSpeakingRef}
+        isSpeakingRef={isSpeakingRef}
+        triggerConversationRecording={triggerConversationRecording}
+        fileInputRef={fileInputRef}
+        onFileSelect={handleFileSelect}
+        stop={stop}
+        t={t}
+      />
     </div>
   );
 
