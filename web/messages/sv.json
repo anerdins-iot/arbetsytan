@@ -329,6 +329,7 @@
       "open": "Öppna",
       "sheetTitle": "Uppgifter"
     },
+    "wholesalerSearchSheetTitle": "Sök material",
     "ocrReview": {
       "title": "Granska fil",
       "noTextHint": "Lägg till text eller beskrivning för att göra filen sökbar.",

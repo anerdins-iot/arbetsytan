@@ -12,31 +12,19 @@ import type { NotificationItem } from "@/actions/notifications"
 import { SocketProvider } from "@/contexts/socket-context"
 import { WholesalerPanelProvider, useWholesalerPanel } from "@/contexts/wholesaler-panel-context"
 import { WholesalerSearchPanel } from "@/components/wholesaler/wholesaler-search-panel"
-import { AddToShoppingListDialog } from "@/components/wholesaler/add-to-shopping-list-dialog"
-import type { WholesalerProduct } from "@/lib/wholesaler-search"
 
 function WholesalerPanelOutlet() {
-  const { open, data, setOpen } = useWholesalerPanel()
-  const [addToListProduct, setAddToListProduct] = useState<WholesalerProduct | null>(null)
+  const { open, data, setOpen, openAddToListDialog } = useWholesalerPanel()
 
   return (
-    <>
-      <WholesalerSearchPanel
-        key={open ? (data?.query ?? "open") : "closed"}
-        open={open}
-        onOpenChange={setOpen}
-        initialQuery={data?.query}
-        initialProducts={data?.products}
-        onAddToList={(product) => setAddToListProduct(product)}
-      />
-      <AddToShoppingListDialog
-        product={addToListProduct}
-        open={addToListProduct !== null}
-        onOpenChange={(isOpen) => {
-          if (!isOpen) setAddToListProduct(null)
-        }}
-      />
-    </>
+    <WholesalerSearchPanel
+      key={open ? (data?.query ?? "open") : "closed"}
+      open={open}
+      onOpenChange={setOpen}
+      initialQuery={data?.query}
+      initialProducts={data?.products}
+      onAddToList={openAddToListDialog}
+    />
   )
 }
 

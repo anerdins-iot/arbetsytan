@@ -329,6 +329,7 @@
       "open": "Open",
       "sheetTitle": "Tasks"
     },
+    "wholesalerSearchSheetTitle": "Search materials",
     "ocrReview": {
       "title": "Review file",
       "noTextHint": "Add text or description to make the file searchable.",

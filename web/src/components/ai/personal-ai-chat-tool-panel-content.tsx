@@ -10,8 +10,11 @@ import { TimeEntryList } from "@/components/time/time-entry-list";
 import { FileListGrid, type FileListGridItem } from "@/components/files/file-list-grid";
 import { TaskList } from "@/components/dashboard/task-list";
 import { ShoppingListsClient } from "@/app/[locale]/(dashboard)/shopping-lists/shopping-lists-client";
+import { WholesalerSearchResults } from "@/components/wholesaler/wholesaler-search-results";
+import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { NoteListPanelData } from "@/components/ai/personal-ai-chat-types";
 import type { NoteCategoryItem } from "@/actions/note-categories";
+import type { WholesalerProduct } from "@/lib/wholesaler-search";
 import type { DashboardTask } from "@/actions/dashboard";
 import type { GroupedTimeEntries } from "@/actions/time-entries";
 import type { SerializedShoppingListItem } from "@/actions/shopping-list";
@@ -26,7 +29,8 @@ export type PersonalAiChatPanelType =
   | "timeEntry"
   | "fileList"
   | "taskList"
-  | "shoppingList";
+  | "shoppingList"
+  | "wholesalerSearch";
 
 export type PersonalAiChatPanelData =
   | (EmailPreviewData & { memberIds?: string[] })
@@ -38,12 +42,13 @@ export type PersonalAiChatPanelData =
   | { groupedEntries: GroupedTimeEntries[]; tasks: Array<{ id: string; title: string }> }
   | { files: FileListGridItem[]; count: number; projectId?: string; projectName?: string }
   | { tasks: DashboardTask[]; count: number; projectId?: string; projectName?: string }
-  | { lists: SerializedShoppingListItem[]; count: number };
+  | { lists: SerializedShoppingListItem[]; count: number }
+  | { query: string; products: WholesalerProduct[]; count: number };
 
 export type PersonalAiChatToolPanelContentCallbacks = {
   onReportGenerate: (data: ReportPreviewData) => Promise<{ success: boolean }>;
-  generateQuotePdf: (data: QuotePreviewData) => Promise<unknown>;
-  onEmailSend: (data: EmailPreviewData & { memberIds?: string[] }) => Promise<unknown>;
+  generateQuotePdf: (data: QuotePreviewData) => Promise<{ success: boolean; error?: string; downloadUrl?: string; fileId?: string }>;
+  onEmailSend: (data: EmailPreviewData & { memberIds?: string[] }) => Promise<{ success: boolean; error?: string }>;
   onEmailCancel: () => void;
   onShoppingListsRefresh: () => Promise<void>;
 };
@@ -63,6 +68,16 @@ export type PersonalAiChatToolPanelContentProps = {
   } | null;
   callbacks: PersonalAiChatToolPanelContentCallbacks;
 };
+
+/** Rendered only when panelType is wholesalerSearch; uses useWholesalerPanel inside so it must be under WholesalerPanelProvider. */
+function WholesalerSearchPanelContent({
+  data,
+}: {
+  data: { query: string; products: WholesalerProduct[]; count: number };
+}) {
+  const { openAddToListDialog } = useWholesalerPanel();
+  return <WholesalerSearchResults products={data.products} onAddToList={openAddToListDialog} />;
+}
 
 export function PersonalAiChatToolPanelContent({
   panelType,
@@ -172,6 +187,11 @@ export function PersonalAiChatToolPanelContent({
           onRefresh={callbacks.onShoppingListsRefresh}
         />
       );
+    }
+    case "wholesalerSearch": {
+      const data = panelData as { query: string; products: WholesalerProduct[]; count: number } | null;
+      if (!data) return null;
+      return <WholesalerSearchPanelContent data={data} />;
     }
     default:
       return null;

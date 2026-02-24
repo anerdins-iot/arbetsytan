@@ -77,7 +77,6 @@ import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
 import type { FileListGridItem } from "@/components/files/file-list-grid";
 import { PersonalAiChatHeader } from "@/components/ai/personal-ai-chat-header";
-import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { getNoteCategories, type NoteCategoryItem } from "@/actions/note-categories";
@@ -94,7 +93,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [projectContext, setProjectContext] = useState<ProjectContextResult | null>(null);
   const [isLoadingContext, setIsLoadingContext] = useState(false);
   const [analysisFile, setAnalysisFile] = useState<AnalysisFileData | null>(null);
-  const { openPanel: openWholesalerPanel } = useWholesalerPanel();
   const isDesktopToolPanel = useMediaQuery("(min-width: 1024px)");
   const [messageDebugContext, setMessageDebugContext] = useState<Map<string, DebugContext>>(new Map());
   const [debugModalMessageId, setDebugModalMessageId] = useState<string | null>(null);
@@ -131,6 +129,11 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     count: number;
   } | null>(null);
   const [openNoteListData, setOpenNoteListData] = useState<NoteListPanelData | null>(null);
+  const [openWholesalerSearchData, setOpenWholesalerSearchData] = useState<{
+    query: string;
+    products: WholesalerProduct[];
+    count: number;
+  } | null>(null);
   const [noteListCategories, setNoteListCategories] = useState<NoteCategoryItem[]>([]);
   const [openEmailPreviewData, setOpenEmailPreviewData] = useState<(EmailPreviewData & { memberIds?: string[] }) | null>(null);
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(() => {
@@ -769,7 +772,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setOpenNoteListData,
     onReportGenerate: handleReportGenerate,
     onDeleteConfirm: handleDeleteConfirm,
-    openWholesalerPanel,
+    openWholesalerPanel: setOpenWholesalerSearchData,
   };
 
   const handleOcrReviewComplete = useCallback(
@@ -904,7 +907,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
       {/* Meddelandelista */}
       <PersonalAiChatMessageList
-        messages={messages}
+        messages={messages as any}
         chatImageMap={chatImageMap}
         messageDebugContext={messageDebugContext}
         messageModels={messageModels}
@@ -1015,7 +1018,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   ? { type: "taskList", title: t("taskList.sheetTitle") }
                   : openShoppingListsData
                     ? { type: "shoppingList", title: tShopping("title") }
-                    : null;
+                    : openWholesalerSearchData
+                      ? { type: "wholesalerSearch", title: t("wholesalerSearchSheetTitle") }
+                      : null;
 
   const closeActiveToolPanel = useCallback(() => {
     setOpenQuoteData(null);
@@ -1027,6 +1032,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     setOpenFileListData(null);
     setOpenTaskListData(null);
     setOpenShoppingListsData(null);
+    setOpenWholesalerSearchData(null);
     setOpenEmailPreviewData(null);
   }, []);
 
@@ -1053,6 +1059,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
             return openTaskListData;
           case "shoppingList":
             return openShoppingListsData;
+          case "wholesalerSearch":
+            return openWholesalerSearchData;
           default:
             return null;
         }
@@ -1110,7 +1118,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               {chatBody}
             </div>
           </div>
-          {(mode === "sheet" || isFullscreen) && (
+          {isFullscreen && (
             <PersonalAiChatToolPanels
               activeToolPanel={activeToolPanel}
               panelData={panelData}

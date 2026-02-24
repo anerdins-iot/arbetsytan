@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useCallback } from "react";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
+import { AddToShoppingListDialog } from "@/components/wholesaler/add-to-shopping-list-dialog";
 
 type WholesalerPanelData = {
   query: string;
@@ -15,6 +16,8 @@ type WholesalerPanelContextValue = {
   openPanel: (data: WholesalerPanelData) => void;
   closePanel: () => void;
   setOpen: (open: boolean) => void;
+  /** Open the "add to shopping list" dialog from anywhere (e.g. AI chat tool panel). */
+  openAddToListDialog: (product: WholesalerProduct) => void;
 };
 
 const WholesalerPanelContext = createContext<WholesalerPanelContextValue | null>(null);
@@ -30,6 +33,7 @@ export function useWholesalerPanel() {
 export function WholesalerPanelProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<WholesalerPanelData | null>(null);
+  const [addToListProduct, setAddToListProduct] = useState<WholesalerProduct | null>(null);
 
   const openPanel = useCallback((panelData: WholesalerPanelData) => {
     setData(panelData);
@@ -40,9 +44,22 @@ export function WholesalerPanelProvider({ children }: { children: React.ReactNod
     setOpen(false);
   }, []);
 
+  const openAddToListDialog = useCallback((product: WholesalerProduct) => {
+    setAddToListProduct(product);
+  }, []);
+
   return (
-    <WholesalerPanelContext.Provider value={{ open, data, openPanel, closePanel, setOpen }}>
+    <WholesalerPanelContext.Provider
+      value={{ open, data, openPanel, closePanel, setOpen, openAddToListDialog }}
+    >
       {children}
+      <AddToShoppingListDialog
+        product={addToListProduct}
+        open={addToListProduct !== null}
+        onOpenChange={(isOpen) => {
+          if (!isOpen) setAddToListProduct(null);
+        }}
+      />
     </WholesalerPanelContext.Provider>
   );
 }

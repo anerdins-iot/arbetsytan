@@ -47,6 +47,7 @@ const PANEL_TYPES: PersonalAiChatPanelType[] = [
   "fileList",
   "taskList",
   "shoppingList",
+  "wholesalerSearch",
 ];
 
 function getSheetTitleDefault(
@@ -76,6 +77,8 @@ function getSheetTitleDefault(
       return t("taskList.sheetTitle");
     case "shoppingList":
       return tShopping("title");
+    case "wholesalerSearch":
+      return t("wholesalerSearchSheetTitle");
     default:
       return "";
   }
