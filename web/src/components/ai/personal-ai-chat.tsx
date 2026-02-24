@@ -10,25 +10,13 @@ import {
   Send,
   Paperclip,
   X,
-  FileText,
-  Image as ImageIcon,
-  Loader2,
   FolderOpen,
-  FolderPlus,
   PanelRightClose,
   PanelLeftClose,
   PanelRightOpen,
   PanelLeftOpen,
   Maximize2,
   Minimize2,
-  Info,
-  Search,
-  BarChart2,
-  StickyNote,
-  Clock,
-  ListTodo,
-  List,
-  Mail,
   ChevronRight,
   ChevronLeft,
 } from "lucide-react";
@@ -42,7 +30,6 @@ import {
 } from "@/components/ui/sheet";
 import { getConversationWithMessages } from "@/actions/conversations";
 import { cn } from "@/lib/utils";
-import { MarkdownMessage } from "@/components/ai/markdown-message";
 import { VoiceModeToggle, type VoiceMode } from "@/components/ai/voice-mode-toggle";
 import type { UploadedFile, AnalysisFileData, NoteListPanelData, PersonalAiChatProps } from "@/components/ai/personal-ai-chat-types";
 import {
@@ -61,23 +48,22 @@ import {
 } from "@/components/ai/personal-ai-chat-utils";
 import { useConversationHistory } from "@/hooks/use-conversation-history";
 import { PersonalAiChatHistoryDropdown } from "@/components/ai/personal-ai-chat-history-dropdown";
+import { PersonalAiChatMessageList } from "@/components/ai/personal-ai-chat-message-list";
+import type { PersonalAiChatToolCardCallbacks } from "@/components/ai/personal-ai-chat-tool-card";
 export type { NoteListPanelData } from "@/components/ai/personal-ai-chat-types";
 import { ProjectSelector } from "@/components/ai/project-selector";
 import { ModelSelector } from "@/components/ai/model-selector";
 import { type ProviderKey, MODEL_OPTIONS } from "@/lib/ai/providers";
 import { EmailPreviewCard, type EmailPreviewData, type EmailAttachment } from "@/components/ai/email-preview-card";
-import { FileCreatedCard, type FileCreatedData } from "@/components/ai/file-created-card";
 import { ReportPreviewCard, type ReportPreviewData } from "@/components/ai/report-preview-card";
 import { sendExternalEmail, sendToTeamMembers, type EmailAttachmentInput } from "@/actions/send-email";
 import { getProjects } from "@/actions/projects";
 import { getDailyBriefing } from "@/actions/briefing";
 import type { DailyBriefing as DailyBriefingData } from "@/actions/briefing";
-import { DailyBriefing } from "@/components/ai/daily-briefing";
 import { getProjectContext } from "@/actions/project-context";
 import type { ProjectContextResult } from "@/actions/project-context";
-import { ProjectContextCard } from "@/components/ai/project-context-card";
 import { SearchResultsCard, type SearchResult } from "@/components/ai/search-results-card";
-import { DeleteConfirmationCard, type DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
+import type { DeleteConfirmationData } from "@/components/ai/delete-confirmation-card";
 import { QuotePreviewCard, type QuotePreviewData } from "@/components/ai/quote-preview-card";
 import { QuoteList, type SerializedQuote } from "@/components/quotes/quote-list";
 import { deleteFile } from "@/actions/files";
@@ -95,8 +81,6 @@ import { OcrReviewDialog } from "@/components/ai/ocr-review-dialog";
 import { useSocketEvent } from "@/contexts/socket-context";
 import { SOCKET_EVENTS, type RealtimeFileEvent } from "@/lib/socket-events";
 import { RagDebugModal, type DebugContext } from "@/components/ai/rag-debug-modal";
-import { WholesalerSearchResultButton } from "@/components/ai/wholesaler-search-result-button";
-import { ChatResultButton } from "@/components/ai/chat-result-button";
 import { FileListGrid, type FileListGridItem } from "@/components/files/file-list-grid";
 import { useWholesalerPanel } from "@/contexts/wholesaler-panel-context";
 import type { WholesalerProduct } from "@/lib/wholesaler-search";
@@ -761,6 +745,76 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     return { success: true };
   }, [sendMessage]);
 
+  const handleDeleteConfirm = useCallback(
+    async (deleteData: { type: string; actionParams: Record<string, string> }) => {
+      const { type, actionParams } = deleteData;
+      switch (type) {
+        case "file": {
+          const r = await deleteFile({
+            projectId: actionParams.projectId,
+            fileId: actionParams.fileId,
+          });
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "task": {
+          const r = await deleteTask(actionParams.projectId, {
+            taskId: actionParams.taskId,
+          });
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "comment": {
+          const r = await deleteComment(actionParams.projectId, {
+            commentId: actionParams.commentId,
+          });
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "projectNote": {
+          const r = await deleteNote(actionParams.projectId, actionParams.noteId);
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "personalNote": {
+          const r = await deletePersonalNote(actionParams.noteId);
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "personalFile": {
+          const r = await deletePersonalFile({ fileId: actionParams.fileId });
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "timeEntry": {
+          const r = await deleteTimeEntry(actionParams.timeEntryId);
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "automation": {
+          const r = await deleteAutomation(actionParams.automationId);
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        case "noteCategory": {
+          const r = await deleteNoteCategory(actionParams.categoryId);
+          return { success: r.success, error: r.success ? undefined : r.error };
+        }
+        default:
+          return { success: false, error: "Okänd raderingstyp" };
+      }
+    },
+    []
+  );
+
+  const toolCardCallbacks: PersonalAiChatToolCardCallbacks = {
+    setOpenQuoteData,
+    setOpenSearchResults,
+    setOpenReportData,
+    setOpenEmailPreviewData,
+    setOpenFileListData,
+    setOpenTaskListData,
+    setOpenShoppingListsData,
+    setOpenTimeEntryPanel,
+    setOpenQuoteListData,
+    setOpenNoteListData,
+    onReportGenerate: handleReportGenerate,
+    onDeleteConfirm: handleDeleteConfirm,
+    openWholesalerPanel,
+  };
+
   // Called when OCR review is complete - analysis runs in background
   const handleOcrReviewComplete = useCallback(
     (result: { ocrText: string; userDescription: string; skipped: boolean }) => {
@@ -929,597 +983,29 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       )}
 
       {/* Meddelandelista */}
-      <div
-        ref={scrollContainerRef}
-        className="min-h-0 flex-1 overflow-y-auto"
+      <PersonalAiChatMessageList
+        messages={messages}
+        chatImageMap={chatImageMap}
+        messageDebugContext={messageDebugContext}
+        messageModels={messageModels}
+        scrollContainerRef={scrollContainerRef}
+        sentinelRef={sentinelRef}
+        messagesEndRef={messagesEndRef}
         onScroll={handleScroll}
-      >
-        {/* Sentinel for infinite scroll (observer triggers load when visible near top) */}
-        <div ref={sentinelRef} className="h-0 shrink-0" aria-hidden="true" />
-
-        {/* Loading indicator when fetching older messages */}
-        {isLoadingMore && (
-          <div className="flex justify-center py-2">
-            <Loader2 className="size-5 animate-spin text-muted-foreground" />
-          </div>
-        )}
-
-        {/* Briefing */}
-        {briefingData && messages.length === 0 && (
-          <DailyBriefing data={briefingData} />
-        )}
-
-        {/* Project context */}
-        {projectContext && messages.length === 0 && !isLoadingContext && (
-          <ProjectContextCard context={projectContext} />
-        )}
-
-        {messages.length === 0 && !error && !briefingData && !isLoadingBriefing && !projectContext && !isLoadingContext && (
-          <div className="flex h-full flex-col items-center justify-center p-4 text-center text-muted-foreground">
-            <MessageCircle className="mb-2 size-10 opacity-50" />
-            <p className="text-sm">{t("placeholder")}</p>
-          </div>
-        )}
-        <div className="space-y-4 p-4">
-          {messages.map((message, messageIndex) => {
-            // Gruppera på varandra följande text-parts till en bubbla så att punktlistor
-            // och långa svar inte blir en bubbla per rad/segment (AI SDK kan skicka flera text-parts per meddelande).
-            const parts = message.parts ?? [];
-            type TextGroup = { type: "text"; text: string };
-            type ToolGroup = { type: "tool"; part: (typeof parts)[number]; index: number };
-            const groups: Array<TextGroup | ToolGroup> = [];
-            // Get attached image file IDs for this user message
-            const attachedImageFileIds = message.role === "user" ? chatImageMap.get(messageIndex) : undefined;
-            let textAcc: string[] = [];
-            for (let i = 0; i < parts.length; i++) {
-              const part = parts[i];
-              if (part.type === "text") {
-                textAcc.push((part as { text: string }).text);
-              } else {
-                if (textAcc.length > 0) {
-                  groups.push({ type: "text", text: textAcc.join("") });
-                  textAcc = [];
-                }
-                if (part.type.startsWith("tool-") && part.type !== "tool-invocation") {
-                  groups.push({ type: "tool", part, index: i });
-                }
-              }
-            }
-            if (textAcc.length > 0) {
-              groups.push({ type: "text", text: textAcc.join("") });
-            }
-
-            // Centralized deduplication: filter tool groups so we only keep the first of each (type, signature).
-            // Prevents duplicate cards and "new button per keystroke" when re-renders or message refs change.
-            const getToolDedupeKey = (part: (typeof parts)[number]): string | null => {
-              const result = (part as { output?: Record<string, unknown> }).output;
-              if (!result || (part as { state?: string }).state !== "output-available") return null;
-              if (result.__emailPreview) {
-                const d = result as { subject?: string; recipients?: string[] };
-                return `email:${d.subject ?? ""}:${(d.recipients ?? []).join(",")}`;
-              }
-              if (result.__searchResults && Array.isArray(result.results)) {
-                const r = result.results as SearchResult[];
-                return `search:${r.length}-${r[0]?.fileId ?? ""}`;
-              }
-              if (result.__noteList) {
-                const d = result.__noteList as { count: number; projectId?: string; notes?: { id?: string }[] };
-                return `noteList:${d.count}:${d.projectId ?? "p"}:${d.notes?.[0]?.id ?? ""}`;
-              }
-              if (result.__taskList) {
-                const d = result.__taskList as { count: number; projectId?: string; tasks?: { id?: string }[] };
-                return `taskList:${d.count}:${d.projectId ?? ""}:${d.tasks?.[0]?.id ?? ""}`;
-              }
-              if (result.__fileList) {
-                const d = result.__fileList as { count: number; projectId?: string; files?: { id?: string }[] };
-                return `fileList:${d.count}:${d.projectId ?? ""}:${d.files?.[0]?.id ?? ""}`;
-              }
-              if (result.__quoteList) {
-                const d = result.__quoteList as { count: number; quotes?: { id?: string }[] };
-                return `quoteList:${d.count}:${d.quotes?.[0]?.id ?? ""}`;
-              }
-              if (result.__timeEntryList) {
-                const d = result.__timeEntryList as { count?: number; entries?: unknown[] };
-                return `timeEntryList:${d.count ?? d.entries?.length ?? 0}`;
-              }
-              if (result.__shoppingLists) {
-                const d = result.__shoppingLists as { count?: number; lists?: { id?: string }[] };
-                return `shoppingLists:${d.count ?? 0}:${d.lists?.[0]?.id ?? ""}`;
-              }
-              if (result.__reportPreview) {
-                const d = result as { title?: string; projectId?: string };
-                return `report:${d.title ?? ""}:${d.projectId ?? ""}`;
-              }
-              if (result.__quotePreview) {
-                const d = result as { title?: string; projectId?: string };
-                return `quotePreview:${d.title ?? ""}:${d.projectId ?? ""}`;
-              }
-              if (result.__wholesalerSearch) {
-                const d = result.__wholesalerSearch as { query?: string; products?: { articleNo?: string }[] };
-                const q = (d.query ?? "").trim();
-                const firstId = d.products?.[0]?.articleNo ?? "";
-                return `wholesaler:${q}:${firstId}`;
-              }
-              if (result.__deleteConfirmation) {
-                const d = result as { type: string; items?: { id: string }[] };
-                return `delete:${d.type}:${(d.items ?? []).map((it) => it.id).sort().join(",")}`;
-              }
-              return null;
-            };
-
-            const seenToolKeys = new Set<string>();
-            const filteredGroups: Array<TextGroup | ToolGroup> =
-              message.role !== "assistant"
-                ? groups
-                : groups.filter((g) => {
-                    if (g.type === "text") return true;
-                    if (g.type === "tool") {
-                      const part = g.part as { state?: string };
-                      if (part.state !== "output-available") return false;
-                      const key = getToolDedupeKey(g.part);
-                      if (key === null) return true;
-                      if (seenToolKeys.has(key)) return false;
-                      seenToolKeys.add(key);
-                      return true;
-                    }
-                    return true;
-                  });
-
-            return (
-            <div
-              key={message.id ?? `msg-${messageIndex}`}
-              className={cn(
-                "flex flex-col gap-1",
-                message.role === "user" ? "items-end" : "items-start"
-              )}
-            >
-              {filteredGroups.map((group, groupIndex) => {
-                if (group.type === "text") {
-                  return (
-                    <div
-                      key={groupIndex}
-                      className={cn(
-                        "max-w-[85%] rounded-lg px-3 py-2 text-sm",
-                        message.role === "user"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground"
-                      )}
-                    >
-                      <MarkdownMessage content={group.text} />
-                    </div>
-                  );
-                }
-
-                const part = group.part;
-                const i = group.index;
-                const toolCardKey = getToolDedupeKey(part) ?? `tool-${message.id ?? messageIndex}-${i}`;
-
-                // Tool invocations with email preview
-                // AI SDK v6 uses "tool-{toolName}" as part.type, not "tool-invocation"
-                const isToolPart = part.type.startsWith("tool-") && part.type !== "tool-invocation";
-                if (isToolPart && (part as { state?: string }).state === "output-available") {
-                  const result = (part as { output?: Record<string, unknown> }).output;
-                  if (result?.__emailPreview) {
-                    const emailData = result as unknown as EmailPreviewData & {
-                      __emailPreview: true;
-                      memberIds?: string[];
-                      attachments?: EmailAttachment[];
-                    };
-
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<Mail className="size-5 text-primary" />}
-                        title={emailData.subject || t("emailPanel.title")}
-                        subtitle={emailData.recipients.slice(0, 2).join(", ") + (emailData.recipients.length > 2 ? ` +${emailData.recipients.length - 2}` : "")}
-                        buttonLabel={t("emailPanel.showEmail")}
-                        onOpen={() => {
-                          setOpenSearchResults(null);
-                          setOpenEmailPreviewData({
-                            type: emailData.type,
-                            recipients: emailData.recipients,
-                            recipientNames: emailData.recipientNames,
-                            subject: emailData.subject,
-                            body: emailData.body,
-                            replyTo: emailData.replyTo,
-                            attachments: emailData.attachments,
-                            previewHtml: emailData.previewHtml,
-                            projectId: emailData.projectId,
-                            projectName: emailData.projectName,
-                            memberIds: emailData.memberIds,
-                          });
-                        }}
-                      />
-                    );
-                  }
-
-                  if (result?.__searchResults && Array.isArray(result.results)) {
-                    const searchResults = result.results as SearchResult[];
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<Search className="size-5 text-primary" />}
-                        title={`Hittade ${searchResults.length} dokument`}
-                        buttonLabel="Visa resultat"
-                        onOpen={() => {
-                          setOpenEmailPreviewData(null);
-                          setOpenSearchResults(searchResults);
-                        }}
-                      />
-                    );
-                  }
-
-                  if (result?.__fileCreated) {
-                    const fileData = result as unknown as FileCreatedData & {
-                      __fileCreated: true;
-                    };
-
-                    return (
-                      <FileCreatedCard
-                        key={toolCardKey}
-                        data={{
-                          fileId: fileData.fileId,
-                          fileName: fileData.fileName,
-                          fileType: fileData.fileType,
-                          fileSize: fileData.fileSize,
-                          downloadUrl: fileData.downloadUrl,
-                          previewUrl: fileData.previewUrl,
-                          message: fileData.message,
-                        }}
-                      />
-                    );
-                  }
-
-                  if (result?.__reportPreview) {
-                    const reportData = result as unknown as ReportPreviewData & {
-                      __reportPreview: true;
-                    };
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<BarChart2 className="size-5 text-primary" />}
-                        title={`Rapport — ${reportData.title}`}
-                        subtitle={reportData.projectName}
-                        buttonLabel="Öppna rapport"
-                        onOpen={() => setOpenReportData({
-                          title: reportData.title,
-                          summary: reportData.summary,
-                          sections: reportData.sections,
-                          projectId: reportData.projectId,
-                          projectName: reportData.projectName,
-                          format: reportData.format,
-                        })}
-                      />
-                    );
-                  }
-
-                  if (result?.__deleteConfirmation) {
-                    const deleteData = result as DeleteConfirmationData & {
-                      __deleteConfirmation: true;
-                      actionParams: Record<string, string>;
-                    };
-                    const handleDeleteConfirm = async () => {
-                      const { type, actionParams } = deleteData;
-                      switch (type) {
-                        case "file": {
-                          const r = await deleteFile({
-                            projectId: actionParams.projectId,
-                            fileId: actionParams.fileId,
-                          });
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "task": {
-                          const r = await deleteTask(actionParams.projectId, {
-                            taskId: actionParams.taskId,
-                          });
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "comment": {
-                          const r = await deleteComment(actionParams.projectId, {
-                            commentId: actionParams.commentId,
-                          });
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "projectNote": {
-                          const r = await deleteNote(actionParams.projectId, actionParams.noteId);
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "personalNote": {
-                          const r = await deletePersonalNote(actionParams.noteId);
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "personalFile": {
-                          const r = await deletePersonalFile({ fileId: actionParams.fileId });
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "timeEntry": {
-                          const r = await deleteTimeEntry(actionParams.timeEntryId);
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "automation": {
-                          const r = await deleteAutomation(actionParams.automationId);
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        case "noteCategory": {
-                          const r = await deleteNoteCategory(actionParams.categoryId);
-                          return { success: r.success, error: r.success ? undefined : r.error };
-                        }
-                        default:
-                          return { success: false, error: "Okänd raderingstyp" };
-                      }
-                    };
-
-                    return (
-                      <DeleteConfirmationCard
-                        key={toolCardKey}
-                        data={{
-                          type: deleteData.type,
-                          items: deleteData.items,
-                          actionParams: deleteData.actionParams,
-                        }}
-                        onConfirm={handleDeleteConfirm}
-                      />
-                    );
-                  }
-
-                  if (result?.__quotePreview) {
-                    const quoteData = result as unknown as QuotePreviewData & {
-                      __quotePreview: true;
-                    };
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<FileText className="size-5 text-primary" />}
-                        title={`Offert — ${quoteData.title}`}
-                        subtitle={quoteData.clientName}
-                        buttonLabel="Öppna offert"
-                        onOpen={() => setOpenQuoteData({
-                          projectId: quoteData.projectId,
-                          projectName: quoteData.projectName,
-                          clientName: quoteData.clientName,
-                          clientEmail: quoteData.clientEmail,
-                          title: quoteData.title,
-                          items: quoteData.items,
-                          validUntil: quoteData.validUntil,
-                          notes: quoteData.notes,
-                          includeRot: quoteData.includeRot,
-                        })}
-                      />
-                    );
-                  }
-
-                  if (result?.__wholesalerSearch) {
-                    const wsData = result.__wholesalerSearch as {
-                      query: string;
-                      products: WholesalerProduct[];
-                      count: number;
-                    };
-                    return (
-                      <WholesalerSearchResultButton
-                        key={toolCardKey}
-                        query={wsData.query}
-                        count={wsData.count}
-                        onOpen={() => {
-                          openWholesalerPanel(wsData);
-                        }}
-                      />
-                    );
-                  }
-
-                  if (result?.__quoteList) {
-                    const raw = result.__quoteList as {
-                      quotes: Array<{
-                        id: string;
-                        quoteNumber: string;
-                        title: string;
-                        customerName: string | null;
-                        status: string;
-                        totalExVat: number;
-                        itemCount: number;
-                        projectId: string | null;
-                        createdAt: string;
-                        updatedAt: string;
-                      }>;
-                      count: number;
-                    };
-                    const listData: { quotes: SerializedQuote[]; count: number } = {
-                      quotes: raw.quotes as SerializedQuote[],
-                      count: raw.count,
-                    };
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<FileText className="size-5 text-primary" />}
-                        title={tQuotes("foundQuotes", { count: listData.count })}
-                        buttonLabel={tQuotes("openList")}
-                        onOpen={() => setOpenQuoteListData(listData)}
-                      />
-                    );
-                  }
-
-                  if (result?.__noteList) {
-                    const noteData = result.__noteList as NoteListPanelData;
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<StickyNote className="size-5 text-primary" />}
-                        title={t("noteList.found", { count: noteData.count })}
-                        subtitle={noteData.projectName ?? (noteData.isPersonal ? t("noteList.personal") : undefined)}
-                        buttonLabel={t("noteList.open")}
-                        onOpen={() => setOpenNoteListData(noteData)}
-                      />
-                    );
-                  }
-
-                  if (result?.__timeEntryList) {
-                    const teData = result.__timeEntryList as { entries: unknown[]; count: number };
-                    const count = teData.count ?? teData.entries?.length ?? 0;
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<Clock className="size-5 text-primary" />}
-                        title={t("timeEntryListButton", { count })}
-                        buttonLabel={t("timeEntryListOpen")}
-                        onOpen={() => setOpenTimeEntryPanel(true)}
-                      />
-                    );
-                  }
-
-                  if (result?.__fileList) {
-                    const fileListData = result.__fileList as {
-                      files: FileListGridItem[];
-                      count: number;
-                      projectId?: string;
-                      projectName?: string;
-                    };
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<FolderOpen className="size-5 text-primary" />}
-                        title={t("fileListPanel.foundFiles", { count: fileListData.count })}
-                        subtitle={fileListData.projectName}
-                        buttonLabel={t("fileListPanel.openButton")}
-                        onOpen={() => setOpenFileListData(fileListData)}
-                      />
-                    );
-                  }
-
-                  if (result?.__taskList) {
-                    const tlData = result.__taskList as {
-                      tasks: DashboardTask[];
-                      count: number;
-                      projectId?: string;
-                      projectName?: string;
-                    };
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<ListTodo className="size-5 text-primary" />}
-                        title={t("taskList.found", { count: tlData.count })}
-                        buttonLabel={t("taskList.open")}
-                        onOpen={() => setOpenTaskListData({
-                          tasks: tlData.tasks,
-                          count: tlData.count,
-                          projectId: tlData.projectId,
-                          projectName: tlData.projectName,
-                        })}
-                      />
-                    );
-                  }
-
-                  if (result?.__shoppingLists) {
-                    const slData = result.__shoppingLists as {
-                      lists: SerializedShoppingListItem[];
-                      count: number;
-                    };
-                    return (
-                      <ChatResultButton
-                        key={toolCardKey}
-                        icon={<List className="size-5 text-primary" />}
-                        title={tShopping("panelFoundLists", { count: slData.count })}
-                        buttonLabel={tShopping("openPanel")}
-                        onOpen={() =>
-                          setOpenShoppingListsData({ lists: slData.lists, count: slData.count })
-                        }
-                      />
-                    );
-                  }
-                }
-
-                return null;
-              })}
-              {/* Attached image thumbnails for user messages */}
-              {message.role === "user" && attachedImageFileIds && attachedImageFileIds.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 max-w-[85%]">
-                  {attachedImageFileIds.map((fileId) => (
-                    <div key={fileId} className="relative">
-                      <div className="size-16 overflow-hidden rounded-md border border-primary-foreground/20">
-                        <ImageIcon className="size-full p-3 text-primary-foreground/50" />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        size="icon"
-                        className="absolute -bottom-2 -right-2 size-6 rounded-full shadow-sm"
-                        onClick={() => {
-                          // Open OcrReviewDialog for this file
-                          setAnalysisFile({
-                            id: fileId,
-                            name: `image-${fileId.slice(0, 8)}`,
-                            type: "image/jpeg",
-                            url: "",
-                            ocrText: null,
-                            ocrLoading: true,
-                          });
-                          // Fetch file details to populate the dialog
-                          void (async () => {
-                            try {
-                              const res = await fetch(`/api/ai/upload/file-info?fileId=${fileId}`);
-                              if (res.ok) {
-                                const data = await res.json();
-                                setAnalysisFile({
-                                  id: fileId,
-                                  name: data.name || `image-${fileId.slice(0, 8)}`,
-                                  type: data.type || "image/jpeg",
-                                  url: data.url || "",
-                                  ocrText: data.ocrText ?? null,
-                                  ocrLoading: false,
-                                });
-                              }
-                            } catch {
-                              // Silently fail — user can close dialog
-                            }
-                          })();
-                        }}
-                        title={t("saveToProject")}
-                      >
-                        <FolderPlus className="size-3.5" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Agent action log for assistant messages */}
-              {message.role === "assistant" && (() => {
-                const actions = generateAgentActionLog(message.parts ?? [], t);
-                if (actions.length === 0) return null;
-                return (
-                  <div className="mt-1 max-w-[85%] text-[11px] text-muted-foreground/70">
-                    <span className="font-medium">{t("agentLog.prefix")}</span>{" "}
-                    {actions.join(" · ")}
-                  </div>
-                );
-              })()}
-              {/* RAG debug button and model badge for assistant messages */}
-              {message.role === "assistant" && (messageDebugContext.has(message.id) || messageModels.has(message.id)) && (
-                <div className="flex items-center gap-1.5">
-                  {messageModels.get(message.id) && (() => {
-                    const mk = messageModels.get(message.id)!;
-                    const option = MODEL_OPTIONS.find(m => m.key === mk);
-                    return (
-                      <span className="text-[10px] text-muted-foreground/60 font-mono">
-                        {option?.label ?? mk}
-                      </span>
-                    );
-                  })()}
-                  {messageDebugContext.has(message.id) && (
-                    <button
-                      type="button"
-                      onClick={() => setDebugModalMessageId(message.id)}
-                      className="rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-                      title="Visa RAG-debug"
-                    >
-                      <Info className="size-3.5" />
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-            );
-          })}
-        </div>
-        <div ref={messagesEndRef} />
-      </div>
+        isLoadingMore={isLoadingMore}
+        briefingData={briefingData}
+        projectContext={projectContext}
+        isLoadingContext={isLoadingContext}
+        isLoadingBriefing={isLoadingBriefing}
+        error={error}
+        t={t}
+        tQuotes={tQuotes}
+        tShopping={tShopping}
+        getChatErrorKey={getChatErrorKey}
+        toolCardCallbacks={toolCardCallbacks}
+        setDebugModalMessageId={setDebugModalMessageId}
+        setAnalysisFile={setAnalysisFile}
+      />
 
       {/* Uppladdade filer — thumbnails för bilder, kompakt chip för dokument */}
       <ChatUploadedFilesStrip
