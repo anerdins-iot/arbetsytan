@@ -18,10 +18,10 @@
 
 ## Fas 2 – Panel resize
 
-- [ ] Finns `web/src/hooks/use-personal-ai-chat-panel-resize.ts` som tar `mode` och returnerar `{ panelWidth, isResizing, handleResizeStart }`.
-- [ ] Hook använder konstanter från personal-ai-chat-constants (PANEL_WIDTH_STORAGE_KEY, MIN/MAX/DEFAULT).
-- [ ] `personal-ai-chat.tsx` använder hooken och har ingen kvarvarande lokal resize-state eller resize-useEffect.
-- [ ] Build passerar. Docked-panelen kan fortfarande resizas (manuell kontroll om möjligt).
+- [x] Finns `web/src/hooks/use-personal-ai-chat-panel-resize.ts` som tar `mode` och returnerar `{ panelWidth, isResizing, handleResizeStart }`.
+- [x] Hook använder konstanter från personal-ai-chat-constants (PANEL_WIDTH_STORAGE_KEY, MIN/MAX/DEFAULT).
+- [x] `personal-ai-chat.tsx` använder hooken och har ingen kvarvarande lokal resize-state eller resize-useEffect.
+- [x] Build passerar. Docked-panelen kan fortfarande resizas (manuell kontroll om möjligt).
 
 ---
 
