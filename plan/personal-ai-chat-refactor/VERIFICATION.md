@@ -47,11 +47,11 @@
 
 ## Fas 5 – Meddelandelista och tool-kort
 
-- [ ] Finns `personal-ai-chat-message-parts.ts` med groupMessageParts, getToolDedupeKey, filterDeduplicatedToolGroups.
-- [ ] Finns `personal-ai-chat-tool-card.tsx` som renderar ett tool-part till rätt kort (email, search, file, report, delete, quote, wholesaler, quoteList, noteList, timeEntry, fileList, taskList, shoppingLists) via callbacks.
-- [ ] Finns `personal-ai-chat-message-list.tsx` som tar messages, refs, briefingData, projectContext, error, callbacks och renderar lista + tool-kort.
-- [ ] Huvudkomponenten renderar PersonalAiChatMessageList och skickar alla nödvändiga props; ingen kvarvarande duplicerad meddelande-/tool-renderingslogik i huvudfilen.
-- [ ] Build passerar. Inga nya lint-fel.
+- [x] Finns `personal-ai-chat-message-parts.ts` med groupMessageParts, getToolDedupeKey, filterDeduplicatedToolGroups.
+- [x] Finns `personal-ai-chat-tool-card.tsx` som renderar ett tool-part till rätt kort (email, search, file, report, delete, quote, wholesaler, quoteList, noteList, timeEntry, fileList, taskList, shoppingLists) via callbacks.
+- [x] Finns `personal-ai-chat-message-list.tsx` som tar messages, refs, briefingData, projectContext, error, callbacks och renderar lista + tool-kort.
+- [x] Huvudkomponenten renderar PersonalAiChatMessageList och skickar alla nödvändiga props; ingen kvarvarande duplicerad meddelande-/tool-renderingslogik i huvudfilen.
+- [x] Build passerar. Inga nya lint-fel.
 
 ---
 
