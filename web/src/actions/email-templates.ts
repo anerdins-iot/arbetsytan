@@ -164,12 +164,12 @@ export async function updateEmailTemplate(
       variables: EMAIL_TEMPLATE_VARIABLES[name as TemplateName],
     },
     create: {
+      tenantId,
       name,
       locale,
       subject,
       htmlTemplate,
       variables: EMAIL_TEMPLATE_VARIABLES[name as TemplateName],
-      // tenantId injiceras av tenantDb-extensionen i db.ts – skicka inte tenant/tenantId här
     },
   });
 

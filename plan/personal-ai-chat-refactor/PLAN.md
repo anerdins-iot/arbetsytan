@@ -12,7 +12,9 @@
 2. **Verifierings-agent:** Du får ENDAST verifiera den fas som anges. Läs HELA PLAN.md och VERIFICATION.md. Kontrollera att implementationen matchar planen för just den fasen och att inget annat brutits. **Du ska köra `npm run build`** (se VERIFICATION.md för ev. npm install / miljövariabler).
 3. **Arbetskopia:** Implementation sker i worktree. Efter godkänd verifiering gör orchestrator merge.
 
-4. **Checkav – orchestrator:** Efter varje fas (oavsett om verifieringsagenten gör det) ska orchestrator alltid:
+4. **En verifiering i taget:** Orchestrator ska aldrig starta flera verifieringsagenter parallellt – bara en verifiering (och därmed en build) i taget. Nästa verifiering startas först när den föregående är klar (PASS/FAIL). Implementationsagenter kan fortfarande köras parallellt med en pågående verifiering.
+
+5. **Checkav – orchestrator:** Efter varje fas (oavsett om verifieringsagenten gör det) ska orchestrator alltid:
    - Uppdatera **STATUS.md**: sätt fasens rad till "Pågår" när impl startar, "Klar" när merge är gjord.
    - Checka av i **VERIFICATION.md**: byt `- [ ]` till `- [x]` för just den fasens punkter när verifieringen är PASS och merge är genomförd.
    - Uppdatera "Senast uppdaterad" i STATUS.md.

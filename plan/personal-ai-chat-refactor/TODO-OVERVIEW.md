@@ -9,8 +9,8 @@ Alla steg och vilken agent/modell som gör vad. Orchestrator (huvudagent) mergar
 | Roll | Modell | Uppgift |
 |------|--------|--------|
 | **Implementation** | Cursor auto | Implementera en fas i worktree; bara den fasen (läs PLAN.md). **Kör inte npm run build** – det gör verifieringen. |
-| **Verifiering** | Cursor auto | Kontrollera att fasen uppfyller VERIFICATION.md + kör **npm run build** i web/ (ev. npm install och dummy DATABASE_URL enligt VERIFICATION.md). |
-| **Orchestrator** | — | Startar agenter, mergar worktree vid PASS, **checkar alltid av**: STATUS.md (Pågår → Klar) + VERIFICATION.md (checkboxar för fasen). |
+| **Verifiering** | Cursor auto | Kontrollera att fasen uppfyller VERIFICATION.md + kör **npm run build** i web/ (ev. npm install och dummy DATABASE_URL enligt VERIFICATION.md). **Endast en verifiering i taget** – parallella verifieringar krockar med build. |
+| **Orchestrator** | — | Startar agenter, mergar worktree vid PASS, checkar av STATUS.md + VERIFICATION.md. **Startar nästa verifiering först när föregående är klar** (inga parallella verifieringar – build krockar). |
 
 ---
 
