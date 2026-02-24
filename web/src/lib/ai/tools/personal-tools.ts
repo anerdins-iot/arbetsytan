@@ -2578,7 +2578,7 @@ Returnera ENBART JSON i följande format:
           .min(1)
           .describe("Lista med e-postadresser"),
         subject: z.string().min(1).max(300).describe("Ämnesrad"),
-        body: z.string().min(1).max(50000).describe("Meddelandetext (klartext, blir HTML-formaterad)"),
+        body: z.string().min(1).max(50000).describe("Meddelandetext. Du kan skriva i Markdown (rubriker med ###, listor med -, fetstil med **); systemet konverterar till e-postformat (HTML + plain text) automatiskt."),
         replyTo: z.string().email().optional().describe("Svara-till adress"),
         attachments: z
           .array(
@@ -2622,7 +2622,7 @@ Returnera ENBART JSON i följande format:
           .optional()
           .describe("E-postadresser för visning (valfritt)"),
         subject: z.string().min(1).max(300).describe("Ämnesrad"),
-        body: z.string().min(1).max(50000).describe("Meddelandetext (klartext)"),
+        body: z.string().min(1).max(50000).describe("Meddelandetext. Markdown stöds (###, listor -, **); konverteras till e-postformat (HTML + plain text) automatiskt."),
         attachments: z
           .array(
             z.object({
@@ -2776,7 +2776,7 @@ Returnera ENBART JSON i följande format:
           .optional()
           .describe("Lista med användar-ID:n. Om tom skickas till ALLA projektmedlemmar."),
         subject: z.string().min(1).max(300).describe("Ämnesrad"),
-        body: z.string().min(1).max(50000).describe("Meddelandetext (klartext)"),
+        body: z.string().min(1).max(50000).describe("Meddelandetext. Markdown stöds (###, listor -, **); konverteras till e-postformat (HTML + plain text) automatiskt."),
         attachments: z
           .array(
             z.object({

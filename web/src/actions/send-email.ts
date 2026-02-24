@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requirePermission } from "@/lib/auth";
 import { tenantDb, userDb, prisma } from "@/lib/db";
 import { sendEmail, DEFAULT_FROM, type EmailAttachment as ResendAttachment } from "@/lib/email";
+import { markdownToHtml, markdownToPlainText } from "@/lib/email-body";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { logOutboundEmail } from "@/lib/email-log";
 import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
@@ -150,31 +151,28 @@ function buildBrandedEmail(options: {
   subject: string;
   body: string;
   locale?: "sv" | "en";
-}): string {
+}): { html: string; text: string } {
   const { tenantName, logoUrl, subject, body, locale = "sv" } = options;
 
-  // Convert plain text body to HTML paragraphs
-  const htmlBody = body
-    .split("\n\n")
-    .map((p) => `<p style="margin: 0 0 16px; color: #4b5563; font-size: 16px; line-height: 1.6;">${p.replace(/\n/g, "<br>")}</p>`)
-    .join("");
+  const htmlBody = markdownToHtml(body);
+  const plainBody = markdownToPlainText(body);
 
   const footerText =
     locale === "sv"
-      ? `Detta mail skickades via ${tenantName} på ArbetsYtan.`
-      : `This email was sent via ${tenantName} on ArbetsYtan.`;
+      ? `Detta mail skickades via ${tenantName} på ArbetsYtan. Du kan anpassa systemmallar under Inställningar → E-postmallar.`
+      : `This email was sent via ${tenantName} on ArbetsYtan. You can customize system templates under Settings → Email templates.`;
 
   const logoHtml = logoUrl
     ? `<img src="${logoUrl}" alt="${tenantName}" style="max-height: 40px; margin-bottom: 16px;" />`
     : "";
 
-  return `
+  const html = `
 <!DOCTYPE html>
 <html lang="${locale}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${subject}</title>
+  <title>${escapeHtmlAttr(subject)}</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f4f4f5; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f4f4f5;">
@@ -187,7 +185,7 @@ function buildBrandedEmail(options: {
             <td style="background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); border-radius: 16px 16px 0 0; padding: 32px 40px; text-align: center;">
               ${logoHtml}
               <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">
-                ${tenantName}
+                ${escapeHtmlAttr(tenantName)}
               </h1>
             </td>
           </tr>
@@ -196,7 +194,7 @@ function buildBrandedEmail(options: {
           <tr>
             <td style="background-color: #ffffff; padding: 40px;">
               <h2 style="margin: 0 0 24px; color: #111827; font-size: 20px; font-weight: 600;">
-                ${subject}
+                ${escapeHtmlAttr(subject)}
               </h2>
               ${htmlBody}
             </td>
@@ -206,10 +204,10 @@ function buildBrandedEmail(options: {
           <tr>
             <td style="background-color: #f9fafb; border-radius: 0 0 16px 16px; padding: 24px 40px; text-align: center; border-top: 1px solid #e5e7eb;">
               <p style="margin: 0 0 8px; color: #6b7280; font-size: 13px;">
-                ${footerText}
+                ${escapeHtmlAttr(footerText)}
               </p>
               <p style="margin: 0; color: #9ca3af; font-size: 12px;">
-                © ${new Date().getFullYear()} ${tenantName}
+                © ${new Date().getFullYear()} ${escapeHtmlAttr(tenantName)}
               </p>
             </td>
           </tr>
@@ -221,6 +219,26 @@ function buildBrandedEmail(options: {
 </body>
 </html>
 `;
+
+  const text = [
+    subject,
+    "",
+    plainBody,
+    "",
+    "---",
+    footerText,
+    `© ${new Date().getFullYear()} ${tenantName}`,
+  ].join("\n");
+
+  return { html, text };
+}
+
+function escapeHtmlAttr(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 }
 
 // ─── Send to External Email ────────────────────────────
@@ -264,9 +282,9 @@ export async function sendExternalEmail(
   // Fetch file attachments from S3/MinIO
   const fileAttachments = await fetchFileAttachments(attachments ?? [], tenantId, userId);
 
-  // Get tenant branding
+  // Get tenant branding and format body for email (markdown → html + plain text)
   const brand = await getTenantBrandTemplate(tenantId);
-  const html = buildBrandedEmail({
+  const { html, text } = buildBrandedEmail({
     tenantName: brand.tenantName,
     logoUrl: brand.logoUrl,
     subject,
@@ -279,7 +297,7 @@ export async function sendExternalEmail(
     select: { name: true, email: true },
   });
 
-  // Send emails
+  // Send emails (multipart: html + text)
   const errors: string[] = [];
   let lastMessageId: string | undefined;
 
@@ -292,6 +310,7 @@ export async function sendExternalEmail(
       to: recipient,
       subject: `[${brand.tenantName}] ${subject}`,
       html,
+      text,
       replyTo: replyTo ?? sender?.email,
       attachments: fileAttachments,
     });
@@ -387,7 +406,7 @@ export async function sendToTeamMember(
   ]);
 
   const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
-  const html = buildBrandedEmail({
+  const { html, text } = buildBrandedEmail({
     tenantName: brand.tenantName,
     logoUrl: brand.logoUrl,
     subject,
@@ -403,6 +422,7 @@ export async function sendToTeamMember(
     to: membership.user.email,
     subject: `[${brand.tenantName}] ${subject}`,
     html,
+    text,
     from: fromAddress,
     replyTo: sender?.email,
   });
@@ -475,7 +495,7 @@ export async function sendToTeamMembers(
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
-    const html = buildBrandedEmail({
+    const { html, text } = buildBrandedEmail({
       tenantName: brand.tenantName,
       logoUrl: brand.logoUrl,
       subject,
@@ -487,6 +507,7 @@ export async function sendToTeamMembers(
       to: membership.user.email,
       subject: `[${brand.tenantName}] ${subject}`,
       html,
+      text,
       from: fromAddress,
       replyTo: sender?.email,
       attachments: fileAttachments,

@@ -45,6 +45,8 @@ export type SendEmailOptions = {
   to: string;
   subject: string;
   html: string;
+  /** Plain text version for multipart/alternative. Recommended so text-only clients get a clean version. */
+  text?: string;
   from?: string;
   replyTo?: string;
   attachments?: EmailAttachment[];
@@ -82,6 +84,7 @@ export async function sendEmail(
       to: options.to,
       subject: options.subject,
       html: options.html,
+      text: options.text ?? undefined,
       replyTo: options.replyTo,
       attachments: options.attachments?.map((a) => ({
         filename: a.filename,
