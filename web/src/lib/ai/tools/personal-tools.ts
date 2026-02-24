@@ -3154,7 +3154,11 @@ Returnera ENBART JSON i följande format:
     description:
       "GROSSISTSÖKNING: Sök produkter hos grossister Elektroskandia och Ahlsell. " +
       "Använd detta när användaren behöver hitta material, artiklar, priser eller produktinformation för offerter eller inköp. " +
-      "Returnerar artikelnummer, namn, pris, enhet och lagerstatus från båda grossisterna.",
+      "Returnerar artikelnummer, namn, pris, enhet och lagerstatus från båda grossisterna. " +
+      "Inkluderar popularitetsdata baserat på företagets köphistorik. " +
+      "VIKTIGT: Presentera alltid den rekommenderade produkten först med bild och länk. " +
+      "Använd markdown-bild: ![produktnamn](imageUrl) och markdown-länk: [Visa på Grossist](productUrl). " +
+      "Om en produkt har previouslyOrdered=true, nämn att den beställts tidigare.",
     inputSchema: toolInputSchema(
       z.object({
         query: z.string().describe("Sökfras, t.ex. 'jordfelsbrytare 16A', 'kabel 5x2.5', 'rörböj 15mm'"),
@@ -3170,10 +3174,39 @@ Returnera ENBART JSON i följande format:
       const suppliers: ("ELEKTROSKANDIA" | "AHLSELL")[] =
         supplier === "ALL" ? ["ELEKTROSKANDIA", "AHLSELL"] : [supplier];
 
-      const { elektroskandia, ahlsell } = await searchWholesalers(query, {
-        suppliers,
-        limit: maxResults,
-      });
+      // Run wholesaler search and purchase history query in parallel
+      const queryLower = query.toLowerCase();
+      const queryWords = queryLower.split(/\s+/).filter((w) => w.length > 1);
+
+      const [wholesalerResult, purchaseHistory] = await Promise.all([
+        searchWholesalers(query, { suppliers, limit: maxResults }),
+        db.shoppingListItem.findMany({
+          where: {
+            isChecked: true,
+            list: { tenantId },
+          },
+          select: {
+            name: true,
+            articleNo: true,
+            brand: true,
+            supplier: true,
+          },
+        }),
+      ]);
+
+      const { elektroskandia, ahlsell } = wholesalerResult;
+
+      // Build popularity map from purchase history: count how many times each product name was ordered
+      const popularityMap = new Map<string, number>();
+      for (const item of purchaseHistory) {
+        const nameLower = item.name.toLowerCase();
+        // Only count items that are relevant to the search query
+        const isRelevant = queryWords.some((word) => nameLower.includes(word));
+        if (isRelevant) {
+          const key = `${nameLower}|${(item.articleNo ?? "").toLowerCase()}|${(item.supplier ?? "").toLowerCase()}`;
+          popularityMap.set(key, (popularityMap.get(key) ?? 0) + 1);
+        }
+      }
 
       const allProducts = [
         ...(elektroskandia?.products ?? []),
@@ -3186,13 +3219,37 @@ Returnera ENBART JSON i följande format:
         return {
           message: `Inga produkter hittades för "${query}" hos ${suppliers.join(" och ")}.`,
           products: [],
+          recommendation: null,
           totalFound: 0,
         };
       }
 
-      return {
-        message: `Hittade ${totalFound} produkter för "${query}". Visar ${allProducts.length} resultat.`,
-        products: allProducts.map((p) => ({
+      // Calculate popularity score for each product
+      const productsWithPopularity = allProducts.map((p) => {
+        const pNameLower = p.name.toLowerCase();
+        let popularityScore = 0;
+        let previouslyOrdered = false;
+
+        // Check exact match on articleNo + supplier first
+        for (const [key, count] of popularityMap) {
+          const [histName, histArticle, histSupplier] = key.split("|");
+          // Match by article number (strongest signal)
+          if (histArticle && p.articleNo.toLowerCase() === histArticle) {
+            popularityScore += count * 3;
+            previouslyOrdered = true;
+          }
+          // Match by name similarity
+          else if (
+            pNameLower.includes(histName) ||
+            histName.includes(pNameLower) ||
+            (histSupplier === p.supplier.toLowerCase() && histName.split(" ").some((w: string) => w.length > 2 && pNameLower.includes(w)))
+          ) {
+            popularityScore += count;
+            previouslyOrdered = true;
+          }
+        }
+
+        return {
           supplier: p.supplier,
           articleNo: p.articleNo,
           name: p.name,
@@ -3202,9 +3259,40 @@ Returnera ENBART JSON i följande format:
           inStock: p.inStock ? "I lager" : "Ej i lager",
           url: p.productUrl,
           imageUrl: p.imageUrl,
-        })),
+          popularityScore,
+          previouslyOrdered,
+        };
+      });
+
+      // Sort: previously ordered first (by popularity), then the rest
+      productsWithPopularity.sort((a, b) => b.popularityScore - a.popularityScore);
+
+      // Build recommendation from the top product
+      const topProduct = productsWithPopularity[0];
+      const recommendation = {
+        name: topProduct.name,
+        supplier: topProduct.supplier,
+        articleNo: topProduct.articleNo,
+        brand: topProduct.brand,
+        imageUrl: topProduct.imageUrl,
+        productUrl: topProduct.url,
+        popularityScore: topProduct.popularityScore,
+        reason: topProduct.previouslyOrdered
+          ? `Beställd ${topProduct.popularityScore} gånger tidigare av företaget`
+          : "Topresultat från sökningen",
+      };
+
+      return {
+        message: `Hittade ${totalFound} produkter för "${query}". Visar ${productsWithPopularity.length} resultat.`,
+        recommendation,
+        products: productsWithPopularity,
         totalFound,
-        hint: "Använd artikelnummer och pris för att lägga till produkter i offerter, inköpslistor eller createQuote.",
+        hint:
+          "PRESENTERA RESULTATET SÅ HÄR: " +
+          "1. Visa den rekommenderade produkten FÖRST med produktbild (markdown ![namn](imageUrl)) och klickbar länk ([Visa på Grossist](url)). " +
+          "2. Om produkten har previouslyOrdered=true, nämn att den beställts tidigare av företaget. " +
+          "3. Lista sedan resterande produkter kortfattat. " +
+          "4. Använd artikelnummer och pris för att lägga till produkter i offerter, inköpslistor eller createQuote.",
       };
     },
   });
