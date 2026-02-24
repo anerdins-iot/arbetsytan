@@ -1570,7 +1570,13 @@
     "supplier": {
       "elektroskandia": "Elektroskandia",
       "ahlsell": "Ahlsell"
-    }
+    },
+    "showProduct": "Visa på {supplier}",
+    "inStock": "I lager",
+    "outOfStock": "Ej i lager",
+    "stockUnknown": "Lagerstatus okänd",
+    "expandDetails": "Visa detaljer",
+    "collapseDetails": "Dölj detaljer"
   },
   "quotes": {
     "title": "Offerter",

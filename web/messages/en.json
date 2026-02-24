@@ -1559,7 +1559,13 @@
     "supplier": {
       "elektroskandia": "Elektroskandia",
       "ahlsell": "Ahlsell"
-    }
+    },
+    "showProduct": "View on {supplier}",
+    "inStock": "In stock",
+    "outOfStock": "Out of stock",
+    "stockUnknown": "Stock status unknown",
+    "expandDetails": "Show details",
+    "collapseDetails": "Hide details"
   },
   "quotes": {
     "title": "Quotes",
