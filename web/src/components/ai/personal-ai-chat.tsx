@@ -16,6 +16,7 @@ import {
   FolderOpen,
   FolderPlus,
   PanelRightClose,
+  PanelLeftClose,
   Maximize2,
   Minimize2,
   Info,
@@ -2042,7 +2043,124 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     />
   ) : null;
 
-  // Tool result panels: Sheet side=right desktop, side=bottom 85vh mobile (DEVLOG datarikt innehåll)
+  // Determine active tool panel type for docked inline rendering
+  const activeToolPanel: { type: string; title: string } | null = openQuoteData
+    ? { type: "quote", title: "Offert" }
+    : openSearchResults
+      ? { type: "search", title: "Sökresultat" }
+      : openReportData
+        ? { type: "report", title: "Rapport" }
+        : openQuoteListData
+          ? { type: "quoteList", title: tQuotes("title") }
+          : openNoteListData
+            ? { type: "noteList", title: openNoteListData.projectName ?? (openNoteListData.isPersonal ? t("noteList.titlePersonal") : t("noteList.title")) }
+            : openTimeEntryPanel
+              ? { type: "timeEntry", title: t("timeEntryListSheetTitle") }
+              : openFileListData
+                ? { type: "fileList", title: t("fileListPanel.title") }
+                : openTaskListData
+                  ? { type: "taskList", title: t("taskList.sheetTitle") }
+                  : openShoppingListsData
+                    ? { type: "shoppingList", title: tShopping("title") }
+                    : null;
+
+  // Close the currently active tool panel
+  const closeActiveToolPanel = useCallback(() => {
+    setOpenQuoteData(null);
+    setOpenSearchResults(null);
+    setOpenReportData(null);
+    setOpenQuoteListData(null);
+    setOpenNoteListData(null);
+    setOpenTimeEntryPanel(false);
+    setOpenFileListData(null);
+    setOpenTaskListData(null);
+    setOpenShoppingListsData(null);
+  }, []);
+
+  // Inline tool panel content for docked mode (rendered in the right column)
+  const toolPanelContent = activeToolPanel ? (
+    <div className="flex h-full flex-col">
+      {/* Panel header with close button */}
+      <div className="flex items-center justify-between border-b border-border px-4 py-3 shrink-0">
+        <h3 className="text-sm font-semibold">{activeToolPanel.title}</h3>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-7 text-muted-foreground hover:text-foreground"
+          onClick={closeActiveToolPanel}
+        >
+          <PanelLeftClose className="size-4" />
+        </Button>
+      </div>
+      {/* Panel body */}
+      <div className="flex-1 min-h-0 overflow-y-auto p-4">
+        {activeToolPanel.type === "quote" && openQuoteData && (
+          <QuotePreviewCard
+            data={openQuoteData}
+            onGenerate={async () => generateQuotePdf({ ...openQuoteData })}
+          />
+        )}
+        {activeToolPanel.type === "search" && openSearchResults && (
+          <SearchResultsCard results={openSearchResults} />
+        )}
+        {activeToolPanel.type === "report" && openReportData && (
+          <ReportPreviewCard
+            data={openReportData}
+            onGenerate={handleReportGenerate}
+          />
+        )}
+        {activeToolPanel.type === "quoteList" && openQuoteListData && (
+          <QuoteList initialQuotes={openQuoteListData.quotes} />
+        )}
+        {activeToolPanel.type === "noteList" && openNoteListData && (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {openNoteListData.notes.map((note) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                projectId={openNoteListData.projectId ?? null}
+                onUpdate={() => {}}
+                categories={noteListCategories}
+              />
+            ))}
+          </div>
+        )}
+        {activeToolPanel.type === "timeEntry" && (
+          timeEntryPanelLoading ? (
+            <p className="text-sm text-muted-foreground">{t("loading")}</p>
+          ) : timeEntryPanelData ? (
+            <TimeEntryList
+              groupedEntries={timeEntryPanelData.groupedEntries}
+              tasks={timeEntryPanelData.tasks}
+            />
+          ) : null
+        )}
+        {activeToolPanel.type === "fileList" && openFileListData && (
+          <FileListGrid
+            files={openFileListData.files}
+            translationNamespace="projects.files"
+            showActions
+          />
+        )}
+        {activeToolPanel.type === "taskList" && openTaskListData && (
+          <TaskList tasks={openTaskListData.tasks} />
+        )}
+        {activeToolPanel.type === "shoppingList" && openShoppingListsData && (
+          <ShoppingListsClient
+            initialLists={openShoppingListsData.lists}
+            onRefresh={async () => {
+              const r = await getShoppingLists();
+              if (r.success)
+                setOpenShoppingListsData({ lists: r.lists, count: r.lists.length });
+            }}
+          />
+        )}
+      </div>
+    </div>
+  ) : null;
+
+  // Tool result panels as Sheet overlays (used in sheet mode and fullscreen)
   const toolResultSheetSide = isDesktopToolPanel ? "right" : "bottom";
   const toolResultSheetClass = isDesktopToolPanel
     ? "max-w-2xl"
@@ -2221,7 +2339,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
   // Docked mode: render as a static sidebar panel
   if (mode === "docked") {
-    // Fullscreen mode - overlay everything
+    // Fullscreen mode - overlay everything (use Sheet overlays for tool panels)
     if (isFullscreen) {
       return (
         <>
@@ -2238,25 +2356,33 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       );
     }
 
-    // Regular docked mode with resizable panel
+    // Regular docked mode with resizable panel + inline tool result column
     return (
       <>
-        <div
-          className="relative flex h-full shrink-0 flex-col border-l border-border bg-card"
-          style={{ width: `${panelWidth}px` }}
-        >
-          {/* Resize handle */}
+        <div className="flex h-full shrink-0">
+          {/* Chat column */}
           <div
-            className={cn(
-              "absolute left-0 top-0 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50",
-              isResizing && "bg-primary"
-            )}
-            onMouseDown={handleResizeStart}
-          />
-          {headerContent}
-          {chatBody}
+            className="relative flex h-full shrink-0 flex-col border-l border-border bg-card"
+            style={{ width: `${panelWidth}px` }}
+          >
+            {/* Resize handle */}
+            <div
+              className={cn(
+                "absolute left-0 top-0 h-full w-1 cursor-col-resize transition-colors hover:bg-primary/50",
+                isResizing && "bg-primary"
+              )}
+              onMouseDown={handleResizeStart}
+            />
+            {headerContent}
+            {chatBody}
+          </div>
+          {/* Tool result column (beside chat) */}
+          {activeToolPanel && toolPanelContent && (
+            <div className="flex h-full w-[420px] shrink-0 flex-col border-l border-border bg-card">
+              {toolPanelContent}
+            </div>
+          )}
         </div>
-        {toolResultPanels}
         {fileAnalysisUI}
         {ragDebugUI}
       </>
