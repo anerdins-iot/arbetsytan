@@ -319,6 +319,74 @@ export function EmailTemplateManager({ templates }: Props) {
           </DialogHeader>
 
           <div className="space-y-4 py-4">
+            {/* AI Edit Section – längst upp i modalen */}
+            <div className="rounded-lg border border-border bg-muted/50 p-4 space-y-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary" />
+                <h3 className="text-sm font-semibold">{t("emailTemplates.aiEdit.title")}</h3>
+              </div>
+
+              <div className="flex gap-2">
+                <Input
+                  value={aiInstruction}
+                  onChange={(e) => setAiInstruction(e.target.value)}
+                  placeholder={t("emailTemplates.aiEdit.placeholder")}
+                  disabled={aiLoading}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleAiEdit();
+                    }
+                  }}
+                />
+                <Button
+                  onClick={handleAiEdit}
+                  disabled={aiLoading || !aiInstruction.trim()}
+                  size="sm"
+                  className="shrink-0"
+                >
+                  {aiLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                      {t("emailTemplates.aiEdit.applying")}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="h-4 w-4 mr-1" />
+                      {t("emailTemplates.aiEdit.apply")}
+                    </>
+                  )}
+                </Button>
+              </div>
+
+              {aiError && (
+                <p className="text-sm text-destructive">{aiError}</p>
+              )}
+
+              {aiHistory.length > 0 && (
+                <div className="space-y-1.5 max-h-[120px] overflow-y-auto">
+                  <p className="text-xs font-medium text-muted-foreground">
+                    {t("emailTemplates.aiEdit.history")}
+                  </p>
+                  {aiHistory.map((msg, i) => (
+                    <div
+                      key={i}
+                      className={`text-xs px-2 py-1 rounded ${
+                        msg.role === "user"
+                          ? "bg-primary/10 text-primary"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      <span className="font-medium">
+                        {msg.role === "user" ? "Du: " : "AI: "}
+                      </span>
+                      {msg.content}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="subject">Ämnesrad</Label>
               <Input
@@ -390,74 +458,6 @@ export function EmailTemplateManager({ templates }: Props) {
                 </div>
               </TabsContent>
             </Tabs>
-
-            {/* AI Edit Section */}
-            <div className="rounded-lg border border-border bg-muted/50 p-4 space-y-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-semibold">{t("emailTemplates.aiEdit.title")}</h3>
-              </div>
-
-              <div className="flex gap-2">
-                <Input
-                  value={aiInstruction}
-                  onChange={(e) => setAiInstruction(e.target.value)}
-                  placeholder={t("emailTemplates.aiEdit.placeholder")}
-                  disabled={aiLoading}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleAiEdit();
-                    }
-                  }}
-                />
-                <Button
-                  onClick={handleAiEdit}
-                  disabled={aiLoading || !aiInstruction.trim()}
-                  size="sm"
-                  className="shrink-0"
-                >
-                  {aiLoading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin mr-1" />
-                      {t("emailTemplates.aiEdit.applying")}
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-4 w-4 mr-1" />
-                      {t("emailTemplates.aiEdit.apply")}
-                    </>
-                  )}
-                </Button>
-              </div>
-
-              {aiError && (
-                <p className="text-sm text-destructive">{aiError}</p>
-              )}
-
-              {aiHistory.length > 0 && (
-                <div className="space-y-1.5 max-h-[120px] overflow-y-auto">
-                  <p className="text-xs font-medium text-muted-foreground">
-                    {t("emailTemplates.aiEdit.history")}
-                  </p>
-                  {aiHistory.map((msg, i) => (
-                    <div
-                      key={i}
-                      className={`text-xs px-2 py-1 rounded ${
-                        msg.role === "user"
-                          ? "bg-primary/10 text-primary"
-                          : "bg-muted text-muted-foreground"
-                      }`}
-                    >
-                      <span className="font-medium">
-                        {msg.role === "user" ? "Du: " : "AI: "}
-                      </span>
-                      {msg.content}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
 
             {error && (
               <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive flex items-center gap-2">
