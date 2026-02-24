@@ -57,10 +57,10 @@
 
 ## Fas 6 – Tool-paneler
 
-- [ ] Finns `personal-ai-chat-tool-panel-content.tsx` med en switch på panelType som renderar QuotePreviewCard, SearchResultsCard, ReportPreviewCard, QuoteList, NoteCard-grid, TimeEntryList, FileListGrid, TaskList, ShoppingListsClient.
-- [ ] Finns `personal-ai-chat-tool-panels.tsx` som visar antingen docked-kolumn eller Sheet-stack och använder ToolPanelContent för innehåll.
-- [ ] Huvudkomponenten använder PersonalAiChatToolPanels; ingen duplicerad tool-panel-JSX kvar.
-- [ ] Build passerar.
+- [x] Finns `personal-ai-chat-tool-panel-content.tsx` med en switch på panelType som renderar QuotePreviewCard, SearchResultsCard, ReportPreviewCard, QuoteList, NoteCard-grid, TimeEntryList, FileListGrid, TaskList, ShoppingListsClient.
+- [x] Finns `personal-ai-chat-tool-panels.tsx` som visar antingen docked-kolumn eller Sheet-stack och använder ToolPanelContent för innehåll.
+- [x] Huvudkomponenten använder PersonalAiChatToolPanels; ingen duplicerad tool-panel-JSX kvar.
+- [x] Build passerar.
 
 ---
 

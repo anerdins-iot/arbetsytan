@@ -42,7 +42,7 @@ export function formatFileSize(bytes: number): string {
  */
 export function generateAgentActionLog(
   parts: Array<{ type: string; state?: string; output?: unknown }>,
-  t: (key: string, values?: Record<string, string | number | Date>) => string
+  t: (key: string, values?: Record<string, unknown>) => string
 ): string[] {
   const actions: string[] = [];
 
