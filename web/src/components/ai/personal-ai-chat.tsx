@@ -1203,8 +1203,15 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
               groups.push({ type: "text", text: textAcc.join("") });
             }
 
-            // Deduplicate __searchResults per message (same result set = one button only)
+            // Deduplicate tool result cards per message (same result = one button only; avoids duplicate cards when AI returns multiple identical tool calls)
             const seenSearchSignatures = new Set<string>();
+            const seenToolSignatures = new Set<string>();
+            function seenTool(key: string, sig: string): boolean {
+              const full = `${key}:${sig}`;
+              if (seenToolSignatures.has(full)) return true;
+              seenToolSignatures.add(full);
+              return false;
+            }
 
             return (
             <div
@@ -1330,7 +1337,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const reportData = result as unknown as ReportPreviewData & {
                       __reportPreview: true;
                     };
-
+                    const sig = `${reportData.title ?? ""}:${reportData.projectId ?? ""}`;
+                    if (seenTool("report", sig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1424,7 +1432,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                     const quoteData = result as unknown as QuotePreviewData & {
                       __quotePreview: true;
                     };
-
+                    const sig = `${quoteData.title ?? ""}:${quoteData.projectId ?? ""}`;
+                    if (seenTool("quotePreview", sig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1453,7 +1462,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       products: WholesalerProduct[];
                       count: number;
                     };
-
+                    const sig = `${wsData.query}:${wsData.count}`;
+                    if (seenTool("wholesaler", sig)) return null;
                     return (
                       <WholesalerSearchResultButton
                         key={i}
@@ -1486,6 +1496,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       quotes: raw.quotes as SerializedQuote[],
                       count: raw.count,
                     };
+                    const quoteListSig = `${listData.count}:${raw.quotes[0]?.id ?? ""}`;
+                    if (seenTool("quoteList", quoteListSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1499,6 +1511,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
 
                   if (result?.__noteList) {
                     const noteData = result.__noteList as NoteListPanelData;
+                    const noteSig = `${noteData.count}:${noteData.projectId ?? "personal"}:${(noteData.notes?.[0] as { id?: string } | undefined)?.id ?? ""}`;
+                    if (seenTool("noteList", noteSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1514,6 +1528,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                   if (result?.__timeEntryList) {
                     const teData = result.__timeEntryList as { entries: unknown[]; count: number };
                     const count = teData.count ?? teData.entries?.length ?? 0;
+                    if (seenTool("timeEntryList", String(count))) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1532,6 +1547,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       projectId?: string;
                       projectName?: string;
                     };
+                    const fileListSig = `${fileListData.count}:${fileListData.projectId ?? ""}:${fileListData.files?.[0]?.id ?? ""}`;
+                    if (seenTool("fileList", fileListSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1551,6 +1568,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       projectId?: string;
                       projectName?: string;
                     };
+                    const taskListSig = `${tlData.count}:${tlData.projectId ?? ""}:${(tlData.tasks?.[0] as { id?: string } | undefined)?.id ?? ""}`;
+                    if (seenTool("taskList", taskListSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
@@ -1572,6 +1591,8 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
                       lists: SerializedShoppingListItem[];
                       count: number;
                     };
+                    const slSig = `${slData.count}:${(slData.lists?.[0] as { id?: string } | undefined)?.id ?? ""}`;
+                    if (seenTool("shoppingLists", slSig)) return null;
                     return (
                       <ChatResultButton
                         key={i}
