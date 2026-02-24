@@ -418,6 +418,13 @@ export async function POST(req: NextRequest) {
     normalizeMistralToolCallIds(modelMessages);
   }
 
+  // Mistral often hits rate limits; use more retries so exponential backoff can clear them
+  const isMistral = providerKey === "MISTRAL_LARGE" || providerKey === "MISTRAL_SMALL";
+  const streamOptions = {
+    ...streamConfig,
+    ...(isMistral ? { maxRetries: 5 } : {}),
+  };
+
   // Stream the response (with tools for project and personal AI)
   const result = streamText({
     model,
@@ -425,7 +432,7 @@ export async function POST(req: NextRequest) {
     messages: modelMessages,
     tools,
     stopWhen: stepCountIs(8),
-    ...streamConfig,
+    ...streamOptions,
     onError: ({ error }) => {
       logger.error("AI stream error", {
         error: error instanceof Error ? error.message : String(error),

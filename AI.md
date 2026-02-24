@@ -167,7 +167,7 @@ Vercel AI SDK (npm-paketet `ai`) används som abstraktionslager för all AI-komm
 
 - **Claude** (via `@ai-sdk/anthropic`) — primär modell för chattassistenterna. Streaming, tool use, extended thinking.
 - **OpenAI** (via `@ai-sdk/openai`) — bildgenerering (DALL-E) och embeddings.
-- **Mistral** (via `@ai-sdk/mistral` + direkt API för OCR) — OCR på ritningar och dokument via Mistral OCR API. För OCR används Mistrals API direkt eftersom det är ett separat endpoint som inte går via chattmodellen.
+- **Mistral** (via `@ai-sdk/mistral` + direkt API för OCR) — Chattmodeller (Mistral Large, Mistral Small) och OCR på ritningar/dokument. För OCR används Mistrals API direkt eftersom det är ett separat endpoint. **Rate limits:** Mistral har striktare rate limits än många andra providers. Vi använder därför fler retries för Mistral (`maxRetries: 5`) i chat-routen så att SDK:n kan vänta ut 429 med exponential backoff (och eventuell Retry-After). Exakta gränser (RPM/TPM) varierar per API-plan; se [Mistral Console](https://console.mistral.ai/) och deras API-dokumentation för aktuella limits.
 
 ### Varför Vercel AI SDK
 
