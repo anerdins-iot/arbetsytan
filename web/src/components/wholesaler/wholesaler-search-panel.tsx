@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Search, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,14 @@ export function WholesalerSearchPanel({
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(!!initialProducts?.length);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setQuery(initialQuery ?? "");
+      setProducts(initialProducts ?? []);
+      setHasSearched(!!initialProducts?.length);
+    }
+  }, [open, initialQuery, initialProducts]);
 
   const doSearch = useCallback(async (q: string) => {
     if (q.length < 2) {
