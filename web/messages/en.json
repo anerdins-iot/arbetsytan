@@ -237,6 +237,8 @@
     "loading": "Loading…",
     "loadMore": "Load earlier messages",
     "error": "Something went wrong. Try again.",
+    "errorRateLimit": "The service is temporarily overloaded. Please wait a moment and try again.",
+    "errorOverloaded": "The AI service is under heavy load right now. Please try again shortly.",
     "messageCount": "{count} msgs",
     "attachFile": "Attach file",
     "dropFiles": "Drop files here to upload",

@@ -88,6 +88,19 @@ import { TimeEntryList } from "@/components/time/time-entry-list";
 import type { DashboardTask } from "@/actions/dashboard";
 import { TaskList } from "@/components/dashboard/task-list";
 
+/** Map a chat error message to a specific translation key. */
+function getChatErrorKey(error: Error | undefined): string {
+  if (!error) return "error";
+  const msg = error.message.toLowerCase();
+  if (msg.includes("rate limit") || msg.includes("429") || msg.includes("too many requests")) {
+    return "errorRateLimit";
+  }
+  if (msg.includes("overloaded") || msg.includes("capacity") || msg.includes("503")) {
+    return "errorOverloaded";
+  }
+  return "error";
+}
+
 // Formatera datum för konversationshistorik
 function formatConversationDate(date: Date): string {
   const d = new Date(date);
@@ -1914,7 +1927,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       {/* Felmeddelande */}
       {error && (
         <div className="border-t border-border bg-destructive/10 px-4 py-2 text-sm text-destructive">
-          {t("error")}
+          {t(getChatErrorKey(error))}
         </div>
       )}
 

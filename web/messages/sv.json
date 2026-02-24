@@ -237,6 +237,8 @@
     "loading": "Laddar…",
     "loadMore": "Ladda tidigare meddelanden",
     "error": "Något gick fel. Försök igen.",
+    "errorRateLimit": "Tjänsten är tillfälligt överbelastad. Vänta en stund och försök igen.",
+    "errorOverloaded": "AI-tjänsten har hög belastning just nu. Försök igen om en liten stund.",
     "messageCount": "{count} medd.",
     "attachFile": "Bifoga fil",
     "dropFiles": "Släpp filer här för att ladda upp",
