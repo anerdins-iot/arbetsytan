@@ -52,15 +52,12 @@ import type { UploadedFile, AnalysisFileData, NoteListPanelData, PersonalAiChatP
 import {
   ALLOWED_EXTENSIONS,
   MAX_FILE_SIZE,
-  PANEL_WIDTH_STORAGE_KEY,
   LEFT_PANEL_COLLAPSED_KEY,
   CHAT_PANEL_COLLAPSED_KEY,
-  DEFAULT_PANEL_WIDTH,
-  MIN_PANEL_WIDTH,
-  MAX_PANEL_WIDTH,
   LEFT_PANEL_WIDTH,
   STRIP_WIDTH,
 } from "@/components/ai/personal-ai-chat-constants";
+import { usePersonalAiChatPanelResize } from "@/hooks/use-personal-ai-chat-panel-resize";
 import {
   getChatErrorKey,
   formatConversationDate,
@@ -201,29 +198,7 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Resizable panel state
-  const [panelWidth, setPanelWidth] = useState(() => {
-    if (typeof window === "undefined") return DEFAULT_PANEL_WIDTH;
-    try {
-      const stored = localStorage.getItem(PANEL_WIDTH_STORAGE_KEY);
-      return stored ? parseInt(stored, 10) : DEFAULT_PANEL_WIDTH;
-    } catch {
-      return DEFAULT_PANEL_WIDTH;
-    }
-  });
-  const [isResizing, setIsResizing] = useState(false);
-  const resizeStartX = useRef(0);
-  const resizeStartWidth = useRef(0);
-
-  // Persist panel width to localStorage
-  useEffect(() => {
-    if (mode === "docked") {
-      try {
-        localStorage.setItem(PANEL_WIDTH_STORAGE_KEY, String(panelWidth));
-      } catch {
-        // Ignore storage errors
-      }
-    }
-  }, [panelWidth, mode]);
+  const { panelWidth, isResizing, handleResizeStart } = usePersonalAiChatPanelResize(mode);
 
   // Persist left panel collapsed state
   useEffect(() => {
@@ -273,39 +248,6 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isFullscreen]);
-
-  // Resize handlers
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsResizing(true);
-    resizeStartX.current = e.clientX;
-    resizeStartWidth.current = panelWidth;
-  }, [panelWidth]);
-
-  useEffect(() => {
-    if (!isResizing) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const deltaX = resizeStartX.current - e.clientX; // Subtract because we're on the right side
-      const newWidth = Math.min(
-        MAX_PANEL_WIDTH,
-        Math.max(MIN_PANEL_WIDTH, resizeStartWidth.current + deltaX)
-      );
-      setPanelWidth(newWidth);
-    };
-
-    const handleMouseUp = () => {
-      setIsResizing(false);
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isResizing]);
 
   // Project selector state
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
