@@ -8,11 +8,11 @@
 
 ## Fas 1 – Typer, konstanter, utils
 
-- [ ] Finns `web/src/components/ai/personal-ai-chat-types.ts` med `UploadedFile`, `AnalysisFileData`, `NoteListPanelData`, `PersonalAiChatProps` (och nödvändiga imports t.ex. VoiceMode).
-- [ ] Finns `web/src/components/ai/personal-ai-chat-constants.ts` med ALLOWED_EXTENSIONS, MAX_FILE_SIZE, PANEL_WIDTH_STORAGE_KEY, LEFT_PANEL_COLLAPSED_KEY, CHAT_PANEL_COLLAPSED_KEY, DEFAULT_PANEL_WIDTH, MIN_PANEL_WIDTH, MAX_PANEL_WIDTH, LEFT_PANEL_WIDTH, STRIP_WIDTH.
-- [ ] Finns `web/src/components/ai/personal-ai-chat-utils.ts` med getChatErrorKey, formatConversationDate, formatFileSize, generateAgentActionLog (samma signatur som tidigare).
-- [ ] `personal-ai-chat.tsx` importerar från dessa tre filer och har INGA lokala definitioner av ovanstående typer/konstanter/funktioner.
-- [ ] `npm run build` (i web/) passerar. Inga nya lint-fel i de berörda filerna.
+- [x] Finns `web/src/components/ai/personal-ai-chat-types.ts` med `UploadedFile`, `AnalysisFileData`, `NoteListPanelData`, `PersonalAiChatProps` (och nödvändiga imports t.ex. VoiceMode).
+- [x] Finns `web/src/components/ai/personal-ai-chat-constants.ts` med ALLOWED_EXTENSIONS, MAX_FILE_SIZE, PANEL_WIDTH_STORAGE_KEY, LEFT_PANEL_COLLAPSED_KEY, CHAT_PANEL_COLLAPSED_KEY, DEFAULT_PANEL_WIDTH, MIN_PANEL_WIDTH, MAX_PANEL_WIDTH, LEFT_PANEL_WIDTH, STRIP_WIDTH.
+- [x] Finns `web/src/components/ai/personal-ai-chat-utils.ts` med getChatErrorKey, formatConversationDate, formatFileSize, generateAgentActionLog (samma signatur som tidigare).
+- [x] `personal-ai-chat.tsx` importerar från dessa tre filer och har INGA lokala definitioner av ovanstående typer/konstanter/funktioner.
+- [x] `npm run build` (i web/) passerar. Inga nya lint-fel i de berörda filerna.
 
 ---
 
