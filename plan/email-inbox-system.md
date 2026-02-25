@@ -1,5 +1,7 @@
 # E-postinkorg med tvåvägskommunikation
 
+> **Nuvarande adressformat och flöde** beskrivs i **AGENTS.md** (E-postsystem) och **RESEND-SETUP.md** (Reply-To = `userSlug.tenantSlug@domain`, emailSlug vid skapande, konversations-id i body). Detta dokument är historisk/planeringskontext; implementationen kan avvika.
+>
 > Läs `plan/README.md` först för arbetsflöde och regler.
 > Läs `/workspace/docs/ai-sdk.md` och befintlig kod i `src/lib/email*.ts` innan implementation.
 > Bygger vidare på `plan/email-log-system.md` — läs den för bakgrund.

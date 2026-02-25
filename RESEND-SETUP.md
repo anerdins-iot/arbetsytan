@@ -96,6 +96,14 @@ RESEND_WEBHOOK_SECRET=whsec_xxxxxxxxxxxxx
 
 ## Steg 4: Testa
 
+### 4.0 Efter migration (produktion)
+
+Om du har befintliga tenants eller medlemmar utan `slug` / `emailSlug` (t.ex. efter att ha kört de nya migrationerna), kör backfill en gång så att Reply-To och inkommande matchning fungerar:
+
+```bash
+cd web && npx tsx scripts/backfill-email-slugs.ts
+```
+
 ### 4.1 Generera inbox-koder för tenants
 
 Innan du testar, kör scriptet för att generera inbox-koder för befintliga tenants:
