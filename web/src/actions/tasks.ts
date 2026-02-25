@@ -7,6 +7,7 @@ import { tenantDb } from "@/lib/db";
 import { getProjectTasksCore } from "@/services/task-service";
 import { logActivity } from "@/lib/activity-log";
 import { notifyTaskAssigned } from "@/lib/notification-delivery";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 import type { TaskStatus, Priority } from "../../generated/prisma/client";
 
 // ─────────────────────────────────────────
@@ -127,7 +128,7 @@ export async function updateTaskStatus(
   projectId: string,
   data: { taskId: string; status: string }
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requirePermission("canUpdateTasks");
+  const { tenantId, userId, user } = await requirePermission("canUpdateTasks");
   await requireProject(tenantId, projectId, userId);
 
   const parsed = updateTaskStatusSchema.safeParse(data);
@@ -156,6 +157,17 @@ export async function updateTaskStatus(
     data: { status: parsed.data.status as TaskStatus },
   });
 
+  if (parsed.data.status === "DONE") {
+    await publishDiscordEvent("discord:task-completed", {
+      taskId: parsed.data.taskId,
+      projectId,
+      tenantId,
+      completedBy: userId,
+      completedByName: user.name ?? user.email ?? undefined,
+      taskTitle: task.title,
+    });
+  }
+
   await logActivity(
     tenantId,
     projectId,
@@ -183,7 +195,7 @@ export async function createTask(
   projectId: string,
   formData: FormData
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requirePermission("canCreateTasks");
+  const { tenantId, userId, user } = await requirePermission("canCreateTasks");
   await requireProject(tenantId, projectId, userId);
 
   const raw = {
@@ -215,6 +227,18 @@ export async function createTask(
       status: "TODO" as TaskStatus,
       project: { connect: { id: projectId } },
     },
+  });
+
+  await publishDiscordEvent("discord:task-created", {
+    taskId: createdTask.id,
+    projectId,
+    tenantId,
+    title: createdTask.title,
+    createdBy: userId,
+    createdByName: user.name ?? user.email ?? undefined,
+    description: createdTask.description ?? undefined,
+    priority: createdTask.priority,
+    deadline: createdTask.deadline?.toISOString() ?? undefined,
   });
 
   await logActivity(tenantId, projectId, userId, "created", "task", createdTask.id, {
@@ -261,6 +285,8 @@ export async function assignTask(
       user: {
         select: {
           id: true,
+          name: true,
+          email: true,
         },
       },
     },
@@ -312,6 +338,15 @@ export async function assignTask(
     });
   }
 
+  await publishDiscordEvent("discord:task-assigned", {
+    taskId: task.id,
+    projectId,
+    tenantId,
+    assigneeUserId: membership.user.id,
+    assigneeName: membership.user.name ?? membership.user.email ?? undefined,
+    taskTitle: task.title,
+  });
+
   revalidatePath("/[locale]/projects/[projectId]", "page");
 
   return { success: true };
@@ -332,7 +367,7 @@ export async function updateTask(
     deadline?: string;
   }
 ): Promise<TaskActionResult> {
-  const { tenantId, userId } = await requirePermission("canUpdateTasks");
+  const { tenantId, userId, user } = await requirePermission("canUpdateTasks");
   const project = await requireProject(tenantId, projectId, userId);
 
   const parsed = updateTaskSchema.safeParse(data);
@@ -372,6 +407,17 @@ export async function updateTask(
         ? "completed"
         : "statusChanged"
       : "updated";
+
+  if (parsed.data.status === "DONE") {
+    await publishDiscordEvent("discord:task-completed", {
+      taskId: task.id,
+      projectId,
+      tenantId,
+      completedBy: userId,
+      completedByName: user.name ?? user.email ?? undefined,
+      taskTitle: parsed.data.title,
+    });
+  }
 
   await logActivity(tenantId, projectId, userId, action, "task", task.id, {
     title: parsed.data.title,

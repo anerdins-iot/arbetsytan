@@ -13,6 +13,12 @@
  * - `discord:category-created`    — create Discord category
  * - `discord:category-deleted`   — delete Discord category
  * - `discord:category-sync`      — sync category structure from admin panel
+ * - `discord:task-created`       — notify project channel
+ * - `discord:task-assigned`      — notify channel + DM assignee
+ * - `discord:task-completed`     — notify project channel
+ * - `discord:comment-added`      — notify project channel
+ * - `discord:file-uploaded`      — notify project channel
+ * - `discord:time-logged`        — optional time entry notification
  */
 import type { Client } from "discord.js";
 import { ChannelType } from "discord.js";
@@ -30,6 +36,16 @@ import {
   syncCategoryStructure,
   type CategorySyncItem,
 } from "./channel.js";
+import {
+  sendTaskNotification,
+  sendCommentNotification,
+  sendFileNotification,
+  sendTimeEntryNotification,
+  type TaskNotificationPayload,
+  type CommentNotificationPayload,
+  type FileNotificationPayload,
+  type TimeEntryNotificationPayload,
+} from "./notification.js";
 
 export interface UserLinkedEvent {
   userId: string;
@@ -102,6 +118,66 @@ export interface CategorySyncEvent {
   categories: CategorySyncItem[];
 }
 
+export interface TaskCreatedEvent {
+  taskId: string;
+  projectId: string;
+  tenantId: string;
+  title: string;
+  createdBy?: string;
+  createdByName?: string;
+  description?: string | null;
+  priority?: string;
+  deadline?: string | null;
+}
+
+export interface TaskAssignedEvent {
+  taskId: string;
+  projectId: string;
+  tenantId: string;
+  assigneeUserId: string;
+  assigneeName?: string;
+  taskTitle?: string;
+}
+
+export interface TaskCompletedEvent {
+  taskId: string;
+  projectId: string;
+  tenantId: string;
+  completedBy?: string;
+  completedByName?: string;
+  taskTitle?: string;
+}
+
+export interface CommentAddedEvent {
+  commentId: string;
+  taskId: string;
+  projectId: string;
+  tenantId: string;
+  authorName: string;
+  preview: string;
+  taskTitle?: string;
+}
+
+export interface FileUploadedEvent {
+  fileId: string;
+  projectId: string;
+  tenantId: string;
+  fileName: string;
+  fileSize: number;
+  uploadedByName?: string;
+}
+
+export interface TimeLoggedEvent {
+  timeEntryId: string;
+  projectId: string;
+  tenantId: string;
+  minutes: number;
+  date: string;
+  description?: string | null;
+  taskTitle?: string | null;
+  userName?: string;
+}
+
 const CHANNELS = [
   "discord:user-linked",
   "discord:user-unlinked",
@@ -114,6 +190,12 @@ const CHANNELS = [
   "discord:category-created",
   "discord:category-deleted",
   "discord:category-sync",
+  "discord:task-created",
+  "discord:task-assigned",
+  "discord:task-completed",
+  "discord:comment-added",
+  "discord:file-uploaded",
+  "discord:time-logged",
 ] as const;
 
 export async function startRedisListener(client: Client): Promise<void> {
@@ -192,6 +274,36 @@ export async function startRedisListener(client: Client): Promise<void> {
         case "discord:category-sync": {
           const event = JSON.parse(message) as CategorySyncEvent;
           handleCategorySync(client, event);
+          break;
+        }
+        case "discord:task-created": {
+          const event = JSON.parse(message) as TaskCreatedEvent;
+          handleTaskCreated(client, event);
+          break;
+        }
+        case "discord:task-assigned": {
+          const event = JSON.parse(message) as TaskAssignedEvent;
+          handleTaskAssigned(client, event);
+          break;
+        }
+        case "discord:task-completed": {
+          const event = JSON.parse(message) as TaskCompletedEvent;
+          handleTaskCompleted(client, event);
+          break;
+        }
+        case "discord:comment-added": {
+          const event = JSON.parse(message) as CommentAddedEvent;
+          handleCommentAdded(client, event);
+          break;
+        }
+        case "discord:file-uploaded": {
+          const event = JSON.parse(message) as FileUploadedEvent;
+          handleFileUploaded(client, event);
+          break;
+        }
+        case "discord:time-logged": {
+          const event = JSON.parse(message) as TimeLoggedEvent;
+          handleTimeLogged(client, event);
           break;
         }
         default:
@@ -545,4 +657,99 @@ async function handleCategorySync(
   } catch (err) {
     console.error("[redis-listener] Failed to sync categories:", err);
   }
+}
+
+async function handleTaskCreated(
+  client: Client,
+  event: TaskCreatedEvent
+): Promise<void> {
+  const payload: TaskNotificationPayload = {
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    title: event.title,
+    description: event.description ?? null,
+    priority: event.priority,
+    deadline: event.deadline ?? null,
+    createdBy: event.createdByName ?? event.createdBy,
+  };
+  await sendTaskNotification(client, payload, "created");
+}
+
+async function handleTaskAssigned(
+  client: Client,
+  event: TaskAssignedEvent
+): Promise<void> {
+  const payload: TaskNotificationPayload = {
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    title: event.taskTitle ?? event.taskId,
+    assigneeUserId: event.assigneeUserId,
+    assigneeName: event.assigneeName,
+  };
+  await sendTaskNotification(client, payload, "assigned");
+}
+
+async function handleTaskCompleted(
+  client: Client,
+  event: TaskCompletedEvent
+): Promise<void> {
+  const payload: TaskNotificationPayload = {
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    title: event.taskTitle ?? event.taskId,
+    completedBy: event.completedBy,
+    completedByName: event.completedByName,
+  };
+  await sendTaskNotification(client, payload, "completed");
+}
+
+async function handleCommentAdded(
+  client: Client,
+  event: CommentAddedEvent
+): Promise<void> {
+  const payload: CommentNotificationPayload = {
+    commentId: event.commentId,
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    authorName: event.authorName,
+    preview: event.preview,
+    taskTitle: event.taskTitle,
+  };
+  await sendCommentNotification(client, payload);
+}
+
+async function handleFileUploaded(
+  client: Client,
+  event: FileUploadedEvent
+): Promise<void> {
+  const payload: FileNotificationPayload = {
+    fileId: event.fileId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    fileName: event.fileName,
+    fileSize: event.fileSize,
+    uploadedByName: event.uploadedByName,
+  };
+  await sendFileNotification(client, payload);
+}
+
+async function handleTimeLogged(
+  client: Client,
+  event: TimeLoggedEvent
+): Promise<void> {
+  const payload: TimeEntryNotificationPayload = {
+    timeEntryId: event.timeEntryId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    minutes: event.minutes,
+    date: event.date,
+    description: event.description ?? null,
+    taskTitle: event.taskTitle ?? null,
+    userName: event.userName,
+  };
+  await sendTimeEntryNotification(client, payload);
 }

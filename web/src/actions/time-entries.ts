@@ -10,6 +10,7 @@ import {
   getTimeSummaryCore,
 } from "@/services/time-entry-service";
 import { getProjectTasksCore } from "@/services/task-service";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 
 const idSchema = z.union([z.string().uuid(), z.string().cuid()]);
 const dateStringSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -155,7 +156,7 @@ export async function createTimeEntry(input: {
   description?: string;
   entryType?: "WORK" | "VACATION" | "SICK" | "VAB" | "PARENTAL" | "EDUCATION" | "OTHER";
 }): Promise<ActionResult<TimeEntryItem>> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId, user } = await requireAuth();
   const parsed = createTimeEntrySchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "VALIDATION_ERROR" };
@@ -208,6 +209,16 @@ export async function createTimeEntry(input: {
   }) as any;
 
   if (resolvedProjectId) {
+    await publishDiscordEvent("discord:time-logged", {
+      timeEntryId: created.id,
+      projectId: resolvedProjectId,
+      tenantId,
+      minutes,
+      date,
+      description: description?.trim() || undefined,
+      taskTitle: created.task?.title ?? undefined,
+      userName: user.name ?? user.email ?? undefined,
+    });
     revalidatePath("/[locale]/projects/[projectId]", "page");
     revalidatePath("/[locale]/projects/[projectId]/time", "page");
   }
