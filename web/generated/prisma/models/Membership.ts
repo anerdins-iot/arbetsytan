@@ -31,6 +31,7 @@ export type MembershipMinAggregateOutputType = {
   updatedAt: Date | null
   userId: string | null
   tenantId: string | null
+  emailSlug: string | null
 }
 
 export type MembershipMaxAggregateOutputType = {
@@ -40,6 +41,7 @@ export type MembershipMaxAggregateOutputType = {
   updatedAt: Date | null
   userId: string | null
   tenantId: string | null
+  emailSlug: string | null
 }
 
 export type MembershipCountAggregateOutputType = {
@@ -50,6 +52,7 @@ export type MembershipCountAggregateOutputType = {
   updatedAt: number
   userId: number
   tenantId: number
+  emailSlug: number
   _all: number
 }
 
@@ -61,6 +64,7 @@ export type MembershipMinAggregateInputType = {
   updatedAt?: true
   userId?: true
   tenantId?: true
+  emailSlug?: true
 }
 
 export type MembershipMaxAggregateInputType = {
@@ -70,6 +74,7 @@ export type MembershipMaxAggregateInputType = {
   updatedAt?: true
   userId?: true
   tenantId?: true
+  emailSlug?: true
 }
 
 export type MembershipCountAggregateInputType = {
@@ -80,6 +85,7 @@ export type MembershipCountAggregateInputType = {
   updatedAt?: true
   userId?: true
   tenantId?: true
+  emailSlug?: true
   _all?: true
 }
 
@@ -163,6 +169,7 @@ export type MembershipGroupByOutputType = {
   updatedAt: Date
   userId: string
   tenantId: string
+  emailSlug: string | null
   _count: MembershipCountAggregateOutputType | null
   _min: MembershipMinAggregateOutputType | null
   _max: MembershipMaxAggregateOutputType | null
@@ -194,6 +201,7 @@ export type MembershipWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   userId?: Prisma.StringFilter<"Membership"> | string
   tenantId?: Prisma.StringFilter<"Membership"> | string
+  emailSlug?: Prisma.StringNullableFilter<"Membership"> | string | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   projectMembers?: Prisma.ProjectMemberListRelationFilter
@@ -208,6 +216,7 @@ export type MembershipOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  emailSlug?: Prisma.SortOrderInput | Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
   projectMembers?: Prisma.ProjectMemberOrderByRelationAggregateInput
@@ -217,6 +226,7 @@ export type MembershipOrderByWithRelationInput = {
 export type MembershipWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   userId_tenantId?: Prisma.MembershipUserIdTenantIdCompoundUniqueInput
+  tenantId_emailSlug?: Prisma.MembershipTenantIdEmailSlugCompoundUniqueInput
   AND?: Prisma.MembershipWhereInput | Prisma.MembershipWhereInput[]
   OR?: Prisma.MembershipWhereInput[]
   NOT?: Prisma.MembershipWhereInput | Prisma.MembershipWhereInput[]
@@ -226,11 +236,12 @@ export type MembershipWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   userId?: Prisma.StringFilter<"Membership"> | string
   tenantId?: Prisma.StringFilter<"Membership"> | string
+  emailSlug?: Prisma.StringNullableFilter<"Membership"> | string | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   projectMembers?: Prisma.ProjectMemberListRelationFilter
   taskAssignments?: Prisma.TaskAssignmentListRelationFilter
-}, "id" | "userId_tenantId">
+}, "id" | "userId_tenantId" | "tenantId_emailSlug">
 
 export type MembershipOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -240,6 +251,7 @@ export type MembershipOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  emailSlug?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MembershipCountOrderByAggregateInput
   _max?: Prisma.MembershipMaxOrderByAggregateInput
   _min?: Prisma.MembershipMinOrderByAggregateInput
@@ -256,6 +268,7 @@ export type MembershipScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Membership"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Membership"> | string
   tenantId?: Prisma.StringWithAggregatesFilter<"Membership"> | string
+  emailSlug?: Prisma.StringNullableWithAggregatesFilter<"Membership"> | string | null
 }
 
 export type MembershipCreateInput = {
@@ -264,6 +277,7 @@ export type MembershipCreateInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  emailSlug?: string | null
   tenant: Prisma.TenantCreateNestedOneWithoutMembershipInput
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutMembershipInput
@@ -278,6 +292,7 @@ export type MembershipUncheckedCreateInput = {
   updatedAt?: Date | string
   userId: string
   tenantId: string
+  emailSlug?: string | null
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutMembershipInput
   taskAssignments?: Prisma.TaskAssignmentUncheckedCreateNestedManyWithoutMembershipInput
 }
@@ -288,6 +303,7 @@ export type MembershipUpdateInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutMembershipNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutMembershipNestedInput
@@ -302,6 +318,7 @@ export type MembershipUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutMembershipNestedInput
   taskAssignments?: Prisma.TaskAssignmentUncheckedUpdateManyWithoutMembershipNestedInput
 }
@@ -314,6 +331,7 @@ export type MembershipCreateManyInput = {
   updatedAt?: Date | string
   userId: string
   tenantId: string
+  emailSlug?: string | null
 }
 
 export type MembershipUpdateManyMutationInput = {
@@ -322,6 +340,7 @@ export type MembershipUpdateManyMutationInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MembershipUncheckedUpdateManyInput = {
@@ -332,11 +351,17 @@ export type MembershipUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MembershipUserIdTenantIdCompoundUniqueInput = {
   userId: string
   tenantId: string
+}
+
+export type MembershipTenantIdEmailSlugCompoundUniqueInput = {
+  tenantId: string
+  emailSlug: string
 }
 
 export type MembershipCountOrderByAggregateInput = {
@@ -347,6 +372,7 @@ export type MembershipCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  emailSlug?: Prisma.SortOrder
 }
 
 export type MembershipMaxOrderByAggregateInput = {
@@ -356,6 +382,7 @@ export type MembershipMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  emailSlug?: Prisma.SortOrder
 }
 
 export type MembershipMinOrderByAggregateInput = {
@@ -365,6 +392,7 @@ export type MembershipMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
+  emailSlug?: Prisma.SortOrder
 }
 
 export type MembershipScalarRelationFilter = {
@@ -500,6 +528,7 @@ export type MembershipCreateWithoutProjectMembersInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  emailSlug?: string | null
   tenant: Prisma.TenantCreateNestedOneWithoutMembershipInput
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   taskAssignments?: Prisma.TaskAssignmentCreateNestedManyWithoutMembershipInput
@@ -513,6 +542,7 @@ export type MembershipUncheckedCreateWithoutProjectMembersInput = {
   updatedAt?: Date | string
   userId: string
   tenantId: string
+  emailSlug?: string | null
   taskAssignments?: Prisma.TaskAssignmentUncheckedCreateNestedManyWithoutMembershipInput
 }
 
@@ -538,6 +568,7 @@ export type MembershipUpdateWithoutProjectMembersInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutMembershipNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   taskAssignments?: Prisma.TaskAssignmentUpdateManyWithoutMembershipNestedInput
@@ -551,6 +582,7 @@ export type MembershipUncheckedUpdateWithoutProjectMembersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   taskAssignments?: Prisma.TaskAssignmentUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
@@ -560,6 +592,7 @@ export type MembershipCreateWithoutTaskAssignmentsInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  emailSlug?: string | null
   tenant: Prisma.TenantCreateNestedOneWithoutMembershipInput
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutMembershipInput
@@ -573,6 +606,7 @@ export type MembershipUncheckedCreateWithoutTaskAssignmentsInput = {
   updatedAt?: Date | string
   userId: string
   tenantId: string
+  emailSlug?: string | null
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutMembershipInput
 }
 
@@ -598,6 +632,7 @@ export type MembershipUpdateWithoutTaskAssignmentsInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutMembershipNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutMembershipNestedInput
@@ -611,6 +646,7 @@ export type MembershipUncheckedUpdateWithoutTaskAssignmentsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutMembershipNestedInput
 }
 
@@ -620,6 +656,7 @@ export type MembershipCreateWithoutTenantInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  emailSlug?: string | null
   user: Prisma.UserCreateNestedOneWithoutMembershipsInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutMembershipInput
   taskAssignments?: Prisma.TaskAssignmentCreateNestedManyWithoutMembershipInput
@@ -632,6 +669,7 @@ export type MembershipUncheckedCreateWithoutTenantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
+  emailSlug?: string | null
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutMembershipInput
   taskAssignments?: Prisma.TaskAssignmentUncheckedCreateNestedManyWithoutMembershipInput
 }
@@ -673,6 +711,7 @@ export type MembershipScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Membership"> | Date | string
   userId?: Prisma.StringFilter<"Membership"> | string
   tenantId?: Prisma.StringFilter<"Membership"> | string
+  emailSlug?: Prisma.StringNullableFilter<"Membership"> | string | null
 }
 
 export type MembershipCreateWithoutUserInput = {
@@ -681,6 +720,7 @@ export type MembershipCreateWithoutUserInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
+  emailSlug?: string | null
   tenant: Prisma.TenantCreateNestedOneWithoutMembershipInput
   projectMembers?: Prisma.ProjectMemberCreateNestedManyWithoutMembershipInput
   taskAssignments?: Prisma.TaskAssignmentCreateNestedManyWithoutMembershipInput
@@ -693,6 +733,7 @@ export type MembershipUncheckedCreateWithoutUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenantId: string
+  emailSlug?: string | null
   projectMembers?: Prisma.ProjectMemberUncheckedCreateNestedManyWithoutMembershipInput
   taskAssignments?: Prisma.TaskAssignmentUncheckedCreateNestedManyWithoutMembershipInput
 }
@@ -730,6 +771,7 @@ export type MembershipCreateManyTenantInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: string
+  emailSlug?: string | null
 }
 
 export type MembershipUpdateWithoutTenantInput = {
@@ -738,6 +780,7 @@ export type MembershipUpdateWithoutTenantInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutMembershipsNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutMembershipNestedInput
   taskAssignments?: Prisma.TaskAssignmentUpdateManyWithoutMembershipNestedInput
@@ -750,6 +793,7 @@ export type MembershipUncheckedUpdateWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutMembershipNestedInput
   taskAssignments?: Prisma.TaskAssignmentUncheckedUpdateManyWithoutMembershipNestedInput
 }
@@ -761,6 +805,7 @@ export type MembershipUncheckedUpdateManyWithoutTenantInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type MembershipCreateManyUserInput = {
@@ -770,6 +815,7 @@ export type MembershipCreateManyUserInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   tenantId: string
+  emailSlug?: string | null
 }
 
 export type MembershipUpdateWithoutUserInput = {
@@ -778,6 +824,7 @@ export type MembershipUpdateWithoutUserInput = {
   permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutMembershipNestedInput
   projectMembers?: Prisma.ProjectMemberUpdateManyWithoutMembershipNestedInput
   taskAssignments?: Prisma.TaskAssignmentUpdateManyWithoutMembershipNestedInput
@@ -790,6 +837,7 @@ export type MembershipUncheckedUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   projectMembers?: Prisma.ProjectMemberUncheckedUpdateManyWithoutMembershipNestedInput
   taskAssignments?: Prisma.TaskAssignmentUncheckedUpdateManyWithoutMembershipNestedInput
 }
@@ -801,6 +849,7 @@ export type MembershipUncheckedUpdateManyWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
+  emailSlug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -851,6 +900,7 @@ export type MembershipSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
+  emailSlug?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   projectMembers?: boolean | Prisma.Membership$projectMembersArgs<ExtArgs>
@@ -866,6 +916,7 @@ export type MembershipSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
+  emailSlug?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["membership"]>
@@ -878,6 +929,7 @@ export type MembershipSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
+  emailSlug?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["membership"]>
@@ -890,9 +942,10 @@ export type MembershipSelectScalar = {
   updatedAt?: boolean
   userId?: boolean
   tenantId?: boolean
+  emailSlug?: boolean
 }
 
-export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role" | "permissions" | "createdAt" | "updatedAt" | "userId" | "tenantId", ExtArgs["result"]["membership"]>
+export type MembershipOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "role" | "permissions" | "createdAt" | "updatedAt" | "userId" | "tenantId" | "emailSlug", ExtArgs["result"]["membership"]>
 export type MembershipInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -925,6 +978,10 @@ export type $MembershipPayload<ExtArgs extends runtime.Types.Extensions.Internal
     updatedAt: Date
     userId: string
     tenantId: string
+    /**
+     * * Unique per tenant: used in reply-to address (userSlug.tenantSlug@domain). Based on first name; on collision add . + 3 letters of last name.
+     */
+    emailSlug: string | null
   }, ExtArgs["result"]["membership"]>
   composites: {}
 }
@@ -1359,6 +1416,7 @@ export interface MembershipFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Membership", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Membership", 'String'>
   readonly tenantId: Prisma.FieldRef<"Membership", 'String'>
+  readonly emailSlug: Prisma.FieldRef<"Membership", 'String'>
 }
     
 

@@ -447,7 +447,8 @@ export const MembershipScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId',
-  tenantId: 'tenantId'
+  tenantId: 'tenantId',
+  emailSlug: 'emailSlug'
 } as const
 
 export type MembershipScalarFieldEnum = (typeof MembershipScalarFieldEnum)[keyof typeof MembershipScalarFieldEnum]
@@ -687,7 +688,8 @@ export const TenantScalarFieldEnum = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   address: 'address',
-  inboxCode: 'inboxCode'
+  inboxCode: 'inboxCode',
+  slug: 'slug'
 } as const
 
 export type TenantScalarFieldEnum = (typeof TenantScalarFieldEnum)[keyof typeof TenantScalarFieldEnum]

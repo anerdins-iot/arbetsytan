@@ -33,6 +33,7 @@ export type TenantMinAggregateOutputType = {
   updatedAt: Date | null
   address: string | null
   inboxCode: string | null
+  slug: string | null
 }
 
 export type TenantMaxAggregateOutputType = {
@@ -44,6 +45,7 @@ export type TenantMaxAggregateOutputType = {
   updatedAt: Date | null
   address: string | null
   inboxCode: string | null
+  slug: string | null
 }
 
 export type TenantCountAggregateOutputType = {
@@ -55,6 +57,7 @@ export type TenantCountAggregateOutputType = {
   updatedAt: number
   address: number
   inboxCode: number
+  slug: number
   _all: number
 }
 
@@ -68,6 +71,7 @@ export type TenantMinAggregateInputType = {
   updatedAt?: true
   address?: true
   inboxCode?: true
+  slug?: true
 }
 
 export type TenantMaxAggregateInputType = {
@@ -79,6 +83,7 @@ export type TenantMaxAggregateInputType = {
   updatedAt?: true
   address?: true
   inboxCode?: true
+  slug?: true
 }
 
 export type TenantCountAggregateInputType = {
@@ -90,6 +95,7 @@ export type TenantCountAggregateInputType = {
   updatedAt?: true
   address?: true
   inboxCode?: true
+  slug?: true
   _all?: true
 }
 
@@ -174,6 +180,7 @@ export type TenantGroupByOutputType = {
   updatedAt: Date
   address: string | null
   inboxCode: string | null
+  slug: string | null
   _count: TenantCountAggregateOutputType | null
   _min: TenantMinAggregateOutputType | null
   _max: TenantMaxAggregateOutputType | null
@@ -206,6 +213,7 @@ export type TenantWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Tenant"> | Date | string
   address?: Prisma.StringNullableFilter<"Tenant"> | string | null
   inboxCode?: Prisma.StringNullableFilter<"Tenant"> | string | null
+  slug?: Prisma.StringNullableFilter<"Tenant"> | string | null
   DocumentChunk?: Prisma.DocumentChunkListRelationFilter
   DocumentTemplate?: Prisma.DocumentTemplateListRelationFilter
   EmailChunk?: Prisma.EmailChunkListRelationFilter
@@ -235,6 +243,7 @@ export type TenantOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   inboxCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
   DocumentChunk?: Prisma.DocumentChunkOrderByRelationAggregateInput
   DocumentTemplate?: Prisma.DocumentTemplateOrderByRelationAggregateInput
   EmailChunk?: Prisma.EmailChunkOrderByRelationAggregateInput
@@ -259,6 +268,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   stripeCustomerId?: string
   inboxCode?: string
+  slug?: string
   AND?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
   OR?: Prisma.TenantWhereInput[]
   NOT?: Prisma.TenantWhereInput | Prisma.TenantWhereInput[]
@@ -285,7 +295,7 @@ export type TenantWhereUniqueInput = Prisma.AtLeast<{
   Quote?: Prisma.QuoteListRelationFilter
   Subscription?: Prisma.XOR<Prisma.SubscriptionNullableScalarRelationFilter, Prisma.SubscriptionWhereInput> | null
   TimeEntry?: Prisma.TimeEntryListRelationFilter
-}, "id" | "stripeCustomerId" | "inboxCode">
+}, "id" | "stripeCustomerId" | "inboxCode" | "slug">
 
 export type TenantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -296,6 +306,7 @@ export type TenantOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   address?: Prisma.SortOrderInput | Prisma.SortOrder
   inboxCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.TenantCountOrderByAggregateInput
   _max?: Prisma.TenantMaxOrderByAggregateInput
   _min?: Prisma.TenantMinOrderByAggregateInput
@@ -313,6 +324,7 @@ export type TenantScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Tenant"> | Date | string
   address?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
   inboxCode?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
+  slug?: Prisma.StringNullableWithAggregatesFilter<"Tenant"> | string | null
 }
 
 export type TenantCreateInput = {
@@ -324,6 +336,7 @@ export type TenantCreateInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -353,6 +366,7 @@ export type TenantUncheckedCreateInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -382,6 +396,7 @@ export type TenantUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -411,6 +426,7 @@ export type TenantUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -440,6 +456,7 @@ export type TenantCreateManyInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
 }
 
 export type TenantUpdateManyMutationInput = {
@@ -451,6 +468,7 @@ export type TenantUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TenantUncheckedUpdateManyInput = {
@@ -462,6 +480,7 @@ export type TenantUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type TenantScalarRelationFilter = {
@@ -478,6 +497,7 @@ export type TenantCountOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   address?: Prisma.SortOrder
   inboxCode?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
 }
 
 export type TenantMaxOrderByAggregateInput = {
@@ -489,6 +509,7 @@ export type TenantMaxOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   address?: Prisma.SortOrder
   inboxCode?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
 }
 
 export type TenantMinOrderByAggregateInput = {
@@ -500,6 +521,7 @@ export type TenantMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
   address?: Prisma.SortOrder
   inboxCode?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
 }
 
 export type TenantCreateNestedOneWithoutDocumentChunkInput = {
@@ -763,6 +785,7 @@ export type TenantCreateWithoutDocumentChunkInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
   EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
@@ -791,6 +814,7 @@ export type TenantUncheckedCreateWithoutDocumentChunkInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
   EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
@@ -835,6 +859,7 @@ export type TenantUpdateWithoutDocumentChunkInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
   EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
@@ -863,6 +888,7 @@ export type TenantUncheckedUpdateWithoutDocumentChunkInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
   EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
@@ -891,6 +917,7 @@ export type TenantCreateWithoutDocumentTemplateInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
   EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
@@ -919,6 +946,7 @@ export type TenantUncheckedCreateWithoutDocumentTemplateInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
   EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
@@ -963,6 +991,7 @@ export type TenantUpdateWithoutDocumentTemplateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
   EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
@@ -991,6 +1020,7 @@ export type TenantUncheckedUpdateWithoutDocumentTemplateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
   EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
@@ -1019,6 +1049,7 @@ export type TenantCreateWithoutEmailChunkInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailConversation?: Prisma.EmailConversationCreateNestedManyWithoutTenantInput
@@ -1047,6 +1078,7 @@ export type TenantUncheckedCreateWithoutEmailChunkInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailConversation?: Prisma.EmailConversationUncheckedCreateNestedManyWithoutTenantInput
@@ -1091,6 +1123,7 @@ export type TenantUpdateWithoutEmailChunkInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailConversation?: Prisma.EmailConversationUpdateManyWithoutTenantNestedInput
@@ -1119,6 +1152,7 @@ export type TenantUncheckedUpdateWithoutEmailChunkInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailConversation?: Prisma.EmailConversationUncheckedUpdateManyWithoutTenantNestedInput
@@ -1147,6 +1181,7 @@ export type TenantCreateWithoutEmailConversationInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1175,6 +1210,7 @@ export type TenantUncheckedCreateWithoutEmailConversationInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1219,6 +1255,7 @@ export type TenantUpdateWithoutEmailConversationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -1247,6 +1284,7 @@ export type TenantUncheckedUpdateWithoutEmailConversationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -1275,6 +1313,7 @@ export type TenantCreateWithoutEmailLogInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1303,6 +1342,7 @@ export type TenantUncheckedCreateWithoutEmailLogInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1347,6 +1387,7 @@ export type TenantUpdateWithoutEmailLogInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -1375,6 +1416,7 @@ export type TenantUncheckedUpdateWithoutEmailLogInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -1403,6 +1445,7 @@ export type TenantCreateWithoutEmailTemplateInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1431,6 +1474,7 @@ export type TenantUncheckedCreateWithoutEmailTemplateInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1475,6 +1519,7 @@ export type TenantUpdateWithoutEmailTemplateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -1503,6 +1548,7 @@ export type TenantUncheckedUpdateWithoutEmailTemplateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -1531,6 +1577,7 @@ export type TenantCreateWithoutFileAnalysisInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1559,6 +1606,7 @@ export type TenantUncheckedCreateWithoutFileAnalysisInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1603,6 +1651,7 @@ export type TenantUpdateWithoutFileAnalysisInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -1631,6 +1680,7 @@ export type TenantUncheckedUpdateWithoutFileAnalysisInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -1659,6 +1709,7 @@ export type TenantCreateWithoutInvitationInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1687,6 +1738,7 @@ export type TenantUncheckedCreateWithoutInvitationInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1731,6 +1783,7 @@ export type TenantUpdateWithoutInvitationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -1759,6 +1812,7 @@ export type TenantUncheckedUpdateWithoutInvitationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -1787,6 +1841,7 @@ export type TenantCreateWithoutMembershipInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1815,6 +1870,7 @@ export type TenantUncheckedCreateWithoutMembershipInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1859,6 +1915,7 @@ export type TenantUpdateWithoutMembershipInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -1887,6 +1944,7 @@ export type TenantUncheckedUpdateWithoutMembershipInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -1915,6 +1973,7 @@ export type TenantCreateWithoutMessageChunkInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -1943,6 +2002,7 @@ export type TenantUncheckedCreateWithoutMessageChunkInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -1987,6 +2047,7 @@ export type TenantUpdateWithoutMessageChunkInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2015,6 +2076,7 @@ export type TenantUncheckedUpdateWithoutMessageChunkInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2043,6 +2105,7 @@ export type TenantCreateWithoutShoppingListInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2071,6 +2134,7 @@ export type TenantUncheckedCreateWithoutShoppingListInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2115,6 +2179,7 @@ export type TenantUpdateWithoutShoppingListInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2143,6 +2208,7 @@ export type TenantUncheckedUpdateWithoutShoppingListInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2171,6 +2237,7 @@ export type TenantCreateWithoutNoteCategoryInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2199,6 +2266,7 @@ export type TenantUncheckedCreateWithoutNoteCategoryInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2243,6 +2311,7 @@ export type TenantUpdateWithoutNoteCategoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2271,6 +2340,7 @@ export type TenantUncheckedUpdateWithoutNoteCategoryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2299,6 +2369,7 @@ export type TenantCreateWithoutNotificationPreferenceInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2327,6 +2398,7 @@ export type TenantUncheckedCreateWithoutNotificationPreferenceInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2371,6 +2443,7 @@ export type TenantUpdateWithoutNotificationPreferenceInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2399,6 +2472,7 @@ export type TenantUncheckedUpdateWithoutNotificationPreferenceInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2427,6 +2501,7 @@ export type TenantCreateWithoutProjectInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2455,6 +2530,7 @@ export type TenantUncheckedCreateWithoutProjectInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2499,6 +2575,7 @@ export type TenantUpdateWithoutProjectInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2527,6 +2604,7 @@ export type TenantUncheckedUpdateWithoutProjectInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2555,6 +2633,7 @@ export type TenantCreateWithoutPushSubscriptionInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2583,6 +2662,7 @@ export type TenantUncheckedCreateWithoutPushSubscriptionInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2627,6 +2707,7 @@ export type TenantUpdateWithoutPushSubscriptionInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2655,6 +2736,7 @@ export type TenantUncheckedUpdateWithoutPushSubscriptionInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2683,6 +2765,7 @@ export type TenantCreateWithoutSubscriptionInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2711,6 +2794,7 @@ export type TenantUncheckedCreateWithoutSubscriptionInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2755,6 +2839,7 @@ export type TenantUpdateWithoutSubscriptionInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2783,6 +2868,7 @@ export type TenantUncheckedUpdateWithoutSubscriptionInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2811,6 +2897,7 @@ export type TenantCreateWithoutTimeEntryInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2839,6 +2926,7 @@ export type TenantUncheckedCreateWithoutTimeEntryInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -2883,6 +2971,7 @@ export type TenantUpdateWithoutTimeEntryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -2911,6 +3000,7 @@ export type TenantUncheckedUpdateWithoutTimeEntryInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -2939,6 +3029,7 @@ export type TenantCreateWithoutQuoteInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkCreateNestedManyWithoutTenantInput
@@ -2967,6 +3058,7 @@ export type TenantUncheckedCreateWithoutQuoteInput = {
   updatedAt?: Date | string
   address?: string | null
   inboxCode?: string | null
+  slug?: string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedCreateNestedManyWithoutTenantInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedCreateNestedManyWithoutTenantInput
   EmailChunk?: Prisma.EmailChunkUncheckedCreateNestedManyWithoutTenantInput
@@ -3011,6 +3103,7 @@ export type TenantUpdateWithoutQuoteInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUpdateManyWithoutTenantNestedInput
@@ -3039,6 +3132,7 @@ export type TenantUncheckedUpdateWithoutQuoteInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   address?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   inboxCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   DocumentChunk?: Prisma.DocumentChunkUncheckedUpdateManyWithoutTenantNestedInput
   DocumentTemplate?: Prisma.DocumentTemplateUncheckedUpdateManyWithoutTenantNestedInput
   EmailChunk?: Prisma.EmailChunkUncheckedUpdateManyWithoutTenantNestedInput
@@ -3242,6 +3336,7 @@ export type TenantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   updatedAt?: boolean
   address?: boolean
   inboxCode?: boolean
+  slug?: boolean
   DocumentChunk?: boolean | Prisma.Tenant$DocumentChunkArgs<ExtArgs>
   DocumentTemplate?: boolean | Prisma.Tenant$DocumentTemplateArgs<ExtArgs>
   EmailChunk?: boolean | Prisma.Tenant$EmailChunkArgs<ExtArgs>
@@ -3272,6 +3367,7 @@ export type TenantSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   updatedAt?: boolean
   address?: boolean
   inboxCode?: boolean
+  slug?: boolean
 }, ExtArgs["result"]["tenant"]>
 
 export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -3283,6 +3379,7 @@ export type TenantSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   updatedAt?: boolean
   address?: boolean
   inboxCode?: boolean
+  slug?: boolean
 }, ExtArgs["result"]["tenant"]>
 
 export type TenantSelectScalar = {
@@ -3294,9 +3391,10 @@ export type TenantSelectScalar = {
   updatedAt?: boolean
   address?: boolean
   inboxCode?: boolean
+  slug?: boolean
 }
 
-export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "orgNumber" | "stripeCustomerId" | "createdAt" | "updatedAt" | "address" | "inboxCode", ExtArgs["result"]["tenant"]>
+export type TenantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "orgNumber" | "stripeCustomerId" | "createdAt" | "updatedAt" | "address" | "inboxCode" | "slug", ExtArgs["result"]["tenant"]>
 export type TenantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   DocumentChunk?: boolean | Prisma.Tenant$DocumentChunkArgs<ExtArgs>
   DocumentTemplate?: boolean | Prisma.Tenant$DocumentTemplateArgs<ExtArgs>
@@ -3352,6 +3450,10 @@ export type $TenantPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     updatedAt: Date
     address: string | null
     inboxCode: string | null
+    /**
+     * * Human-readable slug for reply-to (e.g. anerdins-el). Lookup by slug in inbound mail.
+     */
+    slug: string | null
   }, ExtArgs["result"]["tenant"]>
   composites: {}
 }
@@ -3801,6 +3903,7 @@ export interface TenantFieldRefs {
   readonly updatedAt: Prisma.FieldRef<"Tenant", 'DateTime'>
   readonly address: Prisma.FieldRef<"Tenant", 'String'>
   readonly inboxCode: Prisma.FieldRef<"Tenant", 'String'>
+  readonly slug: Prisma.FieldRef<"Tenant", 'String'>
 }
     
 
