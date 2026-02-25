@@ -338,7 +338,7 @@ export async function sendExternalEmail(
       subject: `[${brand.tenantName}] ${subject}`,
       html,
       text,
-      replyTo: replyTo ?? sender?.email,
+      replyTo: replyTo ?? fromAddress,
       attachments: fileAttachments,
     });
 
@@ -457,8 +457,7 @@ export async function sendToTeamMember(
     locale,
   });
 
-  // Always use RESEND_FROM for verified domain, sender email as reply-to
-  // Fallback to Resend onboarding domain if not configured
+  // Always use RESEND_FROM for verified domain; Reply-To same as From (avsändare som i UI)
   const fromAddress = DEFAULT_FROM;
 
   const emailResult = await sendEmail({
@@ -467,7 +466,7 @@ export async function sendToTeamMember(
     html,
     text,
     from: fromAddress,
-    replyTo: sender?.email,
+    replyTo: fromAddress,
   });
 
   if (!emailResult.success) {
@@ -532,8 +531,7 @@ export async function sendToTeamMembers(
   ]);
 
   const errors: string[] = [];
-  // Always use RESEND_FROM for verified domain, sender email as reply-to
-  // Fallback to Resend onboarding domain if not configured
+  // Always use RESEND_FROM for verified domain; Reply-To same as From (avsändare som i UI)
   const fromAddress = DEFAULT_FROM;
 
   for (const membership of memberships) {
@@ -552,7 +550,7 @@ export async function sendToTeamMembers(
       html,
       text,
       from: fromAddress,
-      replyTo: sender?.email,
+      replyTo: fromAddress,
       attachments: fileAttachments,
     });
 
