@@ -66,3 +66,4 @@ screenshots/
 docs/
 .playwright-mcp/
 .playwright-browsers/discord-bot/generated/
+.playwright-browsers/
