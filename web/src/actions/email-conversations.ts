@@ -141,7 +141,7 @@ export async function createConversation(
     const trackingCode = generateTrackingCode();
 
     // Reply-to = userSlug.tenantSlug@domain (emailSlug from membership)
-    const [tenant, membership] = await Promise.all([
+    const [tenant, membership, userWithLocale] = await Promise.all([
       prisma.tenant.findUnique({
         where: { id: tenantId },
         select: { slug: true, name: true },
@@ -150,7 +150,12 @@ export async function createConversation(
         where: { userId_tenantId: { userId, tenantId } },
         select: { emailSlug: true },
       }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { locale: true },
+      }),
     ]);
+    const locale = (userWithLocale?.locale === "en" ? "en" : "sv") as "sv" | "en";
     const tenantSlug =
       tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
     const userSlug =
@@ -171,7 +176,7 @@ export async function createConversation(
     const rendered = await renderEmailTemplate({
       tenantId,
       name: "outgoing",
-      locale: "sv",
+      locale,
       variables: {
         tenantName,
         subject: rest.subject,
@@ -253,7 +258,7 @@ export async function replyToConversation(
     );
 
     // Reply-to = userSlug.tenantSlug@domain
-    const [tenant, membership] = await Promise.all([
+    const [tenant, membership, userWithLocale] = await Promise.all([
       prisma.tenant.findUnique({
         where: { id: tenantId },
         select: { slug: true, name: true },
@@ -262,7 +267,12 @@ export async function replyToConversation(
         where: { userId_tenantId: { userId, tenantId } },
         select: { emailSlug: true },
       }),
+      prisma.user.findUnique({
+        where: { id: userId },
+        select: { locale: true },
+      }),
     ]);
+    const locale = (userWithLocale?.locale === "en" ? "en" : "sv") as "sv" | "en";
     const tenantSlug =
       tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
     const userSlug =
@@ -283,7 +293,7 @@ export async function replyToConversation(
     const rendered = await renderEmailTemplate({
       tenantId,
       name: "outgoing",
-      locale: "sv",
+      locale,
       variables: {
         tenantName,
         subject: conversation.subject,
