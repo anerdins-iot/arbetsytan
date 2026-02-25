@@ -46,9 +46,9 @@ Systemet hanterar både utgående och inkommande e-post via Resend, med automati
 ### Spårning och Inkommande mail
 - **Tracking Codes**: Varje konversation har en unik hex-kod (t.ex. `abc123...`).
 - **Tenant Inbox Code**: Varje tenant har en unik `inboxCode` för att identifiera företaget.
-- **Reply-To**: Utgående mail använder `inbox+{tenantCode}_{trackingCode}@mail.lowly.se`.
-- **Webhook**: `/api/webhooks/resend` tar emot `email.received` och mappar till rätt konversation via tracking code.
-- **"Övrigt"-inkorg**: Mail utan trackingCode men med giltig tenantCode skapas som `isUnassigned=true` och tilldelas tenant-admin.
+- **Reply-To**: Utgående mail använder `{userSlug}.{tenantSlug}@domain` (t.ex. `fredrik.ane.anerdins-iot@…`). Ingen "inbox". userSlug sätts vid skapande av användare/medlemskap (förnamn; vid kollision + 3 bokst. efternamn). Konversations-id i body.
+- **Webhook**: `/api/webhooks/resend` tar emot `email.received` och mappar till rätt konversation via tracking (i body) eller tenant+user+avsändare.
+- **"Övrigt"-inkorg**: Mail utan tracking men med giltig tenant (slug/inboxCode) skapas som `isUnassigned=true` och tilldelas matchad användare eller tenant-admin.
 
 ### AI-verktyg för E-post
 - **`searchMyEmails`**: Söker i användarens alla e-postloggar med vektor-sökning (embeddings).

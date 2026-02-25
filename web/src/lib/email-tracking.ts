@@ -1,6 +1,7 @@
 /**
  * Email tracking for reply-to addressing and parsing inbound replies.
- * Used to match incoming emails to EmailConversation via tracking code.
+ * Address format: {userSlug}.{tenantSlug}@domain (e.g. fredrik.ane.anerdins-iot@…).
+ * Conversation id is hidden in the email body. Legacy inbox+… format still parsed.
  */
 
 import { randomBytes } from "node:crypto";
@@ -11,29 +12,70 @@ const RECEIVING_DOMAIN =
 const TRACKING_COMMENT_PREFIX = "<!-- lowly-tracking:";
 const TRACKING_COMMENT_SUFFIX = " -->";
 
-/** Regex to extract tenant+tracking from address like inbox+TENANT_TRACKING@domain */
-const REPLY_TO_CODE_REGEX = /^inbox\+([^@]+)@/i;
-
-/** Regex to extract tenant-only from address like inbox+TENANT@domain (no underscore) */
-const REPLY_TO_TENANT_REGEX = /^inbox\+([^_@]+)@/i;
-
-/** Regex to extract code from HTML comment lowly-tracking:CODE (code is hex) */
+/** Regex to extract code from HTML comment or plain text lowly-tracking:CODE (code is hex) */
 const HTML_TRACKING_REGEX = /<!--\s*lowly-tracking:([a-f0-9]+)\s*-->/i;
+const TEXT_TRACKING_REGEX = /lowly-tracking:([a-f0-9]+)/i;
+
+/** Legacy: address part that looks like a tracking code (8–28 hex chars) */
+const LEGACY_TRACKING_PATTERN = /^[a-f0-9]{8,28}$/i;
 
 /**
- * Generates a unique tracking code (URL-safe, alphanumeric).
- * Used as the plus-part in inbox+{code}@domain.
+ * Slugify for reply-to: lowercase, replace spaces/special with one hyphen, trim.
  */
-export function generateTrackingCode(): string {
-  return randomBytes(14).toString("hex");
+export function slugifyForReplyTo(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "") || "x";
 }
 
 /**
- * Builds the reply-to address for a conversation with tenant isolation.
- * Returns inbox+{tenantCode}_{trackingCode}@{RESEND_RECEIVING_DOMAIN}.
+ * Compute a unique email slug from user display name for use in reply-to.
+ * Uses first name; if that slug is taken in the tenant, adds "." + up to 3 letters of last name.
+ * Set at user/membership create. Pass existing slugs (e.g. from other members in same tenant).
  */
-export function buildReplyToAddress(tenantCode: string, trackingCode: string): string {
-  return `inbox+${tenantCode}_${trackingCode}@${RECEIVING_DOMAIN}`;
+export function computeEmailSlugForUser(
+  userName: string,
+  existingSlugsInTenant: string[]
+): string {
+  const set = new Set(existingSlugsInTenant.map((s) => s.toLowerCase()));
+  const parts = (userName ?? "").trim().split(/\s+/);
+  const firstName = parts[0] ?? "";
+  const lastName = parts.slice(1).join(" ");
+  const firstSlug = slugifyForReplyTo(firstName) || "user";
+  const lastSlug = slugifyForReplyTo(lastName);
+
+  if (!set.has(firstSlug)) return firstSlug;
+  const suffix3 = lastSlug.slice(0, 3);
+  if (suffix3) {
+    const withSuffix = `${firstSlug}.${suffix3}`;
+    if (!set.has(withSuffix)) return withSuffix;
+  }
+  if (lastSlug) {
+    const withLast = `${firstSlug}.${lastSlug}`;
+    if (!set.has(withLast)) return withLast;
+  }
+  return `${firstSlug}-${randomBytes(2).toString("hex")}`;
+}
+
+/**
+ * Generates a unique tracking code (hex). Stored in DB and hidden in email body only.
+ */
+export function generateTrackingCode(): string {
+  return randomBytes(4).toString("hex");
+}
+
+/**
+ * Builds the reply-to address: {userSlug}.{tenantSlug}@domain (e.g. fredrik.ane.anerdins-iot@…).
+ * No "inbox" prefix; conversation id is in body only.
+ */
+export function buildReplyToAddress(tenantSlug: string, userSlug: string): string {
+  const safeTenant = tenantSlug.replace(/[^a-z0-9-]/g, "") || "tenant";
+  const safeUser = userSlug.replace(/[^a-z0-9.-]/g, "") || "user";
+  return `${safeUser}.${safeTenant}@${RECEIVING_DOMAIN}`;
 }
 
 /**
@@ -45,37 +87,83 @@ export function buildTrackingHtml(trackingCode: string): string {
 }
 
 /**
- * Extracts tenant code and tracking code from incoming email.
- * 1. Tries to match inbox+{tenantCode}_{trackingCode}@ in toAddress.
- * 2. If no underscore, tries inbox+{tenantCode}@ (tenant-only).
- * 3. If not found, searches for lowly-tracking:{code} in htmlBody (legacy).
- * Returns { tenantCode, trackingCode } or null if not found.
+ * Returns a plain-text line for tracking so text-only replies can be matched.
+ * Append to body text when sending. Format: "\n\nlowly-tracking:{trackingCode}"
+ */
+export function buildTrackingTextLine(trackingCode: string): string {
+  return `\n\nlowly-tracking:${trackingCode}`;
+}
+
+export type ParsedTracking = {
+  tenantCode: string;
+  /** Set when address is inbox+tenant_user (second part not hex). */
+  userSlug?: string;
+  trackingCode: string | null;
+};
+
+/**
+ * Extracts tenant, optional user slug, and tracking from incoming email.
+ * - Address: inbox+{tenantSlug}_{userSlug}@ (tenant + user; no id in address).
+ * - Body: lowly-tracking:{code} in HTML or plain text gives conversation (trackingCode).
+ * Legacy: inbox+{tenantCode}_{trackingCode}@ still supported (second part = hex).
  */
 export function parseTrackingCode(
   toAddress: string,
-  htmlBody: string | null | undefined
-): { tenantCode: string; trackingCode: string | null } | null {
-  if (toAddress) {
-    const match = toAddress.match(REPLY_TO_CODE_REGEX);
-    if (match?.[1]) {
-      const fullCode = match[1];
-      // Check if it contains underscore (tenant_tracking format)
-      if (fullCode.includes('_')) {
-        const [tenantCode, trackingCode] = fullCode.split('_', 2);
-        return { tenantCode, trackingCode };
-      } else {
-        // Tenant-only format (no tracking code)
-        return { tenantCode: fullCode, trackingCode: null };
+  htmlBody: string | null | undefined,
+  textBody?: string | null
+): ParsedTracking | null {
+  let tenantCode: string | null = null;
+  let userSlug: string | undefined;
+  let trackingFromAddress: string | null = null;
+
+  const local = toAddress
+    ? (() => {
+        const email =
+          toAddress.includes("<") && toAddress.includes(">")
+            ? toAddress.replace(/^.*<([^>]+)>.*$/, "$1").trim()
+            : toAddress.trim();
+        const at = email.indexOf("@");
+        return at > 0 ? email.slice(0, at) : "";
+      })()
+    : "";
+
+  if (local) {
+    if (local.startsWith("inbox+")) {
+      const fullCode = local.slice(6);
+      if (fullCode) {
+        if (fullCode.includes("_")) {
+          const parts = fullCode.split("_");
+          const first = parts[0];
+          const second = parts[1];
+          tenantCode = first ?? null;
+          if (second) {
+            if (LEGACY_TRACKING_PATTERN.test(second)) {
+              trackingFromAddress = second;
+            } else {
+              userSlug = second;
+            }
+          }
+        } else {
+          tenantCode = fullCode;
+        }
       }
+    } else if (local.includes(".")) {
+      const parts = local.split(".");
+      tenantCode = parts.pop() ?? null;
+      userSlug = parts.join(".");
     }
   }
-  // Legacy: search in HTML body for tracking code only (no tenant)
+
+  let trackingCode: string | null = trackingFromAddress;
   if (htmlBody) {
-    const match = htmlBody.match(HTML_TRACKING_REGEX);
-    if (match?.[1]) {
-      // Legacy format without tenant code - return null to indicate no tenant found
-      return null;
-    }
+    const bodyMatch = htmlBody.match(HTML_TRACKING_REGEX);
+    if (bodyMatch?.[1]) trackingCode = bodyMatch[1];
   }
-  return null;
+  if (trackingCode == null && textBody) {
+    const textMatch = textBody.match(TEXT_TRACKING_REGEX);
+    if (textMatch?.[1]) trackingCode = textMatch[1];
+  }
+
+  if (!tenantCode) return null;
+  return { tenantCode, ...(userSlug !== undefined && { userSlug }), trackingCode };
 }

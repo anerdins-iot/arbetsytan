@@ -4,7 +4,13 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
 import { sendEmail, DEFAULT_FROM } from "@/lib/email";
-import { buildReplyToAddress, buildTrackingHtml, generateTrackingCode } from "@/lib/email-tracking";
+import {
+  buildReplyToAddress,
+  buildTrackingHtml,
+  buildTrackingTextLine,
+  generateTrackingCode,
+  slugifyForReplyTo,
+} from "@/lib/email-tracking";
 import { prisma } from "@/lib/db";
 import {
   getConversationsCore,
@@ -133,26 +139,34 @@ export async function createConversation(
     // Generate tracking code and prepare email data BEFORE creating anything in DB
     const trackingCode = generateTrackingCode();
 
-    // Get tenant inboxCode for reply-to address
-    const tenant = await prisma.tenant.findUnique({
-      where: { id: tenantId },
-      select: { inboxCode: true },
-    });
-    const inboxCode = tenant?.inboxCode ?? tenantId;
+    // Reply-to = userSlug.tenantSlug@domain (emailSlug from membership)
+    const [tenant, membership] = await Promise.all([
+      prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { slug: true, name: true },
+      }),
+      prisma.membership.findUnique({
+        where: { userId_tenantId: { userId, tenantId } },
+        select: { emailSlug: true },
+      }),
+    ]);
+    const tenantSlug =
+      tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
+    const userSlug =
+      membership?.emailSlug ?? slugifyForReplyTo(user.name ?? "user");
 
     const html = rest.bodyHtml + "\n" + buildTrackingHtml(trackingCode);
+    const text =
+      (rest.bodyText ?? "").trim() + buildTrackingTextLine(trackingCode);
 
-    // Always use RESEND_FROM for verified domain
-    // Fallback to Resend onboarding domain if not configured
     const fromAddress = DEFAULT_FROM;
-
-    // Send email FIRST - before creating anything in the database
     const sent = await sendEmail({
       to: rest.externalEmail,
       subject: rest.subject,
       html,
+      text,
       from: fromAddress,
-      replyTo: buildReplyToAddress(inboxCode, trackingCode),
+      replyTo: buildReplyToAddress(tenantSlug, userSlug),
     });
 
     if (!sent.success) {
@@ -210,25 +224,36 @@ export async function replyToConversation(
       fromName
     );
 
-    // Get tenant inboxCode for reply-to address
-    const tenant = await prisma.tenant.findUnique({
-      where: { id: tenantId },
-      select: { inboxCode: true },
-    });
-    const inboxCode = tenant?.inboxCode ?? tenantId;
+    // Reply-to = userSlug.tenantSlug@domain
+    const [tenant, membership] = await Promise.all([
+      prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { slug: true, name: true },
+      }),
+      prisma.membership.findUnique({
+        where: { userId_tenantId: { userId, tenantId } },
+        select: { emailSlug: true },
+      }),
+    ]);
+    const tenantSlug =
+      tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
+    const userSlug =
+      membership?.emailSlug ?? slugifyForReplyTo(user.name ?? "user");
 
-    const html = parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
+    const html =
+      parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
+    const text =
+      (parsed.data.bodyText ?? "").trim() +
+      buildTrackingTextLine(conversation.trackingCode);
 
-    // Always use RESEND_FROM for verified domain
-    // Fallback to Resend onboarding domain if not configured
     const fromAddress = DEFAULT_FROM;
-
     const sent = await sendEmail({
       to: conversation.externalEmail,
       subject: conversation.subject,
       html,
+      text,
       from: fromAddress,
-      replyTo: buildReplyToAddress(inboxCode, conversation.trackingCode),
+      replyTo: buildReplyToAddress(tenantSlug, userSlug),
     });
 
     if (!sent.success) {

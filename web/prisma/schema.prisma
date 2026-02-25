@@ -382,12 +382,15 @@ model Membership {
   updatedAt      DateTime      @updatedAt
   userId         String
   tenantId       String
+  /** Unique per tenant: used in reply-to address (userSlug.tenantSlug@domain). Based on first name; on collision add . + 3 letters of last name. */
+  emailSlug     String?
   tenant         Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectMembers ProjectMember[]
   taskAssignments TaskAssignment[]
 
   @@unique([userId, tenantId])
+  @@unique([tenantId, emailSlug])
 }
 
 model Message {
@@ -668,6 +671,8 @@ model Tenant {
   updatedAt              DateTime                 @updatedAt
   address                String?
   inboxCode              String?                  @unique
+  /** Human-readable slug for reply-to (e.g. anerdins-el). Lookup by slug in inbound mail. */
+  slug                   String?                  @unique
   DocumentChunk          DocumentChunk[]
   DocumentTemplate       DocumentTemplate[]
   EmailChunk             EmailChunk[]

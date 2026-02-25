@@ -109,7 +109,7 @@ cd web && npx tsx scripts/generate-inbox-codes.ts
 1. Logga in i Arbetsytan
 2. Gå till E-post och fliken "Skriv"
 3. Skicka ett mail till din egen e-postadress
-4. Kontrollera att mailet har en reply-to adress som `inbox+{tenantCode}_{trackingCode}@mail.lowly.se`
+4. Kontrollera att mailet har en reply-to adress som `{userSlug}.{tenantSlug}@mail.lowly.se` (t.ex. `fredrik.anerdins-el@…` eller `fredrik.ane.anerdins-iot@…`). Ingen "inbox"; konversations-id finns i mailet (body).
 
 ### 4.3 Svara på mailet
 
@@ -119,8 +119,8 @@ cd web && npx tsx scripts/generate-inbox-codes.ts
 
 ### 4.4 Testa "Övrigt"-inkorg
 
-1. Skicka ett mail direkt till `inbox+{tenantCode}@mail.lowly.se` (utan trackingCode)
-2. Mailet ska hamna i admin-användarens inkorg som "Övrigt"
+1. Skicka ett mail direkt till `{userSlug}.{tenantSlug}@mail.lowly.se` (t.ex. `fredrik.anerdins-el@…`). Utan tracking i body hamnar det som "Övrigt" eller kopplas till befintlig konversation med samma avsändare.
+2. Mailet ska hamna i rätt användares inkorg (eller som "Övrigt" till admin om adressen inte matchar någon användare)
 3. Konversationen har `isUnassigned=true`
 
 ### 4.5 Felsökning
@@ -144,8 +144,8 @@ Systemet använder följande format för e-postadresser:
 
 | Typ | Format | Beskrivning |
 |-----|--------|-------------|
-| Befintlig konversation | `inbox+{tenantCode}_{trackingCode}@domain` | Svar på befintligt mail |
-| Ny kontakt | `inbox+{tenantCode}@domain` | Nytt mail till företaget |
+| Reply-To (alla utgående) | `{userSlug}.{tenantSlug}@domain` | T.ex. `fredrik.ane.anerdins-iot@mail.lowly.se`. userSlug = förnamn (vid kollision + 3 bokst. efternamn), sätts vid skapande. Konversations-id i body. |
+| Inkommande matchning | Samma adress | Webhook matchar via tracking i body, eller via tenant + användare (emailSlug) + avsändare. |
 
 ## Framtida förbättringar
 

@@ -9,6 +9,7 @@ import { sendEmail } from "@/lib/email";
 import { getAppBaseUrl, renderEmailTemplate } from "@/lib/email-templates";
 import { signIn } from "@/lib/auth";
 import { updateSubscriptionQuantity } from "@/actions/subscription";
+import { computeEmailSlugForUser } from "@/lib/email-tracking";
 import { getSocketServer } from "@/lib/socket";
 import { SOCKET_EVENTS, tenantRoom } from "@/lib/socket-events";
 import type { Role, InvitationStatus } from "../../generated/prisma/client";
@@ -350,7 +351,19 @@ export async function acceptInvitation(
     return { success: true };
   }
 
-  // Create membership and mark invitation as accepted
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true },
+  });
+  const existingSlugs = await prisma.membership.findMany({
+    where: { tenantId: invitation.tenantId },
+    select: { emailSlug: true },
+  });
+  const emailSlug = computeEmailSlugForUser(
+    user?.name ?? "user",
+    existingSlugs.map((m) => m.emailSlug).filter(Boolean) as string[]
+  );
+
   const db = tenantDb(invitation.tenantId, { actorUserId: userId });
   await db.$transaction([
     db.membership.create({
@@ -358,6 +371,7 @@ export async function acceptInvitation(
         userId,
         tenantId: invitation.tenantId,
         role: invitation.role,
+        emailSlug,
       },
     }),
     db.invitation.update({
@@ -446,11 +460,21 @@ export async function acceptInvitationWithRegistration(
         },
       });
 
+      const existingSlugs = await tx.membership.findMany({
+        where: { tenantId: invitation.tenantId },
+        select: { emailSlug: true },
+      });
+      const emailSlug = computeEmailSlugForUser(
+        name,
+        existingSlugs.map((m) => m.emailSlug).filter(Boolean) as string[]
+      );
+
       const membership = await tx.membership.create({
         data: {
           userId: user.id,
           tenantId: invitation.tenantId,
           role: invitation.role,
+          emailSlug,
         },
       });
 

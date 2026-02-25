@@ -7,6 +7,10 @@ import { prisma } from "@/lib/db";
 import { signIn } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
 import { getAppBaseUrl, renderEmailTemplate } from "@/lib/email-templates";
+import {
+  computeEmailSlugForUser,
+  slugifyForReplyTo,
+} from "@/lib/email-tracking";
 import { stripe } from "@/lib/stripe";
 
 // Auth actions run without session (registration/login). Global prisma is correct
@@ -93,18 +97,22 @@ export async function registerUser(
         },
       });
 
+      const baseSlug = slugifyForReplyTo(companyName);
       const tenant = await tx.tenant.create({
         data: {
           name: companyName,
           stripeCustomerId: stripeCustomer.id,
+          slug: `${baseSlug}-${crypto.randomBytes(2).toString("hex")}`,
         },
       });
 
+      const emailSlug = computeEmailSlugForUser(name, []);
       await tx.membership.create({
         data: {
           userId: user.id,
           tenantId: tenant.id,
           role: "ADMIN",
+          emailSlug,
         },
       });
 

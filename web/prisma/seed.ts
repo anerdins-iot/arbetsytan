@@ -14,13 +14,14 @@ async function main() {
   const testPasswordHash = await bcrypt.hash("password123", 12);
   const tenant = await prisma.tenant.upsert({
     where: { id: "seed-tenant-1" },
-    update: { stripeCustomerId: "cus_seed_test_001" },
+    update: { stripeCustomerId: "cus_seed_test_001", slug: "anerdins-el" },
     create: {
       id: "seed-tenant-1",
       name: "Anerdins El",
       orgNumber: "556677-8899",
       stripeCustomerId: "cus_seed_test_001",
       inboxCode: crypto.randomBytes(4).toString("hex"),
+      slug: "anerdins-el",
     },
   });
 
@@ -103,11 +104,12 @@ async function main() {
     where: {
       userId_tenantId: { userId: adminUser.id, tenantId: tenant.id },
     },
-    update: {},
+    update: { emailSlug: "fredrik" },
     create: {
       userId: adminUser.id,
       tenantId: tenant.id,
       role: "ADMIN",
+      emailSlug: "fredrik",
     },
   });
 
@@ -115,11 +117,12 @@ async function main() {
     where: {
       userId_tenantId: { userId: e2eAdminUser.id, tenantId: tenant.id },
     },
-    update: {},
+    update: { emailSlug: "e2e" },
     create: {
       userId: e2eAdminUser.id,
       tenantId: tenant.id,
       role: "ADMIN",
+      emailSlug: "e2e",
     },
   });
 
@@ -127,11 +130,12 @@ async function main() {
     where: {
       userId_tenantId: { userId: pmUser.id, tenantId: tenant.id },
     },
-    update: {},
+    update: { emailSlug: "per" },
     create: {
       userId: pmUser.id,
       tenantId: tenant.id,
       role: "PROJECT_MANAGER",
+      emailSlug: "per",
     },
   });
 
@@ -139,11 +143,12 @@ async function main() {
     where: {
       userId_tenantId: { userId: workerUser.id, tenantId: tenant.id },
     },
-    update: {},
+    update: { emailSlug: "maja" },
     create: {
       userId: workerUser.id,
       tenantId: tenant.id,
       role: "WORKER",
+      emailSlug: "maja",
     },
   });
 
@@ -151,11 +156,12 @@ async function main() {
     where: {
       userId_tenantId: { userId: malareUser.id, tenantId: tenant.id },
     },
-    update: {},
+    update: { emailSlug: "kalle" },
     create: {
       userId: malareUser.id,
       tenantId: tenant.id,
       role: "WORKER",
+      emailSlug: "kalle",
     },
   });
 
