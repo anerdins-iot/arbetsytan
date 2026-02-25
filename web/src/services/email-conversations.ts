@@ -347,6 +347,8 @@ export type CreateOutboundConversationData = {
   fromName?: string | null;
   /** When set, links the created EmailMessage to this EmailLog (e.g. when sending from AI). */
   emailLogId?: string | null;
+  /** Pre-generated tracking code (already injected into email body). If omitted, a new one is generated. */
+  trackingCode?: string;
 };
 
 /**
@@ -359,7 +361,7 @@ export async function createOutboundConversationCore(
   data: CreateOutboundConversationData
 ): Promise<void> {
   const db = tenantDb(tenantId);
-  const code = generateTrackingCode();
+  const code = data.trackingCode ?? generateTrackingCode();
   const now = new Date();
 
   await db.emailConversation.create({

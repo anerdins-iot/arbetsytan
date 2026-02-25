@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
-import { sendEmail, DEFAULT_FROM } from "@/lib/email";
+import { sendEmail, DEFAULT_FROM_EMAIL } from "@/lib/email";
 import {
   buildReplyToAddress,
   buildTrackingHtml,
@@ -167,14 +167,19 @@ export async function createConversation(
     const text =
       (rest.bodyText ?? "").trim() + buildTrackingTextLine(trackingCode);
 
-    const fromAddress = DEFAULT_FROM;
+    const replyToAddr = buildReplyToAddress(tenantSlug, userSlug);
+    const tenantName = tenant?.name ?? "ArbetsYtan";
+    const displayName = fromName
+      ? `${fromName} via ${tenantName}`
+      : tenantName;
+    const fromAddress = `${displayName} <${DEFAULT_FROM_EMAIL}>`;
     const sent = await sendEmail({
       to: rest.externalEmail,
       subject: rest.subject,
       html,
       text,
       from: fromAddress,
-      replyTo: buildReplyToAddress(tenantSlug, userSlug),
+      replyTo: replyToAddr,
     });
 
     if (!sent.success) {
@@ -262,14 +267,19 @@ export async function replyToConversation(
       (parsed.data.bodyText ?? "").trim() +
       buildTrackingTextLine(conversation.trackingCode);
 
-    const fromAddress = DEFAULT_FROM;
+    const replyToAddr = buildReplyToAddress(tenantSlug, userSlug);
+    const tenantName = tenant?.name ?? "ArbetsYtan";
+    const displayName = fromName
+      ? `${fromName} via ${tenantName}`
+      : tenantName;
+    const fromAddress = `${displayName} <${DEFAULT_FROM_EMAIL}>`;
     const sent = await sendEmail({
       to: conversation.externalEmail,
       subject: conversation.subject,
       html,
       text,
       from: fromAddress,
-      replyTo: buildReplyToAddress(tenantSlug, userSlug),
+      replyTo: replyToAddr,
     });
 
     if (!sent.success) {

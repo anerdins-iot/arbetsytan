@@ -35,6 +35,17 @@ function buildFromAddress(): string {
 }
 export const DEFAULT_FROM = buildFromAddress();
 
+/** The raw email address without display name, for building custom From headers. */
+export const DEFAULT_FROM_EMAIL =
+  process.env.RESEND_FROM_EMAIL?.trim() ??
+  (() => {
+    const legacy = process.env.RESEND_FROM?.trim().replace(/^["']|["']$/g, "").trim();
+    const match = legacy?.match(/<([^>]+)>/);
+    if (match) return match[1];
+    if (legacy?.includes("@")) return legacy;
+    return "onboarding@resend.dev";
+  })();
+
 export type EmailAttachment = {
   filename: string;
   content: Buffer | string;

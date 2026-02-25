@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { requirePermission } from "@/lib/auth";
 import { tenantDb, userDb, prisma } from "@/lib/db";
-import { sendEmail, DEFAULT_FROM, type EmailAttachment as ResendAttachment } from "@/lib/email";
+import { sendEmail, DEFAULT_FROM_EMAIL, type EmailAttachment as ResendAttachment } from "@/lib/email";
 import { markdownToHtml, markdownToPlainText } from "@/lib/email-body";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { logOutboundEmail } from "@/lib/email-log";
@@ -12,6 +12,9 @@ import { renderEmailTemplate } from "@/lib/email-templates";
 import { createOutboundConversationCore } from "@/services/email-conversations";
 import {
   buildReplyToAddress,
+  buildTrackingHtml,
+  buildTrackingTextLine,
+  generateTrackingCode,
   slugifyForReplyTo,
 } from "@/lib/email-tracking";
 
@@ -118,9 +121,28 @@ async function fetchFileAttachments(
   return result;
 }
 
-// ─── Reply-To Helper ──────────────────────────────────
+// ─── Sender Identity Helper ───────────────────────────
 
-async function getReplyToForUser(tenantId: string, userId: string, userName: string | null): Promise<string> {
+type SenderIdentity = {
+  /** Personal from: "Fredrik Anerdin via Anerdins El <fredrik.anerdins-el-xxxx@domain>" */
+  from: string;
+  /** Reply-to address: same as from email for personal mail */
+  replyTo: string;
+  /** Tenant display name for subject prefix */
+  tenantName: string;
+};
+
+/**
+ * Build a personal sender identity for outbound mail.
+ * From = "{senderName} via {tenantName} <userSlug.tenantSlug@receivingDomain>"
+ * Reply-To = same address (so replies route through our inbound pipeline).
+ * This replaces the generic noreply@ as from-address for personal mail.
+ */
+async function getSenderIdentity(
+  tenantId: string,
+  userId: string,
+  senderName: string | null
+): Promise<SenderIdentity> {
   const [tenant, membership] = await Promise.all([
     prisma.tenant.findUnique({
       where: { id: tenantId },
@@ -132,7 +154,8 @@ async function getReplyToForUser(tenantId: string, userId: string, userName: str
     }),
   ]);
   const tenantSlug = tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
-  const userSlug = membership?.emailSlug ?? slugifyForReplyTo(userName ?? "user");
+  const tenantName = tenant?.name ?? "ArbetsYtan";
+  const userSlug = membership?.emailSlug ?? slugifyForReplyTo(senderName ?? "user");
 
   // Backfill emailSlug if missing
   if (membership && membership.emailSlug === null) {
@@ -143,7 +166,13 @@ async function getReplyToForUser(tenantId: string, userId: string, userName: str
     });
   }
 
-  return buildReplyToAddress(tenantSlug, userSlug);
+  const replyTo = buildReplyToAddress(tenantSlug, userSlug);
+  const displayName = senderName
+    ? `${senderName} via ${tenantName}`
+    : tenantName;
+  const from = `${displayName} <${DEFAULT_FROM_EMAIL}>`;
+
+  return { from, replyTo, tenantName };
 }
 
 // ─── Schemas ───────────────────────────────────────────
@@ -350,30 +379,30 @@ export async function sendExternalEmail(
     text = branded.text;
   }
 
-  // Get sender info
+  // Get sender info and identity
   const sender = await prisma.user.findUnique({
     where: { id: userId },
     select: { name: true, email: true },
   });
+  const identity = await getSenderIdentity(tenantId, userId, sender?.name ?? null);
 
   // Send emails (multipart: html + text)
   const errors: string[] = [];
   let lastMessageId: string | undefined;
 
-  // Determine from address (always use RESEND_FROM for verified domain)
-  // Fallback to Resend onboarding domain if not configured
-  const fromAddress = DEFAULT_FROM;
-
-  // Reply-To: use user-specified replyTo or fall back to userSlug.tenantSlug@domain
-  const defaultReplyTo = await getReplyToForUser(tenantId, userId, sender?.name ?? null);
-
   for (const recipient of result.data.recipients) {
+    // Generate a tracking code per recipient so replies thread to the right conversation
+    const trackingCode = generateTrackingCode();
+    const trackedHtml = html + "\n" + buildTrackingHtml(trackingCode);
+    const trackedText = (text ?? "").trim() + buildTrackingTextLine(trackingCode);
+
     const emailResult = await sendEmail({
       to: recipient,
-      subject: `[${brand.tenantName}] ${subject}`,
-      html,
-      text,
-      replyTo: replyTo ?? defaultReplyTo,
+      subject: `[${identity.tenantName}] ${subject}`,
+      html: trackedHtml,
+      text: trackedText,
+      from: identity.from,
+      replyTo: replyTo ?? identity.replyTo,
       attachments: fileAttachments,
     });
 
@@ -387,19 +416,17 @@ export async function sendExternalEmail(
         const emailLogId = await logOutboundEmail({
           tenantId,
           userId,
-          projectId: undefined, // external emails don't have project
-          from: fromAddress,
+          projectId: undefined,
+          from: identity.from,
           to: [recipient],
-          subject: `[${brand.tenantName}] ${subject}`,
+          subject: `[${identity.tenantName}] ${subject}`,
           body: body,
-          htmlBody: html,
+          htmlBody: trackedHtml,
           resendMessageId: emailResult.messageId,
           attachments: fileAttachments.map((a) => ({
             filename: a.filename,
             contentType: a.contentType || "application/octet-stream",
             size: a.content.length,
-            // Note: We don't have bucket/key for attachments from the resend format
-            // This is a limitation - we would need to refetch from file table
             bucket: "",
             key: "",
           })),
@@ -408,23 +435,23 @@ export async function sendExternalEmail(
         // Queue embedding processing
         queueEmailEmbeddingProcessing(emailLogId, tenantId);
 
-        // Record in EmailConversation + EmailMessage so it appears in Skickat (same as UI-sent mail)
+        // Record in EmailConversation + EmailMessage so it appears in Skickat
         try {
-          const sentSubject = `[${brand.tenantName}] ${subject}`;
+          const sentSubject = `[${identity.tenantName}] ${subject}`;
           await createOutboundConversationCore(tenantId, userId, {
             externalEmail: recipient,
             subject: sentSubject,
             bodyHtml: markdownToHtml(body),
             bodyText: markdownToPlainText(body),
-            fromEmail: sender?.email ?? fromAddress,
+            fromEmail: sender?.email ?? identity.replyTo,
             fromName: sender?.name ?? null,
             emailLogId,
+            trackingCode,
           });
         } catch (convError) {
           console.error("Failed to create conversation for sent email:", convError);
         }
       } catch (logError) {
-        // Log error but don't fail the email send
         console.error("Failed to log email:", logError);
       }
     }
@@ -474,7 +501,7 @@ export async function sendToTeamMember(
     return { success: false, error: "Användaren hittades inte i organisationen" };
   }
 
-  // Get tenant branding and sender
+  // Get tenant branding and sender identity
   const [brand, sender] = await Promise.all([
     getTenantBrandTemplate(tenantId),
     prisma.user.findUnique({
@@ -482,28 +509,24 @@ export async function sendToTeamMember(
       select: { name: true, email: true },
     }),
   ]);
+  const identity = await getSenderIdentity(tenantId, userId, sender?.name ?? null);
 
   const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
   const { html, text } = buildBrandedEmail({
-    tenantName: brand.tenantName,
+    tenantName: identity.tenantName,
     logoUrl: brand.logoUrl,
     subject,
     body,
     locale,
   });
 
-  // Always use RESEND_FROM for verified domain
-  const fromAddress = DEFAULT_FROM;
-  // Reply-To: userSlug.tenantSlug@domain
-  const replyToAddress = await getReplyToForUser(tenantId, userId, sender?.name ?? null);
-
   const emailResult = await sendEmail({
     to: membership.user.email,
-    subject: `[${brand.tenantName}] ${subject}`,
+    subject: `[${identity.tenantName}] ${subject}`,
     html,
     text,
-    from: fromAddress,
-    replyTo: replyToAddress,
+    from: identity.from,
+    replyTo: identity.replyTo,
   });
 
   if (!emailResult.success) {
@@ -515,10 +538,10 @@ export async function sendToTeamMember(
     const emailLogId = await logOutboundEmail({
       tenantId,
       userId,
-      projectId: undefined, // team member emails don't have project context
-      from: fromAddress,
+      projectId: undefined,
+      from: identity.from,
       to: [membership.user.email],
-      subject: `[${brand.tenantName}] ${subject}`,
+      subject: `[${identity.tenantName}] ${subject}`,
       body: body,
       htmlBody: html,
       resendMessageId: emailResult.messageId,
@@ -527,7 +550,6 @@ export async function sendToTeamMember(
     // Queue embedding processing
     queueEmailEmbeddingProcessing(emailLogId, tenantId);
   } catch (logError) {
-    // Log error but don't fail the email send
     console.error("Failed to log email:", logError);
   }
 
@@ -558,7 +580,7 @@ export async function sendToTeamMembers(
   // Fetch file attachments from S3/MinIO (once for all recipients)
   const fileAttachments = await fetchFileAttachments(attachments ?? [], tenantId, userId);
 
-  // Get tenant branding and sender
+  // Get tenant branding and sender identity
   const [brand, sender] = await Promise.all([
     getTenantBrandTemplate(tenantId),
     prisma.user.findUnique({
@@ -566,30 +588,32 @@ export async function sendToTeamMembers(
       select: { name: true, email: true },
     }),
   ]);
+  const identity = await getSenderIdentity(tenantId, userId, sender?.name ?? null);
 
   const errors: string[] = [];
-  // Always use RESEND_FROM for verified domain
-  const fromAddress = DEFAULT_FROM;
-  // Reply-To: userSlug.tenantSlug@domain
-  const replyToAddress = await getReplyToForUser(tenantId, userId, sender?.name ?? null);
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
     const { html, text } = buildBrandedEmail({
-      tenantName: brand.tenantName,
+      tenantName: identity.tenantName,
       logoUrl: brand.logoUrl,
       subject,
       body,
       locale,
     });
 
+    // Generate tracking code per recipient so replies thread correctly
+    const trackingCode = generateTrackingCode();
+    const trackedHtml = html + "\n" + buildTrackingHtml(trackingCode);
+    const trackedText = (text ?? "").trim() + buildTrackingTextLine(trackingCode);
+
     const emailResult = await sendEmail({
       to: membership.user.email,
-      subject: `[${brand.tenantName}] ${subject}`,
-      html,
-      text,
-      from: fromAddress,
-      replyTo: replyToAddress,
+      subject: `[${identity.tenantName}] ${subject}`,
+      html: trackedHtml,
+      text: trackedText,
+      from: identity.from,
+      replyTo: identity.replyTo,
       attachments: fileAttachments,
     });
 
@@ -601,19 +625,17 @@ export async function sendToTeamMembers(
         const emailLogId = await logOutboundEmail({
           tenantId,
           userId,
-          projectId: undefined, // team member emails don't have project context
-          from: fromAddress,
+          projectId: undefined,
+          from: identity.from,
           to: [membership.user.email],
-          subject: `[${brand.tenantName}] ${subject}`,
+          subject: `[${identity.tenantName}] ${subject}`,
           body: body,
-          htmlBody: html,
+          htmlBody: trackedHtml,
           resendMessageId: emailResult.messageId,
           attachments: fileAttachments.map((a) => ({
             filename: a.filename,
             contentType: a.contentType || "application/octet-stream",
             size: a.content.length,
-            // Note: We don't have bucket/key for attachments from the resend format
-            // This is a limitation - we would need to refetch from file table
             bucket: "",
             key: "",
           })),
@@ -622,24 +644,24 @@ export async function sendToTeamMembers(
         // Queue embedding processing
         queueEmailEmbeddingProcessing(emailLogId, tenantId);
 
-        // Record in EmailConversation + EmailMessage so it appears in Skickat (same as UI-sent mail)
+        // Record in EmailConversation + EmailMessage so it appears in Skickat
         try {
-          const sentSubject = `[${brand.tenantName}] ${subject}`;
+          const sentSubject = `[${identity.tenantName}] ${subject}`;
           await createOutboundConversationCore(tenantId, userId, {
             externalEmail: membership.user.email,
             externalName: membership.user.name ?? null,
             subject: sentSubject,
             bodyHtml: markdownToHtml(body),
             bodyText: markdownToPlainText(body),
-            fromEmail: sender?.email ?? fromAddress,
+            fromEmail: sender?.email ?? identity.replyTo,
             fromName: sender?.name ?? null,
             emailLogId,
+            trackingCode,
           });
         } catch (convError) {
           console.error("Failed to create conversation for sent email:", convError);
         }
       } catch (logError) {
-        // Log error but don't fail the email send
         console.error("Failed to log email:", logError);
       }
     }
