@@ -3,10 +3,11 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { hasPermission, requireAuth, requirePermission, requireProject } from "@/lib/auth";
-import { tenantDb } from "@/lib/db";
+import { tenantDb, prisma } from "@/lib/db";
 import { getProjectsCore, getProjectDetailCore } from "@/services/project-service";
 import { logActivity } from "@/lib/activity-log";
 import { notifyProjectStatusChanged } from "@/lib/notification-delivery";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 import type { Project, ProjectStatus } from "../../generated/prisma/client";
 
 const addProjectMemberSchema = z.object({
@@ -125,6 +126,12 @@ export async function createProject(
   await logActivity(tenantId, project.id, userId, "created", "project", project.id, {
     name: project.name,
     status: project.status,
+  });
+
+  await publishDiscordEvent("discord:project-created", {
+    projectId: project.id,
+    tenantId,
+    name: project.name,
   });
 
   revalidatePath("/[locale]/projects", "page");
@@ -318,6 +325,12 @@ export async function archiveProject(
     data: { status: "ARCHIVED" },
   });
 
+  await publishDiscordEvent("discord:project-archived", {
+    projectId,
+    tenantId,
+    channelId: project.discordChannelId ?? null,
+  });
+
   await logActivity(tenantId, projectId, userId, "statusChanged", "project", projectId, {
     name: project.name,
     previousStatus: currentProject.status,
@@ -392,6 +405,18 @@ export async function addProjectMember(
     membershipId,
     memberUserId: membership.userId,
   });
+  const discordAccount = await prisma.account.findFirst({
+    where: { userId: membership.userId, provider: "discord" },
+    select: { providerAccountId: true },
+  });
+  if (discordAccount) {
+    await publishDiscordEvent("discord:project-member-added", {
+      projectId,
+      userId: membership.userId,
+      discordUserId: discordAccount.providerAccountId,
+      tenantId,
+    });
+  }
   revalidatePath("/[locale]/projects/[projectId]", "page");
   return { success: true };
 }
@@ -414,6 +439,15 @@ export async function removeProjectMember(
     where: { id: membershipId },
   });
 
+  let discordUserId: string | null = null;
+  if (membership?.userId) {
+    const discordAccount = await prisma.account.findFirst({
+      where: { userId: membership.userId, provider: "discord" },
+      select: { providerAccountId: true },
+    });
+    discordUserId = discordAccount?.providerAccountId ?? null;
+  }
+
   await projectDb.projectMember.delete({
     where: { projectId_membershipId: { projectId, membershipId } },
   });
@@ -421,6 +455,14 @@ export async function removeProjectMember(
     membershipId,
     memberUserId: membership?.userId ?? null,
   });
+  if (discordUserId) {
+    await publishDiscordEvent("discord:project-member-removed", {
+      projectId,
+      userId: membership!.userId,
+      discordUserId,
+      tenantId,
+    });
+  }
   revalidatePath("/[locale]/projects/[projectId]", "page");
   return { success: true };
 }

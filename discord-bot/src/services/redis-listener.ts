@@ -4,10 +4,18 @@
  * Subscribes to channels published by the Next.js web app:
  * - `discord:user-linked`         — user linked their Discord account → grant roles
  * - `discord:user-unlinked`       — user unlinked → revoke roles
- * - `discord:user-role-changed`    — system role changed → sync Discord roles
+ * - `discord:user-role-changed`   — system role changed → sync Discord roles
  * - `discord:user-deactivated`    — user deactivated → revoke roles
+ * - `discord:project-created`    — create Discord channel for project
+ * - `discord:project-archived`   — archive Discord channel
+ * - `discord:project-member-added`   — grant member access to project channel
+ * - `discord:project-member-removed` — revoke member access
+ * - `discord:category-created`    — create Discord category
+ * - `discord:category-deleted`   — delete Discord category
+ * - `discord:category-sync`      — sync category structure from admin panel
  */
 import type { Client } from "discord.js";
+import { ChannelType } from "discord.js";
 import { Redis } from "ioredis";
 import { prisma } from "../lib/prisma.js";
 import {
@@ -15,6 +23,13 @@ import {
   revokeAllRoles,
   syncUserRole,
 } from "./roles.js";
+import {
+  createProjectChannel,
+  archiveProjectChannel,
+  updateChannelPermissions,
+  syncCategoryStructure,
+  type CategorySyncItem,
+} from "./channel.js";
 
 export interface UserLinkedEvent {
   userId: string;
@@ -42,11 +57,63 @@ export interface UserDeactivatedEvent {
   discordUserId: string;
 }
 
+export interface ProjectCreatedEvent {
+  projectId: string;
+  tenantId: string;
+  name: string;
+}
+
+export interface ProjectArchivedEvent {
+  projectId: string;
+  tenantId: string;
+  channelId: string | null;
+}
+
+export interface ProjectMemberAddedEvent {
+  projectId: string;
+  userId: string;
+  discordUserId: string;
+  tenantId: string;
+}
+
+export interface ProjectMemberRemovedEvent {
+  projectId: string;
+  userId: string;
+  discordUserId: string;
+  tenantId: string;
+}
+
+export interface CategoryCreatedEvent {
+  tenantId: string;
+  categoryId: string;
+  name: string;
+  type: string;
+}
+
+export interface CategoryDeletedEvent {
+  tenantId: string;
+  categoryId: string;
+  discordCategoryId: string | null;
+}
+
+export interface CategorySyncEvent {
+  tenantId: string;
+  guildId: string;
+  categories: CategorySyncItem[];
+}
+
 const CHANNELS = [
   "discord:user-linked",
   "discord:user-unlinked",
   "discord:user-role-changed",
   "discord:user-deactivated",
+  "discord:project-created",
+  "discord:project-archived",
+  "discord:project-member-added",
+  "discord:project-member-removed",
+  "discord:category-created",
+  "discord:category-deleted",
+  "discord:category-sync",
 ] as const;
 
 export async function startRedisListener(client: Client): Promise<void> {
@@ -90,6 +157,41 @@ export async function startRedisListener(client: Client): Promise<void> {
         case "discord:user-deactivated": {
           const event = JSON.parse(message) as UserDeactivatedEvent;
           handleUserDeactivated(client, event);
+          break;
+        }
+        case "discord:project-created": {
+          const event = JSON.parse(message) as ProjectCreatedEvent;
+          handleProjectCreated(client, event);
+          break;
+        }
+        case "discord:project-archived": {
+          const event = JSON.parse(message) as ProjectArchivedEvent;
+          handleProjectArchived(client, event);
+          break;
+        }
+        case "discord:project-member-added": {
+          const event = JSON.parse(message) as ProjectMemberAddedEvent;
+          handleProjectMemberAdded(client, event);
+          break;
+        }
+        case "discord:project-member-removed": {
+          const event = JSON.parse(message) as ProjectMemberRemovedEvent;
+          handleProjectMemberRemoved(client, event);
+          break;
+        }
+        case "discord:category-created": {
+          const event = JSON.parse(message) as CategoryCreatedEvent;
+          handleCategoryCreated(client, event);
+          break;
+        }
+        case "discord:category-deleted": {
+          const event = JSON.parse(message) as CategoryDeletedEvent;
+          handleCategoryDeleted(client, event);
+          break;
+        }
+        case "discord:category-sync": {
+          const event = JSON.parse(message) as CategorySyncEvent;
+          handleCategorySync(client, event);
           break;
         }
         default:
@@ -236,5 +338,211 @@ async function handleUserDeactivated(
     );
   } catch (err) {
     console.error("[redis-listener] Failed to revoke roles (deactivated):", err);
+  }
+}
+
+async function handleProjectCreated(
+  client: Client,
+  event: ProjectCreatedEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Project created: projectId=${event.projectId}, tenantId=${event.tenantId}`
+  );
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: event.tenantId },
+    select: { discordGuildId: true },
+  });
+  if (!tenant?.discordGuildId) {
+    console.log(
+      `[redis-listener] Tenant ${event.tenantId} has no discordGuildId — skipping channel create`
+    );
+    return;
+  }
+
+  let categoryId: string | null = null;
+  const category = await prisma.discordCategory.findFirst({
+    where: { tenantId: event.tenantId, type: "PROJECTS" },
+    select: { discordCategoryId: true },
+  });
+  if (category?.discordCategoryId) categoryId = category.discordCategoryId;
+
+  try {
+    const channelId = await createProjectChannel(
+      client,
+      tenant.discordGuildId,
+      categoryId,
+      event.name,
+      event.projectId
+    );
+    if (channelId) {
+      console.log(
+        `[redis-listener] Created project channel ${channelId} for ${event.projectId}`
+      );
+    }
+  } catch (err) {
+    console.error("[redis-listener] Failed to create project channel:", err);
+  }
+}
+
+async function handleProjectArchived(
+  client: Client,
+  event: ProjectArchivedEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Project archived: projectId=${event.projectId}, channelId=${event.channelId}`
+  );
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: event.tenantId },
+    select: { discordGuildId: true },
+  });
+  if (!tenant?.discordGuildId) return;
+  const channelId = event.channelId ?? undefined;
+  const project = event.channelId
+    ? null
+    : await prisma.project.findUnique({
+        where: { id: event.projectId },
+        select: { discordChannelId: true },
+      });
+  const toArchive = channelId ?? project?.discordChannelId;
+  if (!toArchive) {
+    console.log(
+      `[redis-listener] No Discord channel for project ${event.projectId} — skipping archive`
+    );
+    return;
+  }
+
+  try {
+    await archiveProjectChannel(client, tenant.discordGuildId, toArchive);
+    console.log(
+      `[redis-listener] Archived channel ${toArchive} for project ${event.projectId}`
+    );
+  } catch (err) {
+    console.error("[redis-listener] Failed to archive project channel:", err);
+  }
+}
+
+async function handleProjectMemberAdded(
+  client: Client,
+  event: ProjectMemberAddedEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Project member added: projectId=${event.projectId}, discordUserId=${event.discordUserId}`
+  );
+
+  const project = await prisma.project.findUnique({
+    where: { id: event.projectId },
+    select: { discordChannelId: true },
+  });
+  if (!project?.discordChannelId) return;
+
+  try {
+    await updateChannelPermissions(
+      client,
+      project.discordChannelId,
+      event.discordUserId,
+      "grant"
+    );
+    console.log(
+      `[redis-listener] Granted channel access for ${event.discordUserId} to ${project.discordChannelId}`
+    );
+  } catch (err) {
+    console.error("[redis-listener] Failed to grant channel access:", err);
+  }
+}
+
+async function handleProjectMemberRemoved(
+  client: Client,
+  event: ProjectMemberRemovedEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Project member removed: projectId=${event.projectId}, discordUserId=${event.discordUserId}`
+  );
+
+  const project = await prisma.project.findUnique({
+    where: { id: event.projectId },
+    select: { discordChannelId: true },
+  });
+  if (!project?.discordChannelId) return;
+
+  try {
+    await updateChannelPermissions(
+      client,
+      project.discordChannelId,
+      event.discordUserId,
+      "revoke"
+    );
+    console.log(
+      `[redis-listener] Revoked channel access for ${event.discordUserId} from ${project.discordChannelId}`
+    );
+  } catch (err) {
+    console.error("[redis-listener] Failed to revoke channel access:", err);
+  }
+}
+
+async function handleCategoryCreated(
+  client: Client,
+  event: CategoryCreatedEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Category created: categoryId=${event.categoryId}, name=${event.name}`
+  );
+
+  const tenant = await prisma.tenant.findUnique({
+    where: { id: event.tenantId },
+    select: { discordGuildId: true },
+  });
+  if (!tenant?.discordGuildId) return;
+
+  try {
+    await syncCategoryStructure(client, tenant.discordGuildId, event.tenantId, [
+      { id: event.categoryId, name: event.name, type: event.type },
+    ]);
+  } catch (err) {
+    console.error("[redis-listener] Failed to create Discord category:", err);
+  }
+}
+
+async function handleCategoryDeleted(
+  client: Client,
+  event: CategoryDeletedEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Category deleted: categoryId=${event.categoryId}, discordCategoryId=${event.discordCategoryId}`
+  );
+
+  if (!event.discordCategoryId) return;
+
+  try {
+    const channel = await client.channels.fetch(event.discordCategoryId);
+    if (channel && channel.type === ChannelType.GuildCategory) {
+      await channel.delete("Category removed in admin panel");
+      console.log(
+        `[redis-listener] Deleted Discord category ${event.discordCategoryId}`
+      );
+    }
+  } catch (err) {
+    console.error("[redis-listener] Failed to delete Discord category:", err);
+  }
+}
+
+async function handleCategorySync(
+  client: Client,
+  event: CategorySyncEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Category sync: tenantId=${event.tenantId}, count=${event.categories.length}`
+  );
+
+  try {
+    await syncCategoryStructure(
+      client,
+      event.guildId,
+      event.tenantId,
+      event.categories
+    );
+  } catch (err) {
+    console.error("[redis-listener] Failed to sync categories:", err);
   }
 }

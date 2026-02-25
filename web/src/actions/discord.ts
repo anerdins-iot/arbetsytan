@@ -5,6 +5,7 @@ import { requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 import type { DiscordCategoryType } from "../../generated/prisma/client";
 
 // --- Types ---
@@ -220,13 +221,20 @@ export async function createDiscordCategory(data: {
     select: { sortOrder: true },
   });
 
-  await db.discordCategory.create({
+  const category = await db.discordCategory.create({
     data: {
       tenantId,
       name: parsed.data.name,
       type: parsed.data.type,
       sortOrder: (maxOrder?.sortOrder ?? -1) + 1,
     },
+  });
+
+  await publishDiscordEvent("discord:category-created", {
+    tenantId,
+    categoryId: category.id,
+    name: category.name,
+    type: category.type,
   });
 
   revalidatePath("/[locale]/settings/discord/categories", "page");
@@ -285,6 +293,12 @@ export async function deleteDiscordCategory(
   if (!category) {
     return { success: false, error: "NOT_FOUND" };
   }
+
+  await publishDiscordEvent("discord:category-deleted", {
+    tenantId,
+    categoryId: id,
+    discordCategoryId: category.discordCategoryId ?? null,
+  });
 
   await db.discordCategory.delete({
     where: { id },
