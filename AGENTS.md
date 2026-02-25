@@ -76,10 +76,12 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 | `/workspace/web/scripts/stop-server.sh` | Stoppa server efter tester |
 | `npx playwright test` (i `web/`) | Köra E2E-tester (kräver att servern körs, t.ex. via start-server.sh) |
 | `web/scripts/run-e2e.sh` (i `web/`) | Köra alla E2E (kräver att servern redan körs; använd t.ex. `start-server.sh` först) |
-| `npx prisma migrate dev --name namn` | Skapa migration vid schema-ändringar (nya tabeller/kolumner) |
-| `npx prisma migrate deploy` | Applicera migrationer i produktion |
-| `npx prisma studio` | Öppna DB-gui |
-| `npx prisma db seed` | Seed testdata |
+| `npx prisma migrate dev --name namn` (i web/) | Skapa migration vid schema-ändringar |
+| `npx prisma migrate deploy` (i web/) | Applicera migrationer i produktion |
+| `npx prisma studio` (i web/) | Öppna DB-gui |
+| `npx prisma db seed` (i web/) | Seed testdata |
+
+Prisma-konfiguration enligt **docs/prisma.md**: provider `prisma-client`, output i generated, ingen url i schema (använd prisma.config.ts i web/), driver adapter obligatoriskt.
 
 **E2E i CI:** Workflow `.github/workflows/ci.yml` har ett e2e-job som kör parallellt med build-and-lint. Det använder service containers (Postgres, Redis, MinIO), inte docker-compose. Stegen: install → playwright chromium → .env → build → MinIO-bucket → migrate → seed → starta server i bakgrunden → `scripts/run-e2e.sh`. Vid stabila gröna E2E kan `continue-on-error: true` tas bort.
 
@@ -90,9 +92,11 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 ### Arbetsflöde vid schema-ändringar
 
 1. Redigera `web/prisma/schema.prisma` (lägg till modell, kolumn, index)
-2. Kör `npx prisma migrate dev --name beskrivande_namn` (t.ex. `add_email_conversations`)
+2. Kör från web/: `npx prisma migrate dev --name beskrivande_namn` (t.ex. `add_email_conversations`)
 3. Verifiera att migrationsfilen skapades i `web/prisma/migrations/`
 4. Committa schema + migrationsfilen
+
+Se **docs/prisma.md** för Prisma 7 (provider, prisma.config.ts, adapter, pgvector).
 
 ### Vanliga misstag
 
