@@ -1,4 +1,9 @@
 import { Client, Events, Message } from "discord.js";
+import { identifyUser, getTenantFromGuild, validateProjectAccess } from "../services/user-identification.js";
+import { buildMessageContext, getChannelContext } from "../services/context.js";
+
+const LINK_ACCOUNT_INSTRUCTION =
+  "Du är inte kopplad till ArbetsYtan. Länka ditt Discord-konto i webbappen under Inställningar → Koppla Discord.";
 
 function shouldHandleMessage(message: Message, clientUserId: string): boolean {
   if (message.author.bot) return false;
@@ -21,12 +26,41 @@ export function registerMessageCreate(client: Client): void {
 
     if (!shouldHandleMessage(message, clientUser.id)) return;
 
-    // Placeholder for future AI handling: log the message
+    const discordUserId = message.author.id;
+    let tenantId: string | undefined;
+    if (message.guildId) {
+      const tenant = await getTenantFromGuild(message.guildId);
+      tenantId = tenant?.id;
+    }
+
+    const user = await identifyUser(discordUserId, tenantId);
+    if (!user) {
+      await message.reply(LINK_ACCOUNT_INSTRUCTION).catch(() => {});
+      return;
+    }
+
+    const channelContext = await getChannelContext(message);
+    const messageContext = await buildMessageContext(
+      message.channel as import("discord.js").TextChannel | import("discord.js").DMChannel,
+      20
+    );
+
+    let projectAccess: { projectId: string; projectName: string } | null = null;
+    if (channelContext.channelType === "guild") {
+      projectAccess = await validateProjectAccess(user.userId, message.channel.id);
+    }
+
     const channelLabel = message.guildId
       ? `#${"name" in message.channel ? message.channel.name : "channel"}`
       : "DM";
     console.log(
       `[${channelLabel}] ${message.author.tag}: ${message.content || "(no text)"}`
     );
+    console.log("[context]", {
+      user: { userId: user.userId, tenantId: user.tenantId, userName: user.userName, userRole: user.userRole },
+      channel: channelContext,
+      projectAccess: projectAccess ?? undefined,
+      recentMessages: messageContext.length,
+    });
   });
 }
