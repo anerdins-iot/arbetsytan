@@ -330,6 +330,7 @@ export async function acceptInvitation(
   // Verify the logged-in user's email matches the invitation
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    select: { email: true, name: true },
   });
 
   if (!user || user.email !== invitation.email) {
@@ -351,10 +352,6 @@ export async function acceptInvitation(
     return { success: true };
   }
 
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { name: true },
-  });
   const existingSlugs = await prisma.membership.findMany({
     where: { tenantId: invitation.tenantId },
     select: { emailSlug: true },

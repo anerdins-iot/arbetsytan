@@ -133,7 +133,7 @@ export async function processInboundEmail(
     }
   } else {
     // No tracking in body/address: match by tenant + user + from, or create Övrigt
-    let targetUserId: string;
+    let targetUserId: string | null;
 
     if (userSlug) {
       const membership = await prisma.membership.findFirst({
@@ -187,7 +187,6 @@ export async function processInboundEmail(
     }
   }
 
-  const { email: fromEmail, name: fromName } = parseFromAddress(data.from);
   const toEmail = toAddress;
   const receivedAt = new Date(data.created_at ?? Date.now());
   const bodyText = data.text ?? (data.html ? stripHtml(data.html) : "");
