@@ -15,7 +15,7 @@ import type {
   ConversationWithMessages,
   EmailMessageData,
 } from "@/services/email-conversations";
-import { MessageBubble, DateSeparator } from "./message-bubble";
+import { MessageItem, DateSeparator } from "./message-item";
 import { ReplyBox } from "./reply-box";
 
 type ConversationViewProps = {
@@ -191,6 +191,7 @@ export function ConversationView({
   const counterpart =
     conversation.externalName?.trim() || conversation.externalEmail || "";
   const messageGroups = groupMessagesByDate(conversation.messages);
+  const totalMessages = conversation.messages.length;
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -251,13 +252,19 @@ export function ConversationView({
             <div key={group.dateKey}>
               <DateSeparator date={group.dateLabel} />
               <div className="space-y-3">
-                {group.messages.map((msg) => (
-                  <MessageBubble
-                    key={msg.id}
-                    message={msg}
-                    isOutbound={msg.direction === "OUTBOUND"}
-                  />
-                ))}
+                {group.messages.map((msg) => {
+                  const isLast =
+                    msg.id ===
+                    conversation.messages[totalMessages - 1]?.id;
+                  return (
+                    <MessageItem
+                      key={msg.id}
+                      message={msg}
+                      isOutbound={msg.direction === "OUTBOUND"}
+                      defaultExpanded={isLast}
+                    />
+                  );
+                })}
               </div>
             </div>
           ))}
