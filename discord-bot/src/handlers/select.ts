@@ -13,6 +13,7 @@ import {
   createSuccessEmbed,
   createErrorEmbed,
 } from "../components/embeds.js";
+import { createUnauthorizedEmbed } from "../components/error-embeds.js";
 
 /**
  * Handle a select menu interaction.
@@ -31,13 +32,10 @@ export async function handleSelectMenu(
 
   const user = await identifyUser(interaction.user.id, tenantId);
   if (!user) {
+    const { embed, row } = createUnauthorizedEmbed();
     await interaction.reply({
-      embeds: [
-        createErrorEmbed(
-          "Konto ej kopplat",
-          "Du m\u00E5ste koppla ditt Discord-konto i webbappen."
-        ),
-      ],
+      embeds: [embed],
+      components: [row],
       flags: MessageFlags.Ephemeral,
     });
     return;

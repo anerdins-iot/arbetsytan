@@ -14,6 +14,10 @@ import { callAI } from "../services/ai-adapter.js";
 import { sendWithThinking } from "../utils/streaming.js";
 import { prisma } from "../lib/prisma.js";
 import {
+  createAIUnavailableEmbed,
+  createGenericErrorEmbed,
+} from "../components/error-embeds.js";
+import {
   isImageAttachment,
   handleImageForAI,
   handleFileAttachment,
@@ -32,6 +36,32 @@ function getConversationKey(message: Message): string {
     return `dm:${message.author.id}`;
   }
   return `channel:${message.channel.id}`;
+}
+
+/**
+ * Safely reply to a message, catching errors from blocked DMs or deleted channels.
+ */
+async function safeReply(
+  message: Message,
+  content: Parameters<Message["reply"]>[0]
+): Promise<void> {
+  try {
+    await message.reply(content);
+  } catch (err) {
+    const code = (err as { code?: number }).code;
+    // 50007 = Cannot send messages to this user (blocked bot)
+    // 10003 = Unknown Channel (deleted channel)
+    // 50001 = Missing Access
+    if (code === 50007) {
+      console.warn(`[message] Cannot DM user ${message.author.id} (blocked bot or DMs disabled)`);
+    } else if (code === 10003) {
+      console.warn(`[message] Channel ${message.channel.id} no longer exists`);
+    } else if (code === 50001) {
+      console.warn(`[message] Missing access to channel ${message.channel.id}`);
+    } else {
+      console.error("[message] Failed to reply:", err);
+    }
+  }
 }
 
 /**
@@ -60,7 +90,7 @@ export async function handleAIMessage(
         .trim();
 
       // Send typing indicator
-      await channel.sendTyping();
+      await channel.sendTyping().catch(() => {});
 
       // Process the first image (AI vision typically handles one at a time)
       await handleImageForAI(
@@ -142,7 +172,7 @@ export async function handleAIMessage(
 
   try {
     // Show typing indicator while waiting for AI
-    await channel.sendTyping();
+    await channel.sendTyping().catch(() => {});
 
     const response = await callAI({
       userId: user.userId,
@@ -166,21 +196,27 @@ export async function handleAIMessage(
     );
 
     if (!response.text?.trim()) {
-      await message.reply("Jag kunde inte generera ett svar. Försök igen.").catch(() => {});
+      await safeReply(message, "Jag kunde inte generera ett svar. Försök igen.");
       return;
     }
 
-    // Send the response using the edit-pattern
+    // Send the response using the edit-pattern (handles long messages via splitting)
     await sendWithThinking(channel, response.text, message);
   } catch (error) {
     console.error("AI error:", error);
 
-    const errorMessage =
-      error instanceof Error && error.message.includes("503")
-        ? "\u274C AI-tjänsten är inte tillgänglig just nu. Kontrollera att API-nycklar är konfigurerade."
-        : "\u274C Ett fel uppstod. Försök igen senare.";
+    const isServiceUnavailable =
+      error instanceof Error &&
+      (error.message.includes("503") ||
+        error.message.includes("timeout") ||
+        error.message.includes("ECONNREFUSED") ||
+        error.message.includes("AbortError"));
 
-    await message.reply(errorMessage).catch(() => {});
+    if (isServiceUnavailable) {
+      await safeReply(message, { embeds: [createAIUnavailableEmbed()] });
+    } else {
+      await safeReply(message, { embeds: [createGenericErrorEmbed()] });
+    }
   }
 }
 

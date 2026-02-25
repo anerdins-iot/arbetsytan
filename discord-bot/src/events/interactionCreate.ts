@@ -2,10 +2,11 @@
  * InteractionCreate event handler.
  * Routes incoming interactions (buttons, select menus, modals) to the appropriate handler.
  */
-import { Client, Events } from "discord.js";
+import { Client, Events, MessageFlags } from "discord.js";
 import { handleButton } from "../handlers/button.js";
 import { handleSelectMenu } from "../handlers/select.js";
 import { handleModalSubmit } from "../handlers/modal.js";
+import { createGenericErrorEmbed } from "../components/error-embeds.js";
 
 export function registerInteractionCreate(client: Client): void {
   client.on(Events.InteractionCreate, async (interaction) => {
@@ -20,21 +21,20 @@ export function registerInteractionCreate(client: Client): void {
     } catch (error) {
       console.error("[interactionCreate] Error handling interaction:", error);
 
-      // Try to respond with an error message if possible
+      // Try to respond with an error embed if possible
       try {
-        const errorMessage =
-          "\u274C Ett fel uppstod. F\u00F6rs\u00F6k igen senare.";
+        const errorEmbed = createGenericErrorEmbed();
 
         if (interaction.isRepliable()) {
           if (interaction.replied || interaction.deferred) {
             await interaction.followUp({
-              content: errorMessage,
-              ephemeral: true,
+              embeds: [errorEmbed],
+              flags: MessageFlags.Ephemeral,
             });
           } else {
             await interaction.reply({
-              content: errorMessage,
-              ephemeral: true,
+              embeds: [errorEmbed],
+              flags: MessageFlags.Ephemeral,
             });
           }
         }

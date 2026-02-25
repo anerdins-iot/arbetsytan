@@ -19,6 +19,7 @@ import {
   createSuccessEmbed,
   createErrorEmbed,
 } from "../components/embeds.js";
+import { createUnauthorizedEmbed } from "../components/error-embeds.js";
 import { createTaskButtons, createTimeButtons } from "../components/buttons.js";
 import { createTimeLogModal } from "../components/modals.js";
 
@@ -39,13 +40,10 @@ export async function handleButton(
 
   const user = await identifyUser(interaction.user.id, tenantId);
   if (!user) {
+    const { embed, row } = createUnauthorizedEmbed();
     await interaction.reply({
-      embeds: [
-        createErrorEmbed(
-          "Konto ej kopplat",
-          "Du m\u00E5ste koppla ditt Discord-konto i webbappen under Inst\u00E4llningar \u2192 Koppla Discord."
-        ),
-      ],
+      embeds: [embed],
+      components: [row],
       flags: MessageFlags.Ephemeral,
     });
     return;

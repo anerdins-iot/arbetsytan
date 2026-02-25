@@ -198,6 +198,16 @@ const CHANNELS = [
   "discord:time-logged",
 ] as const;
 
+/** Module-level reference to the Redis subscriber for graceful shutdown. */
+let subscriberInstance: Redis | null = null;
+
+/**
+ * Get the Redis subscriber instance (for shutdown cleanup).
+ */
+export function getRedisSubscriber(): Redis | null {
+  return subscriberInstance;
+}
+
 export async function startRedisListener(client: Client): Promise<void> {
   const redisUrl = process.env.REDIS_URL;
   if (!redisUrl) {
@@ -206,6 +216,7 @@ export async function startRedisListener(client: Client): Promise<void> {
   }
 
   const subscriber = new Redis(redisUrl);
+  subscriberInstance = subscriber;
 
   subscriber.on("error", (err: Error) => {
     console.error("[redis-listener] Redis error:", err.message);
@@ -213,6 +224,14 @@ export async function startRedisListener(client: Client): Promise<void> {
 
   subscriber.on("connect", () => {
     console.log("[redis-listener] Connected to Redis");
+  });
+
+  subscriber.on("close", () => {
+    console.log("[redis-listener] Redis connection closed");
+  });
+
+  subscriber.on("reconnecting", () => {
+    console.log("[redis-listener] Redis reconnecting...");
   });
 
   await subscriber.subscribe(...CHANNELS);
