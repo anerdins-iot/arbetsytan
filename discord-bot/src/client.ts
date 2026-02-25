@@ -6,7 +6,7 @@ import {
 import { registerReady } from "./events/ready.js";
 import { registerMessageCreate } from "./events/messageCreate.js";
 
-export async function startBot(): Promise<void> {
+export async function startBot(): Promise<Client> {
   const token = process.env.DISCORD_TOKEN;
   if (!token) {
     throw new Error("DISCORD_TOKEN is required");
@@ -27,4 +27,5 @@ export async function startBot(): Promise<void> {
   registerMessageCreate(client);
 
   await client.login(token);
+  return client;
 }
