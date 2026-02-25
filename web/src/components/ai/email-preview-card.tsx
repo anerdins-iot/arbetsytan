@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -158,13 +160,15 @@ export function EmailPreviewCard({ data, onSend, onCancel }: Props) {
             <p className="text-sm font-medium">{editedData.subject}</p>
           </div>
 
-          {/* Body preview */}
+          {/* Body preview (markdown rendered like outgoing email) */}
           <div className="space-y-1">
             <p className="text-xs font-medium text-muted-foreground">Meddelande</p>
-            <div className="rounded-md bg-muted/50 p-3">
-              <p className="text-sm text-muted-foreground line-clamp-3 whitespace-pre-wrap">
-                {editedData.body}
-              </p>
+            <div className="rounded-md bg-muted/50 p-3 line-clamp-3 overflow-hidden">
+              <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground text-sm prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-ol:my-1">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {editedData.body}
+                </ReactMarkdown>
+              </div>
             </div>
           </div>
 

@@ -7,6 +7,13 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ---
 
+### Server Action "was not found" + markdown i e-postförhandsgranskning (2026-02-25)
+**Problem:** Efter deploy eller vid flera instanser: "Server Action ... was not found on the server" vid Skicka e-post från personlig AI. Förhandsgranskningen visade rå markdown (t.ex. ### Rubrik) istället för formaterad text.
+**Lösning:** (1) NEXT_SERVER_ACTIONS_ENCRYPTION_KEY i .env (base64, t.ex. `openssl rand -base64 32`) så att action-IDs är stabila över byggen. (2) EmailPreviewCard använder nu ReactMarkdown + remarkGfm för "Meddelande"-sektionen så att användaren ser formaterad text. Utgående mail konverterade redan markdown → html/text i send-email.ts.
+**Lärdom:** Self-hosted/deploy kräver NEXT_SERVER_ACTIONS_ENCRYPTION_KEY; dokumentera i Coolify/env.
+
+---
+
 ### Inkommande e-post: "(Inget innehåll)" på svar (2026-02-25)
 **Problem:** Svar på utskickade mail visades som "(Inget innehåll)" i konversationsvyn.
 **Orsak:** Resend skickar inte e-postkropp (html/text) i webhooken `email.received` – bara metadata. Vi sparade alltid null för body.
