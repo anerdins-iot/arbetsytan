@@ -102,12 +102,6 @@ export function ConversationView({
         if (res.success) {
           setConversation(res.conversation);
           markConversationAsRead(conversationId).catch(() => {});
-          // Scroll to bottom after load
-          requestAnimationFrame(() => {
-            if (scrollRef.current) {
-              scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-            }
-          });
         } else {
           setLoadError(res.error ?? "UNKNOWN_ERROR");
         }
@@ -131,12 +125,10 @@ export function ConversationView({
         const res = await getConversation(conversationId);
         if (res.success) {
           setConversation(res.conversation);
+          // Scroll to top to see the newest message
           requestAnimationFrame(() => {
             if (scrollRef.current) {
-              scrollRef.current.scrollTo({
-                top: scrollRef.current.scrollHeight,
-                behavior: "smooth",
-              });
+              scrollRef.current.scrollTop = 0;
             }
           });
         }
@@ -190,8 +182,10 @@ export function ConversationView({
 
   const counterpart =
     conversation.externalName?.trim() || conversation.externalEmail || "";
-  const messageGroups = groupMessagesByDate(conversation.messages);
-  const totalMessages = conversation.messages.length;
+  // Reverse: newest message first (like Gmail)
+  const reversedMessages = [...conversation.messages].reverse();
+  const messageGroups = groupMessagesByDate(reversedMessages);
+  const latestMessageId = reversedMessages[0]?.id;
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -252,19 +246,14 @@ export function ConversationView({
             <div key={group.dateKey}>
               <DateSeparator date={group.dateLabel} />
               <div className="space-y-3">
-                {group.messages.map((msg) => {
-                  const isLast =
-                    msg.id ===
-                    conversation.messages[totalMessages - 1]?.id;
-                  return (
-                    <MessageItem
-                      key={msg.id}
-                      message={msg}
-                      isOutbound={msg.direction === "OUTBOUND"}
-                      defaultExpanded={isLast}
-                    />
-                  );
-                })}
+                {group.messages.map((msg) => (
+                  <MessageItem
+                    key={msg.id}
+                    message={msg}
+                    isOutbound={msg.direction === "OUTBOUND"}
+                    defaultExpanded={msg.id === latestMessageId}
+                  />
+                ))}
               </div>
             </div>
           ))}
