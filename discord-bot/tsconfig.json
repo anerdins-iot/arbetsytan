@@ -5,7 +5,6 @@
     "moduleResolution": "NodeNext",
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,10 +14,11 @@
     "declarationMap": true,
     "sourceMap": true,
     "paths": {
-      "@web/*": ["../web/src/*"]
+      "@web/*": ["../web/src/*"],
+      "@prisma/client": ["./generated/prisma/client.ts"]
     },
     "baseUrl": "."
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "generated/**/*"],
   "exclude": ["node_modules", "dist"]
 }
