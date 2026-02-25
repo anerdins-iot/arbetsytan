@@ -14,6 +14,7 @@ model Tenant {
   discordGuildId  String?       @unique
   Membership      Membership[]
   Project         Project[]
+  TimeEntry       TimeEntry[]
 }
 
 model User {
@@ -34,13 +35,14 @@ model Account {
 }
 
 model Membership {
-  id             String          @id @default(cuid())
-  userId         String
-  tenantId       String
-  role           Role            @default(WORKER)
-  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  projectMembers ProjectMember[]
+  id              String           @id @default(cuid())
+  userId          String
+  tenantId        String
+  role            Role             @default(WORKER)
+  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectMembers  ProjectMember[]
+  taskAssignments TaskAssignment[]
 
   @@unique([userId, tenantId])
 }
@@ -51,7 +53,9 @@ model Project {
   discordChannelId  String?         @unique
   tenantId          String
   tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  projectMembers   ProjectMember[]
+  projectMembers    ProjectMember[]
+  tasks             Task[]
+  timeEntries       TimeEntry[]
 }
 
 model ProjectMember {
@@ -62,6 +66,49 @@ model ProjectMember {
   project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@unique([projectId, membershipId])
+}
+
+model Task {
+  id             String           @id @default(cuid())
+  title          String
+  description    String?
+  status         TaskStatus       @default(TODO)
+  priority       Priority         @default(MEDIUM)
+  deadline       DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  projectId      String
+  project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignments    TaskAssignment[]
+  timeEntries    TimeEntry[]
+}
+
+model TaskAssignment {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  taskId       String
+  membershipId String
+  membership   Membership @relation(fields: [membershipId], references: [id], onDelete: Cascade)
+  task         Task       @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, membershipId])
+}
+
+model TimeEntry {
+  id          String        @id @default(cuid())
+  description String?
+  minutes     Int
+  date        DateTime
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  taskId      String?
+  projectId   String?
+  userId      String
+  entryType   TimeEntryType @default(WORK)
+  tenantId    String
+  project     Project?      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task        Task?         @relation(fields: [taskId], references: [id])
+  tenant      Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 }
 
 // Minimal Conversation model for Discord metadata lookup/update.
@@ -81,4 +128,27 @@ enum Role {
   ADMIN
   PROJECT_MANAGER
   WORKER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TimeEntryType {
+  WORK
+  VACATION
+  SICK
+  VAB
+  PARENTAL
+  EDUCATION
+  OTHER
 }

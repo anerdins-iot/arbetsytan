@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import { registerReady } from "./events/ready.js";
 import { registerMessageCreate } from "./events/messageCreate.js";
+import { registerInteractionCreate } from "./events/interactionCreate.js";
 
 export async function startBot(): Promise<Client> {
   const token = process.env.DISCORD_TOKEN;
@@ -25,6 +26,7 @@ export async function startBot(): Promise<Client> {
 
   registerReady(client);
   registerMessageCreate(client);
+  registerInteractionCreate(client);
 
   await client.login(token);
   return client;
