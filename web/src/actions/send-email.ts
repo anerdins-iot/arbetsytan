@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { requirePermission } from "@/lib/auth";
 import { tenantDb, userDb, prisma } from "@/lib/db";
-import { sendEmail, DEFAULT_FROM_EMAIL, type EmailAttachment as ResendAttachment } from "@/lib/email";
+import { sendEmail, type EmailAttachment as ResendAttachment } from "@/lib/email";
 import { markdownToHtml, markdownToPlainText } from "@/lib/email-body";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { logOutboundEmail } from "@/lib/email-log";
@@ -170,7 +170,7 @@ async function getSenderIdentity(
   const displayName = senderName
     ? `${senderName} via ${tenantName}`
     : tenantName;
-  const from = `${displayName} <${DEFAULT_FROM_EMAIL}>`;
+  const from = `${displayName} <${replyTo}>`;
 
   return { from, replyTo, tenantName };
 }

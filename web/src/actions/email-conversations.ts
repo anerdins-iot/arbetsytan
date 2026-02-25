@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { requireAuth, requireProject } from "@/lib/auth";
-import { sendEmail, DEFAULT_FROM_EMAIL } from "@/lib/email";
+import { sendEmail } from "@/lib/email";
 import {
   buildReplyToAddress,
   buildTrackingHtml,
@@ -172,7 +172,7 @@ export async function createConversation(
     const displayName = fromName
       ? `${fromName} via ${tenantName}`
       : tenantName;
-    const fromAddress = `${displayName} <${DEFAULT_FROM_EMAIL}>`;
+    const fromAddress = `${displayName} <${replyToAddr}>`;
     const sent = await sendEmail({
       to: rest.externalEmail,
       subject: rest.subject,
@@ -272,7 +272,7 @@ export async function replyToConversation(
     const displayName = fromName
       ? `${fromName} via ${tenantName}`
       : tenantName;
-    const fromAddress = `${displayName} <${DEFAULT_FROM_EMAIL}>`;
+    const fromAddress = `${displayName} <${replyToAddr}>`;
     const sent = await sendEmail({
       to: conversation.externalEmail,
       subject: conversation.subject,
