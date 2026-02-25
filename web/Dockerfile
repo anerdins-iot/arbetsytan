@@ -75,6 +75,9 @@ COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/prisma/migrations ./prisma/migrations
 COPY --from=builder /app/migrate.mjs ./migrate.mjs
 COPY --from=builder /app/seed.mjs ./seed.mjs
+# Backfill script and its dependencies (src/lib for db + email-tracking)
+COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/src/lib ./src/lib
 
 # Entrypoint script: run migrations then start server
 COPY --chown=nextjs:nodejs docker-entrypoint.sh /app/docker-entrypoint.sh
