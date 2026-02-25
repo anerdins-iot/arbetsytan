@@ -65,4 +65,4 @@ logs/
 screenshots/
 docs/
 .playwright-mcp/
-.playwright-browsers/
+.playwright-browsers/discord-bot/generated/
