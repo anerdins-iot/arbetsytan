@@ -114,7 +114,7 @@ export async function processInboundEmail(
   const { email: fromEmail, name: fromName } = parseFromAddress(data.from);
   let conversation: Awaited<
     ReturnType<typeof prisma.emailConversation.findUnique>
-  >;
+  > = null;
 
   // Priority 1: Try In-Reply-To header matching (Message-ID routing)
   const inReplyTo =

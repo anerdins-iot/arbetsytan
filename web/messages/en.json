@@ -1098,6 +1098,140 @@
         "history": "Change history"
       }
     },
+    "discord": {
+      "title": "Discord Integration",
+      "description": "Manage the Discord server connection, roles and categories.",
+      "backToDiscord": "Back to Discord",
+      "setup": {
+        "title": "Discord Connection",
+        "description": "Connect your Discord server to the system to enable bot integration.",
+        "guildIdLabel": "Discord Server ID",
+        "guildIdPlaceholder": "E.g. 123456789012345678",
+        "guildIdHelp": "Right-click your server in Discord and select 'Copy Server ID'.",
+        "connectButton": "Connect Discord Server",
+        "connecting": "Connecting...",
+        "connected": "Discord server connected.",
+        "connectedTo": "Connected to server: {guildId}",
+        "disconnectButton": "Disconnect",
+        "disconnecting": "Disconnecting...",
+        "botStatusLabel": "Bot Status",
+        "botStatusDescription": "Enable or disable the Discord bot for this server."
+      },
+      "errors": {
+        "guildIdRequired": "Discord Server ID is required.",
+        "connectFailed": "Could not connect the Discord server.",
+        "disconnectFailed": "Could not disconnect the Discord server.",
+        "toggleFailed": "Could not change bot status."
+      },
+      "linkedUsers": {
+        "title": "Linked Users",
+        "description": "{count, plural, =1 {1 user} other {# users}} have linked their Discord account.",
+        "empty": "No users have linked their Discord account yet.",
+        "columns": {
+          "discordUser": "Discord ID",
+          "systemUser": "System User",
+          "role": "Role",
+          "email": "Email"
+        },
+        "roles": {
+          "ADMIN": "Admin",
+          "PROJECT_MANAGER": "Project Manager",
+          "WORKER": "Worker"
+        }
+      },
+      "nav": {
+        "categories": "Categories",
+        "categoriesDescription": "Manage the Discord channel category structure.",
+        "roles": "Roles",
+        "rolesDescription": "Configure role mapping between the system and Discord."
+      },
+      "categories": {
+        "title": "Discord Categories",
+        "pageDescription": "Create and manage categories for Discord channels.",
+        "description": "Categories organize your Discord channels.",
+        "createButton": "New Category",
+        "empty": "No categories created yet.",
+        "saved": "Category saved.",
+        "synced": "Synced",
+        "notSynced": "Not synced",
+        "cancel": "Cancel",
+        "create": "Create",
+        "creating": "Creating...",
+        "save": "Save",
+        "saving": "Saving...",
+        "columns": {
+          "name": "Name",
+          "type": "Type",
+          "synced": "Status",
+          "actions": "Actions"
+        },
+        "fields": {
+          "name": "Category name",
+          "namePlaceholder": "E.g. Projects",
+          "type": "Category type"
+        },
+        "types": {
+          "PROJECTS": "Projects",
+          "SUPPORT": "Support",
+          "GENERAL": "General",
+          "WELCOME": "Welcome",
+          "CUSTOM": "Custom"
+        },
+        "createDialog": {
+          "title": "New Category",
+          "description": "Create a new Discord category."
+        },
+        "editDialog": {
+          "title": "Edit Category",
+          "description": "Change the category name."
+        },
+        "errors": {
+          "duplicateType": "A category with this type already exists.",
+          "createFailed": "Could not create the category.",
+          "updateFailed": "Could not update the category.",
+          "deleteFailed": "Could not delete the category."
+        }
+      },
+      "roles": {
+        "title": "Discord Roles",
+        "pageDescription": "Configure mapping between system roles and Discord roles.",
+        "description": "Customize role names and colors used in Discord.",
+        "syncButton": "Sync Roles",
+        "saved": "Role saved.",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving...",
+        "columns": {
+          "systemRole": "System Role",
+          "discordRole": "Discord Role",
+          "color": "Color",
+          "actions": "Actions"
+        },
+        "systemRoles": {
+          "ADMIN": "Admin",
+          "PROJECT_MANAGER": "Project Manager",
+          "WORKER": "Worker"
+        },
+        "fields": {
+          "discordRoleName": "Discord role name",
+          "color": "Color"
+        },
+        "editDialog": {
+          "title": "Edit Role Mapping",
+          "description": "Customize Discord role name and color for {role}."
+        },
+        "errors": {
+          "updateFailed": "Could not update the role mapping.",
+          "syncFailed": "Could not sync the roles.",
+          "notConnected": "Discord server is not connected."
+        }
+      },
+      "settingsLink": {
+        "title": "Discord",
+        "description": "Manage the Discord server integration, roles and categories.",
+        "cta": "Open Discord settings"
+      }
+    },
     "profile": {
       "title": "Personal settings",
       "description": "Update your profile, password, language, and personal preferences.",

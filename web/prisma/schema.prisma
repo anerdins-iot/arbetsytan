@@ -128,20 +128,64 @@ model Comment {
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
+model DiscordCategory {
+  id                String             @id @default(cuid())
+  tenantId          String
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name              String
+  discordCategoryId String?
+  type              DiscordCategoryType
+  sortOrder         Int                @default(0)
+  createdAt         DateTime           @default(now())
+
+  @@unique([tenantId, type])
+}
+
+model DiscordMessage {
+  id               String   @id @default(cuid())
+  discordMessageId String   @unique
+  messageId        String
+  message          Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  discordChannelId String
+  discordUserId    String
+  createdAt        DateTime @default(now())
+
+  @@index([discordChannelId])
+}
+
+model DiscordRoleMapping {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  systemRole      String
+  discordRoleId   String
+  discordRoleName String
+  color           String
+  createdAt       DateTime @default(now())
+
+  @@unique([tenantId, systemRole])
+  @@index([discordRoleId])
+}
+
 model Conversation {
-  id           String           @id @default(cuid())
-  type         ConversationType
-  title        String?
-  summary      String?
-  provider     AIProvider       @default(CLAUDE)
-  createdAt    DateTime         @default(now())
-  updatedAt    DateTime    @updatedAt
-  userId       String
-  projectId    String?
-  project      Project?         @relation(fields: [projectId], references: [id])
-  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages     Message[]
-  messageChunks MessageChunk[]
+  id              String           @id @default(cuid())
+  type            ConversationType
+  title           String?
+  summary         String?
+  provider        AIProvider       @default(CLAUDE)
+  discordChannelId String?
+  discordUserId   String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  userId          String
+  projectId       String?
+  project         Project?         @relation(fields: [projectId], references: [id])
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages        Message[]
+  messageChunks   MessageChunk[]
+
+  @@index([discordChannelId])
+  @@index([discordUserId])
 }
 
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
@@ -394,15 +438,16 @@ model Membership {
 }
 
 model Message {
-  id             String         @id @default(cuid())
-  role           MessageRole
-  content        String
-  createdAt      DateTime       @default(now())
-  conversationId String
-  projectId      String?
-  conversation   Conversation   @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  project        Project?       @relation(fields: [projectId], references: [id])
-  messageChunks  MessageChunk[]
+  id              String           @id @default(cuid())
+  role            MessageRole
+  content         String
+  createdAt       DateTime         @default(now())
+  conversationId  String
+  projectId       String?
+  conversation    Conversation     @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  project         Project?         @relation(fields: [projectId], references: [id])
+  messageChunks   MessageChunk[]
+  discordMessages DiscordMessage[]
 }
 
 model MessageChunk {
@@ -558,6 +603,8 @@ model Project {
   description       String?
   status            ProjectStatus       @default(ACTIVE)
   address           String?
+  discordChannelId  String?             @unique
+  discordChannelName String?
   createdAt         DateTime            @default(now())
   updatedAt         DateTime         @updatedAt
   tenantId          String
@@ -673,7 +720,11 @@ model Tenant {
   inboxCode              String?                  @unique
   /** Human-readable slug for reply-to (e.g. anerdins-el). Lookup by slug in inbound mail. */
   slug                   String?                  @unique
+  discordGuildId         String?                  @unique
+  discordBotEnabled      Boolean                  @default(false)
   DocumentChunk          DocumentChunk[]
+  DiscordCategory        DiscordCategory[]
+  DiscordRoleMapping     DiscordRoleMapping[]
   DocumentTemplate       DocumentTemplate[]
   EmailChunk             EmailChunk[]
   EmailConversation      EmailConversation[]
@@ -796,6 +847,14 @@ enum AutomationStatus {
 enum ConversationType {
   PERSONAL
   PROJECT
+}
+
+enum DiscordCategoryType {
+  PROJECTS
+  SUPPORT
+  GENERAL
+  WELCOME
+  CUSTOM
 }
 
 enum EmailDirection {

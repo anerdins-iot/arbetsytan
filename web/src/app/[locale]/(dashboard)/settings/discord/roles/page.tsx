@@ -1,0 +1,43 @@
+import { setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
+import { requireRole } from "@/lib/auth";
+import { getDiscordRoleMappings } from "@/actions/discord";
+import { RoleManager } from "@/components/discord/RoleManager";
+import { Link } from "@/i18n/routing";
+import { ArrowLeft } from "lucide-react";
+
+type Props = {
+  params: Promise<{ locale: string }>;
+};
+
+export default async function DiscordRolesPage({ params }: Props) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "settings.discord" });
+
+  await requireRole(["ADMIN"]);
+
+  const mappings = await getDiscordRoleMappings();
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <Link
+          href="/settings/discord"
+          className="mb-2 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="size-4" />
+          {t("backToDiscord")}
+        </Link>
+        <h1 className="text-3xl font-bold text-foreground">
+          {t("roles.title")}
+        </h1>
+        <p className="mt-1 text-muted-foreground">
+          {t("roles.pageDescription")}
+        </p>
+      </div>
+
+      <RoleManager mappings={mappings} />
+    </div>
+  );
+}

@@ -6,6 +6,7 @@ import { requireAuth, requireProject } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { getCommentsCore } from "@/services/comment-service";
 import { createNotification } from "@/actions/notifications";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 
 // ─────────────────────────────────────────
 // Types
@@ -161,7 +162,7 @@ export async function createComment(
   projectId: string,
   data: { taskId: string; content: string }
 ): Promise<CommentActionResult> {
-  const { tenantId, userId } = await requireAuth();
+  const { tenantId, userId, user } = await requireAuth();
   await requireProject(tenantId, projectId, userId);
 
   const parsed = createCommentSchema.safeParse(data);
@@ -188,12 +189,22 @@ export async function createComment(
     return { success: false, error: "TASK_NOT_FOUND" };
   }
 
-  await db.comment.create({
+  const created = await db.comment.create({
     data: {
       content: parsed.data.content,
       authorId: userId,
       task: { connect: { id: parsed.data.taskId } },
     },
+  });
+
+  await publishDiscordEvent("discord:comment-added", {
+    commentId: created.id,
+    taskId: parsed.data.taskId,
+    projectId,
+    tenantId,
+    authorName: user.name ?? user.email ?? "Användare",
+    preview: parsed.data.content.slice(0, 500),
+    taskTitle: task.title,
   });
 
   // Notify assigned users (except the commenter)

@@ -1109,6 +1109,140 @@
         "history": "Ändringshistorik"
       }
     },
+    "discord": {
+      "title": "Discord-integration",
+      "description": "Hantera Discord-serverns koppling, roller och kategorier.",
+      "backToDiscord": "Tillbaka till Discord",
+      "setup": {
+        "title": "Discord-koppling",
+        "description": "Koppla din Discord-server till systemet för att aktivera bot-integration.",
+        "guildIdLabel": "Discord Server-ID",
+        "guildIdPlaceholder": "T.ex. 123456789012345678",
+        "guildIdHelp": "Högerklicka på din server i Discord och välj 'Kopiera server-ID'.",
+        "connectButton": "Koppla Discord-server",
+        "connecting": "Kopplar...",
+        "connected": "Discord-server kopplad.",
+        "connectedTo": "Kopplad till server: {guildId}",
+        "disconnectButton": "Koppla bort",
+        "disconnecting": "Kopplar bort...",
+        "botStatusLabel": "Bot-status",
+        "botStatusDescription": "Aktivera eller inaktivera Discord-boten för denna server."
+      },
+      "errors": {
+        "guildIdRequired": "Discord Server-ID krävs.",
+        "connectFailed": "Kunde inte koppla Discord-servern.",
+        "disconnectFailed": "Kunde inte koppla bort Discord-servern.",
+        "toggleFailed": "Kunde inte ändra bot-statusen."
+      },
+      "linkedUsers": {
+        "title": "Länkade användare",
+        "description": "{count, plural, =1 {1 användare} other {# användare}} har kopplat sitt Discord-konto.",
+        "empty": "Inga användare har kopplat sitt Discord-konto ännu.",
+        "columns": {
+          "discordUser": "Discord-ID",
+          "systemUser": "Systemanvändare",
+          "role": "Roll",
+          "email": "E-post"
+        },
+        "roles": {
+          "ADMIN": "Admin",
+          "PROJECT_MANAGER": "Projektledare",
+          "WORKER": "Montör"
+        }
+      },
+      "nav": {
+        "categories": "Kategorier",
+        "categoriesDescription": "Hantera Discord-kanalernas kategoristruktur.",
+        "roles": "Roller",
+        "rolesDescription": "Konfigurera rollmappning mellan systemet och Discord."
+      },
+      "categories": {
+        "title": "Discord-kategorier",
+        "pageDescription": "Skapa och hantera kategorier för Discord-kanalerna.",
+        "description": "Kategorier organiserar dina Discord-kanaler.",
+        "createButton": "Ny kategori",
+        "empty": "Inga kategorier skapade ännu.",
+        "saved": "Kategori sparad.",
+        "synced": "Synkad",
+        "notSynced": "Ej synkad",
+        "cancel": "Avbryt",
+        "create": "Skapa",
+        "creating": "Skapar...",
+        "save": "Spara",
+        "saving": "Sparar...",
+        "columns": {
+          "name": "Namn",
+          "type": "Typ",
+          "synced": "Status",
+          "actions": "Åtgärder"
+        },
+        "fields": {
+          "name": "Kategorinamn",
+          "namePlaceholder": "T.ex. Projekt",
+          "type": "Kategorityp"
+        },
+        "types": {
+          "PROJECTS": "Projekt",
+          "SUPPORT": "Support",
+          "GENERAL": "Allmänt",
+          "WELCOME": "Välkommen",
+          "CUSTOM": "Anpassad"
+        },
+        "createDialog": {
+          "title": "Ny kategori",
+          "description": "Skapa en ny Discord-kategori."
+        },
+        "editDialog": {
+          "title": "Redigera kategori",
+          "description": "Ändra kategorinamnet."
+        },
+        "errors": {
+          "duplicateType": "En kategori med denna typ finns redan.",
+          "createFailed": "Kunde inte skapa kategorin.",
+          "updateFailed": "Kunde inte uppdatera kategorin.",
+          "deleteFailed": "Kunde inte ta bort kategorin."
+        }
+      },
+      "roles": {
+        "title": "Discord-roller",
+        "pageDescription": "Konfigurera mappning mellan systemroller och Discord-roller.",
+        "description": "Anpassa rollnamn och färger som används i Discord.",
+        "syncButton": "Synka roller",
+        "saved": "Roll sparad.",
+        "cancel": "Avbryt",
+        "save": "Spara",
+        "saving": "Sparar...",
+        "columns": {
+          "systemRole": "Systemroll",
+          "discordRole": "Discord-roll",
+          "color": "Färg",
+          "actions": "Åtgärder"
+        },
+        "systemRoles": {
+          "ADMIN": "Admin",
+          "PROJECT_MANAGER": "Projektledare",
+          "WORKER": "Montör"
+        },
+        "fields": {
+          "discordRoleName": "Discord-rollnamn",
+          "color": "Färg"
+        },
+        "editDialog": {
+          "title": "Redigera rollmappning",
+          "description": "Anpassa Discord-rollnamn och färg för {role}."
+        },
+        "errors": {
+          "updateFailed": "Kunde inte uppdatera rollmappningen.",
+          "syncFailed": "Kunde inte synka rollerna.",
+          "notConnected": "Discord-servern är inte kopplad."
+        }
+      },
+      "settingsLink": {
+        "title": "Discord",
+        "description": "Hantera Discord-serverintegrationen, roller och kategorier.",
+        "cta": "Öppna Discord-inställningar"
+      }
+    },
     "profile": {
       "title": "Personliga inställningar",
       "description": "Uppdatera profil, lösenord, språk och personliga preferenser.",

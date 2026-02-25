@@ -22,6 +22,7 @@ import { processFileOcr } from "@/lib/ai/ocr";
 import { logger } from "@/lib/logger";
 import { getProjectFilesCore } from "@/services/file-service";
 import { fillDocxTemplate } from "@/lib/ai/tools/shared-tools";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 import ExcelJS from "exceljs";
 
 const uploadPreparationSchema = z.object({
@@ -184,7 +185,7 @@ export async function completeFileUpload(input: {
     }
   | { success: false; error: string }
 > {
-  const { tenantId, userId } = await requirePermission("canUploadFiles");
+  const { tenantId, userId, user } = await requirePermission("canUploadFiles");
   const parsed = completeUploadSchema.safeParse(input);
   if (!parsed.success) {
     return { success: false, error: "VALIDATION_ERROR" };
@@ -266,7 +267,7 @@ export async function completeFileUpload(input: {
 export async function uploadFile(
   formData: FormData
 ): Promise<{ success: true; file: FileItem } | { success: false; error: string }> {
-  const { tenantId, userId } = await requirePermission("canUploadFiles");
+  const { tenantId, userId, user } = await requirePermission("canUploadFiles");
   const parsed = uploadFileFormSchema.safeParse({
     projectId: formData.get("projectId"),
     file: formData.get("file"),
@@ -314,6 +315,15 @@ export async function uploadFile(
       fileName: created.name,
       fileSize: created.size,
       fileType: created.type,
+    });
+
+    await publishDiscordEvent("discord:file-uploaded", {
+      fileId: created.id,
+      projectId,
+      tenantId,
+      fileName: created.name,
+      fileSize: created.size,
+      uploadedByName: user.name ?? user.email ?? undefined,
     });
 
     // Trigger OCR in background (fire-and-forget)
