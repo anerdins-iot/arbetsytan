@@ -7,6 +7,14 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ---
 
+### Inkommande e-post: "(Inget innehåll)" på svar (2026-02-25)
+**Problem:** Svar på utskickade mail visades som "(Inget innehåll)" i konversationsvyn.
+**Orsak:** Resend skickar inte e-postkropp (html/text) i webhooken `email.received` – bara metadata. Vi sparade alltid null för body.
+**Lösning:** Efter webhook-anrop hämtar vi innehållet via Resend Received Emails API (`resend.emails.receiving.get(email_id)`). I webhook-routern anrikar vi payload med `html`/`text` innan `processInboundEmail`. I `email-inbound.ts` sätter vi `EmailMessage.bodyText` till avledd text från HTML när endast HTML finns (så sökning/preview fungerar).
+**Lärdom:** Resend webhooks inkluderar aldrig body – alltid två steg: webhook → API-anrop för att hämta html/text.
+
+---
+
 ### ARKITEKTURBESLUT: AI-chatt ska aldrig rendera datarikt innehåll (2026-02-23)
 
 **Beslut (godkänt av användaren):** AI-chattflödet ska ALDRIG rendera produktlistor, tabeller eller annat datarikt innehåll direkt. Det hackar och buggar.

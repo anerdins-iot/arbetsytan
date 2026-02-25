@@ -203,7 +203,7 @@ export async function processInboundEmail(
       toEmail,
       subject: data.subject,
       bodyHtml: data.html ?? null,
-      bodyText: data.text ?? null,
+      bodyText: data.text ?? (bodyText || null),
       isRead: false,
       sentAt: null,
       receivedAt,

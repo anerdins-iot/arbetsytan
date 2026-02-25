@@ -115,3 +115,28 @@ export async function sendEmail(
     };
   }
 }
+
+/**
+ * Fetches the body (html + text) of a received email by id.
+ * Resend webhooks do NOT include body; you must call this after receiving email.received.
+ * @see https://resend.com/docs/dashboard/receiving/get-email-content
+ */
+export async function getReceivedEmailContent(
+  emailId: string
+): Promise<{ html: string | null; text: string | null }> {
+  if (!resend) return { html: null, text: null };
+  try {
+    const { data, error } = await (resend as any).emails.receiving.get(emailId);
+    if (error || !data) {
+      console.warn("[EMAIL] getReceivedEmailContent failed", { emailId, error });
+      return { html: null, text: null };
+    }
+    return {
+      html: typeof data.html === "string" ? data.html : null,
+      text: typeof data.text === "string" ? data.text : null,
+    };
+  } catch (err) {
+    console.error("[EMAIL] getReceivedEmailContent exception", { emailId, err });
+    return { html: null, text: null };
+  }
+}

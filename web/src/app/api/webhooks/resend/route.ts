@@ -1,6 +1,7 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { getReceivedEmailContent } from "@/lib/email";
 import { processInboundEmail } from "@/services/email-inbound";
 import { updateEmailStatus } from "@/lib/email-log";
 
@@ -45,9 +46,17 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (event.type) {
-      case "email.received":
-        await processInboundEmail(event as Parameters<typeof processInboundEmail>[0]);
+      case "email.received": {
+        const emailId = typeof event.data?.email_id === "string" ? event.data.email_id : null;
+        const enriched = { ...event, data: { ...event.data } } as Parameters<typeof processInboundEmail>[0];
+        if (emailId) {
+          const body = await getReceivedEmailContent(emailId);
+          enriched.data.html = body.html ?? enriched.data.html;
+          enriched.data.text = body.text ?? enriched.data.text;
+        }
+        await processInboundEmail(enriched);
         break;
+      }
       case "email.delivered":
         if (event.data?.email_id) {
           await updateEmailStatus(event.data.email_id, "DELIVERED");
