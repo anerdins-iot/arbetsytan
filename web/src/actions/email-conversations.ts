@@ -11,6 +11,7 @@ import {
   generateTrackingCode,
   slugifyForReplyTo,
 } from "@/lib/email-tracking";
+import { renderEmailTemplate } from "@/lib/email-templates";
 import { prisma, tenantDb } from "@/lib/db";
 import {
   getConversationsCore,
@@ -163,12 +164,26 @@ export async function createConversation(
       });
     }
 
-    const html = rest.bodyHtml + "\n" + buildTrackingHtml(trackingCode);
+    const replyToAddr = buildReplyToAddress(tenantSlug, userSlug);
+    const tenantName = tenant?.name ?? "ArbetsYtan";
+
+    // Wrap body in branded email template
+    const rendered = await renderEmailTemplate({
+      tenantId,
+      name: "outgoing",
+      locale: "sv",
+      variables: {
+        tenantName,
+        subject: rest.subject,
+        content: rest.bodyHtml + "\n" + buildTrackingHtml(trackingCode),
+      },
+      fallbackSubject: rest.subject,
+      fallbackHtml: rest.bodyHtml,
+    });
+
     const text =
       (rest.bodyText ?? "").trim() + buildTrackingTextLine(trackingCode);
 
-    const replyToAddr = buildReplyToAddress(tenantSlug, userSlug);
-    const tenantName = tenant?.name ?? "ArbetsYtan";
     const displayName = fromName
       ? `${fromName} via ${tenantName}`
       : tenantName;
@@ -176,7 +191,7 @@ export async function createConversation(
     const sent = await sendEmail({
       to: rest.externalEmail,
       subject: rest.subject,
-      html,
+      html: rendered.html,
       text,
       from: fromAddress,
       replyTo: replyToAddr,
@@ -261,14 +276,27 @@ export async function replyToConversation(
       });
     }
 
-    const html =
-      parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
+    const replyToAddr = buildReplyToAddress(tenantSlug, userSlug);
+    const tenantName = tenant?.name ?? "ArbetsYtan";
+
+    // Wrap body in branded email template
+    const rendered = await renderEmailTemplate({
+      tenantId,
+      name: "outgoing",
+      locale: "sv",
+      variables: {
+        tenantName,
+        subject: conversation.subject,
+        content: parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode),
+      },
+      fallbackSubject: conversation.subject,
+      fallbackHtml: parsed.data.bodyHtml,
+    });
+
     const text =
       (parsed.data.bodyText ?? "").trim() +
       buildTrackingTextLine(conversation.trackingCode);
 
-    const replyToAddr = buildReplyToAddress(tenantSlug, userSlug);
-    const tenantName = tenant?.name ?? "ArbetsYtan";
     const displayName = fromName
       ? `${fromName} via ${tenantName}`
       : tenantName;
@@ -276,7 +304,7 @@ export async function replyToConversation(
     const sent = await sendEmail({
       to: conversation.externalEmail,
       subject: conversation.subject,
-      html,
+      html: rendered.html,
       text,
       from: fromAddress,
       replyTo: replyToAddr,
