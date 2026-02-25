@@ -441,15 +441,68 @@ export async function POST(req: NextRequest) {
         hasOpenaiKey: !!process.env.OPENAI_API_KEY,
       });
     },
-    onFinish: async ({ text, response }) => {
-      const actualModelId = response?.modelId;
-      logger.info("onFinish: triggered", { activeConversationId, textLength: text?.length ?? 0, actualModelId });
-      // Save assistant response to DB (personal AI: use userDb for auto-emit)
-      if (text && activeConversationId) {
+    onFinish: async ({ text }) => {
+      logger.info("onFinish: triggered", { activeConversationId, textLength: text?.length ?? 0 });
+      // Assistant message is saved in toUIMessageStreamResponse onFinish with full parts (tool results)
+      // so conversation history can re-render tool cards. We only log here.
+    },
+  });
+
+  // Headers: conversation ID, model key and optional RAG sources for client
+  const responseHeaders: Record<string, string> = {
+    "X-Conversation-Id": activeConversationId,
+    "X-Model-Key": providerKey,
+  };
+  if (ragSources.length > 0) {
+    // Base64 encode to avoid ByteString errors with Unicode characters in excerpts
+    responseHeaders["X-Sources"] = Buffer.from(JSON.stringify(ragSources), "utf-8").toString("base64");
+  }
+
+  // Debug context: send unified search results to frontend for RAG debug modal
+  if (searchResults.length > 0) {
+    const recentUserMsgsForDebug = [...messages].filter(m => m.role === "user").slice(-3);
+    const debugQueryText = recentUserMsgsForDebug.map(extractTextFromParts).join(" ");
+    const knowledge = searchResults.filter(r => r.source === "knowledge").slice(0, 10);
+    const conversations = searchResults.filter(r => r.source === "conversation").slice(0, 10);
+    const documents = searchResults.filter(r => r.source === "document").slice(0, 10);
+    const debugContext = {
+      knowledge: knowledge.map(r => ({ text: r.text, similarity: r.similarity })),
+      conversations: conversations.map(r => ({ text: r.text, similarity: r.similarity })),
+      documents: documents.map(r => ({ text: r.text, similarity: r.similarity, metadata: r.metadata })),
+      totalResults: searchResults.length,
+      queryText: debugQueryText,
+    };
+    responseHeaders["X-Debug-Context"] = Buffer.from(JSON.stringify(debugContext), "utf-8").toString("base64");
+  }
+
+  return result.toUIMessageStreamResponse({
+    headers: responseHeaders,
+    onFinish: async ({ responseMessage }) => {
+      if (!activeConversationId || responseMessage.role !== "assistant") return;
+      try {
+        const msg = responseMessage as { parts?: unknown[]; content?: unknown[] };
+        const parts = Array.isArray(msg.parts) ? msg.parts : Array.isArray(msg.content) ? msg.content : [];
+        const serializable = {
+          v: 1,
+          id: (responseMessage as { id?: string }).id,
+          role: responseMessage.role,
+          parts: parts.map((p) => {
+            const part = p as Record<string, unknown>;
+            return {
+              type: part.type,
+              text: part.text,
+              state: part.state,
+              output: part.output,
+              toolCallId: part.toolCallId,
+              toolName: part.toolName,
+            };
+          }),
+        };
+        const content = JSON.stringify(serializable);
         const assistantMsg = await udb.message.create({
           data: {
             role: "ASSISTANT",
-            content: text,
+            content,
             conversationId: activeConversationId,
             projectId: projectId ?? null,
           },
@@ -494,39 +547,13 @@ export async function POST(req: NextRequest) {
             })
           );
         }
+      } catch (err) {
+        logger.error("Failed to save assistant message from stream onFinish", {
+          conversationId: activeConversationId,
+          error: err instanceof Error ? err.message : String(err),
+        });
       }
     },
-  });
-
-  // Headers: conversation ID, model key and optional RAG sources for client
-  const responseHeaders: Record<string, string> = {
-    "X-Conversation-Id": activeConversationId,
-    "X-Model-Key": providerKey,
-  };
-  if (ragSources.length > 0) {
-    // Base64 encode to avoid ByteString errors with Unicode characters in excerpts
-    responseHeaders["X-Sources"] = Buffer.from(JSON.stringify(ragSources), "utf-8").toString("base64");
-  }
-
-  // Debug context: send unified search results to frontend for RAG debug modal
-  if (searchResults.length > 0) {
-    const recentUserMsgsForDebug = [...messages].filter(m => m.role === "user").slice(-3);
-    const debugQueryText = recentUserMsgsForDebug.map(extractTextFromParts).join(" ");
-    const knowledge = searchResults.filter(r => r.source === "knowledge").slice(0, 10);
-    const conversations = searchResults.filter(r => r.source === "conversation").slice(0, 10);
-    const documents = searchResults.filter(r => r.source === "document").slice(0, 10);
-    const debugContext = {
-      knowledge: knowledge.map(r => ({ text: r.text, similarity: r.similarity })),
-      conversations: conversations.map(r => ({ text: r.text, similarity: r.similarity })),
-      documents: documents.map(r => ({ text: r.text, similarity: r.similarity, metadata: r.metadata })),
-      totalResults: searchResults.length,
-      queryText: debugQueryText,
-    };
-    responseHeaders["X-Debug-Context"] = Buffer.from(JSON.stringify(debugContext), "utf-8").toString("base64");
-  }
-
-  return result.toUIMessageStreamResponse({
-    headers: responseHeaders,
   });
   } catch (err) {
     logger.error("AI chat route error", {

@@ -37,7 +37,8 @@ import {
   formatConversationDate,
   generateAgentActionLog,
 } from "@/components/ai/personal-ai-chat-utils";
-import { useConversationHistory } from "@/hooks/use-conversation-history";
+import type { UIMessage } from "ai";
+import { useConversationHistory, contentToParts } from "@/hooks/use-conversation-history";
 import { PersonalAiChatHistoryDropdown } from "@/components/ai/personal-ai-chat-history-dropdown";
 import { PersonalAiChatMessageList } from "@/components/ai/personal-ai-chat-message-list";
 import type { PersonalAiChatToolCardCallbacks } from "@/components/ai/personal-ai-chat-tool-card";
@@ -508,9 +509,9 @@ export function PersonalAiChat({ open, onOpenChange, initialProjectId, mode = "s
       const olderMessages = result.messages.map((m) => ({
         id: m.id,
         role: m.role === "USER" ? ("user" as const) : ("assistant" as const),
-        parts: [{ type: "text" as const, text: m.content }],
+        parts: contentToParts(m.content, m.role),
       }));
-      setMessages((prev) => [...olderMessages, ...prev]);
+      setMessages((prev) => [...(olderMessages as UIMessage[]), ...prev]);
     }
   }, [conversationId, nextCursor, isLoadingMore, setMessages]);
 

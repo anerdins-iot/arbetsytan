@@ -15,10 +15,34 @@ const CHUNK_SIZE = 1500;
 const CHUNK_OVERLAP = 200;
 
 /**
+ * Extract plain text from Message.content for embedding.
+ * Content may be plain text or JSON from stored UI message (v1: { v: 1, parts: [...] }).
+ */
+export function extractTextFromMessageContent(content: string): string {
+  const raw = (content ?? "").trim();
+  if (!raw) return "";
+  if (raw.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(raw) as { v?: number; parts?: Array<{ type?: string; text?: string }> };
+      if (parsed.v === 1 && Array.isArray(parsed.parts)) {
+        return parsed.parts
+          .filter((p): p is { type: string; text: string } => p.type === "text" && typeof p.text === "string")
+          .map((p) => p.text)
+          .join("\n");
+      }
+    } catch {
+      // fall through to return raw
+    }
+  }
+  return raw;
+}
+
+/**
  * Split message content into overlapping chunks for embedding.
+ * Uses extractTextFromMessageContent so stored JSON (v1 parts) is chunked as text.
  */
 export function chunkMessageContent(content: string): string[] {
-  const text = (content ?? "").trim();
+  const text = extractTextFromMessageContent(content).trim();
   if (text.length === 0) return [];
   if (text.length <= CHUNK_SIZE) return [text];
 

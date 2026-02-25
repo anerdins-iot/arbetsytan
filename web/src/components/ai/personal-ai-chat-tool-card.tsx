@@ -208,11 +208,16 @@ export function PersonalAiChatToolCard({
       products: WholesalerProduct[];
       count: number;
     };
+    const summary =
+      typeof result.message === "string" && result.message.trim()
+        ? result.message.trim()
+        : undefined;
     return (
       <WholesalerSearchResultButton
         key={toolCardKey}
         query={wsData.query}
         count={wsData.count}
+        summary={summary}
         onOpen={() => callbacks.openWholesalerPanel(wsData)}
       />
     );

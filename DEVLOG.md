@@ -7,6 +7,14 @@ Format per post: Problem, orsak, lösning, lärdom (max 5 rader).
 
 ---
 
+### Konversationshistorik: tool-kort (knappar) renderas inte vid laddning (2026-02-25)
+**Problem:** När användaren laddar en gammal konversation från historiken visades bara användartext; assistant-svar och tool-kort (t.ex. grossistsökning, dokument) syntes inte.
+**Orsak:** Vi sparade bara assistant-meddelandets sluttext (onFinish i streamText). Tool-anrop och tool-resultat sparades inte, och vid laddning mappade vi varje meddelande till en enda text-part.
+**Lösning:** (1) Sparar nu hela assistant-meddelandet (inkl. parts med tool-resultat) i toUIMessageStreamResponse onFinish som JSON (v: 1, parts). (2) I use-conversation-history och load-more: contentToParts(content, role) parsar JSON och bygger parts så tool-kort får state/output och renderas igen. (3) Embedding-pipelinen: extractTextFromMessageContent extraherar text från JSON-parts för chunking.
+**Lärdom:** För att historik ska visa tool-kort måste vi persista och återhydrera message parts, inte bara sluttext.
+
+---
+
 ### Server Action "was not found" + markdown i e-postförhandsgranskning (2026-02-25)
 **Problem:** Efter deploy eller vid flera instanser: "Server Action ... was not found on the server" vid Skicka e-post från personlig AI. Förhandsgranskningen visade rå markdown (t.ex. ### Rubrik) istället för formaterad text.
 **Lösning:** (1) NEXT_SERVER_ACTIONS_ENCRYPTION_KEY i .env (base64, t.ex. `openssl rand -base64 32`) så att action-IDs är stabila över byggen. (2) EmailPreviewCard använder nu ReactMarkdown + remarkGfm för "Meddelande"-sektionen så att användaren ser formaterad text. Utgående mail konverterade redan markdown → html/text i send-email.ts.
