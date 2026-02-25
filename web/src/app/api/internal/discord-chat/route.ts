@@ -20,6 +20,15 @@ import { logger } from "@/lib/logger";
 
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY;
 
+interface DiscordChatMessage {
+  role: "user" | "assistant";
+  content: string;
+  /** Base64-encoded image for vision analysis (sent from Discord bot). */
+  imageBase64?: string;
+  /** MIME type of the image (e.g. "image/jpeg"). */
+  imageMimeType?: string;
+}
+
 interface DiscordChatRequest {
   userId: string;
   tenantId: string;
@@ -28,7 +37,7 @@ interface DiscordChatRequest {
   projectId?: string;
   conversationId?: string;
   provider?: ProviderKey;
-  messages: Array<{ role: "user" | "assistant"; content: string }>;
+  messages: DiscordChatMessage[];
 }
 
 interface DiscordChatResponse {
@@ -113,6 +122,14 @@ export async function POST(req: NextRequest) {
       conversationSummary = existing.summary;
     }
 
+    // Collect image data URLs from messages for vision support
+    const imageDataUrls: string[] = [];
+    for (const m of messages) {
+      if (m.imageBase64 && m.imageMimeType) {
+        imageDataUrls.push(`data:${m.imageMimeType};base64,${m.imageBase64}`);
+      }
+    }
+
     // Convert simple messages to UIMessage format for shared-core
     const uiMessages: UIMessage[] = messages.map((m, i) => ({
       id: `discord-${i}`,
@@ -134,7 +151,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Execute AI chat via shared core
+    // Execute AI chat via shared core (with optional inline images from Discord)
     const result = await executeAIChat({
       context: {
         tenantId,
@@ -148,6 +165,7 @@ export async function POST(req: NextRequest) {
       messages: uiMessages,
       provider: provider as ProviderKey | undefined,
       conversationSummary,
+      ...(imageDataUrls.length > 0 && { inlineImageDataUrls: imageDataUrls }),
     });
 
     // Await the full text response (non-streaming for Discord)

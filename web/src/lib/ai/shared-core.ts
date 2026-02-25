@@ -47,6 +47,8 @@ export interface ExecuteAIChatOptions {
   messages: UIMessage[];
   provider?: ProviderKey;
   imageFileIds?: string[];
+  /** Pre-resolved image data URLs (e.g. from Discord bot). Merged with imageFileIds results. */
+  inlineImageDataUrls?: string[];
   /** Pre-resolved conversation summary (if known). */
   conversationSummary?: string | null;
   /** Callback when the AI stream encounters an error. */
@@ -798,6 +800,7 @@ export async function executeAIChat(
     messages,
     provider,
     imageFileIds,
+    inlineImageDataUrls,
     conversationSummary,
     onStreamError,
     onStreamFinish,
@@ -844,8 +847,9 @@ export async function executeAIChat(
     db
   );
 
-  // Fetch image data URLs
-  const imageDataUrls = await fetchImageDataUrls(imageFileIds ?? []);
+  // Fetch image data URLs (from DB files + inline from Discord)
+  const fetchedImageUrls = await fetchImageDataUrls(imageFileIds ?? []);
+  const imageDataUrls = [...fetchedImageUrls, ...(inlineImageDataUrls ?? [])];
 
   // Fetch project context for system prompt
   let projectContext: ProjectContext | undefined;

@@ -124,6 +124,21 @@ model Conversation {
   @@index([discordUserId])
 }
 
+// Minimal File model for Discord bot file uploads.
+// Full model is in web; this only includes fields the bot needs for creating records.
+model File {
+  id           String   @id @default(cuid())
+  name         String
+  type         String
+  size         Int
+  bucket       String
+  key          String
+  projectId    String?
+  uploadedById String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
 enum Role {
   ADMIN
   PROJECT_MANAGER

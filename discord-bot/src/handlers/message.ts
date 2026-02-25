@@ -2,6 +2,10 @@
  * AI message handler — processes Discord messages and sends them to the AI.
  * Converts Discord context to AI messages format, calls the AI adapter,
  * and sends the response back to Discord.
+ *
+ * Supports file/image attachments:
+ * - Images are sent to AI for vision analysis
+ * - Files in project channels are uploaded to S3/MinIO
  */
 import type { Message, TextChannel, DMChannel } from "discord.js";
 import type { IdentifiedUser } from "../services/user-identification.js";
@@ -9,6 +13,11 @@ import type { ChannelContext, MessageContext } from "../services/context.js";
 import { callAI } from "../services/ai-adapter.js";
 import { sendWithThinking } from "../utils/streaming.js";
 import { prisma } from "../lib/prisma.js";
+import {
+  isImageAttachment,
+  handleImageForAI,
+  handleFileAttachment,
+} from "./file.js";
 
 /** Map to store conversation IDs per channel/DM for continuity. */
 const conversationCache = new Map<string, string>();
@@ -27,7 +36,8 @@ function getConversationKey(message: Message): string {
 
 /**
  * Handle an AI message from Discord.
- * Converts context, calls AI, and sends the response.
+ * Detects attachments (images/files), then converts context, calls AI,
+ * and sends the response.
  */
 export async function handleAIMessage(
   message: Message,
@@ -36,6 +46,51 @@ export async function handleAIMessage(
   messageContext: MessageContext[]
 ): Promise<void> {
   const channel = message.channel as TextChannel | DMChannel;
+
+  // Handle attachments: images go to AI vision, files go to S3 upload
+  const attachments = [...message.attachments.values()];
+  if (attachments.length > 0) {
+    const imageAttachments = attachments.filter(isImageAttachment);
+    const fileAttachments = attachments.filter((a) => !isImageAttachment(a));
+
+    // Process images via AI vision
+    if (imageAttachments.length > 0) {
+      const textContent = message.content
+        .replace(/<@!?\d+>/g, "")
+        .trim();
+
+      // Send typing indicator
+      await channel.sendTyping();
+
+      // Process the first image (AI vision typically handles one at a time)
+      await handleImageForAI(
+        imageAttachments[0],
+        message,
+        user,
+        channelContext,
+        textContent
+      );
+
+      // If there are also non-image files, upload them
+      for (const file of fileAttachments) {
+        await handleFileAttachment(file, message, user, channelContext);
+      }
+
+      return;
+    }
+
+    // Non-image files: upload to S3 if in project channel
+    if (fileAttachments.length > 0) {
+      for (const file of fileAttachments) {
+        await handleFileAttachment(file, message, user, channelContext);
+      }
+
+      // If there's also text, continue to AI processing below
+      if (!message.content.replace(/<@!?\d+>/g, "").trim()) {
+        return;
+      }
+    }
+  }
 
   // Convert Discord message context to AI messages format
   const aiMessages: Array<{ role: "user" | "assistant"; content: string }> = [];

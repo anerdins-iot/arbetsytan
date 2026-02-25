@@ -3,6 +3,15 @@
  * This bridges the Discord bot to the shared AI Core without importing Next.js modules.
  */
 
+export interface AIMessage {
+  role: "user" | "assistant";
+  content: string;
+  /** Base64-encoded image data for vision analysis. */
+  imageBase64?: string;
+  /** MIME type of the image (e.g. "image/jpeg"). */
+  imageMimeType?: string;
+}
+
 export interface AIRequestOptions {
   userId: string;
   tenantId: string;
@@ -10,7 +19,7 @@ export interface AIRequestOptions {
   userRole: string;
   projectId?: string;
   conversationId?: string;
-  messages: Array<{ role: "user" | "assistant"; content: string }>;
+  messages: AIMessage[];
 }
 
 export interface AIResponse {
@@ -42,7 +51,14 @@ export async function callAI(options: AIRequestOptions): Promise<AIResponse> {
       userRole: options.userRole,
       projectId: options.projectId,
       conversationId: options.conversationId,
-      messages: options.messages,
+      messages: options.messages.map((m) => ({
+        role: m.role,
+        content: m.content,
+        ...(m.imageBase64 && {
+          imageBase64: m.imageBase64,
+          imageMimeType: m.imageMimeType ?? "image/jpeg",
+        }),
+      })),
     }),
     signal: AbortSignal.timeout(120_000), // 2 min timeout for AI responses
   });
