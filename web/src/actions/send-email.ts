@@ -10,6 +10,10 @@ import { logOutboundEmail } from "@/lib/email-log";
 import { queueEmailEmbeddingProcessing } from "@/lib/ai/email-embeddings";
 import { renderEmailTemplate } from "@/lib/email-templates";
 import { createOutboundConversationCore } from "@/services/email-conversations";
+import {
+  buildReplyToAddress,
+  slugifyForReplyTo,
+} from "@/lib/email-tracking";
 
 // ─── S3/MinIO Client ────────────────────────────────────
 
@@ -112,6 +116,34 @@ async function fetchFileAttachments(
   }
 
   return result;
+}
+
+// ─── Reply-To Helper ──────────────────────────────────
+
+async function getReplyToForUser(tenantId: string, userId: string, userName: string | null): Promise<string> {
+  const [tenant, membership] = await Promise.all([
+    prisma.tenant.findUnique({
+      where: { id: tenantId },
+      select: { slug: true, name: true },
+    }),
+    prisma.membership.findUnique({
+      where: { userId_tenantId: { userId, tenantId } },
+      select: { emailSlug: true },
+    }),
+  ]);
+  const tenantSlug = tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
+  const userSlug = membership?.emailSlug ?? slugifyForReplyTo(userName ?? "user");
+
+  // Backfill emailSlug if missing
+  if (membership && membership.emailSlug === null) {
+    const db = tenantDb(tenantId);
+    await db.membership.update({
+      where: { userId_tenantId: { userId, tenantId } },
+      data: { emailSlug: userSlug },
+    });
+  }
+
+  return buildReplyToAddress(tenantSlug, userSlug);
 }
 
 // ─── Schemas ───────────────────────────────────────────
@@ -332,13 +364,16 @@ export async function sendExternalEmail(
   // Fallback to Resend onboarding domain if not configured
   const fromAddress = DEFAULT_FROM;
 
+  // Reply-To: use user-specified replyTo or fall back to userSlug.tenantSlug@domain
+  const defaultReplyTo = await getReplyToForUser(tenantId, userId, sender?.name ?? null);
+
   for (const recipient of result.data.recipients) {
     const emailResult = await sendEmail({
       to: recipient,
       subject: `[${brand.tenantName}] ${subject}`,
       html,
       text,
-      replyTo: replyTo ?? fromAddress,
+      replyTo: replyTo ?? defaultReplyTo,
       attachments: fileAttachments,
     });
 
@@ -457,8 +492,10 @@ export async function sendToTeamMember(
     locale,
   });
 
-  // Always use RESEND_FROM for verified domain; Reply-To same as From (avsändare som i UI)
+  // Always use RESEND_FROM for verified domain
   const fromAddress = DEFAULT_FROM;
+  // Reply-To: userSlug.tenantSlug@domain
+  const replyToAddress = await getReplyToForUser(tenantId, userId, sender?.name ?? null);
 
   const emailResult = await sendEmail({
     to: membership.user.email,
@@ -466,7 +503,7 @@ export async function sendToTeamMember(
     html,
     text,
     from: fromAddress,
-    replyTo: fromAddress,
+    replyTo: replyToAddress,
   });
 
   if (!emailResult.success) {
@@ -531,8 +568,10 @@ export async function sendToTeamMembers(
   ]);
 
   const errors: string[] = [];
-  // Always use RESEND_FROM for verified domain; Reply-To same as From (avsändare som i UI)
+  // Always use RESEND_FROM for verified domain
   const fromAddress = DEFAULT_FROM;
+  // Reply-To: userSlug.tenantSlug@domain
+  const replyToAddress = await getReplyToForUser(tenantId, userId, sender?.name ?? null);
 
   for (const membership of memberships) {
     const locale = (membership.user.locale === "en" ? "en" : "sv") as "sv" | "en";
@@ -550,7 +589,7 @@ export async function sendToTeamMembers(
       html,
       text,
       from: fromAddress,
-      replyTo: fromAddress,
+      replyTo: replyToAddress,
       attachments: fileAttachments,
     });
 
