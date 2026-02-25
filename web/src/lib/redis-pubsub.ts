@@ -67,6 +67,30 @@ export async function publishSocketEvent(msg: SocketEmitMessage): Promise<void> 
   }
 }
 
+// ─── Discord event publisher ────────────────────────────────────────────────
+
+/**
+ * Publish an event on a dedicated Redis channel for the Discord bot.
+ * Channel name is used directly (e.g. "discord:user-linked").
+ * Fire-and-forget — never throws.
+ */
+export async function publishDiscordEvent(
+  channel: string,
+  payload: Record<string, unknown>
+): Promise<void> {
+  try {
+    const client = await getPublisher();
+    if (!client) {
+      console.log("[redis-pubsub] No Redis client available, skipping discord publish for:", channel);
+      return;
+    }
+    console.log("[redis-pubsub] Publishing discord event:", channel);
+    await client.publish(channel, JSON.stringify(payload));
+  } catch (err) {
+    console.warn("[redis-pubsub] Failed to publish discord event:", err);
+  }
+}
+
 // ─── Subscriber (used by Socket.IO server process) ─────────────────────────
 
 /**
