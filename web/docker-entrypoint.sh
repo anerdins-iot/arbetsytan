@@ -2,7 +2,7 @@
 set -e
 
 echo "Running database migrations..."
-node migrate.mjs || echo "Warning: Migration script failed (see logs above)"
+node migrate.mjs
 
 echo "Running backfill for Tenant.slug and Membership.emailSlug (idempotent)..."
 npx tsx scripts/backfill-email-slugs.ts || echo "Warning: Backfill script failed (see logs above)"

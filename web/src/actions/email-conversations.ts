@@ -11,7 +11,7 @@ import {
   generateTrackingCode,
   slugifyForReplyTo,
 } from "@/lib/email-tracking";
-import { prisma } from "@/lib/db";
+import { prisma, tenantDb } from "@/lib/db";
 import {
   getConversationsCore,
   getConversationCore,
@@ -155,6 +155,14 @@ export async function createConversation(
     const userSlug =
       membership?.emailSlug ?? slugifyForReplyTo(user.name ?? "user");
 
+    if (membership && membership.emailSlug === null) {
+      const db = tenantDb(tenantId);
+      await db.membership.update({
+        where: { userId_tenantId: { userId, tenantId } },
+        data: { emailSlug: userSlug },
+      });
+    }
+
     const html = rest.bodyHtml + "\n" + buildTrackingHtml(trackingCode);
     const text =
       (rest.bodyText ?? "").trim() + buildTrackingTextLine(trackingCode);
@@ -239,6 +247,14 @@ export async function replyToConversation(
       tenant?.slug ?? slugifyForReplyTo(tenant?.name ?? "tenant");
     const userSlug =
       membership?.emailSlug ?? slugifyForReplyTo(user.name ?? "user");
+
+    if (membership && membership.emailSlug === null) {
+      const db = tenantDb(tenantId);
+      await db.membership.update({
+        where: { userId_tenantId: { userId, tenantId } },
+        data: { emailSlug: userSlug },
+      });
+    }
 
     const html =
       parsed.data.bodyHtml + "\n" + buildTrackingHtml(conversation.trackingCode);
