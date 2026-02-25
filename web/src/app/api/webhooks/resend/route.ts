@@ -53,6 +53,9 @@ export async function POST(req: NextRequest) {
           const body = await getReceivedEmailContent(emailId);
           enriched.data.html = body.html ?? enriched.data.html;
           enriched.data.text = body.text ?? enriched.data.text;
+          enriched.data.headers = body.headers ?? undefined;
+          enriched.data.in_reply_to =
+            body.headers?.["in-reply-to"] ?? body.headers?.["In-Reply-To"] ?? undefined;
         }
         await processInboundEmail(enriched);
         break;

@@ -128,26 +128,60 @@ export async function sendEmail(
 }
 
 /**
- * Fetches the body (html + text) of a received email by id.
+ * Fetches the body (html + text) and headers of a received email by id.
  * Resend webhooks do NOT include body; you must call this after receiving email.received.
+ * Headers (e.g. in-reply-to, message-id) are used for Message-ID–based reply routing.
  * @see https://resend.com/docs/dashboard/receiving/get-email-content
  */
 export async function getReceivedEmailContent(
   emailId: string
-): Promise<{ html: string | null; text: string | null }> {
-  if (!resend) return { html: null, text: null };
+): Promise<{
+  html: string | null;
+  text: string | null;
+  headers: Record<string, string> | null;
+}> {
+  if (!resend) return { html: null, text: null, headers: null };
   try {
     const { data, error } = await (resend as any).emails.receiving.get(emailId);
     if (error || !data) {
       console.warn("[EMAIL] getReceivedEmailContent failed", { emailId, error });
-      return { html: null, text: null };
+      return { html: null, text: null, headers: null };
     }
-    return {
-      html: typeof data.html === "string" ? data.html : null,
-      text: typeof data.text === "string" ? data.text : null,
-    };
+    // Log raw API response for debugging routing (headers, in_reply_to, message_id, etc.)
+    console.log(
+      "[EMAIL] getReceivedEmailContent raw data:",
+      JSON.stringify(
+        {
+          ...data,
+          html: data.html != null ? "(present)" : null,
+          text: data.text != null ? "(present)" : null,
+        },
+        null,
+        2
+      )
+    );
+    const html = typeof data.html === "string" ? data.html : null;
+    const text = typeof data.text === "string" ? data.text : null;
+    // Normalise headers to Record<string, string>; Resend may expose as object or array
+    let headers: Record<string, string> | null = null;
+    if (data.headers != null && typeof data.headers === "object") {
+      headers = {};
+      for (const [k, v] of Object.entries(data.headers)) {
+        if (typeof k === "string" && (typeof v === "string" || (Array.isArray(v) && v.length > 0))) {
+          headers[k] = typeof v === "string" ? v : String(v[0]);
+        }
+      }
+    }
+    // Resend may also return top-level in_reply_to / message_id
+    if (headers == null) headers = {};
+    if (typeof data.in_reply_to === "string" && !headers["in-reply-to"])
+      headers["in-reply-to"] = data.in_reply_to;
+    if (typeof data.message_id === "string" && !headers["message-id"])
+      headers["message-id"] = data.message_id;
+    const headersOut = Object.keys(headers).length > 0 ? headers : null;
+    return { html, text, headers: headersOut };
   } catch (err) {
     console.error("[EMAIL] getReceivedEmailContent exception", { emailId, err });
-    return { html: null, text: null };
+    return { html: null, text: null, headers: null };
   }
 }

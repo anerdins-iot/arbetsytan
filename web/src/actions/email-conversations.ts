@@ -217,6 +217,38 @@ export async function createConversation(
       trackingCode
     );
 
+    // Create EmailLog with resendMessageId for In-Reply-To routing; link to first outbound message
+    if (sent.messageId) {
+      const db = tenantDb(tenantId);
+      const emailLog = await db.emailLog.create({
+        data: {
+          tenantId,
+          userId,
+          projectId: projectId ?? null,
+          direction: "OUTBOUND",
+          status: "SENT",
+          from: fromAddress,
+          to: [rest.externalEmail],
+          subject: rest.subject,
+          body: rest.bodyText ?? "",
+          htmlBody: rendered.html,
+          resendMessageId: sent.messageId,
+          sentAt: new Date(),
+        },
+      });
+      const firstMessageId = conversation.messages[0]?.id;
+      if (firstMessageId) {
+        await db.emailMessage.update({
+          where: { id: firstMessageId },
+          data: { emailLogId: emailLog.id },
+        });
+      }
+      console.log("[email-conversations] createConversation EmailLog created for In-Reply-To routing", {
+        resendMessageId: sent.messageId,
+        conversationId: conversation.id,
+      });
+    }
+
     revalidatePath("/[locale]/email", "page");
     return { success: true, conversation };
   } catch (err) {
@@ -248,7 +280,7 @@ export async function replyToConversation(
 
   try {
     const conversation = await getConversationCore(tenantId, userId, id);
-    await replyToConversationCore(
+    const outboundMessage = await replyToConversationCore(
       tenantId,
       userId,
       id,
@@ -323,6 +355,35 @@ export async function replyToConversation(
     if (!sent.success) {
       console.error("[email-conversations] replyToConversation sendEmail failed", sent.error);
       return { success: false, error: sent.error ?? "SEND_FAILED" };
+    }
+
+    // Create EmailLog with resendMessageId for In-Reply-To routing; link to outbound message
+    if (sent.messageId) {
+      const db = tenantDb(tenantId);
+      const emailLog = await db.emailLog.create({
+        data: {
+          tenantId,
+          userId,
+          projectId: conversation.projectId,
+          direction: "OUTBOUND",
+          status: "SENT",
+          from: fromAddress,
+          to: [conversation.externalEmail],
+          subject: conversation.subject,
+          body: parsed.data.bodyText ?? "",
+          htmlBody: rendered.html,
+          resendMessageId: sent.messageId,
+          sentAt: new Date(),
+        },
+      });
+      await db.emailMessage.update({
+        where: { id: outboundMessage.id },
+        data: { emailLogId: emailLog.id },
+      });
+      console.log("[email-conversations] replyToConversation EmailLog created for In-Reply-To routing", {
+        resendMessageId: sent.messageId,
+        conversationId: id,
+      });
     }
 
     revalidatePath("/[locale]/email", "page");

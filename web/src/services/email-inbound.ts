@@ -34,6 +34,10 @@ export type ResendEmailReceivedPayload = {
     }>;
     html?: string;
     text?: string;
+    /** Headers from getReceivedEmailContent (e.g. in-reply-to, message-id). */
+    headers?: Record<string, string>;
+    /** In-Reply-To header value for Message-ID–based routing. */
+    in_reply_to?: string;
   };
 };
 
@@ -112,7 +116,34 @@ export async function processInboundEmail(
     ReturnType<typeof prisma.emailConversation.findUnique>
   >;
 
-  if (trackingCode) {
+  // Priority 1: Try In-Reply-To header matching (Message-ID routing)
+  const inReplyTo =
+    data.in_reply_to ?? data.headers?.["in-reply-to"] ?? data.headers?.["In-Reply-To"] ?? null;
+  if (inReplyTo) {
+    const cleanId = inReplyTo.replace(/^<|>$/g, "").trim();
+    const matchingLog = await prisma.emailLog.findFirst({
+      where: {
+        OR: [{ resendMessageId: cleanId }, { resendMessageId: inReplyTo }],
+        direction: "OUTBOUND",
+      },
+      include: { EmailMessage: { select: { conversationId: true } } },
+    });
+    if (matchingLog?.EmailMessage?.conversationId) {
+      const conv = await prisma.emailConversation.findUnique({
+        where: { id: matchingLog.EmailMessage.conversationId },
+      });
+      if (conv && conv.tenantId === tenant.id) {
+        conversation = conv;
+        logger.info("processInboundEmail: matched via In-Reply-To header", {
+          inReplyTo,
+          conversationId: conv.id,
+        });
+      }
+    }
+  }
+
+  // Priority 2: Tracking code in body/address
+  if (!conversation && trackingCode) {
     conversation = await prisma.emailConversation.findUnique({
       where: { trackingCode },
     });
@@ -131,7 +162,10 @@ export async function processInboundEmail(
       });
       return;
     }
-  } else {
+  }
+
+  // Priority 3: No tracking — match by tenant + user + from, or create Övrigt
+  if (!conversation) {
     // No tracking in body/address: match by tenant + user + from, or create Övrigt
     let targetUserId: string | null;
 
