@@ -18,8 +18,6 @@ const SEED_PROJECT_ID = "seed-project-1";
 const LOCALE = "sv";
 
 test.describe("Project Time tab on mobile viewport", () => {
-  test.use({ project: "mobile" });
-
   test("Time tab shows form, time entry or summary, and has no horizontal overflow", async ({
     page,
   }) => {

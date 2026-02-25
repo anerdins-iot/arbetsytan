@@ -18,8 +18,6 @@ const SEED_PROJECT_ID = "seed-project-1";
 const LOCALE = "sv";
 
 test.describe("Project Automations tab on mobile viewport", () => {
-  test.use({ project: "mobile" });
-
   test("automations tab shows list, create/history dialog and no horizontal overflow", async ({
     page,
   }) => {

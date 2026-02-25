@@ -17,8 +17,6 @@ const SEED_PROJECT_ID = "seed-project-1";
 const LOCALE = "sv";
 
 test.describe("File detail modal on mobile viewport", () => {
-  test.use({ project: "mobile" });
-
   test("file detail modal opens and has no horizontal overflow on mobile", async ({
     page,
   }) => {

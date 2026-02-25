@@ -18,8 +18,6 @@ const SEED_PROJECT_ID = "seed-project-1";
 const LOCALE = "sv";
 
 test.describe("Project Overview tab on mobile viewport", () => {
-  test.use({ project: "mobile" });
-
   test("Overview tab loads, activity list visible, edit dialog works, no horizontal overflow", async ({
     page,
   }) => {

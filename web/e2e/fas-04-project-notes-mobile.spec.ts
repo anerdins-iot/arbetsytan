@@ -19,8 +19,6 @@ const SEED_PROJECT_ID = "seed-project-1";
 const LOCALE = "sv";
 
 test.describe("Project Notes tab on mobile viewport", () => {
-  test.use({ project: "mobile" });
-
   test("notes tab loads, shows at least one note, modals and no horizontal overflow", async ({
     page,
   }) => {

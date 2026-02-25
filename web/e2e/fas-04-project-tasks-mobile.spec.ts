@@ -18,8 +18,6 @@ const SEED_PROJECT_ID = "seed-project-1";
 const LOCALE = "sv";
 
 test.describe("Project Tasks tab (Kanban) on mobile viewport", () => {
-  test.use({ project: "mobile" });
-
   test("tasks tab shows Kanban with column and card, create dialog and no horizontal overflow", async ({
     page,
   }) => {
