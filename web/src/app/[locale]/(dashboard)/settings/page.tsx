@@ -60,20 +60,36 @@ export default async function SettingsPage({ params }: Props) {
         </Link>
       </div>
       {isAdmin ? (
-        <div className="rounded-lg border border-border bg-card p-6">
-          <h2 className="text-lg font-semibold text-card-foreground">
-            {t("billingLink.title")}
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {t("billingLink.description")}
-          </p>
-          <Link
-            href="/settings/billing"
-            className="mt-4 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
-          >
-            {t("billingLink.cta")}
-          </Link>
-        </div>
+        <>
+          <div className="rounded-lg border border-border bg-card p-6">
+            <h2 className="text-lg font-semibold text-card-foreground">
+              {t("billingLink.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("billingLink.description")}
+            </p>
+            <Link
+              href="/settings/billing"
+              className="mt-4 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {t("billingLink.cta")}
+            </Link>
+          </div>
+          <div className="rounded-lg border border-border bg-card p-6">
+            <h2 className="text-lg font-semibold text-card-foreground">
+              {t("discord.settingsLink.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("discord.settingsLink.description")}
+            </p>
+            <Link
+              href="/settings/discord"
+              className="mt-4 inline-flex text-sm font-medium text-primary underline-offset-4 hover:underline"
+            >
+              {t("discord.settingsLink.cta")}
+            </Link>
+          </div>
+        </>
       ) : null}
       {preferencesResult.success && preferencesResult.preferences ? (
         <NotificationSettings initialPreferences={preferencesResult.preferences} />
