@@ -9,7 +9,8 @@ out/
 dist/
 build/
 
-# Prisma
+# Prisma (generated client; run "cd web && npx prisma generate" after clone)
+web/generated/prisma/
 prisma/generated/
 
 # Environment

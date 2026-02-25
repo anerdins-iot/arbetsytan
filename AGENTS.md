@@ -81,7 +81,7 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 | `npx prisma studio` (i web/) | Öppna DB-gui |
 | `npx prisma db seed` (i web/) | Seed testdata |
 
-Prisma-konfiguration enligt **docs/prisma.md**: provider `prisma-client`, output i generated, ingen url i schema (använd prisma.config.ts i web/), driver adapter obligatoriskt.
+Prisma-konfiguration enligt **docs/prisma.md**: provider `prisma-client`, output i generated, ingen url i schema (använd prisma.config.ts i web/), driver adapter obligatoriskt. Genererade klientfiler (web/generated/prisma/) är i gitignore; efter clone kör **cd web && npx prisma generate** innan build/körning.
 
 **E2E i CI:** Workflow `.github/workflows/ci.yml` har ett e2e-job som kör parallellt med build-and-lint. Det använder service containers (Postgres, Redis, MinIO), inte docker-compose. Stegen: install → playwright chromium → .env → build → MinIO-bucket → migrate → seed → starta server i bakgrunden → `scripts/run-e2e.sh`. Vid stabila gröna E2E kan `continue-on-error: true` tas bort.
 
