@@ -63,6 +63,19 @@ model ProjectMember {
   @@unique([projectId, membershipId])
 }
 
+// Minimal Conversation model for Discord metadata lookup/update.
+// Full model is in web; this only includes fields the bot needs.
+model Conversation {
+  id               String   @id @default(cuid())
+  discordChannelId String?
+  discordUserId    String?
+  userId           String
+  updatedAt        DateTime @updatedAt
+
+  @@index([discordChannelId])
+  @@index([discordUserId])
+}
+
 enum Role {
   ADMIN
   PROJECT_MANAGER
