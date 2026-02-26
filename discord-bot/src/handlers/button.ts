@@ -296,7 +296,7 @@ async function handleStartOnboarding(
       embeds: [
         createErrorEmbed(
           "Inga aktiva projekt hittades.",
-          "Skapa projekt i ArbetsYtan f\u00F6rst och k\u00F6r sedan /setup igen."
+          "Skapa projekt i ArbetsYtan först."
         ),
       ],
       components: [],
@@ -405,8 +405,8 @@ async function handleCancelSync(
   await interaction.update({
     embeds: [
       createSuccessEmbed(
-        "Setup avbruten.",
-        "Du kan k\u00F6ra /setup igen n\u00E4r du \u00E4r redo."
+        "Synkning avbruten.",
+        "Du kan starta synkningen igen via AI-chatten eller Webb-UI:t."
       ),
     ],
     components: [],

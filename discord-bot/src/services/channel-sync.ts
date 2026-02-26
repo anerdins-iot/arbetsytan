@@ -2,9 +2,10 @@
  * Discord channel sync service.
  * Creates category + sub-channels (general, tasks, files, activity) for projects.
  * Triggered via Redis event from the web AI tool `syncDiscordChannels`.
+ * Also syncs existing tasks and notes to the new channels.
  */
-import type { Client, Guild } from "discord.js";
-import { ChannelType } from "discord.js";
+import type { Client, Guild, TextChannel } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
 import { prisma } from "../lib/prisma.js";
 import { toChannelName } from "./channel.js";
 
@@ -69,7 +70,7 @@ export async function syncProjectsToDiscord(
       name: true,
       discordChannelId: true,
       discordChannels: {
-        select: { id: true, discordChannelId: true, channelType: true },
+        select: { id: true, discordChannelId: true, discordCategoryId: true, channelType: true },
       },
     },
   });
@@ -103,7 +104,7 @@ async function syncSingleProject(
     id: string;
     name: string;
     discordChannelId: string | null;
-    discordChannels: { id: string; discordChannelId: string; channelType: string }[];
+    discordChannels: { id: string; discordChannelId: string; discordCategoryId: string | null; channelType: string }[];
   }
 ): Promise<SyncResult> {
   const channelName = toChannelName(project.name);
@@ -112,26 +113,46 @@ async function syncSingleProject(
   // Ensure guild channels are cached
   await guild.channels.fetch();
 
-  // Create or find category for the project
+  // CRITICAL: First check if we already have a category saved in DB
+  // This prevents duplicate categories on re-sync
   let categoryId: string | null = null;
-  const existingCategory = guild.channels.cache.find(
-    (c) => c.type === ChannelType.GuildCategory && c.name.toLowerCase() === channelName.toLowerCase()
-  );
+  const savedCategoryId = project.discordChannels.find((c) => c.discordCategoryId)?.discordCategoryId;
 
-  if (existingCategory) {
-    categoryId = existingCategory.id;
-  } else {
-    const newCategory = await guild.channels
-      .create({
-        name: project.name,
-        type: ChannelType.GuildCategory,
-        reason: `Projekt-sync: ${project.name}`,
-      })
-      .catch((err: unknown) => {
-        console.error("[channel-sync] Failed to create category:", err);
-        return null;
-      });
-    categoryId = newCategory?.id ?? null;
+  if (savedCategoryId) {
+    // Verify the category still exists in Discord
+    const existingCategory = guild.channels.cache.get(savedCategoryId);
+    if (existingCategory && existingCategory.type === ChannelType.GuildCategory) {
+      categoryId = savedCategoryId;
+      console.log(`[channel-sync] Using existing category from DB: ${categoryId}`);
+    } else {
+      console.warn(`[channel-sync] Saved category ${savedCategoryId} no longer exists in Discord`);
+    }
+  }
+
+  // Only create new category if we don't have a valid one
+  if (!categoryId) {
+    // Check if category with this name already exists (fallback)
+    const existingCategory = guild.channels.cache.find(
+      (c) => c.type === ChannelType.GuildCategory && c.name.toLowerCase() === channelName.toLowerCase()
+    );
+
+    if (existingCategory) {
+      categoryId = existingCategory.id;
+      console.log(`[channel-sync] Found existing category by name: ${categoryId}`);
+    } else {
+      const newCategory = await guild.channels
+        .create({
+          name: project.name,
+          type: ChannelType.GuildCategory,
+          reason: `Projekt-sync: ${project.name}`,
+        })
+        .catch((err: unknown) => {
+          console.error("[channel-sync] Failed to create category:", err);
+          return null;
+        });
+      categoryId = newCategory?.id ?? null;
+      console.log(`[channel-sync] Created new category: ${categoryId}`);
+    }
   }
 
   const createdChannels: { type: string; channelId: string }[] = [];
@@ -192,12 +213,128 @@ async function syncSingleProject(
     `[channel-sync] Synced project "${project.name}" — ${createdChannels.length} channels created/found`
   );
 
+  // Sync initial content (tasks, notes) to the new channels
+  await syncInitialContent(guild, project.id, createdChannels);
+
   return {
     projectId: project.id,
     projectName: project.name,
     categoryId,
     channels: createdChannels,
   };
+}
+
+/**
+ * Sync existing tasks and notes to the newly created Discord channels.
+ * This gives users immediate content when channels are first created.
+ */
+async function syncInitialContent(
+  guild: Guild,
+  projectId: string,
+  channels: { type: string; channelId: string }[]
+): Promise<void> {
+  const tasksChannel = channels.find((c) => c.type === "tasks");
+  const activityChannel = channels.find((c) => c.type === "activity");
+
+  // Sync tasks to #uppgifter
+  if (tasksChannel) {
+    const channel = guild.channels.cache.get(tasksChannel.channelId) as TextChannel | undefined;
+    if (channel) {
+      const tasks = await prisma.task.findMany({
+        where: { projectId, status: { not: "DONE" } },
+        orderBy: { createdAt: "desc" },
+        take: 20, // Limit to most recent 20
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          status: true,
+          priority: true,
+          deadline: true,
+        },
+      });
+
+      if (tasks.length > 0) {
+        // Send summary embed
+        const summaryEmbed = new EmbedBuilder()
+          .setTitle("📋 Befintliga uppgifter")
+          .setDescription(`Här är de ${tasks.length} senaste aktiva uppgifterna i projektet.`)
+          .setColor(0x3b82f6)
+          .setTimestamp();
+
+        await channel.send({ embeds: [summaryEmbed] }).catch(() => {});
+
+        // Send each task as an embed
+        for (const task of tasks.slice(0, 10)) { // Limit to 10 to avoid spam
+          const statusEmoji = task.status === "IN_PROGRESS" ? "🔄" : "📌";
+          const priorityEmoji = task.priority === "URGENT" ? "🔴" : task.priority === "HIGH" ? "🟠" : "⚪";
+
+          const taskEmbed = new EmbedBuilder()
+            .setTitle(`${statusEmoji} ${task.title}`)
+            .setDescription(task.description?.slice(0, 200) || "Ingen beskrivning")
+            .addFields(
+              { name: "Status", value: task.status, inline: true },
+              { name: "Prioritet", value: `${priorityEmoji} ${task.priority}`, inline: true }
+            )
+            .setColor(task.status === "IN_PROGRESS" ? 0xf59e0b : 0x6b7280)
+            .setFooter({ text: `ID: ${task.id}` });
+
+          if (task.deadline) {
+            taskEmbed.addFields({ name: "Deadline", value: new Date(task.deadline).toLocaleDateString("sv-SE"), inline: true });
+          }
+
+          await channel.send({ embeds: [taskEmbed] }).catch(() => {});
+          // Small delay to avoid rate limiting
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+    }
+  }
+
+  // Sync notes to #aktivitet
+  if (activityChannel) {
+    const channel = guild.channels.cache.get(activityChannel.channelId) as TextChannel | undefined;
+    if (channel) {
+      const notes = await prisma.note.findMany({
+        where: { projectId },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          title: true,
+          content: true,
+          category: true,
+          createdAt: true,
+          createdBy: { select: { name: true } },
+        },
+      });
+
+      if (notes.length > 0) {
+        const summaryEmbed = new EmbedBuilder()
+          .setTitle("📝 Senaste anteckningar")
+          .setDescription(`Här är de ${notes.length} senaste anteckningarna.`)
+          .setColor(0x10b981)
+          .setTimestamp();
+
+        await channel.send({ embeds: [summaryEmbed] }).catch(() => {});
+
+        for (const note of notes.slice(0, 5)) {
+          const noteEmbed = new EmbedBuilder()
+            .setTitle(`📝 ${note.title}`)
+            .setDescription(note.content?.slice(0, 300) || "Inget innehåll")
+            .setColor(0x10b981)
+            .setFooter({ text: `Av ${note.createdBy?.name || "Okänd"} • ${new Date(note.createdAt).toLocaleDateString("sv-SE")}` });
+
+          if (note.category) {
+            noteEmbed.addFields({ name: "Kategori", value: note.category, inline: true });
+          }
+
+          await channel.send({ embeds: [noteEmbed] }).catch(() => {});
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+    }
+  }
 }
 
 /**

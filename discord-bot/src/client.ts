@@ -8,7 +8,6 @@ import { registerReady } from "./events/ready.js";
 import { registerMessageCreate } from "./events/messageCreate.js";
 import { registerInteractionCreate } from "./events/interactionCreate.js";
 import { registerMessageReactionAdd } from "./events/messageReactionAdd.js";
-import { registerSlashCommands } from "./commands/index.js";
 
 export async function startBot(): Promise<Client> {
   const token = env.DISCORD_TOKEN;
@@ -73,9 +72,6 @@ export async function startBot(): Promise<Client> {
   });
 
   await client.login(token);
-
-  // Register slash commands with Discord API after login
-  await registerSlashCommands();
 
   return client;
 }

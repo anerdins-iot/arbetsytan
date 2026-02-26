@@ -52,10 +52,29 @@ export async function getChannelContext(
     guildId: message.guildId ?? undefined,
   };
 
-  const project = await prisma.project.findUnique({
+  // First, check if this is a main project channel (Project.discordChannelId)
+  let project = await prisma.project.findUnique({
     where: { discordChannelId: channel.id },
     select: { id: true, name: true },
   });
+
+  // If not found, check DiscordProjectChannel (general, tasks, files, activity channels)
+  if (!project) {
+    const projectChannel = await prisma.discordProjectChannel.findUnique({
+      where: { discordChannelId: channel.id },
+      select: {
+        projectId: true,
+        project: { select: { name: true } },
+      },
+    });
+    if (projectChannel) {
+      project = {
+        id: projectChannel.projectId,
+        name: projectChannel.project.name,
+      };
+    }
+  }
+
   if (project) {
     context.projectId = project.id;
     context.projectName = project.name;

@@ -25,6 +25,7 @@ model User {
   name        String?
   Account     Account[]
   memberships Membership[]
+  notes       Note[]
 }
 
 model Account {
@@ -174,6 +175,21 @@ model File {
   uploadedById String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+// Minimal Note model for Discord bot content sync.
+// Full model is in web; this only includes fields the bot needs for reading notes.
+model Note {
+  id          String   @id @default(cuid())
+  title       String   @default("")
+  content     String
+  category    String?
+  projectId   String?
+  createdById String
+  createdAt   DateTime @default(now())
+  createdBy   User     @relation(fields: [createdById], references: [id])
+
+  @@index([projectId, createdAt])
 }
 
 enum Role {
