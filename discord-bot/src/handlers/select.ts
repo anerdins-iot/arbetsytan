@@ -3,7 +3,12 @@
  * Handles user assignment via string select menus.
  */
 import type { StringSelectMenuInteraction } from "discord.js";
-import { MessageFlags } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  MessageFlags,
+} from "discord.js";
 import { prisma } from "../lib/prisma.js";
 import {
   identifyUser,
@@ -12,6 +17,7 @@ import {
 import {
   createSuccessEmbed,
   createErrorEmbed,
+  createSyncConfirmEmbed,
 } from "../components/embeds.js";
 import type { IdentifiedUser } from "../services/user-identification.js";
 
@@ -53,7 +59,9 @@ export async function handleSelectMenu(
     }
   }
 
-  if (customId.startsWith("assign_user_")) {
+  if (customId === "select_projects_for_sync") {
+    await handleProjectSelectForSync(interaction, user.tenantId);
+  } else if (customId.startsWith("assign_user_")) {
     await handleAssignUser(
       interaction,
       customId.replace("assign_user_", "")
@@ -137,5 +145,65 @@ async function handleAssignUser(
       ),
     ],
     components: [],
+  });
+}
+
+/**
+ * Handle project selection for onboarding sync.
+ * Shows a confirmation embed with confirm/cancel buttons.
+ */
+async function handleProjectSelectForSync(
+  interaction: StringSelectMenuInteraction,
+  tenantId: string
+): Promise<void> {
+  await interaction.deferUpdate();
+
+  const selectedProjectIds = interaction.values;
+  if (selectedProjectIds.length === 0) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Inga projekt valda.")],
+      components: [],
+    });
+    return;
+  }
+
+  const projects = await prisma.project.findMany({
+    where: {
+      id: { in: selectedProjectIds },
+      tenantId,
+    },
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  });
+
+  if (projects.length === 0) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Inga giltiga projekt hittades.")],
+      components: [],
+    });
+    return;
+  }
+
+  const confirmEmbed = createSyncConfirmEmbed(projects);
+
+  // Encode project IDs in the button customId (comma-separated)
+  const projectIdsParam = projects.map((p) => p.id).join(",");
+
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`confirm_sync_${projectIdsParam}`)
+      .setLabel("Bekr\u00E4fta")
+      .setEmoji("\u2705")
+      .setStyle(ButtonStyle.Success),
+    new ButtonBuilder()
+      .setCustomId("cancel_sync")
+      .setLabel("Avbryt")
+      .setEmoji("\u274C")
+      .setStyle(ButtonStyle.Danger)
+  );
+
+  await interaction.editReply({
+    embeds: [confirmEmbed],
+    components: [row],
   });
 }

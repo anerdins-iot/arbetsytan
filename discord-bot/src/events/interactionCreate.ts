@@ -6,12 +6,15 @@ import { Client, Events, MessageFlags } from "discord.js";
 import { handleButton } from "../handlers/button.js";
 import { handleSelectMenu } from "../handlers/select.js";
 import { handleModalSubmit } from "../handlers/modal.js";
+import { handleCommand } from "../commands/index.js";
 import { createGenericErrorEmbed } from "../components/error-embeds.js";
 
 export function registerInteractionCreate(client: Client): void {
   client.on(Events.InteractionCreate, async (interaction) => {
     try {
-      if (interaction.isButton()) {
+      if (interaction.isChatInputCommand()) {
+        await handleCommand(interaction);
+      } else if (interaction.isButton()) {
         await handleButton(interaction);
       } else if (interaction.isStringSelectMenu()) {
         await handleSelectMenu(interaction);

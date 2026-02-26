@@ -326,6 +326,115 @@ export function createSuccessEmbed(
 }
 
 /**
+ * Build an onboarding welcome embed.
+ */
+export function createOnboardingWelcomeEmbed(): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(COLORS.PROJECT)
+    .setTitle("\u{1F680} V\u00E4lkommen till ArbetsYtan!")
+    .setDescription(
+      "Koppla dina projekt till Discord f\u00F6r att f\u00E5 notifikationer, hantera uppgifter och samarbeta direkt h\u00E4rifr\u00E5n.\n\n" +
+        "**Vad h\u00E4nder n\u00E4r du k\u00F6r setup:**\n" +
+        "\u2022 V\u00E4lj vilka projekt du vill koppla\n" +
+        "\u2022 Discord-kanaler skapas automatiskt per projekt\n" +
+        "\u2022 Varje projekt f\u00E5r: #allm\u00E4nt, #uppgifter, #filer och #aktivitet\n\n" +
+        "Klicka p\u00E5 knappen nedan f\u00F6r att b\u00F6rja!"
+    )
+    .setFooter({ text: "ArbetsYtan \u2014 Projektledning f\u00F6r hantverkare" })
+    .setTimestamp();
+}
+
+/**
+ * Build an embed with instructions for project selection.
+ */
+export function createProjectSelectEmbed(): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(COLORS.PROJECT)
+    .setTitle("\u{1F4C1} V\u00E4lj projekt att koppla")
+    .setDescription(
+      "V\u00E4lj ett eller flera projekt fr\u00E5n listan nedan. F\u00F6r varje valt projekt skapas en Discord-kategori med kanaler.\n\n" +
+        "\u{1F4A1} *Du kan v\u00E4lja upp till 25 projekt \u00E5t g\u00E5ngen.*"
+    )
+    .setTimestamp();
+}
+
+export interface SyncConfirmProject {
+  name: string;
+  id: string;
+}
+
+/**
+ * Build a confirmation embed before syncing.
+ */
+export function createSyncConfirmEmbed(
+  projects: SyncConfirmProject[]
+): EmbedBuilder {
+  const projectList = projects.map((p) => `\u2022 **${p.name}**`).join("\n");
+
+  return new EmbedBuilder()
+    .setColor(COLORS.WARNING)
+    .setTitle("\u2753 Bekr\u00E4fta synkning")
+    .setDescription(
+      `Du har valt **${projects.length}** projekt att koppla till Discord:\n\n` +
+        `${projectList}\n\n` +
+        "F\u00F6r varje projekt skapas:\n" +
+        "\u2022 En kategori med projektnamnet\n" +
+        "\u2022 #allm\u00E4nt \u2014 AI-bot och allm\u00E4n diskussion\n" +
+        "\u2022 #uppgifter \u2014 Uppgiftsnotifikationer\n" +
+        "\u2022 #filer \u2014 Filuppladdningar\n" +
+        "\u2022 #aktivitet \u2014 Anteckningar och statusuppdateringar\n\n" +
+        "\u00C4r detta korrekt?"
+    )
+    .setTimestamp();
+}
+
+export interface SyncCompleteResult {
+  projectName: string;
+  channelCount: number;
+  error?: string;
+}
+
+/**
+ * Build a summary embed after sync is complete.
+ */
+export function createSyncCompleteEmbed(
+  results: SyncCompleteResult[]
+): EmbedBuilder {
+  const successful = results.filter((r) => !r.error);
+  const failed = results.filter((r) => r.error);
+
+  let description = `**${successful.length}** av **${results.length}** projekt synkades!\n\n`;
+
+  if (successful.length > 0) {
+    description += "**Lyckades:**\n";
+    description += successful
+      .map(
+        (r) =>
+          `\u2705 **${r.projectName}** \u2014 ${r.channelCount} kanaler skapade`
+      )
+      .join("\n");
+  }
+
+  if (failed.length > 0) {
+    description += "\n\n**Misslyckades:**\n";
+    description += failed
+      .map((r) => `\u274C **${r.projectName}** \u2014 ${r.error}`)
+      .join("\n");
+  }
+
+  return new EmbedBuilder()
+    .setColor(failed.length > 0 ? COLORS.WARNING : COLORS.SUCCESS)
+    .setTitle(
+      failed.length === 0
+        ? "\u2705 Synkning klar!"
+        : "\u26A0\uFE0F Synkning delvis klar"
+    )
+    .setDescription(description)
+    .setFooter({ text: "Kanalerna \u00E4r redo att anv\u00E4ndas!" })
+    .setTimestamp();
+}
+
+/**
  * Format bytes to human-readable string.
  */
 function formatBytes(bytes: number): string {
