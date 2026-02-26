@@ -247,21 +247,21 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 
 **AI-chatt och datarikt innehåll:** AI-chatten får aldrig rendera datarikt innehåll (listor, tabeller) direkt i chatten. Använd mönstret knapp + Sheet-panel med samma komponenter som på den vanliga UI-sidan (se `DEVLOG.md` 2026-02-23). Mönstret är implementerat för t.ex. grossistsökning, rapport-/offertförhandsgranskning och dokumentsökning.
 
-## CRUD-paritet: AI + UI
+## CRUD-paritet: AI + UI + Discord
 
-**KRITISK REGEL:** Alla funktioner som byggs MÅSTE ha fullständig CRUD-åtkomst i BÅDE AI och UI.
+**KRITISK REGEL:** Alla funktioner som byggs MÅSTE ha fullständig CRUD-åtkomst i AI, UI och Discord (där det är rimligt). Discord ska kunna visa, skapa, uppdatera och radera samma entiteter som webben och AI:n — via botten (knappar, modaler, notiser) och/eller Discord-AI-chatt.
 
-| Funktion | UI-åtkomst | AI-åtkomst |
-|----------|-----------|------------|
-| Projekt | Skapa, läs, uppdatera, arkivera | `createProject`, `listProjects`, `updateProject`, `archiveProject` |
-| Uppgifter | Skapa, läs, uppdatera, radera | `createTask`, `listTasks`, `updateTask`, `deleteTask` |
-| Kommentarer | Skapa, läs, uppdatera, radera | `addComment`, `listComments`, `updateComment`, `deleteComment` |
-| Tidrapporter | Skapa, läs, uppdatera, radera | `logTime`, `listTimeEntries`, `updateTimeEntry`, `deleteTimeEntry` |
-| Filer | Ladda upp, läs, radera | `uploadFile`, `listFiles`, `deleteFile` |
-| Anteckningar | Skapa, läs, uppdatera, radera | `createNote`, `listNotes`, `updateNote`, `deleteNote` |
-| Projektmedlemmar | Lägg till, ta bort, lista | `addMember`, `removeMember`, `listMembers` |
-| E-post | Läsa, svara, arkivera | `searchMyEmails`, `getConversationContext` |
-| Rapport | — | `generateProjectReport` |
+| Funktion | UI-åtkomst | AI-åtkomst | Discord-åtkomst |
+|----------|-----------|------------|----------------|
+| Projekt | Skapa, läs, uppdatera, arkivera | `createProject`, `listProjects`, `updateProject`, `archiveProject` | Kanal skapas/arkiveras via Redis; lista/info via AI-chatt eller bot |
+| Uppgifter | Skapa, läs, uppdatera, radera | `createTask`, `listTasks`, `updateTask`, `deleteTask` | Visa, skapa, uppdatera (t.ex. klar, tilldela), radera via knappar/modaler + notiser i kanal |
+| Kommentarer | Skapa, läs, uppdatera, radera | `addComment`, `listComments`, `updateComment`, `deleteComment` | Notis vid ny kommentar; läsa/skriva/radera via bot eller AI-chatt |
+| Tidrapporter | Skapa, läs, uppdatera, radera | `logTime`, `listTimeEntries`, `updateTimeEntry`, `deleteTimeEntry` | Logga tid (modal); lista/uppdatera/radera via bot eller AI-chatt |
+| Filer | Ladda upp, läs, radera | `uploadFile`, `listFiles`, `deleteFile` | Uppladdning i projektkanal; lista/radera via bot eller AI-chatt |
+| Anteckningar | Skapa, läs, uppdatera, radera | `createNote`, `listNotes`, `updateNote`, `deleteNote` | Via AI-chatt eller framtida bot-flöden |
+| Projektmedlemmar | Lägg till, ta bort, lista | `addMember`, `removeMember`, `listMembers` | Kanalrättigheter synkas; lista/lägg till/ta bort via bot eller AI-chatt |
+| E-post | Läsa, svara, arkivera | `searchMyEmails`, `getConversationContext` | Via Discord-AI-chatt |
+| Rapport | — | `generateProjectReport` | Via Discord-AI-chatt |
 
 ### Checklista vid ny funktionalitet
 
@@ -275,8 +275,9 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
    - Projekt-AI: `project-tools.ts`
    - Personlig AI: `personal-tools.ts`
    - Delad logik: `shared-tools.ts`
-6. **Översättningar** — Texter i `messages/sv.json` och `messages/en.json`
-7. **Seed-data** — Testdata i `prisma/seed.ts`
+6. **Discord** — Motsvarande flöden i Discord-botten (Redis-events, knappar, modaler, notiser) och/eller tillgång via Discord-AI-chatt; admin-panel för att konfigurera projekt↔kanal och uppgifter↔kanaler.
+7. **Översättningar** — Texter i `messages/sv.json` och `messages/en.json`
+8. **Seed-data** — Testdata i `prisma/seed.ts`
 
 ### AI-verktyg som MÅSTE finnas
 
@@ -295,6 +296,10 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - Översikt: listProjects, searchAcrossProjects
 - E-post: searchMyEmails (global), getConversationContext
 - Personliga anteckningar: create, list, update, delete (utan projektkontext)
+
+**Discord** (paritet med AI + UI):
+- Samma funktioner som ovan ska vara åtkomliga från Discord (bot-knappar/modaler/notiser och/eller Discord-AI-chatt).
+- Admin-panel (Inställningar → Discord): koppla server, kategorier, rollmappningar, **projekt↔kanal-synk** (vilka projekt har vilka kanaler), **uppgifter↔kanaler** (vilka kanaler får task-notiser, vilka typer).
 
 ## Förbjudet
 
@@ -340,6 +345,10 @@ Läs `UI.md` för designspråk, färger, typsnitt och visuella riktlinjer. Läs 
 - `vercel-ai-sdk.md` — Vercel AI SDK-referens
 - `web/prisma/schema.prisma` — Databasschema
 - `web/prisma/seed.ts` — Seed-data
+- `web/src/actions/discord.ts` — Discord Server Actions (inställningar, kategorier, roller, projektsynk)
+- `web/src/app/[locale]/(dashboard)/settings/discord/` — Discord admin-panel (sidor)
+- `web/src/lib/redis-pubsub.ts` — Redis pub/sub för Discord-bot (events)
+- `docs/discord.md` — discord.js v14-referens
 - `PROJEKT.md` — Fullständig projektbeskrivning och faser
 - `UI.md` — Designspråk, färger, typsnitt
 - `DEVLOG.md` — Löpande erfarenhetslogg
