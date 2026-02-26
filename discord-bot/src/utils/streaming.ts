@@ -63,7 +63,12 @@ function extractMedia(text: string): ExtractedMedia {
     const url = match[2];
     const ext = getExtension(url);
     if (FILE_EXTENSIONS.has(ext)) {
-      const filename = linkText || getFilenameFromUrl(url);
+      // Use linkText as base filename, but ensure it has the correct extension
+      let filename = linkText || getFilenameFromUrl(url);
+      // If the filename doesn't already have the extension, add it
+      if (!filename.toLowerCase().endsWith(ext)) {
+        filename = filename + ext;
+      }
       fileUrls.push({ url, filename });
     } else if (IMAGE_EXTENSIONS.has(ext) && !imageUrls.includes(url)) {
       imageUrls.push(url);
@@ -80,7 +85,12 @@ function extractMedia(text: string): ExtractedMedia {
       imageUrls.push(url);
       cleanedText = cleanedText.replace(url, "");
     } else if (FILE_EXTENSIONS.has(ext) && !fileUrls.some((f) => f.url === url)) {
-      fileUrls.push({ url, filename: getFilenameFromUrl(url) });
+      let filename = getFilenameFromUrl(url);
+      // Ensure the filename has the correct extension
+      if (!filename.toLowerCase().endsWith(ext)) {
+        filename = filename + ext;
+      }
+      fileUrls.push({ url, filename });
     }
   }
 
@@ -103,12 +113,46 @@ function getExtension(url: string): string {
   }
 }
 
-/** Extract a filename from a URL path. */
+/** Extract a filename from a URL path, preserving the file extension. */
 function getFilenameFromUrl(url: string): string {
   try {
-    const pathname = new URL(url).pathname;
+    const parsedUrl = new URL(url);
+    const pathname = parsedUrl.pathname;
     const parts = pathname.split("/");
-    return decodeURIComponent(parts[parts.length - 1] || "file");
+    let filename = decodeURIComponent(parts[parts.length - 1] || "");
+
+    // If filename is empty or doesn't have an extension, try to get it from Content-Disposition
+    // or use a fallback based on the extension in the path
+    if (!filename || filename === "") {
+      return "file";
+    }
+
+    // Check if the filename has an extension
+    const hasExtension = filename.includes(".") && filename.lastIndexOf(".") > 0;
+
+    if (!hasExtension) {
+      // Try to extract extension from query params (some systems use ?filename=xxx.pdf)
+      const filenameParam = parsedUrl.searchParams.get("filename")
+        || parsedUrl.searchParams.get("response-content-disposition");
+
+      if (filenameParam) {
+        // Extract filename from Content-Disposition style param
+        const match = filenameParam.match(/filename[*]?=["']?([^"';\s]+)/i);
+        if (match) {
+          return decodeURIComponent(match[1]);
+        }
+        // If it's just a filename
+        if (filenameParam.includes(".")) {
+          return decodeURIComponent(filenameParam);
+        }
+      }
+
+      // Look through the entire path for an extension hint
+      // This handles cases like /files/abc123 where the original filename is lost
+      // We'll return a generic name, but the extension detection should handle it
+    }
+
+    return filename;
   } catch {
     return "file";
   }
