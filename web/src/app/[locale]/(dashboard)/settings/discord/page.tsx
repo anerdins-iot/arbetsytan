@@ -1,9 +1,14 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
 import { requireRole } from "@/lib/auth";
-import { getDiscordSettings, getLinkedUsers } from "@/actions/discord";
+import {
+  getDiscordSettings,
+  getLinkedUsers,
+  getProjectSyncStatus,
+} from "@/actions/discord";
 import { DiscordSetup } from "@/components/discord/DiscordSetup";
 import { LinkedUsersTable } from "@/components/discord/LinkedUsersTable";
+import { ProjectSyncSection } from "@/components/discord/ProjectSyncSection";
 import { Link } from "@/i18n/routing";
 
 type Props = {
@@ -17,9 +22,10 @@ export default async function DiscordSettingsPage({ params }: Props) {
 
   await requireRole(["ADMIN"]);
 
-  const [settings, linkedUsers] = await Promise.all([
+  const [settings, linkedUsers, projectSync] = await Promise.all([
     getDiscordSettings(),
     getLinkedUsers(),
+    getProjectSyncStatus(),
   ]);
 
   return (
@@ -34,6 +40,8 @@ export default async function DiscordSettingsPage({ params }: Props) {
       {settings.discordGuildId ? (
         <>
           <LinkedUsersTable users={linkedUsers} />
+
+          <ProjectSyncSection projects={projectSync} />
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Link
