@@ -101,6 +101,36 @@ function mergeWhereEmailMessageTenant<T extends { where?: unknown }>(
   } as T;
 }
 
+/**
+ * Two-step tenant guard for unique operations (findUnique/update/delete) on models
+ * with indirect tenant relations. Prisma doesn't support nested relation filters
+ * in unique WHERE clauses, so we first verify the record belongs to the tenant
+ * via findFirst, then let the original operation proceed.
+ *
+ * @param modelName  - Prisma model name (camelCase, e.g. "task", "emailMessage")
+ * @param id         - The record id to check
+ * @param tenantId   - The tenant to verify ownership against
+ * @param relationPath - Dot-separated relation path to tenantId (e.g. "project", "task.project", "conversation")
+ */
+async function guardRelationTenant(
+  modelName: string,
+  id: string,
+  tenantId: string,
+  relationPath: string
+): Promise<void> {
+  const filter = nestedTenantFilter(relationPath, tenantId);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const exists = await (basePrisma as any)[modelName].findFirst({
+    where: { id, ...filter },
+    select: { id: true },
+  });
+  if (!exists) {
+    throw new Error(
+      `${modelName} ${id} not found or does not belong to tenant ${tenantId}`
+    );
+  }
+}
+
 /** Build nested where key from dot path, e.g. "task.project" -> { task: { project: { tenantId } } }. */
 function nestedTenantFilter(relationPath: string, tenantId: string): Record<string, unknown> {
   const parts = relationPath.split(".");
@@ -274,7 +304,26 @@ function createTenantExtension(tenantId: string) {
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
       findFirstOrThrow: ({ args, query: run }) =>
         run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-      // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
+      findUnique: async ({ args, query: run }) => {
+        const a = args as { where: { id?: string } };
+        if (a.where?.id) await guardRelationTenant(model, a.where.id, tenantId, "project");
+        return run(args);
+      },
+      findUniqueOrThrow: async ({ args, query: run }) => {
+        const a = args as { where: { id?: string } };
+        if (a.where?.id) await guardRelationTenant(model, a.where.id, tenantId, "project");
+        return run(args);
+      },
+      update: async ({ args, query: run }) => {
+        const a = args as { where: { id?: string } };
+        if (a.where?.id) await guardRelationTenant(model, a.where.id, tenantId, "project");
+        return run(args);
+      },
+      delete: async ({ args, query: run }) => {
+        const a = args as { where: { id?: string } };
+        if (a.where?.id) await guardRelationTenant(model, a.where.id, tenantId, "project");
+        return run(args);
+      },
     };
   }
 
@@ -292,7 +341,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
     count: ({ args, query: run }) =>
       run(mergeWhereFileTenant(args as { where?: unknown }, tenantId)),
-    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("file", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("file", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("file", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("file", a.where.id, tenantId, "project");
+      return run(args);
+    },
   };
 
   // 2a2. NoteAttachment: scoped via note.project.tenantId
@@ -303,6 +371,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("noteAttachment", a.where.id, tenantId, "note.project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("noteAttachment", a.where.id, tenantId, "note.project");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("noteAttachment", a.where.id, tenantId, "note.project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("noteAttachment", a.where.id, tenantId, "note.project");
+      return run(args);
+    },
     count: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "note.project")),
   };
@@ -321,7 +409,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
     count: ({ args, query: run }) =>
       run(mergeWhereNoteTenant(args as { where?: unknown }, tenantId)),
-    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("note", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("note", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("note", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("note", a.where.id, tenantId, "project");
+      return run(args);
+    },
   };
 
   // 2b. Comment is scoped via task.project (no direct project relation)
@@ -332,7 +439,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
-    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("comment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("comment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("comment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("comment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
   };
 
   // 2c. AutomationLog is scoped via automation
@@ -345,7 +471,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
     count: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "automation")),
-    // findUnique/update/delete not intercepted due to Prisma unique filter limitations
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("automationLog", a.where.id, tenantId, "automation");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("automationLog", a.where.id, tenantId, "automation");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("automationLog", a.where.id, tenantId, "automation");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("automationLog", a.where.id, tenantId, "automation");
+      return run(args);
+    },
   };
 
   // 3. Handle ProjectMember (scoped via project)
@@ -359,7 +504,21 @@ function createTenantExtension(tenantId: string) {
     create: ({ args, query: run }) => run(args),
     deleteMany: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-    // findUnique/delete not intercepted due to Prisma unique filter limitations with joins
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("projectMember", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("projectMember", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("projectMember", a.where.id, tenantId, "project");
+      return run(args);
+    },
   };
 
   // 4. Handle TaskAssignment (nested relation: task -> project -> tenantId)
@@ -370,7 +529,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "task.project")),
-    // findUnique not intercepted due to Prisma unique filter limitations with joins
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("taskAssignment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("taskAssignment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("taskAssignment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("taskAssignment", a.where.id, tenantId, "task.project");
+      return run(args);
+    },
   };
 
   // 4b. AIMessage is scoped via project (always has projectId)
@@ -388,7 +566,26 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
     count: ({ args, query: run }) =>
       run(mergeWhereTenantId(args as { where?: unknown }, tenantId, "project")),
-    // findUnique/update/delete not intercepted due to Prisma unique filter limitations with joins
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("aIMessage", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("aIMessage", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("aIMessage", a.where.id, tenantId, "project");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("aIMessage", a.where.id, tenantId, "project");
+      return run(args);
+    },
   };
 
   // 5. Conversation: personal (projectId null) or project.tenantId
@@ -438,6 +635,8 @@ function createTenantExtension(tenantId: string) {
   };
 
   // 6b. EmailMessage: scoped via conversation.tenantId
+  // For unique operations (findUnique/update/delete), Prisma doesn't support nested
+  // relation filters in WHERE, so we use a two-step guard: verify tenant first, then run.
   query.emailMessage = {
     findMany: ({ args, query: run }) =>
       run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
@@ -445,14 +644,28 @@ function createTenantExtension(tenantId: string) {
       run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
     findFirstOrThrow: ({ args, query: run }) =>
       run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
-    findUnique: ({ args, query: run }) =>
-      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
-    findUniqueOrThrow: ({ args, query: run }) =>
-      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
+    findUnique: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("emailMessage", a.where.id, tenantId, "conversation");
+      return run(args);
+    },
+    findUniqueOrThrow: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("emailMessage", a.where.id, tenantId, "conversation");
+      return run(args);
+    },
     create: ({ args, query: run }) => run(args),
-    update: ({ args, query: run }) =>
-      run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
-    delete: ({ args, query: run }) =>
+    update: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("emailMessage", a.where.id, tenantId, "conversation");
+      return run(args);
+    },
+    delete: async ({ args, query: run }) => {
+      const a = args as { where: { id?: string } };
+      if (a.where?.id) await guardRelationTenant("emailMessage", a.where.id, tenantId, "conversation");
+      return run(args);
+    },
+    updateMany: ({ args, query: run }) =>
       run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
     deleteMany: ({ args, query: run }) =>
       run(mergeWhereEmailMessageTenant(args as { where?: unknown }, tenantId)),
