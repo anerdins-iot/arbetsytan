@@ -175,6 +175,8 @@ export async function handleAIMessage(
     console.log(`[handleAIMessage] Starting AI call for user ${user.userId}`);
     await channel.sendTyping().catch(() => {});
 
+    const isDM = !message.guildId;
+
     const response = await callAI({
       userId: user.userId,
       tenantId: user.tenantId,
@@ -182,6 +184,7 @@ export async function handleAIMessage(
       userRole: user.userRole,
       projectId: channelContext.projectId,
       conversationId,
+      isDM,
       messages: aiMessages,
     });
 

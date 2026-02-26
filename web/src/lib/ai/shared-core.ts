@@ -39,6 +39,13 @@ export interface AIContext {
   projectId?: string | null;
   conversationId: string;
   conversationType: "PERSONAL" | "PROJECT";
+  /**
+   * Whether this is a Discord DM (direct message).
+   * When false (guild channel): personal tools are excluded, and if projectId is set,
+   * only that project's tools are available.
+   * When true or undefined (web/DM): all tools are available.
+   */
+  isDiscordDM?: boolean;
 }
 
 /** Options for executing an AI chat stream. */
@@ -138,25 +145,117 @@ export function resolveProvider(
 // ─────────────────────────────────────────
 
 /**
+ * Tool names that are personal/private and should ONLY be available in DMs.
+ * These deal with personal files, personal notes, email, and conversation history.
+ */
+const PERSONAL_ONLY_TOOLS = new Set([
+  // Personal files
+  "getPersonalFiles",
+  "analyzePersonalFile",
+  "movePersonalFileToProject",
+  "moveProjectFileToPersonal",
+  "deletePersonalFile",
+  // Personal notes
+  "getPersonalNotes",
+  "createPersonalNote",
+  "updatePersonalNote",
+  "deletePersonalNote",
+  "togglePersonalNotePin",
+  "searchPersonalNotes",
+  "getPersonalNoteAttachments",
+  "attachFileToPersonalNote",
+  "detachFileFromPersonalNote",
+  // Email
+  "searchMyEmails",
+  "getConversationContext",
+  "getMyRecentEmails",
+  "listEmailTemplates",
+  "getEmailTemplate",
+  "updateEmailTemplate",
+  "previewEmailTemplate",
+  "prepareEmailToExternalRecipients",
+  "prepareEmailToTeamMembers",
+  "prepareEmailToProjectMembers",
+  "getTeamMembersForEmailTool",
+  "getProjectsForEmailTool",
+  "getProjectMembersForEmailTool",
+  // Conversation history
+  "searchConversations",
+  // Notification settings
+  "getNotificationSettings",
+  "updateNotificationSettings",
+  // Invitations (admin)
+  "sendInvitation",
+  "listInvitations",
+  "cancelInvitation",
+  // Automations
+  "createAutomation",
+  "listAutomations",
+  "getAutomation",
+  "updateAutomation",
+  "pauseAutomation",
+  "resumeAutomation",
+  "deleteAutomation",
+]);
+
+/**
+ * Tool names that span across projects and should be excluded in project channels.
+ * In a project channel, the AI should only work within that specific project.
+ */
+const CROSS_PROJECT_TOOLS = new Set([
+  "getProjectList",
+  "createProject",
+  "archiveProject",
+  "getUserTasks",
+  "getMyTimeEntries",
+]);
+
+/**
  * Build the tool schemas for an AI chat session.
  * Returns personal tools + optional web search (Anthropic-only).
+ *
+ * When called from a Discord guild channel (isDiscordDM === false):
+ * - Personal tools are excluded (files, notes, email, conversations)
+ * - If a projectId is set, cross-project tools are also excluded
  */
 export function buildToolSchemas(context: AIContext, providerKey: ProviderKey) {
   const db = tenantDb(context.tenantId);
   const udb = userDb(context.userId, {});
 
-  const personalTools = createPersonalTools({
+  const allPersonalTools = createPersonalTools({
     db,
     tenantId: context.tenantId,
     userId: context.userId,
     udb,
   });
 
+  // Determine if we need to filter tools (Discord guild channels only)
+  const isGuildChannel = context.isDiscordDM === false;
+  const isProjectChannel = isGuildChannel && !!context.projectId;
+
+  let tools: Record<string, unknown>;
+
+  if (isGuildChannel) {
+    // Filter out personal-only tools in guild channels
+    tools = Object.fromEntries(
+      Object.entries(allPersonalTools).filter(([name]) => {
+        // Always exclude personal tools in guild channels
+        if (PERSONAL_ONLY_TOOLS.has(name)) return false;
+        // In project channels, also exclude cross-project tools
+        if (isProjectChannel && CROSS_PROJECT_TOOLS.has(name)) return false;
+        return true;
+      })
+    );
+  } else {
+    // DM or web: all tools available
+    tools = allPersonalTools;
+  }
+
   const isAnthropicProvider =
     providerKey === "CLAUDE_HAIKU" || providerKey === "CLAUDE_SONNET";
 
   return {
-    ...personalTools,
+    ...tools,
     ...(isAnthropicProvider
       ? {
           web_search: anthropic.tools.webSearch_20250305({
@@ -428,6 +527,8 @@ export interface BuildSystemPromptOptions {
   checkUnreadOnStart?: boolean;
   conversationSummary?: string | null;
   hasAttachedImages?: boolean;
+  /** When true, the AI is in a Discord guild channel (not DM). Limits scope. */
+  isDiscordGuildChannel?: boolean;
 }
 
 /** Build the full system prompt for an AI chat session. */
@@ -442,6 +543,7 @@ export function buildSystemPrompt(opts: BuildSystemPromptOptions): string {
     checkUnreadOnStart,
     conversationSummary,
     hasAttachedImages,
+    isDiscordGuildChannel,
   } = opts;
 
   const knowledgeBlock =
@@ -486,12 +588,33 @@ export function buildSystemPrompt(opts: BuildSystemPromptOptions): string {
     );
   }
 
-  parts.push(
-    `Du är en personlig arbetsassistent åt ${userName ?? "användaren"}.`,
-    `Användaren har rollen ${userRole}.`,
-    "Du hjälper med personliga saker och med projekt — användaren kan byta projekt när som helst. Du har tillgång till verktyg för alla användarens projekt (ange projectId när du arbetar i ett specifikt projekt).",
-    unreadHint
-  );
+  if (isDiscordGuildChannel && projectId && projectContext) {
+    // Guild channel with a project: scoped assistant
+    parts.push(
+      `Du är en projektassistent för "${projectContext.name}" i en Discord-kanal.`,
+      `Användaren har rollen ${userRole}.`,
+      "Du hjälper ENBART med detta specifika projekt. Du har INTE tillgång till personliga filer, personliga anteckningar, e-post eller andra projekt.",
+      "Om användaren frågar om personliga saker eller andra projekt, hänvisa dem till att skicka ett DM (direktmeddelande) till botten istället.",
+      unreadHint
+    );
+  } else if (isDiscordGuildChannel) {
+    // Guild channel without a project: limited assistant
+    parts.push(
+      `Du är en arbetsassistent i en Discord-kanal.`,
+      `Användaren har rollen ${userRole}.`,
+      "Du hjälper med projektrelaterade frågor. Du har INTE tillgång till personliga filer, personliga anteckningar eller e-post.",
+      "Om användaren frågar om personliga saker, hänvisa dem till att skicka ett DM (direktmeddelande) till botten istället.",
+      unreadHint
+    );
+  } else {
+    // DM or web: full assistant
+    parts.push(
+      `Du är en personlig arbetsassistent åt ${userName ?? "användaren"}.`,
+      `Användaren har rollen ${userRole}.`,
+      "Du hjälper med personliga saker och med projekt — användaren kan byta projekt när som helst. Du har tillgång till verktyg för alla användarens projekt (ange projectId när du arbetar i ett specifikt projekt).",
+      unreadHint
+    );
+  }
 
   // Factual accuracy - never invent dates or numbers
   const factualPolicy = `
@@ -870,6 +993,7 @@ export async function executeAIChat(
     checkUnreadOnStart: isFirstTurn,
     conversationSummary,
     hasAttachedImages,
+    isDiscordGuildChannel: context.isDiscordDM === false,
   });
 
   // Build tools

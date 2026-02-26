@@ -36,6 +36,8 @@ interface DiscordChatRequest {
   userRole: string;
   projectId?: string;
   conversationId?: string;
+  /** Whether this is a DM (direct message) vs a guild channel message. */
+  isDM?: boolean;
   provider?: ProviderKey;
   messages: DiscordChatMessage[];
 }
@@ -74,6 +76,7 @@ export async function POST(req: NextRequest) {
     userRole,
     projectId,
     conversationId,
+    isDM,
     provider,
     messages,
   } = body;
@@ -177,6 +180,7 @@ export async function POST(req: NextRequest) {
         projectId: projectId ?? null,
         conversationId: activeConversationId,
         conversationType: "PERSONAL",
+        isDiscordDM: isDM,
       },
       messages: uiMessages,
       provider: provider as ProviderKey | undefined,

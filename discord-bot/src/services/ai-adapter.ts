@@ -21,6 +21,8 @@ export interface AIRequestOptions {
   userRole: string;
   projectId?: string;
   conversationId?: string;
+  /** Whether this is a DM (direct message) vs a guild channel message. */
+  isDM?: boolean;
   messages: AIMessage[];
 }
 
@@ -57,6 +59,7 @@ export async function callAI(options: AIRequestOptions): Promise<AIResponse> {
       userRole: options.userRole,
       projectId: options.projectId,
       conversationId: options.conversationId,
+      isDM: options.isDM,
       messages: options.messages.map((m) => ({
         role: m.role,
         content: m.content,
