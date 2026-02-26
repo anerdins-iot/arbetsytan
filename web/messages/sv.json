@@ -1264,6 +1264,47 @@
         "title": "Discord",
         "description": "Hantera Discord-serverintegrationen, roller och kategorier.",
         "cta": "Öppna Discord-inställningar"
+      },
+      "wizard": {
+        "title": "Konfigurera Discord",
+        "welcome": {
+          "title": "Välkommen till Discord-integrationen",
+          "description": "Vi hjälper dig att koppla din Discord-server till systemet."
+        },
+        "serverSelection": {
+          "title": "Välj server",
+          "connectWithDiscord": "Anslut med Discord",
+          "selectServer": "Välj en server där du vill lägga till boten",
+          "createNew": "Skapa ny server",
+          "botAlreadyAdded": "Bot redan tillagd",
+          "addBot": "Lägg till bot",
+          "noServers": "Du har inga servrar med administratörsbehörighet",
+          "refresh": "Uppdatera lista"
+        },
+        "categories": {
+          "title": "Konfigurera kategorier",
+          "description": "Kategorier organiserar kanalerna i din Discord-server."
+        },
+        "roles": {
+          "title": "Konfigurera roller",
+          "description": "Roller används för att ge användare rätt behörigheter."
+        },
+        "confirmation": {
+          "title": "Bekräfta setup",
+          "description": "Vi skapar följande i din Discord-server:",
+          "createAll": "Skapa allt",
+          "creating": "Skapar..."
+        },
+        "steps": {
+          "welcome": "Välkommen",
+          "server": "Server",
+          "categories": "Kategorier",
+          "roles": "Roller",
+          "confirm": "Bekräfta"
+        },
+        "next": "Nästa",
+        "back": "Tillbaka",
+        "skip": "Hoppa över"
       }
     },
     "profile": {
@@ -1344,6 +1385,16 @@
         "errors": {
           "generic": "Kunde inte uppdatera språkvalet."
         }
+      },
+      "discord": {
+        "title": "Discord-konto",
+        "description": "Koppla ditt Discord-konto för att få notifieringar och access till projektkanaler.",
+        "connect": "Koppla Discord-konto",
+        "connected": "Kopplat som {username}",
+        "disconnect": "Koppla bort",
+        "disconnecting": "Kopplar bort...",
+        "disconnected": "Discord-konto bortkopplat",
+        "error": "Kunde inte koppla bort Discord-kontot"
       }
     }
   },

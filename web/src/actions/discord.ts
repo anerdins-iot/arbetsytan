@@ -1,7 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { requireRole } from "@/lib/auth";
+import { requireAuth, requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
@@ -399,6 +399,81 @@ export async function updateRoleMapping(data: {
 
   revalidatePath("/[locale]/settings/discord/roles", "page");
   return { success: true };
+}
+
+// --- User Discord Account Actions (all roles) ---
+
+export type DiscordAccountStatus = {
+  connected: boolean;
+  discordUserId?: string;
+  discordUsername?: string;
+  discordAvatar?: string | null;
+};
+
+export async function getDiscordAccountStatus(): Promise<DiscordAccountStatus> {
+  const { userId } = await requireAuth();
+
+  const account = await prisma.account.findFirst({
+    where: {
+      userId,
+      provider: "discord",
+    },
+    select: {
+      providerAccountId: true,
+      access_token: true,
+    },
+  });
+
+  if (!account) {
+    return { connected: false };
+  }
+
+  // Try to fetch fresh Discord user info if we have a token
+  let username: string | undefined;
+  let avatar: string | null | undefined;
+
+  if (account.access_token) {
+    try {
+      const res = await fetch("https://discord.com/api/users/@me", {
+        headers: { Authorization: `Bearer ${account.access_token}` },
+      });
+      if (res.ok) {
+        const data = (await res.json()) as {
+          username: string;
+          avatar: string | null;
+        };
+        username = data.username;
+        avatar = data.avatar;
+      }
+    } catch {
+      // Token may be expired — just return what we have
+    }
+  }
+
+  return {
+    connected: true,
+    discordUserId: account.providerAccountId,
+    discordUsername: username,
+    discordAvatar: avatar,
+  };
+}
+
+export async function disconnectDiscordAccount(): Promise<DiscordActionResult> {
+  const { userId } = await requireAuth();
+
+  try {
+    await prisma.account.deleteMany({
+      where: {
+        userId,
+        provider: "discord",
+      },
+    });
+
+    revalidatePath("/[locale]/settings/profile", "page");
+    return { success: true };
+  } catch {
+    return { success: false, error: "DISCONNECT_FAILED" };
+  }
 }
 
 export async function syncRoles(): Promise<DiscordActionResult> {

@@ -29,6 +29,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DiscordAccountSection } from "./DiscordAccountSection";
 
 type Props = {
   initialProfile: ProfileData;
@@ -477,6 +478,8 @@ export function ProfileSettings({ initialProfile, initialNotificationPreferences
           {localeError ? <p className="text-sm text-destructive">{localeError}</p> : null}
         </CardContent>
       </Card>
+
+      <DiscordAccountSection />
     </div>
   );
 }

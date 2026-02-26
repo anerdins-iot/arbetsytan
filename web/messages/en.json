@@ -1253,6 +1253,47 @@
         "title": "Discord",
         "description": "Manage the Discord server integration, roles and categories.",
         "cta": "Open Discord settings"
+      },
+      "wizard": {
+        "title": "Configure Discord",
+        "welcome": {
+          "title": "Welcome to the Discord integration",
+          "description": "We'll help you connect your Discord server to the system."
+        },
+        "serverSelection": {
+          "title": "Select server",
+          "connectWithDiscord": "Connect with Discord",
+          "selectServer": "Select a server where you want to add the bot",
+          "createNew": "Create new server",
+          "botAlreadyAdded": "Bot already added",
+          "addBot": "Add bot",
+          "noServers": "You have no servers with administrator permissions",
+          "refresh": "Refresh list"
+        },
+        "categories": {
+          "title": "Configure categories",
+          "description": "Categories organize the channels in your Discord server."
+        },
+        "roles": {
+          "title": "Configure roles",
+          "description": "Roles are used to give users the right permissions."
+        },
+        "confirmation": {
+          "title": "Confirm setup",
+          "description": "We will create the following in your Discord server:",
+          "createAll": "Create all",
+          "creating": "Creating..."
+        },
+        "steps": {
+          "welcome": "Welcome",
+          "server": "Server",
+          "categories": "Categories",
+          "roles": "Roles",
+          "confirm": "Confirm"
+        },
+        "next": "Next",
+        "back": "Back",
+        "skip": "Skip"
       }
     },
     "profile": {
@@ -1333,6 +1374,16 @@
         "errors": {
           "generic": "Could not update language preference."
         }
+      },
+      "discord": {
+        "title": "Discord account",
+        "description": "Link your Discord account to receive notifications and access project channels.",
+        "connect": "Link Discord account",
+        "connected": "Connected as {username}",
+        "disconnect": "Disconnect",
+        "disconnecting": "Disconnecting...",
+        "disconnected": "Discord account disconnected",
+        "error": "Could not disconnect the Discord account"
       }
     }
   },
