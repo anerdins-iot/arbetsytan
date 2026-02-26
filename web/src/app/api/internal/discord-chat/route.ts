@@ -183,7 +183,8 @@ export async function POST(req: NextRequest) {
         isDiscordDM: isDM,
       },
       messages: uiMessages,
-      provider: provider as ProviderKey | undefined,
+      // Default to Claude Haiku for Discord (faster, more reliable than Gemini Flash)
+      provider: (provider as ProviderKey | undefined) ?? "CLAUDE_HAIKU",
       conversationSummary,
       ...(imageDataUrls.length > 0 && { inlineImageDataUrls: imageDataUrls }),
     });
