@@ -141,6 +141,26 @@ model DiscordCategory {
   @@unique([tenantId, type])
 }
 
+model DiscordProjectChannel {
+  id                String   @id @default(cuid())
+  discordChannelId  String   @unique
+  discordCategoryId String?
+  projectId         String
+  tenantId          String
+  channelType       String   // "general", "tasks", "files", "activity"
+  syncEnabled       Boolean  @default(true)
+  lastSyncedAt      DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([tenantId])
+  @@index([discordChannelId])
+}
+
 model DiscordMessage {
   id               String   @id @default(cuid())
   discordMessageId String   @unique
@@ -629,6 +649,7 @@ model Project {
   projectMembers   ProjectMember[]
   tasks            Task[]
   timeEntries      TimeEntry[]
+  discordChannels  DiscordProjectChannel[]
 }
 
 model ProjectMember {
@@ -742,6 +763,7 @@ model Tenant {
   Quote                  Quote[]
   Subscription           Subscription?
   TimeEntry              TimeEntry[]
+  DiscordProjectChannel  DiscordProjectChannel[]
 }
 
 model TimeEntry {

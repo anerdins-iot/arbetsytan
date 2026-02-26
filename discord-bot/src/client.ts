@@ -7,6 +7,7 @@ import { env } from "./lib/env.js";
 import { registerReady } from "./events/ready.js";
 import { registerMessageCreate } from "./events/messageCreate.js";
 import { registerInteractionCreate } from "./events/interactionCreate.js";
+import { registerMessageReactionAdd } from "./events/messageReactionAdd.js";
 
 export async function startBot(): Promise<Client> {
   const token = env.DISCORD_TOKEN;
@@ -18,14 +19,16 @@ export async function startBot(): Promise<Client> {
       GatewayIntentBits.MessageContent,
       GatewayIntentBits.DirectMessages,
       GatewayIntentBits.GuildMembers,
+      GatewayIntentBits.GuildMessageReactions,
     ],
-    partials: [Partials.Channel, Partials.Message],
+    partials: [Partials.Channel, Partials.Message, Partials.Reaction],
   });
 
   // Register event handlers
   registerReady(client);
   registerMessageCreate(client);
   registerInteractionCreate(client);
+  registerMessageReactionAdd(client);
 
   // Reconnection and error event listeners
   client.on("warn", (info) => {

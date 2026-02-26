@@ -3901,6 +3901,117 @@ Returnera ENBART JSON i följande format:
     },
   });
 
+  // ─── Discord-synkning ─────────────────────────────────────
+
+  const syncDiscordChannels = tool({
+    description:
+      "Synka projekt till Discord-kanaler. Skapar kategorier och kanaler (allmänt, uppgifter, filer, aktivitet) för valda projekt. Kräver att Discord-bot är ansluten till företagets server.",
+    inputSchema: toolInputSchema(
+      z.object({
+        projectIds: z
+          .array(z.string())
+          .optional()
+          .describe("Projekt-IDn att synka. Om tom, synka alla aktiva projekt."),
+      })
+    ),
+    execute: async ({ projectIds }) => {
+      // Verify tenant has Discord configured
+      const tenant = await prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { discordGuildId: true, discordBotEnabled: true },
+      });
+
+      if (!tenant?.discordGuildId) {
+        return {
+          error: "Ingen Discord-server är kopplad till detta företag. Koppla först Discord i inställningarna.",
+        };
+      }
+
+      if (!tenant.discordBotEnabled) {
+        return {
+          error: "Discord-boten är inte aktiverad. Aktivera den i inställningarna.",
+        };
+      }
+
+      const ids = projectIds ?? [];
+
+      // Publish sync request to Redis for discord-bot to process
+      const { publishDiscordEvent } = await import("@/lib/redis-pubsub");
+      await publishDiscordEvent("discord:sync-projects", {
+        tenantId,
+        projectIds: ids,
+        requestedBy: userId,
+      });
+
+      // Return immediately — sync happens asynchronously
+      const projectCount = ids.length > 0 ? ids.length : "alla aktiva";
+      return {
+        message: `Synkningsförfrågan skickad för ${projectCount} projekt. Discord-boten skapar nu kategorier och kanaler. Det kan ta några sekunder.`,
+        projectIds: ids,
+        tenantId,
+      };
+    },
+  });
+
+  const getDiscordSyncStatus = tool({
+    description:
+      "Visa vilka projekt som är synkade till Discord, med deras kanaler och status.",
+    inputSchema: toolInputSchema(
+      z.object({
+        _: z.string().optional().describe("Ignoreras"),
+      })
+    ),
+    execute: async () => {
+      const tenant = await prisma.tenant.findUnique({
+        where: { id: tenantId },
+        select: { discordGuildId: true, discordBotEnabled: true },
+      });
+
+      if (!tenant?.discordGuildId) {
+        return {
+          error: "Ingen Discord-server är kopplad till detta företag.",
+          projects: [],
+        };
+      }
+
+      const projects = await db.project.findMany({
+        where: { status: "ACTIVE" },
+        select: {
+          id: true,
+          name: true,
+          discordChannelId: true,
+          discordChannels: {
+            select: {
+              discordChannelId: true,
+              channelType: true,
+              syncEnabled: true,
+              lastSyncedAt: true,
+            },
+          },
+        },
+      });
+
+      return {
+        discordBotEnabled: tenant.discordBotEnabled,
+        guildId: tenant.discordGuildId,
+        projects: projects.map((p) => ({
+          id: p.id,
+          name: p.name,
+          mainChannelId: p.discordChannelId,
+          synced: p.discordChannels.length > 0,
+          channels: p.discordChannels.map((c) => ({
+            type: c.channelType,
+            channelId: c.discordChannelId,
+            syncEnabled: c.syncEnabled,
+            lastSyncedAt: c.lastSyncedAt?.toISOString() ?? null,
+          })),
+        })),
+        totalSynced: projects.filter((p) => p.discordChannels.length > 0).length,
+        totalProjects: projects.length,
+      };
+    },
+  });
+
   return {
     // Projektlista och hantering
     getProjectList,
@@ -4040,5 +4151,8 @@ Returnera ENBART JSON i följande format:
     searchAndAddToShoppingList,
     // Chatthistorik
     searchConversations: searchConversationsTool,
+    // Discord-synkning
+    syncDiscordChannels,
+    getDiscordSyncStatus,
   };
 }

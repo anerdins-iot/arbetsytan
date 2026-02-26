@@ -419,6 +419,19 @@ export async function updateTask(
     });
   }
 
+  // Sync task update to Discord channels
+  await publishDiscordEvent("discord:task-updated", {
+    taskId: task.id,
+    projectId,
+    tenantId,
+    title: parsed.data.title,
+    description: parsed.data.description ?? null,
+    status: parsed.data.status,
+    priority: parsed.data.priority,
+    deadline: parsed.data.deadline ?? null,
+    updatedByName: user.name ?? user.email ?? undefined,
+  });
+
   await logActivity(tenantId, projectId, userId, action, "task", task.id, {
     title: parsed.data.title,
     previousStatus: task.status,
@@ -463,6 +476,12 @@ export async function deleteTask(
 
   await db.task.delete({
     where: { id: parsed.data.taskId },
+  });
+
+  await publishDiscordEvent("discord:task-deleted", {
+    taskId: task.id,
+    projectId,
+    tenantId,
   });
 
   await logActivity(tenantId, projectId, userId, "deleted", "task", task.id, {

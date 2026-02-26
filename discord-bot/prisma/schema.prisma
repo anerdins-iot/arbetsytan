@@ -10,12 +10,14 @@ datasource db {
 }
 
 model Tenant {
-  id               String            @id @default(cuid())
-  discordGuildId   String?           @unique
-  Membership       Membership[]
-  Project         Project[]
-  TimeEntry       TimeEntry[]
-  DiscordCategory DiscordCategory[]
+  id                    String                  @id @default(cuid())
+  discordGuildId        String?                 @unique
+  discordBotEnabled     Boolean                 @default(false)
+  Membership            Membership[]
+  Project               Project[]
+  TimeEntry             TimeEntry[]
+  DiscordCategory       DiscordCategory[]
+  DiscordProjectChannel DiscordProjectChannel[]
 }
 
 model User {
@@ -49,14 +51,17 @@ model Membership {
 }
 
 model Project {
-  id                String          @id @default(cuid())
-  name              String
-  discordChannelId  String?         @unique
-  tenantId          String
-  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  projectMembers    ProjectMember[]
-  tasks             Task[]
-  timeEntries       TimeEntry[]
+  id                 String                  @id @default(cuid())
+  name               String
+  status             String                  @default("ACTIVE")
+  discordChannelId   String?                 @unique
+  discordChannelName String?
+  tenantId           String
+  tenant             Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  projectMembers     ProjectMember[]
+  tasks              Task[]
+  timeEntries        TimeEntry[]
+  discordChannels    DiscordProjectChannel[]
 }
 
 model ProjectMember {
@@ -121,6 +126,26 @@ model DiscordCategory {
   sortOrder         Int      @default(0)
   createdAt         DateTime @default(now())
   tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model DiscordProjectChannel {
+  id                String   @id @default(cuid())
+  discordChannelId  String   @unique
+  discordCategoryId String?
+  projectId         String
+  tenantId          String
+  channelType       String
+  syncEnabled       Boolean  @default(true)
+  lastSyncedAt      DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  project           Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([tenantId])
+  @@index([discordChannelId])
 }
 
 // Minimal Conversation model for Discord metadata lookup/update.

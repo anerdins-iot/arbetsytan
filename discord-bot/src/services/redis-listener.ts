@@ -47,6 +47,31 @@ import {
   type FileNotificationPayload,
   type TimeEntryNotificationPayload,
 } from "./notification.js";
+import {
+  syncProjectsToDiscord,
+  getProjectSyncStatus,
+  type SyncProjectsEvent,
+} from "./channel-sync.js";
+import {
+  handleTaskCreatedSync,
+  handleTaskUpdatedSync,
+  handleTaskDeletedSync,
+  handleTaskAssignedSync,
+  type TaskCreatedSyncEvent,
+  type TaskUpdatedSyncEvent,
+  type TaskDeletedSyncEvent,
+  type TaskAssignedSyncEvent,
+} from "./task-sync.js";
+import {
+  handleNoteCreatedSync,
+  handleNoteUpdatedSync,
+  handleFileUploadedSync,
+  handleCommentAddedSync,
+  type NoteCreatedSyncEvent,
+  type NoteUpdatedSyncEvent,
+  type FileUploadedSyncEvent,
+  type CommentAddedSyncEvent,
+} from "./activity-sync.js";
 
 export interface UserLinkedEvent {
   userId: string;
@@ -184,6 +209,56 @@ export interface VerifyGuildEvent {
   guildId: string;
 }
 
+// ─── Live sync events ──────────────────────────────────────────────────
+
+export interface SyncProjectsRedisEvent {
+  tenantId: string;
+  projectIds: string[];
+  requestedBy?: string;
+}
+
+export interface TaskUpdatedRedisEvent {
+  taskId: string;
+  projectId: string;
+  tenantId: string;
+  title?: string;
+  description?: string | null;
+  status?: string;
+  priority?: string;
+  deadline?: string | null;
+  updatedByName?: string;
+}
+
+export interface TaskDeletedRedisEvent {
+  taskId: string;
+  projectId: string;
+  tenantId: string;
+}
+
+export interface NoteCreatedRedisEvent {
+  noteId: string;
+  projectId: string;
+  tenantId: string;
+  title: string;
+  content?: string;
+  category?: string | null;
+  createdByName?: string;
+}
+
+export interface NoteUpdatedRedisEvent {
+  noteId: string;
+  projectId: string;
+  tenantId: string;
+  title: string;
+  content?: string;
+  updatedByName?: string;
+}
+
+export interface SyncStatusRequestEvent {
+  tenantId: string;
+  requestId: string;
+}
+
 const VERIFY_RESPONSE_CHANNEL = "discord:verify-response";
 
 const CHANNELS = [
@@ -201,9 +276,15 @@ const CHANNELS = [
   "discord:task-created",
   "discord:task-assigned",
   "discord:task-completed",
+  "discord:task-updated",
+  "discord:task-deleted",
   "discord:comment-added",
   "discord:file-uploaded",
   "discord:time-logged",
+  "discord:note-created",
+  "discord:note-updated",
+  "discord:sync-projects",
+  "discord:sync-status",
   "discord:verify-guild",
 ] as const;
 
@@ -348,6 +429,36 @@ export async function startRedisListener(client: Client): Promise<void> {
         case "discord:time-logged": {
           const event = JSON.parse(message) as TimeLoggedEvent;
           handleTimeLogged(client, event);
+          break;
+        }
+        case "discord:task-updated": {
+          const event = JSON.parse(message) as TaskUpdatedRedisEvent;
+          handleTaskUpdatedSync(client, event);
+          break;
+        }
+        case "discord:task-deleted": {
+          const event = JSON.parse(message) as TaskDeletedRedisEvent;
+          handleTaskDeletedSync(client, event);
+          break;
+        }
+        case "discord:note-created": {
+          const event = JSON.parse(message) as NoteCreatedRedisEvent;
+          handleNoteCreatedSync(client, event);
+          break;
+        }
+        case "discord:note-updated": {
+          const event = JSON.parse(message) as NoteUpdatedRedisEvent;
+          handleNoteUpdatedSync(client, event);
+          break;
+        }
+        case "discord:sync-projects": {
+          const event = JSON.parse(message) as SyncProjectsRedisEvent;
+          handleSyncProjects(client, event);
+          break;
+        }
+        case "discord:sync-status": {
+          const event = JSON.parse(message) as SyncStatusRequestEvent;
+          handleSyncStatusRequest(event);
           break;
         }
         case "discord:verify-guild": {
@@ -723,6 +834,19 @@ async function handleTaskCreated(
     createdBy: event.createdByName ?? event.createdBy,
   };
   await sendTaskNotification(client, payload, "created");
+
+  // Also sync to dedicated tasks channel if it exists
+  await handleTaskCreatedSync(client, {
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    title: event.title,
+    description: event.description,
+    status: "TODO",
+    priority: event.priority,
+    deadline: event.deadline,
+    createdByName: event.createdByName ?? event.createdBy,
+  });
 }
 
 async function handleTaskAssigned(
@@ -738,6 +862,16 @@ async function handleTaskAssigned(
     assigneeName: event.assigneeName,
   };
   await sendTaskNotification(client, payload, "assigned");
+
+  // Also sync to dedicated tasks channel
+  await handleTaskAssignedSync(client, {
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    assigneeUserId: event.assigneeUserId,
+    assigneeName: event.assigneeName,
+    taskTitle: event.taskTitle,
+  });
 }
 
 async function handleTaskCompleted(
@@ -769,6 +903,17 @@ async function handleCommentAdded(
     taskTitle: event.taskTitle,
   };
   await sendCommentNotification(client, payload);
+
+  // Also sync to dedicated tasks channel
+  await handleCommentAddedSync(client, {
+    commentId: event.commentId,
+    taskId: event.taskId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    authorName: event.authorName,
+    preview: event.preview,
+    taskTitle: event.taskTitle,
+  });
 }
 
 async function handleFileUploaded(
@@ -784,6 +929,16 @@ async function handleFileUploaded(
     uploadedByName: event.uploadedByName,
   };
   await sendFileNotification(client, payload);
+
+  // Also sync to dedicated files channel
+  await handleFileUploadedSync(client, {
+    fileId: event.fileId,
+    projectId: event.projectId,
+    tenantId: event.tenantId,
+    fileName: event.fileName,
+    fileSize: event.fileSize,
+    uploadedByName: event.uploadedByName,
+  });
 }
 
 async function handleTimeLogged(
@@ -801,6 +956,66 @@ async function handleTimeLogged(
     userName: event.userName,
   };
   await sendTimeEntryNotification(client, payload);
+}
+
+async function handleSyncProjects(
+  client: Client,
+  event: SyncProjectsRedisEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Sync projects: tenantId=${event.tenantId}, count=${event.projectIds.length}`
+  );
+
+  try {
+    const results = await syncProjectsToDiscord(client, {
+      tenantId: event.tenantId,
+      projectIds: event.projectIds,
+      requestedBy: event.requestedBy,
+    });
+
+    // Publish results back so web can update the user
+    const pub = publisherInstance;
+    if (pub) {
+      await pub.publish(
+        "discord:sync-projects-result",
+        JSON.stringify({
+          tenantId: event.tenantId,
+          results,
+        })
+      );
+    }
+
+    console.log(
+      `[redis-listener] Synced ${results.length} projects`
+    );
+  } catch (err) {
+    console.error("[redis-listener] Failed to sync projects:", err);
+  }
+}
+
+async function handleSyncStatusRequest(
+  event: SyncStatusRequestEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Sync status request: tenantId=${event.tenantId}`
+  );
+
+  try {
+    const status = await getProjectSyncStatus(event.tenantId);
+    const pub = publisherInstance;
+    if (pub) {
+      await pub.publish(
+        "discord:sync-status-result",
+        JSON.stringify({
+          requestId: event.requestId,
+          tenantId: event.tenantId,
+          projects: status,
+        })
+      );
+    }
+  } catch (err) {
+    console.error("[redis-listener] Failed to get sync status:", err);
+  }
 }
 
 async function handleVerifyGuild(

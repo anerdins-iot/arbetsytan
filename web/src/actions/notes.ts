@@ -7,6 +7,7 @@ import { tenantDb } from "@/lib/db";
 import { getProjectNotesCore } from "@/services/note-service";
 import { getProjectNoteAttachmentsCore, type NoteAttachmentItem } from "@/services/note-attachment-service";
 import { createPresignedDownloadUrl } from "@/lib/minio";
+import { publishDiscordEvent } from "@/lib/redis-pubsub";
 
 // ─────────────────────────────────────────
 // Types
@@ -118,6 +119,17 @@ export async function createNote(
     });
 
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
+
+    await publishDiscordEvent("discord:note-created", {
+      noteId: note.id,
+      projectId,
+      tenantId,
+      title: note.title,
+      content: note.content?.slice(0, 300),
+      category: note.category,
+      createdByName: note.createdBy?.name ?? null,
+    });
+
     return { success: true, note: formatNote(note) };
   } catch {
     return { success: false, error: "Kunde inte skapa anteckning." };
@@ -217,6 +229,16 @@ export async function updateNote(
     });
 
     revalidatePath(`/[locale]/projects/${projectId}`, "page");
+
+    await publishDiscordEvent("discord:note-updated", {
+      noteId: note.id,
+      projectId,
+      tenantId,
+      title: note.title,
+      content: note.content?.slice(0, 300),
+      updatedByName: note.createdBy?.name ?? null,
+    });
+
     return { success: true, note: formatNote(note) };
   } catch {
     return { success: false, error: "Kunde inte uppdatera anteckning." };
