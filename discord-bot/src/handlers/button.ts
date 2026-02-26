@@ -19,7 +19,7 @@ import {
   createSuccessEmbed,
   createErrorEmbed,
 } from "../components/embeds.js";
-import { createUnauthorizedEmbed } from "../components/error-embeds.js";
+import type { IdentifiedUser } from "../services/user-identification.js";
 import { createTaskButtons, createTimeButtons } from "../components/buttons.js";
 import { createTimeLogModal } from "../components/modals.js";
 
@@ -38,15 +38,27 @@ export async function handleButton(
     tenantId = tenant?.id;
   }
 
-  const user = await identifyUser(interaction.user.id, tenantId);
+  let user = await identifyUser(interaction.user.id, tenantId);
+
+  // Allow guest users for testing (same logic as messageCreate)
   if (!user) {
-    const { embed, row } = createUnauthorizedEmbed();
-    await interaction.reply({
-      embeds: [embed],
-      components: [row],
-      flags: MessageFlags.Ephemeral,
-    });
-    return;
+    if (tenantId) {
+      user = {
+        userId: `guest-${interaction.user.id}`,
+        tenantId: tenantId,
+        userName: interaction.user.displayName || interaction.user.username,
+        userRole: "GUEST",
+        discordUserId: interaction.user.id,
+      };
+    } else {
+      user = {
+        userId: `guest-${interaction.user.id}`,
+        tenantId: "seed-tenant-1",
+        userName: interaction.user.displayName || interaction.user.username,
+        userRole: "GUEST",
+        discordUserId: interaction.user.id,
+      };
+    }
   }
 
   if (customId.startsWith("task_view_")) {

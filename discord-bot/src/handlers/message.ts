@@ -172,6 +172,7 @@ export async function handleAIMessage(
 
   try {
     // Show typing indicator while waiting for AI
+    console.log(`[handleAIMessage] Starting AI call for user ${user.userId}`);
     await channel.sendTyping().catch(() => {});
 
     const response = await callAI({
@@ -187,13 +188,17 @@ export async function handleAIMessage(
     // Cache the conversation ID for future messages
     conversationCache.set(cacheKey, response.conversationId);
 
-    // Update the conversation with Discord metadata
-    await updateConversationDiscordMetadata(
-      response.conversationId,
-      message
-    ).catch((err) =>
-      console.error("Failed to update conversation Discord metadata:", err)
-    );
+    // Update the conversation with Discord metadata (skip for guest users)
+    if (!response.conversationId.startsWith("guest-conv-")) {
+      await updateConversationDiscordMetadata(
+        response.conversationId,
+        message
+      ).catch((err) =>
+        console.error("Failed to update conversation Discord metadata:", err)
+      );
+    }
+
+    console.log(`[handleAIMessage] Got response: ${response.text?.substring(0, 50)}...`);
 
     if (!response.text?.trim()) {
       await safeReply(message, "Jag kunde inte generera ett svar. Försök igen.");
@@ -201,7 +206,9 @@ export async function handleAIMessage(
     }
 
     // Send the response using the edit-pattern (handles long messages via splitting)
+    console.log(`[handleAIMessage] Sending response to Discord...`);
     await sendWithThinking(channel, response.text, message);
+    console.log(`[handleAIMessage] Response sent successfully`);
   } catch (error) {
     console.error("AI error:", error);
 
