@@ -1173,6 +1173,34 @@
           "WORKER": "Montör"
         }
       },
+      "projectSync": {
+        "title": "Synkade projekt",
+        "description": "{synced} av {total} projekt synkade till Discord.",
+        "syncAllButton": "Synka alla projekt",
+        "syncing": "Synkar...",
+        "createChannelsButton": "Skapa kanaler i Discord",
+        "resyncButton": "Synka igen",
+        "statusSynced": "Synkad",
+        "statusNotSynced": "Ej synkad",
+        "empty": "Inga aktiva projekt hittades.",
+        "columns": {
+          "project": "Projekt",
+          "status": "Status",
+          "channels": "Kanaler",
+          "lastSynced": "Senast synkad",
+          "actions": "Åtgärder"
+        },
+        "channelTypes": {
+          "general": "allmänt",
+          "tasks": "uppgifter",
+          "files": "filer",
+          "activity": "aktivitet"
+        },
+        "errors": {
+          "syncFailed": "Kunde inte synka projekt till Discord.",
+          "notConnected": "Discord-servern är inte kopplad."
+        }
+      },
       "nav": {
         "categories": "Kategorier",
         "categoriesDescription": "Hantera Discord-kanalernas kategoristruktur.",

@@ -1162,6 +1162,34 @@
           "WORKER": "Worker"
         }
       },
+      "projectSync": {
+        "title": "Synced Projects",
+        "description": "{synced} of {total} projects synced to Discord.",
+        "syncAllButton": "Sync all projects",
+        "syncing": "Syncing...",
+        "createChannelsButton": "Create channels in Discord",
+        "resyncButton": "Resync",
+        "statusSynced": "Synced",
+        "statusNotSynced": "Not synced",
+        "empty": "No active projects found.",
+        "columns": {
+          "project": "Project",
+          "status": "Status",
+          "channels": "Channels",
+          "lastSynced": "Last synced",
+          "actions": "Actions"
+        },
+        "channelTypes": {
+          "general": "general",
+          "tasks": "tasks",
+          "files": "files",
+          "activity": "activity"
+        },
+        "errors": {
+          "syncFailed": "Could not sync projects to Discord.",
+          "notConnected": "Discord server is not connected."
+        }
+      },
       "nav": {
         "categories": "Categories",
         "categoriesDescription": "Manage the Discord channel category structure.",

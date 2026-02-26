@@ -503,3 +503,129 @@ export async function syncRoles(): Promise<DiscordActionResult> {
 
   return { success: true };
 }
+
+// --- Project Sync Actions ---
+
+export type ProjectSyncData = {
+  projectId: string;
+  projectName: string;
+  synced: boolean;
+  discordCategoryId: string | null;
+  lastSyncedAt: string | null;
+  channels: {
+    type: string;
+    channelId: string;
+    syncEnabled: boolean;
+  }[];
+};
+
+export async function getProjectSyncStatus(): Promise<ProjectSyncData[]> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const projects = await db.project.findMany({
+    where: { status: "ACTIVE" },
+    select: {
+      id: true,
+      name: true,
+      discordChannels: {
+        select: {
+          discordChannelId: true,
+          discordCategoryId: true,
+          channelType: true,
+          syncEnabled: true,
+          lastSyncedAt: true,
+        },
+      },
+    },
+    orderBy: { name: "asc" },
+  });
+
+  return projects.map((p) => {
+    const lastSync = p.discordChannels
+      .map((c) => c.lastSyncedAt)
+      .filter(Boolean)
+      .sort((a, b) => (b?.getTime() ?? 0) - (a?.getTime() ?? 0))[0];
+
+    return {
+      projectId: p.id,
+      projectName: p.name,
+      synced: p.discordChannels.length > 0,
+      discordCategoryId: p.discordChannels[0]?.discordCategoryId ?? null,
+      lastSyncedAt: lastSync?.toISOString() ?? null,
+      channels: p.discordChannels.map((c) => ({
+        type: c.channelType,
+        channelId: c.discordChannelId,
+        syncEnabled: c.syncEnabled,
+      })),
+    };
+  });
+}
+
+export async function syncProjectsToDiscord(): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { discordGuildId: true, discordBotEnabled: true },
+  });
+
+  if (!tenant?.discordGuildId || !tenant.discordBotEnabled) {
+    return { success: false, error: "DISCORD_NOT_CONNECTED" };
+  }
+
+  try {
+    await publishDiscordEvent("discord:sync-projects", {
+      tenantId,
+      projectIds: [],
+    });
+  } catch {
+    return { success: false, error: "SYNC_FAILED" };
+  }
+
+  revalidatePath("/[locale]/settings/discord", "page");
+  return { success: true };
+}
+
+export async function syncSingleProjectToDiscord(
+  projectId: string
+): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  if (!projectId || projectId.trim().length === 0) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { discordGuildId: true, discordBotEnabled: true },
+  });
+
+  if (!tenant?.discordGuildId || !tenant.discordBotEnabled) {
+    return { success: false, error: "DISCORD_NOT_CONNECTED" };
+  }
+
+  // Verify project belongs to tenant
+  const project = await db.project.findUnique({
+    where: { id: projectId },
+    select: { id: true },
+  });
+
+  if (!project) {
+    return { success: false, error: "PROJECT_NOT_FOUND" };
+  }
+
+  try {
+    await publishDiscordEvent("discord:sync-projects", {
+      tenantId,
+      projectIds: [projectId],
+    });
+  } catch {
+    return { success: false, error: "SYNC_FAILED" };
+  }
+
+  revalidatePath("/[locale]/settings/discord", "page");
+  return { success: true };
+}
