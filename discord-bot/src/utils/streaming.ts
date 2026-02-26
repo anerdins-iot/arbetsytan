@@ -114,12 +114,49 @@ function getFilenameFromUrl(url: string): string {
 }
 
 /**
- * Build Discord embeds for image URLs.
+ * Download images and prepare them as Discord attachments.
+ * Discord embeds with setImage(url) don't work reliably with presigned/private URLs.
+ * Instead, we download the image and attach it, then reference it in the embed.
  */
-function buildImageEmbeds(imageUrls: string[]): EmbedBuilder[] {
-  return imageUrls.slice(0, 4).map((url) =>
-    new EmbedBuilder().setImage(url).setColor(0x5865f2)
-  );
+async function downloadImagesAsAttachments(
+  imageUrls: string[]
+): Promise<{ attachments: Array<{ attachment: Buffer; name: string }>; embeds: EmbedBuilder[] }> {
+  const attachments: Array<{ attachment: Buffer; name: string }> = [];
+  const embeds: EmbedBuilder[] = [];
+
+  for (let i = 0; i < Math.min(imageUrls.length, 4); i++) {
+    const url = imageUrls[i];
+    try {
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(15_000),
+      });
+      if (!response.ok) {
+        console.warn(`[streaming] Failed to fetch image: ${url} (${response.status})`);
+        continue;
+      }
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      // Skip if too large (Discord limit ~25MB)
+      if (buffer.length > 24 * 1024 * 1024) {
+        console.warn(`[streaming] Image too large to attach: ${url}`);
+        continue;
+      }
+
+      // Extract filename from URL or generate one
+      const filename = getFilenameFromUrl(url) || `image_${i}.png`;
+      attachments.push({ attachment: buffer, name: filename });
+
+      // Create embed that references the attached file
+      const embed = new EmbedBuilder()
+        .setImage(`attachment://${filename}`)
+        .setColor(0xf97316); // Orange accent
+      embeds.push(embed);
+    } catch (err) {
+      console.warn(`[streaming] Failed to download image: ${url}`, err);
+    }
+  }
+
+  return { attachments, embeds };
 }
 
 /**
@@ -187,14 +224,19 @@ export async function sendWithThinking(
 
   // Extract media (images + files) from the response
   const { imageUrls, fileUrls, cleanedText } = extractMedia(responseText);
-  const embeds = buildImageEmbeds(imageUrls);
+
+  // Download images and create embeds that reference attachments
+  const { attachments: imageAttachments, embeds } = await downloadImagesAsAttachments(imageUrls);
 
   // Fetch file attachments in parallel
-  const fileAttachments = (
+  const fileAttachmentResults = (
     await Promise.all(
       fileUrls.map((f) => fetchFileAsAttachment(f.url, f.filename))
     )
   ).filter((a): a is NonNullable<typeof a> => a !== null);
+
+  // Combine image and file attachments
+  const fileAttachments = [...imageAttachments, ...fileAttachmentResults];
 
   // Edit with final response
   try {
