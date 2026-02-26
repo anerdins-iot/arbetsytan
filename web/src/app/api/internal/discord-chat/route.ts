@@ -87,39 +87,55 @@ export async function POST(req: NextRequest) {
 
   const udb = userDb(userId, {});
 
+  // Check if this is a guest user (no database record)
+  const isGuestUser = userId.startsWith("guest-");
+
+  logger.info("Discord chat request", {
+    userId,
+    isGuestUser,
+    tenantId,
+    hasConversationId: !!conversationId,
+  });
+
   try {
     // Get or create conversation for this Discord user
+    // Skip conversation persistence for guest users
     let activeConversationId: string = conversationId ?? "";
     let conversationSummary: string | null = null;
 
-    if (!activeConversationId) {
-      const lastUserMsg = messages.filter((m) => m.role === "user").pop();
-      const title = lastUserMsg
-        ? lastUserMsg.content.slice(0, 100)
-        : "Discord-konversation";
+    if (!isGuestUser) {
+      if (!activeConversationId) {
+        const lastUserMsg = messages.filter((m) => m.role === "user").pop();
+        const title = lastUserMsg
+          ? lastUserMsg.content.slice(0, 100)
+          : "Discord-konversation";
 
-      const conversation = await udb.conversation.create({
-        data: {
-          type: "PERSONAL",
-          title,
-          provider: "CLAUDE_HAIKU",
-          userId,
-          projectId: projectId ?? null,
-        },
-      });
-      activeConversationId = conversation.id;
-    } else {
-      const existing = await udb.conversation.findFirst({
-        where: { id: activeConversationId },
-        select: { id: true, summary: true },
-      });
-      if (!existing) {
-        return NextResponse.json(
-          { error: "Conversation not found" },
-          { status: 404 }
-        );
+        const conversation = await udb.conversation.create({
+          data: {
+            type: "PERSONAL",
+            title,
+            provider: "CLAUDE_HAIKU",
+            userId,
+            projectId: projectId ?? null,
+          },
+        });
+        activeConversationId = conversation.id;
+      } else {
+        const existing = await udb.conversation.findFirst({
+          where: { id: activeConversationId },
+          select: { id: true, summary: true },
+        });
+        if (!existing) {
+          return NextResponse.json(
+            { error: "Conversation not found" },
+            { status: 404 }
+          );
+        }
+        conversationSummary = existing.summary;
       }
-      conversationSummary = existing.summary;
+    } else {
+      // Guest user: use a temporary conversation ID, don't persist
+      activeConversationId = `guest-conv-${Date.now()}`;
     }
 
     // Collect image data URLs from messages for vision support
@@ -138,9 +154,9 @@ export async function POST(req: NextRequest) {
       parts: [{ type: "text" as const, text: m.content }],
     }));
 
-    // Save the latest user message
+    // Save the latest user message (skip for guest users)
     const lastUserMessage = uiMessages.filter((m) => m.role === "user").pop();
-    if (lastUserMessage) {
+    if (lastUserMessage && !isGuestUser) {
       await saveUserMessage({
         udb,
         message: lastUserMessage,
@@ -172,20 +188,22 @@ export async function POST(req: NextRequest) {
     const { stream, providerKey } = result;
     const fullText = await stream.text;
 
-    // Save the assistant response
-    const db = tenantDb(tenantId);
-    await saveAssistantMessage({
-      udb,
-      db,
-      responseMessage: {
-        role: "assistant",
-        parts: [{ type: "text", text: fullText }],
-      },
-      conversationId: activeConversationId,
-      tenantId,
-      userId,
-      projectId: projectId ?? null,
-    });
+    // Save the assistant response (skip for guest users)
+    if (!isGuestUser) {
+      const db = tenantDb(tenantId);
+      await saveAssistantMessage({
+        udb,
+        db,
+        responseMessage: {
+          role: "assistant",
+          parts: [{ type: "text", text: fullText }],
+        },
+        conversationId: activeConversationId,
+        tenantId,
+        userId,
+        projectId: projectId ?? null,
+      });
+    }
 
     logger.info("Discord chat completed", {
       userId,
