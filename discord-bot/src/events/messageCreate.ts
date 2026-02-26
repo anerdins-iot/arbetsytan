@@ -2,10 +2,59 @@ import { Client, Events, Message, MessageFlags } from "discord.js";
 import { identifyUser, getTenantFromGuild, validateProjectAccess } from "../services/user-identification.js";
 import { buildMessageContext, getChannelContext } from "../services/context.js";
 import { handleAIMessage } from "../handlers/message.js";
-import { createUnauthorizedEmbed, createRateLimitedEmbed } from "../components/error-embeds.js";
+import { createRateLimitedEmbed } from "../components/error-embeds.js";
 import { checkRateLimit } from "../utils/rate-limiter.js";
 
-function shouldHandleMessage(message: Message, clientUserId: string): boolean {
+/**
+ * Check if the message immediately before this one was from the bot,
+ * AND the message before that was from the same user who just wrote.
+ * Pattern: User → Bot → User (same user) = continuation of conversation.
+ */
+async function isConversationContinuation(
+  message: Message,
+  clientUserId: string
+): Promise<boolean> {
+  // Only works in guild text channels with message history
+  if (!("messages" in message.channel)) return false;
+
+  try {
+    // Fetch the last 2 messages before this one
+    const recentMessages = await message.channel.messages.fetch({
+      limit: 2,
+      before: message.id,
+    });
+
+    if (recentMessages.size < 2) return false;
+
+    // Sort by timestamp (newest first)
+    const sorted = [...recentMessages.values()].sort(
+      (a, b) => b.createdTimestamp - a.createdTimestamp
+    );
+
+    const lastMessage = sorted[0]; // Should be bot's response
+    const messageBeforeThat = sorted[1]; // Should be user's original question
+
+    // Check pattern: User(same) → Bot → User(same)
+    const isBotResponse = lastMessage?.author.id === clientUserId;
+    const wasOriginallyFromSameUser =
+      messageBeforeThat?.author.id === message.author.id;
+
+    // Also check that bot's message was recent (within 5 minutes)
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000;
+    const isBotResponseRecent =
+      lastMessage && lastMessage.createdTimestamp > fiveMinutesAgo;
+
+    return isBotResponse && wasOriginallyFromSameUser && isBotResponseRecent;
+  } catch (error) {
+    console.warn("[shouldHandleMessage] Failed to check conversation continuation:", error);
+    return false;
+  }
+}
+
+async function shouldHandleMessage(
+  message: Message,
+  clientUserId: string
+): Promise<boolean> {
   if (message.author.bot) return false;
 
   const isDM = !message.guildId;
@@ -16,7 +65,14 @@ function shouldHandleMessage(message: Message, clientUserId: string): boolean {
       : undefined;
   const isReplyToBot = refMsg?.author.id === clientUserId;
 
-  return isDM || isMentioned || isReplyToBot;
+  // Quick checks first (no async needed)
+  if (isDM || isMentioned || isReplyToBot) return true;
+
+  // Check if this is a continuation of a recent conversation
+  // Pattern: User asked → Bot answered → Same user writes again
+  const isContinuation = await isConversationContinuation(message, clientUserId);
+
+  return isContinuation;
 }
 
 export function registerMessageCreate(client: Client): void {
@@ -25,7 +81,7 @@ export function registerMessageCreate(client: Client): void {
       const clientUser = client.user;
       if (!clientUser) return;
 
-      if (!shouldHandleMessage(message, clientUser.id)) return;
+      if (!(await shouldHandleMessage(message, clientUser.id))) return;
 
       // Verify the channel still exists and is accessible
       if (!message.channel) {
@@ -40,17 +96,33 @@ export function registerMessageCreate(client: Client): void {
         tenantId = tenant?.id;
       }
 
-      const user = await identifyUser(discordUserId, tenantId);
+      let user = await identifyUser(discordUserId, tenantId);
+
+      // If user hasn't linked account, create a guest identity for testing
+      // This allows anyone to chat with the bot, but with limited functionality
       if (!user) {
-        // Send unauthorized embed with account linking button
-        const { embed, row } = createUnauthorizedEmbed();
-        await message
-          .reply({ embeds: [embed], components: [row] })
-          .catch(() => {
-            // If we can't reply (e.g. user blocked bot for DMs), just log it
-            console.warn(`[messageCreate] Could not reply to unlinked user ${discordUserId}`);
-          });
-        return;
+        // Try to get tenant from guild for guest access
+        if (tenantId) {
+          user = {
+            userId: `guest-${discordUserId}`,
+            tenantId: tenantId,
+            userName: message.author.displayName || message.author.username,
+            userRole: "GUEST",
+            discordUserId,
+          };
+          console.log(`[messageCreate] Guest user ${user.userName} (${discordUserId}) in tenant ${tenantId}`);
+        } else {
+          // DM without linked account - still allow but with disclaimer
+          // Use a default tenant for testing (seed-tenant-1)
+          user = {
+            userId: `guest-${discordUserId}`,
+            tenantId: "seed-tenant-1",
+            userName: message.author.displayName || message.author.username,
+            userRole: "GUEST",
+            discordUserId,
+          };
+          console.log(`[messageCreate] Guest user ${user.userName} (${discordUserId}) in DM, using default tenant`);
+        }
       }
 
       // Check rate limit before processing AI request
