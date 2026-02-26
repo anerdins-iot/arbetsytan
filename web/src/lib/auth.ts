@@ -184,6 +184,21 @@ export async function requireProject(
     throw new Error("PROJECT_NOT_FOUND");
   }
 
+  // Guest users (from Discord bot testing) get read-only access to projects in their tenant
+  // This allows Discord users who haven't linked their account to still interact with the bot
+  if (userId.startsWith("guest-")) {
+    return {
+      id: project.id,
+      name: project.name,
+      description: project.description,
+      status: project.status,
+      address: project.address,
+      tenantId: project.tenantId,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
+    };
+  }
+
   // Get user's tenant membership to check role
   const membership = await db.membership.findFirst({
     where: { userId },

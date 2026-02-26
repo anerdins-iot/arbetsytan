@@ -1210,12 +1210,16 @@ Returnera ENBART JSON i följande format:
       limit: z.number().min(1).max(15).optional().default(8),
     })),
     execute: async ({ query, limit }) => {
-      const projectIds = (
-        await db.projectMember.findMany({
-          where: { membership: { userId } },
-          select: { projectId: true },
-        })
-      ).map((p) => p.projectId);
+      // Guest users (from Discord) get access to all projects in their tenant
+      const isGuest = userId.startsWith("guest-");
+      const projectIds = isGuest
+        ? (await db.project.findMany({ select: { id: true } })).map((p) => p.id)
+        : (
+            await db.projectMember.findMany({
+              where: { membership: { userId } },
+              select: { projectId: true },
+            })
+          ).map((p) => p.projectId);
 
       const searchResult = await searchDocumentsAcrossProjects({ tenantId, projectIds, query, limit, userId });
 
@@ -1260,8 +1264,10 @@ Returnera ENBART JSON i följande format:
       fileId: z.string().describe("ID för filen som ska analyseras"),
     })),
     execute: async ({ projectId: pid, fileId }) => {
+      console.log(`[analyzeDocument] Called with projectId=${pid}, fileId=${fileId}, userId=${userId}, tenantId=${tenantId}`);
       await requireProject(tenantId, pid, userId);
       const result = await getOcrTextForFile({ fileId, projectId: pid, tenantId });
+      console.log(`[analyzeDocument] Result:`, "error" in result ? result.error : `text length: ${result.fullText.length}`);
       if ("error" in result) return { error: result.error };
       return { fullText: result.fullText };
     },
