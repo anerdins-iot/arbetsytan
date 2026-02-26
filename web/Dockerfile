@@ -39,6 +39,31 @@ RUN npx prisma generate
 # Build with webpack fallback for sandbox/CI compatibility
 RUN npm run build
 
+# Compile server.ts to server.js with esbuild for production
+RUN npx esbuild server.ts \
+  --bundle \
+  --platform=node \
+  --target=node22 \
+  --format=esm \
+  --external:next \
+  --external:socket.io \
+  --external:@socket.io/redis-adapter \
+  --external:redis \
+  --external:next-auth \
+  --external:zod \
+  --external:dotenv \
+  --outfile=server.js
+
+# Compile backfill script to JavaScript
+RUN npx esbuild scripts/backfill-email-slugs.ts \
+  --bundle \
+  --platform=node \
+  --target=node22 \
+  --format=esm \
+  --external:@prisma/client \
+  --packages=external \
+  --outfile=scripts/backfill-email-slugs.js
+
 # ─────────────────────────────────────────────
 # Stage 3: Runner (Production)
 # ─────────────────────────────────────────────
@@ -51,16 +76,17 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
-# Copy package files for tsx
+# Copy package files and install ONLY production dependencies
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/package-lock.json ./package-lock.json
+RUN npm ci --omit=dev --ignore-scripts
 
-# Copy node_modules (needed for tsx and socket.io)
-COPY --from=builder /app/node_modules ./node_modules
+# Regenerate Prisma client (postinstall was skipped)
+COPY --from=builder /app/prisma/schema.prisma ./prisma/schema.prisma
+RUN npx prisma generate
 
-# Copy custom server and its runtime dependencies (tsx resolves imports at runtime)
-COPY --from=builder /app/server.ts ./server.ts
-COPY --from=builder /app/src/lib/socket-events.ts ./src/lib/socket-events.ts
-COPY --from=builder /app/src/lib/redis-pubsub.ts ./src/lib/redis-pubsub.ts
+# Copy compiled server (no more tsx needed!)
+COPY --from=builder /app/server.js ./server.js
 
 # Copy public assets
 COPY --from=builder /app/public ./public
@@ -75,9 +101,8 @@ COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/prisma/migrations ./prisma/migrations
 COPY --from=builder /app/migrate.mjs ./migrate.mjs
 COPY --from=builder /app/seed.mjs ./seed.mjs
-# Backfill script and its dependencies (src/lib for db + email-tracking)
-COPY --from=builder /app/scripts ./scripts
-COPY --from=builder /app/src/lib ./src/lib
+# Copy compiled backfill script (no more src/lib dependencies needed for backfill)
+COPY --from=builder /app/scripts/backfill-email-slugs.js ./scripts/backfill-email-slugs.js
 
 # Entrypoint script: run migrations then start server
 COPY --chown=nextjs:nodejs docker-entrypoint.sh /app/docker-entrypoint.sh

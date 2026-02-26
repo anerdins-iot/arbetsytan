@@ -5,14 +5,22 @@ node_modules
 .git
 .gitignore
 
+# Prisma generated client (regenerated during build)
+generated
+
 # Dev/tooling
 .dev-server.pid
 playwright-report
 test-results
 .playwright-browsers
+playwright-browsers
 coverage
 e2e
 *.log
+
+# Playwright (HUGE - 600+ MB)
+.playwright
+playwright.config.ts
 
 # Docs and screenshots (not needed for build)
 *.md

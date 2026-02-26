@@ -5,7 +5,7 @@ echo "Running database migrations..."
 node migrate.mjs
 
 echo "Running backfill for Tenant.slug and Membership.emailSlug (idempotent)..."
-npx tsx scripts/backfill-email-slugs.ts || echo "Warning: Backfill script failed (see logs above)"
+node scripts/backfill-email-slugs.js || echo "Warning: Backfill script failed (see logs above)"
 
 if [ "$RUN_SEED" = "true" ]; then
   echo "Running database seed..."
@@ -13,4 +13,4 @@ if [ "$RUN_SEED" = "true" ]; then
 fi
 
 echo "Starting Next.js server with Socket.IO..."
-exec npx tsx server.ts
+exec node server.js
