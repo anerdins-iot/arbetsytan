@@ -91,6 +91,88 @@ export async function publishDiscordEvent(
   }
 }
 
+// ─── Discord guild verification (request/response) ──────────────────────────
+
+const VERIFY_REQUEST_CHANNEL = "discord:verify-guild";
+const VERIFY_RESPONSE_CHANNEL = "discord:verify-response";
+
+export type VerifyGuildResult = "guild-verified" | "guild-not-found" | "timeout";
+
+/**
+ * Ask the Discord bot to verify that it is a member of the given guild.
+ * Publishes "discord:verify-guild" and waits for "discord:verify-response" with matching requestId.
+ * Resolves with "timeout" if the bot does not respond within timeoutMs (default 5000).
+ */
+export async function verifyDiscordGuildWithBot(
+  guildId: string,
+  timeoutMs: number = 5000
+): Promise<VerifyGuildResult> {
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) {
+    console.log("[redis-pubsub] No REDIS_URL — cannot verify guild");
+    return "timeout";
+  }
+
+  const requestId = crypto.randomUUID();
+  const payload = { requestId, guildId };
+
+  return new Promise<VerifyGuildResult>((resolve) => {
+    const timeoutId = setTimeout(() => {
+      subClient?.unsubscribe(VERIFY_RESPONSE_CHANNEL).catch(() => {});
+      subClient?.quit().catch(() => {});
+      resolve("timeout");
+    }, timeoutMs);
+
+    let subClient: RedisClientType | null = null;
+
+    const handleMessage = (message: string) => {
+      try {
+        const data = JSON.parse(message) as { requestId: string; status: string };
+        if (data.requestId !== requestId) return;
+        clearTimeout(timeoutId);
+        subClient?.unsubscribe(VERIFY_RESPONSE_CHANNEL).catch(() => {});
+        subClient?.quit().catch(() => {});
+        if (data.status === "guild-verified") {
+          resolve("guild-verified");
+        } else {
+          resolve("guild-not-found");
+        }
+      } catch {
+        // ignore parse errors for other requests
+      }
+    };
+
+    (async () => {
+      try {
+        subClient = createClient({ url: redisUrl }) as RedisClientType;
+        subClient.on("error", (err) => {
+          console.warn("[redis-pubsub] Verify subscriber error:", err.message);
+        });
+        await subClient.connect();
+        await subClient.subscribe(VERIFY_RESPONSE_CHANNEL, (message) => {
+          handleMessage(message);
+        });
+
+        const pub = await getPublisher();
+        if (!pub) {
+          clearTimeout(timeoutId);
+          await subClient.quit();
+          resolve("timeout");
+          return;
+        }
+        await pub.publish(VERIFY_REQUEST_CHANNEL, JSON.stringify(payload));
+      } catch (err) {
+        console.warn("[redis-pubsub] Verify guild failed:", err);
+        clearTimeout(timeoutId);
+        if (subClient) {
+          subClient.quit().catch(() => {});
+        }
+        resolve("timeout");
+      }
+    })();
+  });
+}
+
 // ─── Subscriber (used by Socket.IO server process) ─────────────────────────
 
 /**

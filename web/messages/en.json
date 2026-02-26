@@ -1105,9 +1105,29 @@
       "setup": {
         "title": "Discord Connection",
         "description": "Connect your Discord server to the system to enable bot integration.",
+        "step1Title": "Add the bot to your Discord server",
+        "step1Description": "Click the button below to invite Dyngbaggen to your Discord server. You need administrator permissions on the server.",
+        "addBotButton": "Add bot to Discord",
+        "step2Title": "Connect the server to the system",
+        "step2Description": "After adding the bot, enter the server ID below. The system will verify that the bot is present on the server.",
+        "permissionsTitle": "What permissions does the bot need?",
+        "permissions": {
+          "manageChannels": "Manage Channels",
+          "manageChannelsDesc": "Create project channels and categories automatically.",
+          "manageRoles": "Manage Roles",
+          "manageRolesDesc": "Assign and sync roles based on system roles.",
+          "sendMessages": "Send Messages",
+          "sendMessagesDesc": "Send notifications about tasks, comments, and files.",
+          "viewChannels": "View Channels",
+          "viewChannelsDesc": "See and access server channels.",
+          "embedLinks": "Embed Links",
+          "embedLinksDesc": "Send formatted notifications with embeds.",
+          "readHistory": "Read Message History",
+          "readHistoryDesc": "Read conversation history for AI context handling."
+        },
         "guildIdLabel": "Discord Server ID",
         "guildIdPlaceholder": "E.g. 123456789012345678",
-        "guildIdHelp": "Right-click your server in Discord and select 'Copy Server ID'.",
+        "guildIdHelp": "Right-click your server in Discord and select 'Copy Server ID'. (Requires Developer Mode: Settings > App Settings > Advanced > Developer Mode.)",
         "connectButton": "Connect Discord Server",
         "connecting": "Connecting...",
         "connected": "Discord server connected.",
@@ -1120,8 +1140,11 @@
       "errors": {
         "guildIdRequired": "Discord Server ID is required.",
         "connectFailed": "Could not connect the Discord server.",
+        "botNotAvailable": "The Discord bot is not responding. Ensure the bot is running and Redis is available.",
+        "botNotInServer": "The bot is not a member of this server. Add the bot to the server first using the button in step 1.",
         "disconnectFailed": "Could not disconnect the Discord server.",
-        "toggleFailed": "Could not change bot status."
+        "toggleFailed": "Could not change bot status.",
+        "noClientId": "Discord Client ID is not configured. Contact the system administrator."
       },
       "linkedUsers": {
         "title": "Linked Users",

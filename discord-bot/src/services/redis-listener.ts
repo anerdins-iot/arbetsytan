@@ -19,6 +19,7 @@
  * - `discord:comment-added`      — notify project channel
  * - `discord:file-uploaded`      — notify project channel
  * - `discord:time-logged`        — optional time entry notification
+ * - `discord:verify-guild`       — web asks bot to verify it is in the guild (request/response)
  */
 import type { Client } from "discord.js";
 import { ChannelType } from "discord.js";
@@ -178,6 +179,13 @@ export interface TimeLoggedEvent {
   userName?: string;
 }
 
+export interface VerifyGuildEvent {
+  requestId: string;
+  guildId: string;
+}
+
+const VERIFY_RESPONSE_CHANNEL = "discord:verify-response";
+
 const CHANNELS = [
   "discord:user-linked",
   "discord:user-unlinked",
@@ -196,10 +204,14 @@ const CHANNELS = [
   "discord:comment-added",
   "discord:file-uploaded",
   "discord:time-logged",
+  "discord:verify-guild",
 ] as const;
 
 /** Module-level reference to the Redis subscriber for graceful shutdown. */
 let subscriberInstance: Redis | null = null;
+
+/** Separate Redis connection for publishing verify responses (subscriber connection cannot publish). */
+let publisherInstance: Redis | null = null;
 
 /**
  * Get the Redis subscriber instance (for shutdown cleanup).
@@ -208,12 +220,25 @@ export function getRedisSubscriber(): Redis | null {
   return subscriberInstance;
 }
 
+/**
+ * Get the Redis publisher instance (for shutdown cleanup).
+ */
+export function getRedisPublisher(): Redis | null {
+  return publisherInstance;
+}
+
 export async function startRedisListener(client: Client): Promise<void> {
   const redisUrl = process.env.REDIS_URL;
   if (!redisUrl) {
     console.log("[redis-listener] No REDIS_URL — skipping Redis subscriber");
     return;
   }
+
+  const publisher = new Redis(redisUrl);
+  publisherInstance = publisher;
+  publisher.on("error", (err: Error) => {
+    console.error("[redis-listener] Redis publisher error:", err.message);
+  });
 
   const subscriber = new Redis(redisUrl);
   subscriberInstance = subscriber;
@@ -323,6 +348,11 @@ export async function startRedisListener(client: Client): Promise<void> {
         case "discord:time-logged": {
           const event = JSON.parse(message) as TimeLoggedEvent;
           handleTimeLogged(client, event);
+          break;
+        }
+        case "discord:verify-guild": {
+          const event = JSON.parse(message) as VerifyGuildEvent;
+          handleVerifyGuild(client, event);
           break;
         }
         default:
@@ -771,4 +801,33 @@ async function handleTimeLogged(
     userName: event.userName,
   };
   await sendTimeEntryNotification(client, payload);
+}
+
+async function handleVerifyGuild(
+  client: Client,
+  event: VerifyGuildEvent
+): Promise<void> {
+  const pub = publisherInstance;
+  if (!pub) {
+    console.warn("[redis-listener] No publisher for verify response");
+    return;
+  }
+
+  let status: "guild-verified" | "guild-not-found";
+  try {
+    const guild = client.guilds.cache.get(event.guildId) ?? await client.guilds.fetch(event.guildId).catch(() => null);
+    status = guild ? "guild-verified" : "guild-not-found";
+  } catch {
+    status = "guild-not-found";
+  }
+
+  try {
+    await pub.publish(
+      VERIFY_RESPONSE_CHANNEL,
+      JSON.stringify({ requestId: event.requestId, status })
+    );
+    console.log(`[redis-listener] Verify guild ${event.guildId}: ${status}`);
+  } catch (err) {
+    console.error("[redis-listener] Failed to publish verify response:", err);
+  }
 }

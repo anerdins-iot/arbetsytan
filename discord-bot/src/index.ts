@@ -1,5 +1,6 @@
+import "./lib/env.js";
 import { startBot } from "./client.js";
-import { startRedisListener, getRedisSubscriber } from "./services/redis-listener.js";
+import { startRedisListener, getRedisSubscriber, getRedisPublisher } from "./services/redis-listener.js";
 import { prisma } from "./lib/prisma.js";
 import { startRateLimiterCleanup } from "./utils/rate-limiter.js";
 
@@ -36,15 +37,25 @@ async function main() {
       console.error("[shutdown] Error disconnecting Discord client:", err);
     }
 
-    // Close Redis connection
-    const redis = getRedisSubscriber();
-    if (redis) {
+    // Close Redis connections (subscriber and publisher)
+    const redisSub = getRedisSubscriber();
+    if (redisSub) {
       try {
-        console.log("[shutdown] Closing Redis connection...");
-        await redis.quit();
-        console.log("[shutdown] Redis connection closed.");
+        console.log("[shutdown] Closing Redis subscriber...");
+        await redisSub.quit();
+        console.log("[shutdown] Redis subscriber closed.");
       } catch (err) {
-        console.error("[shutdown] Error closing Redis:", err);
+        console.error("[shutdown] Error closing Redis subscriber:", err);
+      }
+    }
+    const redisPub = getRedisPublisher();
+    if (redisPub) {
+      try {
+        console.log("[shutdown] Closing Redis publisher...");
+        await redisPub.quit();
+        console.log("[shutdown] Redis publisher closed.");
+      } catch (err) {
+        console.error("[shutdown] Error closing Redis publisher:", err);
       }
     }
 

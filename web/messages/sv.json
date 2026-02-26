@@ -1116,9 +1116,29 @@
       "setup": {
         "title": "Discord-koppling",
         "description": "Koppla din Discord-server till systemet för att aktivera bot-integration.",
+        "step1Title": "Lägg till boten på din Discord-server",
+        "step1Description": "Klicka på knappen nedan för att bjuda in Dyngbaggen till din Discord-server. Du behöver ha administratörsbehörighet på servern.",
+        "addBotButton": "Lägg till bot i Discord",
+        "step2Title": "Koppla servern till systemet",
+        "step2Description": "Efter att boten är tillagd, ange serverns ID nedan. Systemet verifierar att boten finns på servern.",
+        "permissionsTitle": "Vilka behörigheter behöver boten?",
+        "permissions": {
+          "manageChannels": "Hantera kanaler",
+          "manageChannelsDesc": "Skapa projektkanaler och kategorier automatiskt.",
+          "manageRoles": "Hantera roller",
+          "manageRolesDesc": "Tilldela och synka roller baserat på systemroller.",
+          "sendMessages": "Skicka meddelanden",
+          "sendMessagesDesc": "Skicka notifikationer om uppgifter, kommentarer och filer.",
+          "viewChannels": "Visa kanaler",
+          "viewChannelsDesc": "Se och komma åt serverkanaler.",
+          "embedLinks": "Bädda in länkar",
+          "embedLinksDesc": "Skicka formatterade notifikationer med embeds.",
+          "readHistory": "Läsa meddelandehistorik",
+          "readHistoryDesc": "Läsa konversationshistorik för AI-kontexthantering."
+        },
         "guildIdLabel": "Discord Server-ID",
         "guildIdPlaceholder": "T.ex. 123456789012345678",
-        "guildIdHelp": "Högerklicka på din server i Discord och välj 'Kopiera server-ID'.",
+        "guildIdHelp": "Högerklicka på din server i Discord och välj 'Kopiera server-ID'. (Kräver utvecklarläge: Inställningar > App-inställningar > Avancerat > Utvecklarläge.)",
         "connectButton": "Koppla Discord-server",
         "connecting": "Kopplar...",
         "connected": "Discord-server kopplad.",
@@ -1131,8 +1151,11 @@
       "errors": {
         "guildIdRequired": "Discord Server-ID krävs.",
         "connectFailed": "Kunde inte koppla Discord-servern.",
+        "botNotAvailable": "Discord-boten svarar inte. Kontrollera att botten körs och att Redis är tillgänglig.",
+        "botNotInServer": "Botten är inte medlem i denna server. Lägg till botten på servern först med knappen i steg 1.",
         "disconnectFailed": "Kunde inte koppla bort Discord-servern.",
-        "toggleFailed": "Kunde inte ändra bot-statusen."
+        "toggleFailed": "Kunde inte ändra bot-statusen.",
+        "noClientId": "Discord Client ID är inte konfigurerat. Kontakta systemadministratören."
       },
       "linkedUsers": {
         "title": "Länkade användare",

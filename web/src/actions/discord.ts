@@ -5,8 +5,18 @@ import { requireRole } from "@/lib/auth";
 import { tenantDb } from "@/lib/db";
 import { prisma } from "@/lib/db";
 import { revalidatePath } from "next/cache";
-import { publishDiscordEvent } from "@/lib/redis-pubsub";
+import { publishDiscordEvent, verifyDiscordGuildWithBot } from "@/lib/redis-pubsub";
 import type { DiscordCategoryType } from "../../generated/prisma/client";
+
+// --- Constants ---
+
+/**
+ * Discord bot permissions integer.
+ * Calculated from: ManageChannels, AddReactions, ViewChannel, SendMessages,
+ * ManageMessages, EmbedLinks, AttachFiles, ReadMessageHistory,
+ * UseExternalEmojis, ManageRoles, SendMessagesInThreads.
+ */
+const BOT_PERMISSIONS = "275146730576";
 
 // --- Types ---
 
@@ -18,6 +28,7 @@ export type DiscordActionResult = {
 export type DiscordSettingsData = {
   discordGuildId: string | null;
   discordBotEnabled: boolean;
+  botInviteUrl: string | null;
 };
 
 export type LinkedUser = {
@@ -85,7 +96,21 @@ export async function getDiscordSettings(): Promise<DiscordSettingsData> {
     throw new Error("TENANT_NOT_FOUND");
   }
 
-  return tenant;
+  const clientId = process.env.DISCORD_CLIENT_ID;
+  let botInviteUrl: string | null = null;
+  if (clientId) {
+    const params = new URLSearchParams({
+      client_id: clientId,
+      permissions: BOT_PERMISSIONS,
+      scope: "bot applications.commands",
+    });
+    botInviteUrl = `https://discord.com/oauth2/authorize?${params.toString()}`;
+  }
+
+  return {
+    ...tenant,
+    botInviteUrl,
+  };
 }
 
 export async function connectDiscordServer(
@@ -98,10 +123,20 @@ export async function connectDiscordServer(
     return { success: false, error: "INVALID_INPUT" };
   }
 
+  const trimmedGuildId = guildId.trim();
+  const verification = await verifyDiscordGuildWithBot(trimmedGuildId, 5000);
+
+  if (verification === "timeout") {
+    return { success: false, error: "BOT_NOT_AVAILABLE" };
+  }
+  if (verification === "guild-not-found") {
+    return { success: false, error: "BOT_NOT_IN_SERVER" };
+  }
+
   await db.tenant.update({
     where: { id: tenantId },
     data: {
-      discordGuildId: guildId.trim(),
+      discordGuildId: trimmedGuildId,
       discordBotEnabled: true,
     },
   });

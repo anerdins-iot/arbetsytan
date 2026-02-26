@@ -3,15 +3,13 @@ import {
   GatewayIntentBits,
   Partials,
 } from "discord.js";
+import { env } from "./lib/env.js";
 import { registerReady } from "./events/ready.js";
 import { registerMessageCreate } from "./events/messageCreate.js";
 import { registerInteractionCreate } from "./events/interactionCreate.js";
 
 export async function startBot(): Promise<Client> {
-  const token = process.env.DISCORD_TOKEN;
-  if (!token) {
-    throw new Error("DISCORD_TOKEN is required");
-  }
+  const token = env.DISCORD_TOKEN;
 
   const client = new Client({
     intents: [

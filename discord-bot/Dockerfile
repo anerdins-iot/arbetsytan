@@ -51,4 +51,4 @@ USER bot
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD kill -0 1 || exit 1
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/src/index.js"]
