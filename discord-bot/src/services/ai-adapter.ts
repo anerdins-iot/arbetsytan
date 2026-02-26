@@ -3,6 +3,8 @@
  * This bridges the Discord bot to the shared AI Core without importing Next.js modules.
  */
 
+import { env } from "../lib/env.js";
+
 export interface AIMessage {
   role: "user" | "assistant";
   content: string;
@@ -28,8 +30,11 @@ export interface AIResponse {
   provider: string;
 }
 
-const API_URL = process.env.API_URL ?? "http://localhost:3000";
+const API_URL = env.WEB_APP_URL;
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY ?? "";
+
+// Log the URL on startup for debugging
+console.log(`[ai-adapter] Using WEB_APP_URL: ${API_URL}`);
 
 /**
  * Call the web app's internal AI chat endpoint.
@@ -37,6 +42,7 @@ const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY ?? "";
  */
 export async function callAI(options: AIRequestOptions): Promise<AIResponse> {
   const url = `${API_URL}/api/internal/discord-chat`;
+  console.log(`[ai-adapter] Calling: ${url}`);
 
   const response = await fetch(url, {
     method: "POST",
