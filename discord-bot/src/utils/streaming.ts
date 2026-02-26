@@ -7,6 +7,7 @@
  * Also handles embedding images and attaching files found in the AI response.
  */
 import { EmbedBuilder, type Message, type TextChannel, type DMChannel } from "discord.js";
+import { formatForDiscord } from "./format.js";
 
 const MAX_MESSAGE_LENGTH = 2000;
 
@@ -222,8 +223,11 @@ export async function sendWithThinking(
     throw err;
   }
 
+  // Format tables and other Discord-incompatible markdown before processing
+  const formattedText = formatForDiscord(responseText);
+
   // Extract media (images + files) from the response
-  const { imageUrls, fileUrls, cleanedText } = extractMedia(responseText);
+  const { imageUrls, fileUrls, cleanedText } = extractMedia(formattedText);
 
   // Download images and create embeds that reference attachments
   const { attachments: imageAttachments, embeds } = await downloadImagesAsAttachments(imageUrls);
