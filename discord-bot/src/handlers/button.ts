@@ -33,7 +33,7 @@ import {
   createTimeButtons,
   createTaskListPaginationButtons,
 } from "../components/buttons.js";
-import { createTimeLogModal, createTaskModal } from "../components/modals.js";
+import { createTimeLogModal, createTaskModal, createNoteModal } from "../components/modals.js";
 
 /**
  * Handle a button interaction.
@@ -98,6 +98,8 @@ export async function handleButton(
     await handleTimeLog(interaction, customId.replace("time_log_", ""));
   } else if (customId.startsWith("task_create_")) {
     await handleTaskCreate(interaction, customId.replace("task_create_", ""));
+  } else if (customId.startsWith("note_create_")) {
+    await handleNoteCreate(interaction, customId.replace("note_create_", ""));
   } else if (customId === "start_onboarding") {
     await handleStartOnboarding(interaction, user.tenantId);
   } else if (customId.startsWith("confirm_sync_")) {
@@ -299,6 +301,17 @@ async function handleTaskCreate(
   projectId: string
 ): Promise<void> {
   const modal = createTaskModal(projectId);
+  await interaction.showModal(modal);
+}
+
+/**
+ * Show the note creation modal for a project.
+ */
+async function handleNoteCreate(
+  interaction: ButtonInteraction,
+  projectId: string
+): Promise<void> {
+  const modal = createNoteModal(projectId);
   await interaction.showModal(modal);
 }
 
