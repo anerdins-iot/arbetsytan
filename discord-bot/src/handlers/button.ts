@@ -5,6 +5,7 @@
 import type { ButtonInteraction } from "discord.js";
 import {
   ActionRowBuilder,
+  ButtonBuilder,
   MessageFlags,
   StringSelectMenuBuilder,
   StringSelectMenuOptionBuilder,
@@ -16,6 +17,7 @@ import {
 } from "../services/user-identification.js";
 import {
   createTaskEmbed,
+  createTaskListEmbed,
   createSuccessEmbed,
   createErrorEmbed,
   createProjectSelectEmbed,
@@ -25,7 +27,11 @@ import {
 import type { SyncResult } from "../services/channel-sync.js";
 import { syncProjectsToDiscord } from "../services/channel-sync.js";
 import type { IdentifiedUser } from "../services/user-identification.js";
-import { createTaskButtons, createTimeButtons } from "../components/buttons.js";
+import {
+  createTaskButtons,
+  createTimeButtons,
+  createTaskListPaginationButtons,
+} from "../components/buttons.js";
 import { createTimeLogModal, createTaskModal } from "../components/modals.js";
 
 /**
@@ -66,7 +72,12 @@ export async function handleButton(
     }
   }
 
-  if (customId.startsWith("task_view_")) {
+  if (customId.startsWith("task_list_")) {
+    // task_list_<projectId>_page_<n>
+    await handleTaskList(interaction, customId);
+  } else if (customId.startsWith("task_pin_")) {
+    await handleTaskPin(interaction, customId.replace("task_pin_", ""));
+  } else if (customId.startsWith("task_view_")) {
     await handleTaskView(interaction, customId.replace("task_view_", ""));
   } else if (customId.startsWith("task_complete_")) {
     await handleTaskComplete(
@@ -424,4 +435,171 @@ async function handleCancelSync(
     ],
     components: [],
   });
+}
+
+/** Items per page in task list */
+const TASK_LIST_PAGE_SIZE = 8;
+
+/**
+ * List tasks for a project with pagination.
+ * customId format: task_list_<projectId>_page_<pageNumber>
+ */
+async function handleTaskList(
+  interaction: ButtonInteraction,
+  customId: string
+): Promise<void> {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  // Parse customId: task_list_<projectId>_page_<n>
+  const match = customId.match(/^task_list_(.+)_page_(\d+)$/);
+  if (!match) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Ogiltigt kommando.")],
+    });
+    return;
+  }
+
+  const projectId = match[1];
+  const page = parseInt(match[2], 10);
+
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, name: true },
+  });
+
+  if (!project) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Projektet hittades inte.")],
+    });
+    return;
+  }
+
+  // Count total active tasks
+  const totalCount = await prisma.task.count({
+    where: { projectId, status: { not: "DONE" } },
+  });
+
+  const totalPages = Math.max(1, Math.ceil(totalCount / TASK_LIST_PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+
+  // Fetch tasks for this page
+  const tasks = await prisma.task.findMany({
+    where: { projectId, status: { not: "DONE" } },
+    orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
+    skip: safePage * TASK_LIST_PAGE_SIZE,
+    take: TASK_LIST_PAGE_SIZE,
+    include: {
+      assignments: {
+        include: {
+          membership: {
+            include: { user: { select: { name: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  const taskData = tasks.map((t) => ({
+    id: t.id,
+    title: t.title,
+    description: t.description,
+    status: t.status,
+    priority: t.priority,
+    deadline: t.deadline,
+    projectName: project.name,
+    assignees: t.assignments.map((a) => a.membership.user.name ?? "Okänd"),
+  }));
+
+  const embed = createTaskListEmbed(
+    project.name,
+    taskData,
+    safePage,
+    totalPages,
+    totalCount
+  );
+
+  const components: ActionRowBuilder<ButtonBuilder>[] = [];
+
+  // Add pagination if more than one page
+  if (totalPages > 1) {
+    const paginationRow = createTaskListPaginationButtons(
+      projectId,
+      safePage,
+      totalPages
+    );
+    if (paginationRow.components.length > 0) {
+      components.push(paginationRow);
+    }
+  }
+
+  await interaction.editReply({
+    embeds: [embed],
+    components,
+  });
+}
+
+/**
+ * Pin a task — send a persistent (non-ephemeral) task embed in the channel.
+ */
+async function handleTaskPin(
+  interaction: ButtonInteraction,
+  taskId: string
+): Promise<void> {
+  await interaction.deferReply(); // Non-ephemeral so it stays visible
+
+  const task = await prisma.task.findUnique({
+    where: { id: taskId },
+    include: {
+      project: { select: { name: true } },
+      assignments: {
+        include: {
+          membership: {
+            include: { user: { select: { name: true } } },
+          },
+        },
+      },
+    },
+  });
+
+  if (!task) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Uppgiften hittades inte.")],
+    });
+    return;
+  }
+
+  const assignees = task.assignments.map(
+    (a) => a.membership.user.name ?? "Okänd"
+  );
+
+  const embed = createTaskEmbed({
+    id: task.id,
+    title: task.title,
+    description: task.description,
+    status: task.status,
+    priority: task.priority,
+    deadline: task.deadline,
+    projectName: task.project.name,
+    assignees,
+  });
+  embed.setFooter({ text: "\u{1F4CC} Fäst uppgift" });
+
+  const buttons = createTaskButtons(task.id);
+  const timeButtons = createTimeButtons(task.id);
+
+  const reply = await interaction.editReply({
+    embeds: [embed],
+    components: [buttons, timeButtons],
+  });
+
+  // Try to pin the message in the channel
+  try {
+    const message = await interaction.channel?.messages.fetch(reply.id);
+    if (message && message.pinnable) {
+      await message.pin();
+    }
+  } catch {
+    // Pin may fail if bot lacks permission — the message stays visible regardless
+    console.warn("[button] Could not pin task message, missing permission");
+  }
 }

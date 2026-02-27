@@ -34,6 +34,11 @@ export function createTaskButtons(
       .setEmoji("\u2705")
       .setStyle(ButtonStyle.Success),
     new ButtonBuilder()
+      .setCustomId(`task_pin_${taskId}`)
+      .setLabel("Fäst")
+      .setEmoji("\u{1F4CC}")
+      .setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder()
       .setLabel("\u00D6ppna i webb")
       .setEmoji("\u{1F310}")
       .setStyle(ButtonStyle.Link)
@@ -69,6 +74,77 @@ export function createTaskCreateButton(
       .setLabel("Skapa uppgift")
       .setEmoji("\u2795")
       .setStyle(ButtonStyle.Success)
+  );
+}
+
+/**
+ * Create a "List tasks" button for a project.
+ * When clicked, shows an ephemeral embed listing project tasks.
+ */
+export function createTaskListButton(
+  projectId: string
+): ActionRowBuilder<ButtonBuilder> {
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`task_list_${projectId}_page_0`)
+      .setLabel("Lista uppgifter")
+      .setEmoji("\u{1F4CB}")
+      .setStyle(ButtonStyle.Primary)
+  );
+}
+
+/**
+ * Create pagination buttons for task list.
+ * Shows Previous / Next buttons based on current page and total pages.
+ */
+export function createTaskListPaginationButtons(
+  projectId: string,
+  currentPage: number,
+  totalPages: number
+): ActionRowBuilder<ButtonBuilder> {
+  const row = new ActionRowBuilder<ButtonBuilder>();
+
+  if (currentPage > 0) {
+    row.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`task_list_${projectId}_page_${currentPage - 1}`)
+        .setLabel("Föregående")
+        .setEmoji("\u2B05\uFE0F")
+        .setStyle(ButtonStyle.Secondary)
+    );
+  }
+
+  if (currentPage < totalPages - 1) {
+    row.addComponents(
+      new ButtonBuilder()
+        .setCustomId(`task_list_${projectId}_page_${currentPage + 1}`)
+        .setLabel("Nästa")
+        .setEmoji("\u27A1\uFE0F")
+        .setStyle(ButtonStyle.Secondary)
+    );
+  }
+
+  return row;
+}
+
+/**
+ * Create persistent project hub buttons (Skapa uppgift + Lista uppgifter).
+ * Sent as a pinned message in the general channel on sync.
+ */
+export function createProjectHubButtons(
+  projectId: string
+): ActionRowBuilder<ButtonBuilder> {
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`task_create_${projectId}`)
+      .setLabel("Skapa uppgift")
+      .setEmoji("\u2795")
+      .setStyle(ButtonStyle.Success),
+    new ButtonBuilder()
+      .setCustomId(`task_list_${projectId}_page_0`)
+      .setLabel("Lista uppgifter")
+      .setEmoji("\u{1F4CB}")
+      .setStyle(ButtonStyle.Primary)
   );
 }
 
