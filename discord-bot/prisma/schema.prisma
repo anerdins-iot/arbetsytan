@@ -86,8 +86,9 @@ model Task {
   updatedAt      DateTime         @updatedAt
   projectId      String
   project        Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  assignments    TaskAssignment[]
-  timeEntries    TimeEntry[]
+  assignments      TaskAssignment[]
+  timeEntries      TimeEntry[]
+  discordMessages  DiscordTaskMessage[]
 }
 
 model TaskAssignment {
@@ -147,6 +148,18 @@ model DiscordProjectChannel {
   @@index([projectId])
   @@index([tenantId])
   @@index([discordChannelId])
+}
+
+model DiscordTaskMessage {
+  id               String   @id @default(cuid())
+  taskId           String
+  discordMessageId String
+  discordChannelId String
+  createdAt        DateTime @default(now())
+  task             Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, discordMessageId])
+  @@index([discordMessageId])
 }
 
 // Minimal Conversation model for Discord metadata lookup/update.

@@ -70,7 +70,7 @@ async function getTasksChannel(
   projectId: string
 ): Promise<TextChannel | null> {
   const channel = await prisma.discordProjectChannel.findFirst({
-    where: { projectId, channelType: "tasks", syncEnabled: true },
+    where: { projectId, channelType: "general", syncEnabled: true },
     select: { discordChannelId: true },
   });
 
@@ -118,12 +118,22 @@ export async function handleTaskCreatedSync(
   const secondRow = createTimeButtons(event.taskId);
   const createRow = createTaskCreateButton(event.projectId);
 
-  await channel.send({
-    embeds: [embed],
-    components: [taskButtons, secondRow, createRow],
-  }).catch((err) => {
+  try {
+    const sentMessage = await channel.send({
+      embeds: [embed],
+      components: [taskButtons, secondRow, createRow],
+    });
+
+    await prisma.discordTaskMessage.create({
+      data: {
+        taskId: event.taskId,
+        discordMessageId: sentMessage.id,
+        discordChannelId: channel.id,
+      },
+    });
+  } catch (err) {
     console.error("[task-sync] Failed to send task created embed:", err);
-  });
+  }
 }
 
 /**
@@ -168,12 +178,44 @@ export async function handleTaskUpdatedSync(
 
   const taskButtons = createTaskButtons(event.taskId);
 
-  await channel.send({
-    embeds: [embed],
-    components: [taskButtons],
-  }).catch((err) => {
+  try {
+    // Delete old Discord message if one exists
+    const existingMsg = await prisma.discordTaskMessage.findFirst({
+      where: { taskId: event.taskId },
+    });
+    if (existingMsg) {
+      await channel.messages.delete(existingMsg.discordMessageId).catch(() => {
+        // Old message may already be deleted
+      });
+    }
+
+    // Send new message
+    const sentMessage = await channel.send({
+      embeds: [embed],
+      components: [taskButtons],
+    });
+
+    // Upsert the DiscordTaskMessage record
+    if (existingMsg) {
+      await prisma.discordTaskMessage.update({
+        where: { id: existingMsg.id },
+        data: {
+          discordMessageId: sentMessage.id,
+          discordChannelId: channel.id,
+        },
+      });
+    } else {
+      await prisma.discordTaskMessage.create({
+        data: {
+          taskId: event.taskId,
+          discordMessageId: sentMessage.id,
+          discordChannelId: channel.id,
+        },
+      });
+    }
+  } catch (err) {
     console.error("[task-sync] Failed to send task updated embed:", err);
-  });
+  }
 }
 
 /**
@@ -186,15 +228,30 @@ export async function handleTaskDeletedSync(
   const channel = await getTasksChannel(client, event.projectId);
   if (!channel) return;
 
-  const embed = new EmbedBuilder()
-    .setColor(COLORS.DELETED)
-    .setTitle("🗑️ Uppgift borttagen")
-    .setDescription(`Uppgift \`${event.taskId}\` har tagits bort.`)
-    .setTimestamp();
+  try {
+    // Delete the old task message from Discord if one exists
+    const existingMsg = await prisma.discordTaskMessage.findFirst({
+      where: { taskId: event.taskId },
+    });
+    if (existingMsg) {
+      await channel.messages.delete(existingMsg.discordMessageId).catch(() => {
+        // Old message may already be deleted
+      });
+      await prisma.discordTaskMessage.delete({
+        where: { id: existingMsg.id },
+      });
+    }
 
-  await channel.send({ embeds: [embed] }).catch((err) => {
+    const embed = new EmbedBuilder()
+      .setColor(COLORS.DELETED)
+      .setTitle("🗑️ Uppgift borttagen")
+      .setDescription(`Uppgift \`${event.taskId}\` har tagits bort.`)
+      .setTimestamp();
+
+    await channel.send({ embeds: [embed] });
+  } catch (err) {
     console.error("[task-sync] Failed to send task deleted embed:", err);
-  });
+  }
 }
 
 /**
