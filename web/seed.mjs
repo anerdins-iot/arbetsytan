@@ -42,17 +42,21 @@ async function run() {
     `, [periodEnd, trialEnd]);
 
     // 3. Upsert users
+    // Matches seed.ts: fredrik@anerdins.se (ADMIN), pm@example.com (PM), montor@example.com (WORKER),
+    //                  malare@example.com (WORKER), admin@example.com (ADMIN, E2E)
     const users = [
-      { id: 'seed-user-admin', name: 'Anna Admin', email: 'admin@example.com', role: 'ADMIN' },
-      { id: 'seed-user-pm', name: 'Per Projektledare', email: 'pm@example.com', role: 'PROJECT_MANAGER' },
-      { id: 'seed-user-worker', name: 'Maja Montör', email: 'montor@example.com', role: 'WORKER' },
+      { id: 'seed-user-fredrik', name: 'Fredrik Admin', email: 'fredrik@anerdins.se', role: 'ADMIN', emailSlug: 'fredrik' },
+      { id: 'seed-user-e2e', name: 'E2E Admin', email: 'admin@example.com', role: 'ADMIN', emailSlug: 'e2e' },
+      { id: 'seed-user-pm', name: 'Per Projektledare', email: 'pm@example.com', role: 'PROJECT_MANAGER', emailSlug: 'per' },
+      { id: 'seed-user-worker', name: 'Maja Montör', email: 'montor@example.com', role: 'WORKER', emailSlug: 'maja' },
+      { id: 'seed-user-malare', name: 'Kalle Målare', email: 'malare@example.com', role: 'WORKER', emailSlug: 'kalle' },
     ];
 
     for (const u of users) {
       await client.query(`
         INSERT INTO "User" ("id", "name", "email", "locale", "password", "createdAt", "updatedAt")
         VALUES ($1, $2, $3, 'sv', $4, now(), now())
-        ON CONFLICT ("email") DO UPDATE SET "password" = $4, "updatedAt" = now()
+        ON CONFLICT ("email") DO UPDATE SET "name" = $2, "password" = $4, "updatedAt" = now()
       `, [u.id, u.name, u.email, PASSWORD_HASH]);
 
       // We need the actual user ID (might differ if user already existed)
@@ -60,10 +64,10 @@ async function run() {
       const userId = rows[0].id;
 
       await client.query(`
-        INSERT INTO "Membership" ("id", "userId", "tenantId", "role", "createdAt", "updatedAt")
-        VALUES (gen_random_uuid()::text, $1, 'seed-tenant-1', $2, now(), now())
-        ON CONFLICT ("userId", "tenantId") DO NOTHING
-      `, [userId, u.role]);
+        INSERT INTO "Membership" ("id", "userId", "tenantId", "role", "emailSlug", "createdAt", "updatedAt")
+        VALUES (gen_random_uuid()::text, $1, 'seed-tenant-1', $2, $3, now(), now())
+        ON CONFLICT ("userId", "tenantId") DO UPDATE SET "role" = $2, "emailSlug" = $3, "updatedAt" = now()
+      `, [userId, u.role, u.emailSlug]);
     }
 
     // 4. Upsert project
@@ -72,6 +76,21 @@ async function run() {
       VALUES ('seed-project-1', 'Kvarnbergsskolan', 'Elinstallation i nybyggnad', 'ACTIVE', 'Kvarnbergsvägen 12, Göteborg', 'seed-tenant-1', now(), now())
       ON CONFLICT ("id") DO NOTHING
     `);
+
+    // 4b. Add all members to project
+    const { rows: allMemberships } = await client.query(`
+      SELECT m."id" FROM "Membership" m
+      JOIN "User" u ON u."id" = m."userId"
+      WHERE u."email" = ANY($1) AND m."tenantId" = 'seed-tenant-1'
+    `, [['fredrik@anerdins.se', 'admin@example.com', 'pm@example.com', 'montor@example.com', 'malare@example.com']]);
+
+    for (const membership of allMemberships) {
+      await client.query(`
+        INSERT INTO "ProjectMember" ("id", "projectId", "membershipId", "createdAt")
+        VALUES (gen_random_uuid()::text, 'seed-project-1', $1, now())
+        ON CONFLICT ("projectId", "membershipId") DO NOTHING
+      `, [membership.id]);
+    }
 
     // 5. Create tasks (skip if project already has tasks)
     const { rows: existingTasks } = await client.query(
