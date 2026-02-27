@@ -1169,9 +1169,19 @@
         "syncing": "Syncing...",
         "createChannelsButton": "Create channels in Discord",
         "resyncButton": "Resync",
+        "configureButton": "Configure",
         "statusSynced": "Synced",
         "statusNotSynced": "Not synced",
         "empty": "No active projects found.",
+        "sheetDescription": "Manage sync settings and channel links for this project.",
+        "noChannels": "No channels linked to this project.",
+        "syncToggle": "Sync",
+        "channelIdLabel": "Channel ID",
+        "taskNotificationsHelp": "Task notifications are sent here when sync is enabled.",
+        "unlink": "Unlink",
+        "unlinkConfirm": "Are you sure?",
+        "unlinkConfirmButton": "Yes, unlink",
+        "cancelButton": "Cancel",
         "columns": {
           "project": "Project",
           "status": "Status",
@@ -1187,7 +1197,9 @@
         },
         "errors": {
           "syncFailed": "Could not sync projects to Discord.",
-          "notConnected": "Discord server is not connected."
+          "notConnected": "Discord server is not connected.",
+          "toggleFailed": "Could not update sync status.",
+          "unlinkFailed": "Could not unlink the channel."
         }
       },
       "nav": {

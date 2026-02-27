@@ -513,9 +513,11 @@ export type ProjectSyncData = {
   discordCategoryId: string | null;
   lastSyncedAt: string | null;
   channels: {
+    recordId: string;
     type: string;
     channelId: string;
     syncEnabled: boolean;
+    lastSyncedAt: string | null;
   }[];
 };
 
@@ -530,6 +532,7 @@ export async function getProjectSyncStatus(): Promise<ProjectSyncData[]> {
       name: true,
       discordChannels: {
         select: {
+          id: true,
           discordChannelId: true,
           discordCategoryId: true,
           channelType: true,
@@ -554,9 +557,11 @@ export async function getProjectSyncStatus(): Promise<ProjectSyncData[]> {
       discordCategoryId: p.discordChannels[0]?.discordCategoryId ?? null,
       lastSyncedAt: lastSync?.toISOString() ?? null,
       channels: p.discordChannels.map((c) => ({
+        recordId: c.id,
         type: c.channelType,
         channelId: c.discordChannelId,
         syncEnabled: c.syncEnabled,
+        lastSyncedAt: c.lastSyncedAt?.toISOString() ?? null,
       })),
     };
   });
@@ -625,6 +630,90 @@ export async function syncSingleProjectToDiscord(
   } catch {
     return { success: false, error: "SYNC_FAILED" };
   }
+
+  revalidatePath("/[locale]/settings/discord", "page");
+  return { success: true };
+}
+
+export async function setProjectChannelSyncEnabled(
+  projectId: string,
+  discordChannelId: string,
+  enabled: boolean
+): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  if (!projectId || !discordChannelId) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  // Verify the channel belongs to a project in this tenant
+  const channel = await db.discordProjectChannel.findFirst({
+    where: {
+      projectId,
+      discordChannelId,
+    },
+    select: { id: true },
+  });
+
+  if (!channel) {
+    return { success: false, error: "NOT_FOUND" };
+  }
+
+  await db.discordProjectChannel.update({
+    where: { id: channel.id },
+    data: { syncEnabled: enabled },
+  });
+
+  revalidatePath("/[locale]/settings/discord", "page");
+  return { success: true };
+}
+
+export async function unlinkProjectChannel(
+  projectId: string,
+  discordChannelId: string
+): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  if (!projectId || !discordChannelId) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  // Verify project belongs to tenant
+  const project = await db.project.findUnique({
+    where: { id: projectId },
+    select: { id: true },
+  });
+
+  if (!project) {
+    return { success: false, error: "PROJECT_NOT_FOUND" };
+  }
+
+  // Verify the channel exists for this project
+  const channel = await db.discordProjectChannel.findFirst({
+    where: {
+      projectId,
+      discordChannelId,
+    },
+    select: { id: true },
+  });
+
+  if (!channel) {
+    return { success: false, error: "NOT_FOUND" };
+  }
+
+  // Delete the channel record
+  await db.discordProjectChannel.delete({
+    where: { id: channel.id },
+  });
+
+  // Publish event so bot can optionally archive/rename the channel
+  await publishDiscordEvent("discord:channel-unlinked", {
+    tenantId,
+    projectId,
+    discordChannelId,
+  });
 
   revalidatePath("/[locale]/settings/discord", "page");
   return { success: true };

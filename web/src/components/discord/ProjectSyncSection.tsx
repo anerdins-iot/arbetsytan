@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import {
   syncProjectsToDiscord,
   syncSingleProjectToDiscord,
+  setProjectChannelSyncEnabled,
+  unlinkProjectChannel,
   type ProjectSyncData,
 } from "@/actions/discord";
 import { Button } from "@/components/ui/button";
@@ -18,11 +20,22 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
   CheckCircle,
   Circle,
   Hash,
   Loader2,
   RefreshCw,
+  Settings2,
+  Unlink,
 } from "lucide-react";
 
 type ProjectSyncSectionProps = {
@@ -35,6 +48,23 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
   const [isSyncingAll, startSyncAll] = useTransition();
   const [syncingProjectId, setSyncingProjectId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // Sheet state
+  const [selectedProject, setSelectedProject] =
+    useState<ProjectSyncData | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  // Per-channel loading states
+  const [togglingChannelId, setTogglingChannelId] = useState<string | null>(
+    null
+  );
+  const [unlinkingChannelId, setUnlinkingChannelId] = useState<string | null>(
+    null
+  );
+  const [confirmUnlinkChannelId, setConfirmUnlinkChannelId] = useState<
+    string | null
+  >(null);
+  const [channelError, setChannelError] = useState<string | null>(null);
 
   function handleSyncAll() {
     setError(null);
@@ -65,6 +95,88 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
       .finally(() => {
         setSyncingProjectId(null);
       });
+  }
+
+  function handleOpenSheet(project: ProjectSyncData) {
+    setSelectedProject(project);
+    setSheetOpen(true);
+    setChannelError(null);
+    setConfirmUnlinkChannelId(null);
+  }
+
+  function handleToggleSync(
+    projectId: string,
+    discordChannelId: string,
+    enabled: boolean
+  ) {
+    setChannelError(null);
+    setTogglingChannelId(discordChannelId);
+    setProjectChannelSyncEnabled(projectId, discordChannelId, enabled)
+      .then((result) => {
+        if (result.success) {
+          // Update local state so the sheet reflects the change
+          if (selectedProject && selectedProject.projectId === projectId) {
+            setSelectedProject({
+              ...selectedProject,
+              channels: selectedProject.channels.map((ch) =>
+                ch.channelId === discordChannelId
+                  ? { ...ch, syncEnabled: enabled }
+                  : ch
+              ),
+            });
+          }
+          router.refresh();
+        } else {
+          setChannelError(t("errors.toggleFailed"));
+        }
+      })
+      .catch(() => {
+        setChannelError(t("errors.toggleFailed"));
+      })
+      .finally(() => {
+        setTogglingChannelId(null);
+      });
+  }
+
+  function handleUnlink(projectId: string, discordChannelId: string) {
+    setChannelError(null);
+    setUnlinkingChannelId(discordChannelId);
+    unlinkProjectChannel(projectId, discordChannelId)
+      .then((result) => {
+        if (result.success) {
+          // Update local state to remove the channel
+          if (selectedProject && selectedProject.projectId === projectId) {
+            const updatedChannels = selectedProject.channels.filter(
+              (ch) => ch.channelId !== discordChannelId
+            );
+            if (updatedChannels.length === 0) {
+              setSheetOpen(false);
+              setSelectedProject(null);
+            } else {
+              setSelectedProject({
+                ...selectedProject,
+                synced: updatedChannels.length > 0,
+                channels: updatedChannels,
+              });
+            }
+          }
+          router.refresh();
+        } else {
+          setChannelError(t("errors.unlinkFailed"));
+        }
+      })
+      .catch(() => {
+        setChannelError(t("errors.unlinkFailed"));
+      })
+      .finally(() => {
+        setUnlinkingChannelId(null);
+        setConfirmUnlinkChannelId(null);
+      });
+  }
+
+  function truncateChannelId(id: string) {
+    if (id.length <= 12) return id;
+    return `${id.slice(0, 6)}…${id.slice(-4)}`;
   }
 
   const syncedCount = projects.filter((p) => p.synced).length;
@@ -162,25 +274,39 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
                         : "—"}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant={project.synced ? "outline" : "default"}
-                        size="sm"
-                        onClick={() => handleSyncProject(project.projectId)}
-                        disabled={
-                          isSyncing || isSyncingAll || syncingProjectId !== null
-                        }
-                      >
-                        {isSyncing ? (
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                        ) : project.synced ? (
-                          <RefreshCw className="mr-2 size-4" />
+                      <div className="inline-flex items-center gap-2">
+                        {project.synced ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleOpenSheet(project)}
+                          >
+                            <Settings2 className="mr-2 size-4" />
+                            {t("configureButton")}
+                          </Button>
                         ) : null}
-                        {isSyncing
-                          ? t("syncing")
-                          : project.synced
-                            ? t("resyncButton")
-                            : t("createChannelsButton")}
-                      </Button>
+                        <Button
+                          variant={project.synced ? "ghost" : "default"}
+                          size="sm"
+                          onClick={() => handleSyncProject(project.projectId)}
+                          disabled={
+                            isSyncing ||
+                            isSyncingAll ||
+                            syncingProjectId !== null
+                          }
+                        >
+                          {isSyncing ? (
+                            <Loader2 className="mr-2 size-4 animate-spin" />
+                          ) : project.synced ? (
+                            <RefreshCw className="mr-2 size-4" />
+                          ) : null}
+                          {isSyncing
+                            ? t("syncing")
+                            : project.synced
+                              ? t("resyncButton")
+                              : t("createChannelsButton")}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 );
@@ -189,6 +315,149 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
           </Table>
         </div>
       )}
+
+      {/* Channel Configuration Sheet */}
+      <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>
+              {selectedProject?.projectName ?? ""}
+            </SheetTitle>
+            <SheetDescription>
+              {t("sheetDescription")}
+            </SheetDescription>
+          </SheetHeader>
+
+          {channelError ? (
+            <div className="mx-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              {channelError}
+            </div>
+          ) : null}
+
+          <div className="flex-1 overflow-y-auto px-4 pb-4">
+            {selectedProject?.channels.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                {t("noChannels")}
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {selectedProject?.channels.map((ch) => {
+                  const isToggling = togglingChannelId === ch.channelId;
+                  const isUnlinking = unlinkingChannelId === ch.channelId;
+                  const isConfirmingUnlink =
+                    confirmUnlinkChannelId === ch.channelId;
+
+                  return (
+                    <div
+                      key={ch.recordId}
+                      className="rounded-lg border border-border p-4"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0 flex-1 space-y-1">
+                          <div className="flex items-center gap-2">
+                            <Hash className="size-4 shrink-0 text-muted-foreground" />
+                            <span className="font-medium">
+                              {t(`channelTypes.${ch.type}`)}
+                            </span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {t("channelIdLabel")}:{" "}
+                            <code className="rounded bg-muted px-1 py-0.5">
+                              {truncateChannelId(ch.channelId)}
+                            </code>
+                          </p>
+                          {ch.type === "tasks" ? (
+                            <p className="text-xs text-muted-foreground/80">
+                              {t("taskNotificationsHelp")}
+                            </p>
+                          ) : null}
+                          {ch.lastSyncedAt ? (
+                            <p className="text-xs text-muted-foreground">
+                              {t("columns.lastSynced")}:{" "}
+                              {new Date(ch.lastSyncedAt).toLocaleString()}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <Label
+                            htmlFor={`sync-${ch.recordId}`}
+                            className="text-xs text-muted-foreground"
+                          >
+                            {t("syncToggle")}
+                          </Label>
+                          <Switch
+                            id={`sync-${ch.recordId}`}
+                            checked={ch.syncEnabled}
+                            disabled={isToggling || isUnlinking}
+                            onCheckedChange={(checked) =>
+                              handleToggleSync(
+                                selectedProject!.projectId,
+                                ch.channelId,
+                                checked
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="mt-3 flex items-center justify-end">
+                        {isConfirmingUnlink ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-destructive">
+                              {t("unlinkConfirm")}
+                            </span>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              disabled={isUnlinking}
+                              onClick={() =>
+                                handleUnlink(
+                                  selectedProject!.projectId,
+                                  ch.channelId
+                                )
+                              }
+                            >
+                              {isUnlinking ? (
+                                <Loader2 className="mr-2 size-4 animate-spin" />
+                              ) : (
+                                <Unlink className="mr-2 size-4" />
+                              )}
+                              {t("unlinkConfirmButton")}
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() =>
+                                setConfirmUnlinkChannelId(null)
+                              }
+                            >
+                              {t("cancelButton")}
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-destructive hover:text-destructive"
+                            onClick={() =>
+                              setConfirmUnlinkChannelId(ch.channelId)
+                            }
+                            disabled={isUnlinking || isToggling}
+                          >
+                            <Unlink className="mr-2 size-4" />
+                            {t("unlink")}
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

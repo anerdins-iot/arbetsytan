@@ -1180,9 +1180,19 @@
         "syncing": "Synkar...",
         "createChannelsButton": "Skapa kanaler i Discord",
         "resyncButton": "Synka igen",
+        "configureButton": "Konfigurera",
         "statusSynced": "Synkad",
         "statusNotSynced": "Ej synkad",
         "empty": "Inga aktiva projekt hittades.",
+        "sheetDescription": "Hantera synkronisering och kopplingar för projektets Discord-kanaler.",
+        "noChannels": "Inga kanaler kopplade till detta projekt.",
+        "syncToggle": "Synk",
+        "channelIdLabel": "Kanal-ID",
+        "taskNotificationsHelp": "Task-notiser skickas hit när synk är på.",
+        "unlink": "Avkoppla",
+        "unlinkConfirm": "Är du säker?",
+        "unlinkConfirmButton": "Ja, avkoppla",
+        "cancelButton": "Avbryt",
         "columns": {
           "project": "Projekt",
           "status": "Status",
@@ -1198,7 +1208,9 @@
         },
         "errors": {
           "syncFailed": "Kunde inte synka projekt till Discord.",
-          "notConnected": "Discord-servern är inte kopplad."
+          "notConnected": "Discord-servern är inte kopplad.",
+          "toggleFailed": "Kunde inte ändra synkstatus.",
+          "unlinkFailed": "Kunde inte avkoppla kanalen."
         }
       },
       "nav": {
