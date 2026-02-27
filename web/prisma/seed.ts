@@ -104,7 +104,7 @@ async function main() {
     where: {
       userId_tenantId: { userId: adminUser.id, tenantId: tenant.id },
     },
-    update: { emailSlug: "fredrik" },
+    update: { emailSlug: "fredrik", role: "ADMIN" },
     create: {
       userId: adminUser.id,
       tenantId: tenant.id,
@@ -117,7 +117,7 @@ async function main() {
     where: {
       userId_tenantId: { userId: e2eAdminUser.id, tenantId: tenant.id },
     },
-    update: { emailSlug: "e2e" },
+    update: { emailSlug: "e2e", role: "ADMIN" },
     create: {
       userId: e2eAdminUser.id,
       tenantId: tenant.id,

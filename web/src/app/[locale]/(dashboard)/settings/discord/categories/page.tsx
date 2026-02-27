@@ -1,5 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import { getDiscordCategories } from "@/actions/discord";
 import { CategoryManager } from "@/components/discord/CategoryManager";
@@ -15,7 +16,11 @@ export default async function DiscordCategoriesPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "settings.discord" });
 
-  await requireRole(["ADMIN"]);
+  try {
+    await requireRole(["ADMIN"]);
+  } catch {
+    redirect(`/${locale}/settings`);
+  }
 
   const categories = await getDiscordCategories();
 

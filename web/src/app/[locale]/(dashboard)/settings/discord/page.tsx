@@ -1,10 +1,14 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import {
   getDiscordSettings,
   getLinkedUsers,
   getProjectSyncStatus,
+  type DiscordSettingsData,
+  type LinkedUser,
+  type ProjectSyncData,
 } from "@/actions/discord";
 import { DiscordSetup } from "@/components/discord/DiscordSetup";
 import { LinkedUsersTable } from "@/components/discord/LinkedUsersTable";
@@ -20,12 +24,22 @@ export default async function DiscordSettingsPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "settings.discord" });
 
-  await requireRole(["ADMIN"]);
+  try {
+    await requireRole(["ADMIN"]);
+  } catch {
+    redirect(`/${locale}/settings`);
+  }
+
+  const defaultSettings: DiscordSettingsData = {
+    discordGuildId: null,
+    discordBotEnabled: false,
+    botInviteUrl: null,
+  };
 
   const [settings, linkedUsers, projectSync] = await Promise.all([
-    getDiscordSettings(),
-    getLinkedUsers(),
-    getProjectSyncStatus(),
+    getDiscordSettings().catch((): DiscordSettingsData => defaultSettings),
+    getLinkedUsers().catch((): LinkedUser[] => []),
+    getProjectSyncStatus().catch((): ProjectSyncData[] => []),
   ]);
 
   return (

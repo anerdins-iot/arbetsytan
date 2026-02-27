@@ -1,5 +1,6 @@
 import { setRequestLocale } from "next-intl/server";
 import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/auth";
 import { getDiscordRoleMappings } from "@/actions/discord";
 import { RoleManager } from "@/components/discord/RoleManager";
@@ -15,7 +16,11 @@ export default async function DiscordRolesPage({ params }: Props) {
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "settings.discord" });
 
-  await requireRole(["ADMIN"]);
+  try {
+    await requireRole(["ADMIN"]);
+  } catch {
+    redirect(`/${locale}/settings`);
+  }
 
   const mappings = await getDiscordRoleMappings();
 
