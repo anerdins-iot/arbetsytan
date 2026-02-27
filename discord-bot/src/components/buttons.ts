@@ -128,13 +128,14 @@ export function createTaskListPaginationButtons(
 }
 
 /**
- * Create persistent project hub buttons (Skapa uppgift + Lista uppgifter).
+ * Create persistent project hub buttons (Skapa uppgift + Lista uppgifter + more).
  * Sent as a pinned message in the general channel on sync.
+ * Returns two rows of buttons.
  */
 export function createProjectHubButtons(
   projectId: string
-): ActionRowBuilder<ButtonBuilder> {
-  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+): ActionRowBuilder<ButtonBuilder>[] {
+  const row1 = new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
       .setCustomId(`task_create_${projectId}`)
       .setLabel("Skapa uppgift")
@@ -146,6 +147,26 @@ export function createProjectHubButtons(
       .setEmoji("\u{1F4CB}")
       .setStyle(ButtonStyle.Primary)
   );
+
+  const row2 = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`note_create_${projectId}`)
+      .setLabel("Ny anteckning")
+      .setEmoji("\u{1F4DD}")
+      .setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId(`file_list_${projectId}`)
+      .setLabel("Visa filer")
+      .setEmoji("\u{1F4C1}")
+      .setStyle(ButtonStyle.Secondary),
+    new ButtonBuilder()
+      .setCustomId(`time_log_project_${projectId}`)
+      .setLabel("Logga tid")
+      .setEmoji("\u23F1\uFE0F")
+      .setStyle(ButtonStyle.Secondary)
+  );
+
+  return [row1, row2];
 }
 
 /**

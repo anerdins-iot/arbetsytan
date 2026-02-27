@@ -1054,7 +1054,7 @@ async function handleResendHub(
 
     const message = await textChannel.send({
       embeds: [embed],
-      components: [buttons],
+      components: buttons,
     });
 
     await message.pin().catch(() => {
