@@ -9,6 +9,7 @@ import {
   syncSingleProjectToDiscord,
   setProjectChannelSyncEnabled,
   unlinkProjectChannel,
+  resendProjectHub,
   type ProjectSyncData,
 } from "@/actions/discord";
 import { Button } from "@/components/ui/button";
@@ -43,8 +44,11 @@ import {
   CheckCircle,
   Circle,
   Hash,
+  Info,
   Loader2,
+  MessageSquare,
   RefreshCw,
+  Send,
   Settings2,
   Unlink,
 } from "lucide-react";
@@ -72,6 +76,11 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
   const [unlinkingChannelId, setUnlinkingChannelId] = useState<string | null>(
     null
   );
+
+  // Resend hub loading state
+  const [resendingHubProjectId, setResendingHubProjectId] = useState<
+    string | null
+  >(null);
 
   // AlertDialog state for unlink confirmation
   const [unlinkDialogOpen, setUnlinkDialogOpen] = useState(false);
@@ -203,6 +212,24 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
       });
   }
 
+  function handleResendHub(projectId: string) {
+    setResendingHubProjectId(projectId);
+    resendProjectHub(projectId)
+      .then((result) => {
+        if (result.success) {
+          toast.success(t("toasts.resendHubSuccess"));
+        } else {
+          toast.error(t("toasts.resendHubFailed"));
+        }
+      })
+      .catch(() => {
+        toast.error(t("toasts.resendHubFailed"));
+      })
+      .finally(() => {
+        setResendingHubProjectId(null);
+      });
+  }
+
   function truncateChannelId(id: string) {
     if (id.length <= 12) return id;
     return `${id.slice(0, 6)}…${id.slice(-4)}`;
@@ -236,6 +263,15 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
         </Button>
       </div>
 
+      {/* Explanatory info box */}
+      <div className="mt-4 flex gap-3 rounded-md border border-border bg-muted/50 p-3">
+        <Info className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+        <div className="space-y-1 text-sm text-muted-foreground">
+          <p>{t("syncExplanation")}</p>
+          <p className="text-xs">{t("syncAllHelp")}</p>
+        </div>
+      </div>
+
       {error ? (
         <div className="mt-4 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
           {error}
@@ -261,6 +297,11 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
             <TableBody>
               {projects.map((project) => {
                 const isSyncing = syncingProjectId === project.projectId;
+                const isResendingHub =
+                  resendingHubProjectId === project.projectId;
+                const hasGeneralChannel = project.channels.some(
+                  (ch) => ch.type === "general"
+                );
                 return (
                   <TableRow key={project.projectId}>
                     <TableCell className="font-medium">
@@ -316,6 +357,30 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
                             {t("configureButton")}
                           </Button>
                         ) : null}
+                        {project.synced && hasGeneralChannel ? (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="min-h-11"
+                            onClick={() =>
+                              handleResendHub(project.projectId)
+                            }
+                            disabled={
+                              isResendingHub ||
+                              isSyncingAll ||
+                              syncingProjectId !== null
+                            }
+                          >
+                            {isResendingHub ? (
+                              <Loader2 className="mr-2 size-4 animate-spin" />
+                            ) : (
+                              <Send className="mr-2 size-4" />
+                            )}
+                            {isResendingHub
+                              ? t("resendingHub")
+                              : t("resendHubButton")}
+                          </Button>
+                        ) : null}
                         <Button
                           variant={project.synced ? "ghost" : "default"}
                           size="sm"
@@ -367,6 +432,46 @@ export function ProjectSyncSection({ projects }: ProjectSyncSectionProps) {
               </p>
             ) : (
               <div className="space-y-6">
+                {/* Project hub section */}
+                {selectedProject?.channels.some(
+                  (ch) => ch.type === "general"
+                ) ? (
+                  <div className="rounded-lg border border-border bg-muted/30 p-4">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="size-4 text-muted-foreground" />
+                      <h3 className="text-sm font-medium">
+                        {t("hubSectionTitle")}
+                      </h3>
+                    </div>
+                    <p className="mt-1.5 text-xs text-muted-foreground">
+                      {t("hubSectionDescription")}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3 min-h-11"
+                      onClick={() =>
+                        selectedProject &&
+                        handleResendHub(selectedProject.projectId)
+                      }
+                      disabled={
+                        resendingHubProjectId === selectedProject?.projectId
+                      }
+                    >
+                      {resendingHubProjectId ===
+                      selectedProject?.projectId ? (
+                        <Loader2 className="mr-2 size-4 animate-spin" />
+                      ) : (
+                        <Send className="mr-2 size-4" />
+                      )}
+                      {resendingHubProjectId ===
+                      selectedProject?.projectId
+                        ? t("resendingHub")
+                        : t("resendHubButton")}
+                    </Button>
+                  </div>
+                ) : null}
+
                 <h3 className="text-sm font-medium text-muted-foreground">
                   {t("channelLinksTitle")}
                 </h3>

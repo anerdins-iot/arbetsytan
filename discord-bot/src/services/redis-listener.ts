@@ -62,6 +62,8 @@ import {
   type TaskDeletedSyncEvent,
   type TaskAssignedSyncEvent,
 } from "./task-sync.js";
+import { createProjectHubEmbed } from "../components/embeds.js";
+import { createProjectHubButtons } from "../components/buttons.js";
 import {
   handleNoteCreatedSync,
   handleNoteUpdatedSync,
@@ -259,6 +261,13 @@ export interface SyncStatusRequestEvent {
   requestId: string;
 }
 
+export interface ResendHubEvent {
+  tenantId: string;
+  projectId: string;
+  projectName: string;
+  channelId: string;
+}
+
 const VERIFY_RESPONSE_CHANNEL = "discord:verify-response";
 
 const CHANNELS = [
@@ -285,6 +294,7 @@ const CHANNELS = [
   "discord:note-updated",
   "discord:sync-projects",
   "discord:sync-status",
+  "discord:resend-hub",
   "discord:verify-guild",
 ] as const;
 
@@ -459,6 +469,11 @@ export async function startRedisListener(client: Client): Promise<void> {
         case "discord:sync-status": {
           const event = JSON.parse(message) as SyncStatusRequestEvent;
           handleSyncStatusRequest(event);
+          break;
+        }
+        case "discord:resend-hub": {
+          const event = JSON.parse(message) as ResendHubEvent;
+          handleResendHub(client, event);
           break;
         }
         case "discord:verify-guild": {
@@ -1015,6 +1030,40 @@ async function handleSyncStatusRequest(
     }
   } catch (err) {
     console.error("[redis-listener] Failed to get sync status:", err);
+  }
+}
+
+async function handleResendHub(
+  client: Client,
+  event: ResendHubEvent
+): Promise<void> {
+  console.log(
+    `[redis-listener] Resend hub: projectId=${event.projectId}, channelId=${event.channelId}`
+  );
+
+  try {
+    const channel = await client.channels.fetch(event.channelId).catch(() => null);
+    if (!channel || !channel.isTextBased() || channel.isDMBased()) {
+      console.warn(`[redis-listener] Could not find text channel ${event.channelId}`);
+      return;
+    }
+
+    const textChannel = channel as import("discord.js").TextChannel;
+    const embed = createProjectHubEmbed(event.projectName);
+    const buttons = createProjectHubButtons(event.projectId);
+
+    const message = await textChannel.send({
+      embeds: [embed],
+      components: [buttons],
+    });
+
+    await message.pin().catch(() => {
+      console.warn("[redis-listener] Could not pin hub message, missing permission");
+    });
+
+    console.log(`[redis-listener] Resent hub message for project ${event.projectId}`);
+  } catch (err) {
+    console.error("[redis-listener] Failed to resend hub message:", err);
   }
 }
 

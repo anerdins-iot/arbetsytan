@@ -1176,17 +1176,23 @@
       "projectSync": {
         "title": "Synkade projekt",
         "description": "{synced} av {total} projekt synkade till Discord.",
+        "syncExplanation": "Synkning skapar kanaler i Discord (#allmänt, #uppgifter, #filer, #aktivitet) och fäster ett projekthubb-meddelande med knappar för \"Skapa uppgift\" och \"Lista uppgifter\" i #allmänt-kanalen.",
         "syncAllButton": "Synka alla projekt",
+        "syncAllHelp": "Skapar kanaler och projekthubb för alla projekt som saknar dem.",
         "syncing": "Synkar...",
         "createChannelsButton": "Skapa kanaler i Discord",
         "resyncButton": "Synka igen",
         "configureButton": "Konfigurera",
+        "resendHubButton": "Skicka om projekthubb",
+        "resendingHub": "Skickar...",
         "statusSynced": "Synkad",
         "statusNotSynced": "Ej synkad",
         "empty": "Inga aktiva projekt hittades.",
         "sheetDescription": "Hantera synkronisering och kopplingar för projektets Discord-kanaler.",
         "noChannels": "Inga kanaler kopplade till detta projekt.",
         "channelLinksTitle": "Kanalkopplingar",
+        "hubSectionTitle": "Projekthubb",
+        "hubSectionDescription": "Projekthubben är ett fäst meddelande i #allmänt-kanalen med knappar för att skapa och lista uppgifter direkt i Discord. Klicka nedan för att skicka om det.",
         "syncToggle": "Synk",
         "channelIdLabel": "Kanal-ID",
         "taskNotificationsHelp": "Task-notiser skickas hit när synk är på.",
@@ -1214,13 +1220,16 @@
           "syncProjectSuccess": "Projektsynkning startad.",
           "syncEnabled": "Synk aktiverad.",
           "syncDisabled": "Synk inaktiverad.",
-          "unlinkSuccess": "Kanalen har avkopplats."
+          "unlinkSuccess": "Kanalen har avkopplats.",
+          "resendHubSuccess": "Projekthubb-meddelande skickat till Discord.",
+          "resendHubFailed": "Kunde inte skicka om projekthubben."
         },
         "errors": {
           "syncFailed": "Kunde inte synka projekt till Discord.",
           "notConnected": "Discord-servern är inte kopplad.",
           "toggleFailed": "Kunde inte ändra synkstatus.",
-          "unlinkFailed": "Kunde inte avkoppla kanalen."
+          "unlinkFailed": "Kunde inte avkoppla kanalen.",
+          "resendHubFailed": "Kunde inte skicka om projekthubben."
         }
       },
       "nav": {

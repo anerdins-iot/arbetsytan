@@ -669,6 +669,61 @@ export async function setProjectChannelSyncEnabled(
   return { success: true };
 }
 
+export async function resendProjectHub(
+  projectId: string
+): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  if (!projectId || projectId.trim().length === 0) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { discordGuildId: true, discordBotEnabled: true },
+  });
+
+  if (!tenant?.discordGuildId || !tenant.discordBotEnabled) {
+    return { success: false, error: "DISCORD_NOT_CONNECTED" };
+  }
+
+  // Verify project belongs to tenant and has a general channel
+  const project = await db.project.findUnique({
+    where: { id: projectId },
+    select: {
+      id: true,
+      name: true,
+      discordChannels: {
+        where: { channelType: "general" },
+        select: { discordChannelId: true },
+      },
+    },
+  });
+
+  if (!project) {
+    return { success: false, error: "PROJECT_NOT_FOUND" };
+  }
+
+  const generalChannel = project.discordChannels[0];
+  if (!generalChannel) {
+    return { success: false, error: "NO_GENERAL_CHANNEL" };
+  }
+
+  try {
+    await publishDiscordEvent("discord:resend-hub", {
+      tenantId,
+      projectId,
+      projectName: project.name,
+      channelId: generalChannel.discordChannelId,
+    });
+  } catch {
+    return { success: false, error: "RESEND_FAILED" };
+  }
+
+  return { success: true };
+}
+
 export async function unlinkProjectChannel(
   projectId: string,
   discordChannelId: string

@@ -1165,17 +1165,23 @@
       "projectSync": {
         "title": "Synced Projects",
         "description": "{synced} of {total} projects synced to Discord.",
+        "syncExplanation": "Syncing creates channels in Discord (#general, #tasks, #files, #activity) and pins a project hub message with \"Create task\" and \"List tasks\" buttons in the #general channel.",
         "syncAllButton": "Sync all projects",
+        "syncAllHelp": "Creates channels and project hub for all projects that don't have them yet.",
         "syncing": "Syncing...",
         "createChannelsButton": "Create channels in Discord",
         "resyncButton": "Resync",
         "configureButton": "Configure",
+        "resendHubButton": "Resend project hub",
+        "resendingHub": "Sending...",
         "statusSynced": "Synced",
         "statusNotSynced": "Not synced",
         "empty": "No active projects found.",
         "sheetDescription": "Manage sync settings and channel links for this project.",
         "noChannels": "No channels linked to this project.",
         "channelLinksTitle": "Channel links",
+        "hubSectionTitle": "Project hub",
+        "hubSectionDescription": "The project hub is a pinned message in the #general channel with buttons to create and list tasks directly in Discord. Click below to resend it.",
         "syncToggle": "Sync",
         "channelIdLabel": "Channel ID",
         "taskNotificationsHelp": "Task notifications are sent here when sync is enabled.",
@@ -1203,13 +1209,16 @@
           "syncProjectSuccess": "Project sync started.",
           "syncEnabled": "Sync enabled.",
           "syncDisabled": "Sync disabled.",
-          "unlinkSuccess": "Channel has been unlinked."
+          "unlinkSuccess": "Channel has been unlinked.",
+          "resendHubSuccess": "Project hub message sent to Discord.",
+          "resendHubFailed": "Could not resend the project hub."
         },
         "errors": {
           "syncFailed": "Could not sync projects to Discord.",
           "notConnected": "Discord server is not connected.",
           "toggleFailed": "Could not update sync status.",
-          "unlinkFailed": "Could not unlink the channel."
+          "unlinkFailed": "Could not unlink the channel.",
+          "resendHubFailed": "Could not resend the project hub."
         }
       },
       "nav": {
