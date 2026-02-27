@@ -86,14 +86,25 @@ async function run() {
       `, [tenantId, trialEnd]);
     }
 
-    // 3. Upsert membership as ADMIN
-    const emailSlug = EMAIL.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 20);
+    // 3. Upsert membership as ADMIN (without emailSlug to avoid unique constraint conflict)
     await client.query(`
-      INSERT INTO "Membership" ("id", "userId", "tenantId", "role", "emailSlug", "createdAt", "updatedAt")
-      VALUES (gen_random_uuid()::text, $1, $2, 'ADMIN', $3, now(), now())
+      INSERT INTO "Membership" ("id", "userId", "tenantId", "role", "createdAt", "updatedAt")
+      VALUES (gen_random_uuid()::text, $1, $2, 'ADMIN', now(), now())
       ON CONFLICT ("userId", "tenantId") DO UPDATE SET
         "role" = 'ADMIN',
         "updatedAt" = now()
+    `, [user.id, tenantId]);
+
+    // Set emailSlug only if not already assigned (avoids unique constraint on tenantId+emailSlug)
+    const emailSlug = EMAIL.split('@')[0].replace(/[^a-z0-9]/gi, '').toLowerCase().slice(0, 20);
+    await client.query(`
+      UPDATE "Membership"
+      SET "emailSlug" = $3
+      WHERE "userId" = $1 AND "tenantId" = $2 AND "emailSlug" IS NULL
+        AND NOT EXISTS (
+          SELECT 1 FROM "Membership"
+          WHERE "tenantId" = $2 AND "emailSlug" = $3 AND "userId" != $1
+        )
     `, [user.id, tenantId, emailSlug]);
 
     await client.query('COMMIT');
