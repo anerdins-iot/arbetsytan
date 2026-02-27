@@ -1058,6 +1058,9 @@ export async function executeAIChat(
     ...(isMistral ? { maxRetries: 5 } : {}),
   };
 
+  // Step counter for logging
+  let stepCounter = 0;
+
   // Stream the response
   const stream = streamText({
     model,
@@ -1075,6 +1078,26 @@ export async function executeAIChat(
         hasOpenaiKey: !!process.env.OPENAI_API_KEY,
       });
       onStreamError?.(error);
+    },
+    onStepFinish: ({ toolCalls, finishReason }) => {
+      stepCounter++;
+      logger.info("[AI step]", {
+        userId: context.userId,
+        conversationId: context.conversationId,
+        step: stepCounter,
+        finishReason,
+        toolCallCount: toolCalls?.length ?? 0,
+        toolCalls: toolCalls
+          ?.map((tc) => {
+            if (!tc) return null;
+            return {
+              toolName: tc.toolName,
+              // Truncate input to avoid huge logs
+              input: JSON.stringify(tc.input).slice(0, 200),
+            };
+          })
+          .filter((tc) => tc !== null),
+      });
     },
     onFinish: async ({ text }) => {
       logger.info("onFinish: triggered", {
