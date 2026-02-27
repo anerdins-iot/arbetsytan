@@ -46,7 +46,7 @@ Bygga en fullständig Discord-adminpanel i webb-UI så att administratörer kan:
 
 ## Status
 
-- [ ] Actions: setProjectChannelSyncEnabled, unlinkProjectChannel
-- [ ] ProjectSyncSection: per-kanal-vy med toggles + unlink
-- [ ] Översättningar
-- [ ] Build och snabb manuell verifiering
+- [x] Actions: setProjectChannelSyncEnabled, unlinkProjectChannel
+- [x] ProjectSyncSection: per-kanal-vy med toggles + unlink (Sheet med Configure-knapp)
+- [x] Översättningar (sv + en)
+- [x] Build verifierad (sub-agent: tsc + next build)
