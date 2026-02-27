@@ -18,6 +18,7 @@ import {
 import {
   createTaskEmbed,
   createTaskListEmbed,
+  createFileListEmbed,
   createSuccessEmbed,
   createErrorEmbed,
   createProjectSelectEmbed,
@@ -72,7 +73,9 @@ export async function handleButton(
     }
   }
 
-  if (customId.startsWith("task_list_")) {
+  if (customId.startsWith("file_list_")) {
+    await handleFileList(interaction, customId.replace("file_list_", ""));
+  } else if (customId.startsWith("task_list_")) {
     // task_list_<projectId>_page_<n>
     await handleTaskList(interaction, customId);
   } else if (customId.startsWith("task_pin_")) {
@@ -602,4 +605,44 @@ async function handleTaskPin(
     // Pin may fail if bot lacks permission — the message stays visible regardless
     console.warn("[button] Could not pin task message, missing permission");
   }
+}
+
+/**
+ * Show a list of recent files for a project.
+ */
+async function handleFileList(
+  interaction: ButtonInteraction,
+  projectId: string
+): Promise<void> {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, name: true },
+  });
+
+  if (!project) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Projektet hittades inte.")],
+    });
+    return;
+  }
+
+  const files = await prisma.file.findMany({
+    where: { projectId },
+    orderBy: { createdAt: "desc" },
+    take: 10,
+    select: {
+      id: true,
+      name: true,
+      size: true,
+      createdAt: true,
+    },
+  });
+
+  const embed = createFileListEmbed(files, project.name);
+
+  await interaction.editReply({
+    embeds: [embed],
+  });
 }

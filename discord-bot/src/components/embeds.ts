@@ -495,6 +495,44 @@ export function createSyncCompleteEmbed(
     .setTimestamp();
 }
 
+export interface FileListItem {
+  id: string;
+  name: string;
+  size: number;
+  createdAt: Date;
+}
+
+/**
+ * Build a file list embed showing files for a project.
+ */
+export function createFileListEmbed(
+  files: FileListItem[],
+  projectName: string
+): EmbedBuilder {
+  const embed = new EmbedBuilder()
+    .setColor(COLORS.FILE)
+    .setTitle(`📁 Filer i ${projectName}`)
+    .setTimestamp();
+
+  if (files.length === 0) {
+    embed.setDescription("Inga filer har laddats upp i detta projekt ännu.");
+    return embed;
+  }
+
+  const lines = files.map((f) => {
+    const date = f.createdAt.toLocaleDateString("sv-SE");
+    const size = formatBytes(f.size);
+    return `📄 **${f.name}** — ${size} — ${date}`;
+  });
+
+  embed.setDescription(lines.join("\n"));
+  embed.setFooter({
+    text: `${files.length} fil${files.length === 1 ? "" : "er"} visas`,
+  });
+
+  return embed;
+}
+
 /**
  * Format bytes to human-readable string.
  */
