@@ -12,14 +12,13 @@ import { createProjectHubEmbed } from "../components/embeds.js";
 import { createProjectHubButtons } from "../components/buttons.js";
 
 /** Channel types we create per project */
-const PROJECT_CHANNEL_TYPES = ["general", "tasks", "files", "activity"] as const;
+const PROJECT_CHANNEL_TYPES = ["general", "files", "activity"] as const;
 type ProjectChannelType = (typeof PROJECT_CHANNEL_TYPES)[number];
 
-const CHANNEL_CONFIG: Record<ProjectChannelType, { suffix: string; topic: string }> = {
-  general: { suffix: "", topic: "AI-bot svarar här — kopplad till projektet" },
-  tasks: { suffix: "-uppgifter", topic: "Uppgifter — skapa trådar för varje uppgift" },
-  files: { suffix: "-filer", topic: "Uppladdade filer postas här" },
-  activity: { suffix: "-aktivitet", topic: "Anteckningar, statusändringar och aktivitet" },
+const CHANNEL_CONFIG: Record<ProjectChannelType, { name: string; topic: string }> = {
+  general: { name: "allmänt", topic: "AI-bot och uppgiftsnotiser — kopplad till projektet" },
+  files: { name: "filer", topic: "Uppladdade filer postas här" },
+  activity: { name: "aktivitet", topic: "Anteckningar, statusändringar och aktivitet" },
 };
 
 export interface SyncProjectsEvent {
