@@ -78,6 +78,13 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-}
+      # Superadmin: always created/updated on container start (works in prod too)
+      SUPERADMIN_EMAIL: ${SUPERADMIN_EMAIL:-fredrik@anerdins.se}
+      SUPERADMIN_PASSWORD: ${SUPERADMIN_PASSWORD:-password123}
+      SUPERADMIN_NAME: ${SUPERADMIN_NAME:-Fredrik Admin}
+      SUPERADMIN_TENANT: ${SUPERADMIN_TENANT:-Anerdins El}
+      # Dev seed: set RUN_SEED=true to populate test data
+      RUN_SEED: ${RUN_SEED:-false}
     healthcheck:
       test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/api/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})\""]
       interval: 30s

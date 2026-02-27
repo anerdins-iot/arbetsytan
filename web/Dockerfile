@@ -64,6 +64,16 @@ RUN npx esbuild scripts/backfill-email-slugs.ts \
   --packages=external \
   --outfile=scripts/backfill-email-slugs.js
 
+# Compile seed script to JavaScript
+RUN npx esbuild prisma/seed.ts \
+  --bundle \
+  --platform=node \
+  --target=node22 \
+  --format=esm \
+  --external:@prisma/client \
+  --packages=external \
+  --outfile=seed.js
+
 # ─────────────────────────────────────────────
 # Stage 3: Runner (Production)
 # ─────────────────────────────────────────────
@@ -100,7 +110,11 @@ COPY --from=builder /app/generated ./generated
 # Copy migration SQL files and runner scripts
 COPY --from=builder /app/prisma/migrations ./prisma/migrations
 COPY --from=builder /app/migrate.mjs ./migrate.mjs
-COPY --from=builder /app/seed.mjs ./seed.mjs
+COPY --from=builder /app/seed.js ./seed.js
+# Copy seed assets (images used in seed pipeline)
+COPY --from=builder /app/prisma/seed-assets ./prisma/seed-assets
+# Copy superadmin bootstrap script (runs on every start if SUPERADMIN_EMAIL is set)
+COPY --from=builder /app/ensure-superadmin.mjs ./ensure-superadmin.mjs
 # Copy compiled backfill script (no more src/lib dependencies needed for backfill)
 COPY --from=builder /app/scripts/backfill-email-slugs.js ./scripts/backfill-email-slugs.js
 
