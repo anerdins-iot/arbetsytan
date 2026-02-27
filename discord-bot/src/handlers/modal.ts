@@ -56,7 +56,15 @@ export async function handleModalSubmit(
     }
   }
 
-  if (customId.startsWith("time_log_modal_")) {
+  if (customId.startsWith("time_log_project_modal_")) {
+    await handleProjectTimeLogSubmit(
+      interaction,
+      customId.replace("time_log_project_modal_", ""),
+      user.userId,
+      user.tenantId,
+      user.userName
+    );
+  } else if (customId.startsWith("time_log_modal_")) {
     await handleTimeLogSubmit(
       interaction,
       customId.replace("time_log_modal_", ""),
@@ -273,4 +281,73 @@ async function handleNoteCreateSubmit(
       ),
     ],
   });
+}
+
+/**
+ * Handle project time log modal submission — creates a TimeEntry on the project without a task.
+ */
+async function handleProjectTimeLogSubmit(
+  interaction: ModalSubmitInteraction,
+  projectId: string,
+  userId: string,
+  tenantId: string,
+  userName: string
+): Promise<void> {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  const hoursInput = interaction.fields.getTextInputValue("hours");
+  const description =
+    interaction.fields.getTextInputValue("description") || null;
+
+  // Parse hours (supports both . and , as decimal separator)
+  const hours = parseFloat(hoursInput.replace(",", "."));
+  if (isNaN(hours) || hours <= 0 || hours > 24) {
+    await interaction.editReply({
+      embeds: [
+        createErrorEmbed(
+          "Ogiltigt antal timmar.",
+          "Ange ett tal mellan 0 och 24 (t.ex. 2.5)."
+        ),
+      ],
+    });
+    return;
+  }
+
+  const minutes = Math.round(hours * 60);
+
+  // Verify project exists
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, name: true },
+  });
+
+  if (!project) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Projektet hittades inte.")],
+    });
+    return;
+  }
+
+  const timeEntry = await prisma.timeEntry.create({
+    data: {
+      description,
+      minutes,
+      date: new Date(),
+      projectId: project.id,
+      userId,
+      tenantId,
+      entryType: "WORK",
+    },
+  });
+
+  const embed = createTimeEntryEmbed({
+    id: timeEntry.id,
+    description,
+    minutes,
+    date: timeEntry.date,
+    projectName: project.name,
+    userName,
+  });
+
+  await interaction.editReply({ embeds: [embed] });
 }

@@ -33,7 +33,7 @@ import {
   createTimeButtons,
   createTaskListPaginationButtons,
 } from "../components/buttons.js";
-import { createTimeLogModal, createTaskModal, createNoteModal } from "../components/modals.js";
+import { createTimeLogModal, createProjectTimeLogModal, createTaskModal, createNoteModal } from "../components/modals.js";
 
 /**
  * Handle a button interaction.
@@ -94,6 +94,8 @@ export async function handleButton(
       customId.replace("task_assign_", ""),
       user.tenantId
     );
+  } else if (customId.startsWith("time_log_project_")) {
+    await handleProjectTimeLog(interaction, customId.replace("time_log_project_", ""));
   } else if (customId.startsWith("time_log_")) {
     await handleTimeLog(interaction, customId.replace("time_log_", ""));
   } else if (customId.startsWith("task_create_")) {
@@ -312,6 +314,17 @@ async function handleNoteCreate(
   projectId: string
 ): Promise<void> {
   const modal = createNoteModal(projectId);
+  await interaction.showModal(modal);
+}
+
+/**
+ * Show the project time logging modal (no specific task).
+ */
+async function handleProjectTimeLog(
+  interaction: ButtonInteraction,
+  projectId: string
+): Promise<void> {
+  const modal = createProjectTimeLogModal(projectId);
   await interaction.showModal(modal);
 }
 

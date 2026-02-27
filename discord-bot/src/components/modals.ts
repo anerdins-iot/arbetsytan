@@ -41,6 +41,36 @@ export function createTimeLogModal(taskId: string): ModalBuilder {
 }
 
 /**
+ * Create a modal for logging time on a project (without a specific task).
+ */
+export function createProjectTimeLogModal(projectId: string): ModalBuilder {
+  return new ModalBuilder()
+    .setCustomId(`time_log_project_modal_${projectId}`)
+    .setTitle("Logga arbetstid")
+    .addComponents(
+      new ActionRowBuilder<TextInputBuilder>().addComponents(
+        new TextInputBuilder()
+          .setCustomId("hours")
+          .setLabel("Antal timmar")
+          .setStyle(TextInputStyle.Short)
+          .setPlaceholder("t.ex. 2.5")
+          .setRequired(true)
+          .setMinLength(1)
+          .setMaxLength(5)
+      ),
+      new ActionRowBuilder<TextInputBuilder>().addComponents(
+        new TextInputBuilder()
+          .setCustomId("description")
+          .setLabel("Beskrivning")
+          .setStyle(TextInputStyle.Paragraph)
+          .setPlaceholder("Vad gjordes?")
+          .setRequired(false)
+          .setMaxLength(500)
+      )
+    );
+}
+
+/**
  * Create a modal for creating a new note in a project.
  */
 export function createNoteModal(projectId: string): ModalBuilder {
