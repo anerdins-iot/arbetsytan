@@ -13,6 +13,7 @@ import {
   createTimeEntryEmbed,
   createTaskEmbed,
   createErrorEmbed,
+  createSuccessEmbed,
 } from "../components/embeds.js";
 import type { IdentifiedUser } from "../services/user-identification.js";
 import { createTaskButtons, createTimeButtons } from "../components/buttons.js";
@@ -67,6 +68,14 @@ export async function handleModalSubmit(
     await handleTaskCreateSubmit(
       interaction,
       customId.replace("task_create_modal_", ""),
+      user.userName
+    );
+  } else if (customId.startsWith("note_create_modal_")) {
+    await handleNoteCreateSubmit(
+      interaction,
+      customId.replace("note_create_modal_", ""),
+      user.userId,
+      user.tenantId,
       user.userName
     );
   }
@@ -216,5 +225,52 @@ async function handleTaskCreateSubmit(
   await interaction.editReply({
     embeds: [embed],
     components: [buttons, timeButtons],
+  });
+}
+
+/**
+ * Handle note creation modal submission — creates a Note.
+ */
+async function handleNoteCreateSubmit(
+  interaction: ModalSubmitInteraction,
+  projectId: string,
+  userId: string,
+  tenantId: string,
+  userName: string
+): Promise<void> {
+  await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+
+  const title = interaction.fields.getTextInputValue("title");
+  const content = interaction.fields.getTextInputValue("content");
+
+  // Verify project exists
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    select: { id: true, name: true },
+  });
+
+  if (!project) {
+    await interaction.editReply({
+      embeds: [createErrorEmbed("Projektet hittades inte.")],
+    });
+    return;
+  }
+
+  const note = await prisma.note.create({
+    data: {
+      title,
+      content,
+      projectId: project.id,
+      createdById: userId,
+    },
+  });
+
+  await interaction.editReply({
+    embeds: [
+      createSuccessEmbed(
+        `Anteckning "${note.title}" skapad!`,
+        `Projekt: ${project.name}\nSkapad av: ${userName}`
+      ),
+    ],
   });
 }

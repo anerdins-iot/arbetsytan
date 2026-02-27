@@ -41,6 +41,37 @@ export function createTimeLogModal(taskId: string): ModalBuilder {
 }
 
 /**
+ * Create a modal for creating a new note in a project.
+ */
+export function createNoteModal(projectId: string): ModalBuilder {
+  return new ModalBuilder()
+    .setCustomId(`note_create_modal_${projectId}`)
+    .setTitle("Skapa anteckning")
+    .addComponents(
+      new ActionRowBuilder<TextInputBuilder>().addComponents(
+        new TextInputBuilder()
+          .setCustomId("title")
+          .setLabel("Titel")
+          .setStyle(TextInputStyle.Short)
+          .setPlaceholder("Anteckningens titel")
+          .setRequired(true)
+          .setMinLength(1)
+          .setMaxLength(200)
+      ),
+      new ActionRowBuilder<TextInputBuilder>().addComponents(
+        new TextInputBuilder()
+          .setCustomId("content")
+          .setLabel("Innehåll")
+          .setStyle(TextInputStyle.Paragraph)
+          .setPlaceholder("Skriv din anteckning här...")
+          .setRequired(true)
+          .setMinLength(1)
+          .setMaxLength(2000)
+      )
+    );
+}
+
+/**
  * Create a modal for creating a new task in a project.
  */
 export function createTaskModal(projectId: string): ModalBuilder {
