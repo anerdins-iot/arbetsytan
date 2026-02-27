@@ -137,8 +137,27 @@ model DiscordCategory {
   type              DiscordCategoryType
   sortOrder         Int                @default(0)
   createdAt         DateTime           @default(now())
+  channels          DiscordChannel[]
 
   @@unique([tenantId, type])
+}
+
+model DiscordChannel {
+  id                String          @id @default(cuid())
+  tenantId          String
+  tenant            Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  categoryId        String
+  category          DiscordCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name              String
+  discordChannelId  String?         @unique
+  channelType       String          @default("text") // "text", "voice", "announcement"
+  sortOrder         Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  @@index([categoryId])
+  @@index([tenantId])
+  @@index([discordChannelId])
 }
 
 model DiscordProjectChannel {
@@ -764,6 +783,7 @@ model Tenant {
   Subscription           Subscription?
   TimeEntry              TimeEntry[]
   DiscordProjectChannel  DiscordProjectChannel[]
+  DiscordChannel         DiscordChannel[]
 }
 
 model TimeEntry {

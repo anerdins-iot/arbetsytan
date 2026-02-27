@@ -1267,11 +1267,69 @@
           "title": "Edit Category",
           "description": "Change the category name."
         },
+        "syncButton": "Sync Categories",
+        "syncSuccess": "Category sync started.",
         "errors": {
           "duplicateType": "A category with this type already exists.",
           "createFailed": "Could not create the category.",
           "updateFailed": "Could not update the category.",
-          "deleteFailed": "Could not delete the category."
+          "deleteFailed": "Could not delete the category.",
+          "syncFailed": "Could not sync categories to Discord.",
+          "notConnected": "Discord server is not connected.",
+          "noCategories": "No categories to sync. Create at least one category first."
+        },
+        "channels": {
+          "title": "Channels",
+          "empty": "No channels in this category.",
+          "showChannels": "Show channels",
+          "hideChannels": "Hide channels",
+          "createButton": "New Channel",
+          "channelCount": "{count, plural, =0 {No channels} =1 {1 channel} other {# channels}}",
+          "columns": {
+            "name": "Channel name",
+            "type": "Type",
+            "discordId": "Discord ID",
+            "actions": "Actions"
+          },
+          "channelTypes": {
+            "text": "Text",
+            "voice": "Voice",
+            "announcement": "Announcement"
+          },
+          "createDialog": {
+            "title": "New Channel",
+            "description": "Create a new channel in this category."
+          },
+          "renameDialog": {
+            "title": "Rename Channel",
+            "description": "Change the channel name."
+          },
+          "deleteDialog": {
+            "title": "Delete channel?",
+            "description": "The channel \"{name}\" will be deleted from Discord and the database. This action cannot be undone."
+          },
+          "fields": {
+            "name": "Channel name",
+            "namePlaceholder": "E.g. general",
+            "type": "Channel type"
+          },
+          "cancel": "Cancel",
+          "create": "Create",
+          "creating": "Creating...",
+          "save": "Save",
+          "saving": "Saving...",
+          "delete": "Delete",
+          "deleting": "Deleting...",
+          "rename": "Rename",
+          "saved": "Channel saved.",
+          "deleted": "Channel deleted.",
+          "notSynced": "Not synced",
+          "errors": {
+            "createFailed": "Could not create the channel.",
+            "renameFailed": "Could not rename the channel.",
+            "deleteFailed": "Could not delete the channel.",
+            "categoryNotFound": "Category not found."
+          }
         }
       },
       "roles": {

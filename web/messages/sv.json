@@ -1278,11 +1278,69 @@
           "title": "Redigera kategori",
           "description": "Ändra kategorinamnet."
         },
+        "syncButton": "Synka kategorier",
+        "syncSuccess": "Kategorisynkning startad.",
         "errors": {
           "duplicateType": "En kategori med denna typ finns redan.",
           "createFailed": "Kunde inte skapa kategorin.",
           "updateFailed": "Kunde inte uppdatera kategorin.",
-          "deleteFailed": "Kunde inte ta bort kategorin."
+          "deleteFailed": "Kunde inte ta bort kategorin.",
+          "syncFailed": "Kunde inte synka kategorierna till Discord.",
+          "notConnected": "Discord-servern är inte kopplad.",
+          "noCategories": "Inga kategorier att synka. Skapa minst en kategori först."
+        },
+        "channels": {
+          "title": "Kanaler",
+          "empty": "Inga kanaler i denna kategori.",
+          "showChannels": "Visa kanaler",
+          "hideChannels": "Dölj kanaler",
+          "createButton": "Ny kanal",
+          "channelCount": "{count, plural, =0 {Inga kanaler} =1 {1 kanal} other {# kanaler}}",
+          "columns": {
+            "name": "Kanalnamn",
+            "type": "Typ",
+            "discordId": "Discord-ID",
+            "actions": "Åtgärder"
+          },
+          "channelTypes": {
+            "text": "Text",
+            "voice": "Röst",
+            "announcement": "Meddelande"
+          },
+          "createDialog": {
+            "title": "Ny kanal",
+            "description": "Skapa en ny kanal i denna kategori."
+          },
+          "renameDialog": {
+            "title": "Byt namn på kanal",
+            "description": "Ändra kanalnamnet."
+          },
+          "deleteDialog": {
+            "title": "Ta bort kanal?",
+            "description": "Kanalen \"{name}\" kommer att tas bort från Discord och databasen. Denna åtgärd kan inte ångras."
+          },
+          "fields": {
+            "name": "Kanalnamn",
+            "namePlaceholder": "T.ex. allmänt",
+            "type": "Kanaltyp"
+          },
+          "cancel": "Avbryt",
+          "create": "Skapa",
+          "creating": "Skapar...",
+          "save": "Spara",
+          "saving": "Sparar...",
+          "delete": "Ta bort",
+          "deleting": "Tar bort...",
+          "rename": "Byt namn",
+          "saved": "Kanal sparad.",
+          "deleted": "Kanal borttagen.",
+          "notSynced": "Ej synkad",
+          "errors": {
+            "createFailed": "Kunde inte skapa kanalen.",
+            "renameFailed": "Kunde inte byta namn på kanalen.",
+            "deleteFailed": "Kunde inte ta bort kanalen.",
+            "categoryNotFound": "Kategorin hittades inte."
+          }
         }
       },
       "roles": {

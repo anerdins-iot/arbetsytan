@@ -41,6 +41,16 @@ export type LinkedUser = {
   linkedAt: string;
 };
 
+export type DiscordChannelData = {
+  id: string;
+  categoryId: string;
+  name: string;
+  discordChannelId: string | null;
+  channelType: string;
+  sortOrder: number;
+  createdAt: string;
+};
+
 export type DiscordCategoryData = {
   id: string;
   name: string;
@@ -48,6 +58,7 @@ export type DiscordCategoryData = {
   discordCategoryId: string | null;
   sortOrder: number;
   createdAt: string;
+  channels: DiscordChannelData[];
 };
 
 export type DiscordRoleMappingData = {
@@ -76,6 +87,17 @@ const updateRoleMappingSchema = z.object({
   systemRole: z.string().min(1),
   discordRoleName: z.string().trim().min(1).max(100),
   color: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+});
+
+const createChannelSchema = z.object({
+  categoryId: z.string().min(1),
+  name: z.string().trim().min(1).max(100),
+  channelType: z.enum(["text", "voice", "announcement"]).default("text"),
+});
+
+const renameChannelSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().trim().min(1).max(100),
 });
 
 // --- Server Actions ---
@@ -216,6 +238,11 @@ export async function getDiscordCategories(): Promise<DiscordCategoryData[]> {
 
   const categories = await db.discordCategory.findMany({
     orderBy: { sortOrder: "asc" },
+    include: {
+      channels: {
+        orderBy: { sortOrder: "asc" },
+      },
+    },
   });
 
   return categories.map((c) => ({
@@ -225,6 +252,15 @@ export async function getDiscordCategories(): Promise<DiscordCategoryData[]> {
     discordCategoryId: c.discordCategoryId,
     sortOrder: c.sortOrder,
     createdAt: c.createdAt.toISOString(),
+    channels: c.channels.map((ch) => ({
+      id: ch.id,
+      categoryId: ch.categoryId,
+      name: ch.name,
+      discordChannelId: ch.discordChannelId,
+      channelType: ch.channelType,
+      sortOrder: ch.sortOrder,
+      createdAt: ch.createdAt.toISOString(),
+    })),
   }));
 }
 
@@ -474,6 +510,48 @@ export async function disconnectDiscordAccount(): Promise<DiscordActionResult> {
   } catch {
     return { success: false, error: "DISCONNECT_FAILED" };
   }
+}
+
+export async function syncCategories(): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const tenant = await db.tenant.findUnique({
+    where: { id: tenantId },
+    select: { discordGuildId: true, discordBotEnabled: true },
+  });
+
+  if (!tenant?.discordGuildId || !tenant.discordBotEnabled) {
+    return { success: false, error: "DISCORD_NOT_CONNECTED" };
+  }
+
+  // Fetch all categories for this tenant
+  const categories = await db.discordCategory.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+
+  if (categories.length === 0) {
+    return { success: false, error: "NO_CATEGORIES" };
+  }
+
+  try {
+    await publishDiscordEvent("discord:sync-categories", {
+      tenantId,
+      guildId: tenant.discordGuildId,
+      categories: categories.map((c) => ({
+        id: c.id,
+        name: c.name,
+        type: c.type,
+        discordCategoryId: c.discordCategoryId,
+        sortOrder: c.sortOrder,
+      })),
+    });
+  } catch {
+    return { success: false, error: "SYNC_FAILED" };
+  }
+
+  revalidatePath("/[locale]/settings/discord/categories", "page");
+  return { success: true };
 }
 
 export async function syncRoles(): Promise<DiscordActionResult> {
@@ -771,5 +849,164 @@ export async function unlinkProjectChannel(
   });
 
   revalidatePath("/[locale]/settings/discord", "page");
+  return { success: true };
+}
+
+// --- Discord Channel CRUD Actions ---
+
+export async function getChannelsForCategory(
+  categoryId: string
+): Promise<DiscordChannelData[]> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  if (!categoryId) {
+    return [];
+  }
+
+  const channels = await db.discordChannel.findMany({
+    where: { categoryId },
+    orderBy: { sortOrder: "asc" },
+  });
+
+  return channels.map((ch) => ({
+    id: ch.id,
+    categoryId: ch.categoryId,
+    name: ch.name,
+    discordChannelId: ch.discordChannelId,
+    channelType: ch.channelType,
+    sortOrder: ch.sortOrder,
+    createdAt: ch.createdAt.toISOString(),
+  }));
+}
+
+export async function createDiscordChannel(data: {
+  categoryId: string;
+  name: string;
+  channelType?: string;
+}): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const parsed = createChannelSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  // Verify the category exists and belongs to this tenant
+  const category = await db.discordCategory.findUnique({
+    where: { id: parsed.data.categoryId },
+  });
+
+  if (!category) {
+    return { success: false, error: "CATEGORY_NOT_FOUND" };
+  }
+
+  // Get max sortOrder for channels in this category
+  const maxOrder = await db.discordChannel.findFirst({
+    where: { categoryId: parsed.data.categoryId },
+    orderBy: { sortOrder: "desc" },
+    select: { sortOrder: true },
+  });
+
+  const channel = await db.discordChannel.create({
+    data: {
+      tenantId,
+      categoryId: parsed.data.categoryId,
+      name: parsed.data.name,
+      channelType: parsed.data.channelType,
+      sortOrder: (maxOrder?.sortOrder ?? -1) + 1,
+    },
+  });
+
+  // Publish event so bot creates the channel in Discord
+  await publishDiscordEvent("discord:channel-created", {
+    tenantId,
+    channelId: channel.id,
+    categoryId: category.id,
+    discordCategoryId: category.discordCategoryId ?? null,
+    name: channel.name,
+    channelType: channel.channelType,
+  });
+
+  revalidatePath("/[locale]/settings/discord/categories", "page");
+  return { success: true };
+}
+
+export async function renameDiscordChannel(data: {
+  id: string;
+  name: string;
+}): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  const parsed = renameChannelSchema.safeParse(data);
+  if (!parsed.success) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const channel = await db.discordChannel.findUnique({
+    where: { id: parsed.data.id },
+  });
+
+  if (!channel) {
+    return { success: false, error: "NOT_FOUND" };
+  }
+
+  const oldName = channel.name;
+
+  await db.discordChannel.update({
+    where: { id: parsed.data.id },
+    data: { name: parsed.data.name },
+  });
+
+  // Publish event so bot renames the channel in Discord
+  if (channel.discordChannelId) {
+    await publishDiscordEvent("discord:channel-renamed", {
+      tenantId,
+      channelId: channel.id,
+      discordChannelId: channel.discordChannelId,
+      oldName,
+      newName: parsed.data.name,
+    });
+  }
+
+  revalidatePath("/[locale]/settings/discord/categories", "page");
+  return { success: true };
+}
+
+export async function deleteDiscordChannel(
+  id: string
+): Promise<DiscordActionResult> {
+  const { tenantId } = await requireRole(["ADMIN"]);
+  const db = tenantDb(tenantId);
+
+  if (!id) {
+    return { success: false, error: "INVALID_INPUT" };
+  }
+
+  const channel = await db.discordChannel.findUnique({
+    where: { id },
+  });
+
+  if (!channel) {
+    return { success: false, error: "NOT_FOUND" };
+  }
+
+  // Publish event so bot deletes the channel in Discord BEFORE removing from DB
+  if (channel.discordChannelId) {
+    await publishDiscordEvent("discord:channel-deleted", {
+      tenantId,
+      channelId: channel.id,
+      discordChannelId: channel.discordChannelId,
+      name: channel.name,
+    });
+  }
+
+  await db.discordChannel.delete({
+    where: { id },
+  });
+
+  revalidatePath("/[locale]/settings/discord/categories", "page");
   return { success: true };
 }
