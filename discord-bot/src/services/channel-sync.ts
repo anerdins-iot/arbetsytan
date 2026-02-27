@@ -1,6 +1,6 @@
 /**
  * Discord channel sync service.
- * Creates category + sub-channels (general, tasks, files, activity) for projects.
+ * Creates category + sub-channels (general, files, activity, chat) for projects.
  * Triggered via Redis event from the web AI tool `syncDiscordChannels`.
  * Also syncs existing tasks and notes to the new channels.
  */
@@ -12,13 +12,14 @@ import { createProjectHubEmbed } from "../components/embeds.js";
 import { createProjectHubButtons } from "../components/buttons.js";
 
 /** Channel types we create per project */
-const PROJECT_CHANNEL_TYPES = ["general", "files", "activity"] as const;
+const PROJECT_CHANNEL_TYPES = ["general", "files", "activity", "chat"] as const;
 type ProjectChannelType = (typeof PROJECT_CHANNEL_TYPES)[number];
 
 const CHANNEL_CONFIG: Record<ProjectChannelType, { name: string; topic: string }> = {
   general: { name: "allmänt", topic: "AI-bot och uppgiftsnotiser — kopplad till projektet" },
   files: { name: "filer", topic: "Uppladdade filer postas här" },
   activity: { name: "aktivitet", topic: "Anteckningar, statusändringar och aktivitet" },
+  chat: { name: "chatt", topic: "Chatta med AI-boten och projektmedlemmar" },
 };
 
 export interface SyncProjectsEvent {
@@ -169,7 +170,7 @@ async function syncSingleProject(
     }
 
     const config = CHANNEL_CONFIG[channelType];
-    const name = channelType === "general" ? channelName : `${channelName}${config.suffix}`;
+    const name = channelType === "general" ? channelName : `${channelName}-${config.name}`;
 
     const channel = await guild.channels
       .create({
@@ -267,12 +268,12 @@ async function syncInitialContent(
   projectId: string,
   channels: { type: string; channelId: string }[]
 ): Promise<void> {
-  const tasksChannel = channels.find((c) => c.type === "tasks");
+  const generalChannel = channels.find((c) => c.type === "general");
   const activityChannel = channels.find((c) => c.type === "activity");
 
-  // Sync tasks to #uppgifter
-  if (tasksChannel) {
-    const channel = guild.channels.cache.get(tasksChannel.channelId) as TextChannel | undefined;
+  // Sync tasks to #allmänt (general channel)
+  if (generalChannel) {
+    const channel = guild.channels.cache.get(generalChannel.channelId) as TextChannel | undefined;
     if (channel) {
       const tasks = await prisma.task.findMany({
         where: { projectId, status: { not: "DONE" } },
