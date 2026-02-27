@@ -335,9 +335,12 @@ export function createProjectHubEmbed(projectName: string): EmbedBuilder {
     .setColor(COLORS.PROJECT)
     .setTitle(`\u{1F3E0} ${projectName}`)
     .setDescription(
-      "Välkommen till projektkanalen! Använd knapparna nedan för att hantera uppgifter.\n\n" +
+      "Välkommen till projektkanalen! Använd knapparna nedan för att hantera projektet.\n\n" +
         "\u2795 **Skapa uppgift** — Öppna formulär för ny uppgift\n" +
-        "\u{1F4CB} **Lista uppgifter** — Visa alla aktiva uppgifter"
+        "\u{1F4CB} **Lista uppgifter** — Visa alla aktiva uppgifter\n" +
+        "\u{1F4DD} **Ny anteckning** — Skapa en anteckning\n" +
+        "\u{1F4C2} **Visa filer** — Se uppladdade filer\n" +
+        "\u23F1\uFE0F **Logga tid** — Rapportera arbetad tid"
     )
     .setFooter({ text: "ArbetsYtan — Projektledning för hantverkare" })
     .setTimestamp();
@@ -395,7 +398,7 @@ export function createOnboardingWelcomeEmbed(): EmbedBuilder {
         "**Vad h\u00E4nder n\u00E4r du k\u00F6r setup:**\n" +
         "\u2022 V\u00E4lj vilka projekt du vill koppla\n" +
         "\u2022 Discord-kanaler skapas automatiskt per projekt\n" +
-        "\u2022 Varje projekt f\u00E5r: #allm\u00E4nt, #uppgifter, #filer och #aktivitet\n\n" +
+        "\u2022 Varje projekt f\u00E5r: #allm\u00E4nt, #chatt, #filer och #aktivitet\n\n" +
         "Klicka p\u00E5 knappen nedan f\u00F6r att b\u00F6rja!"
     )
     .setFooter({ text: "ArbetsYtan \u2014 Projektledning f\u00F6r hantverkare" })
@@ -437,8 +440,8 @@ export function createSyncConfirmEmbed(
         `${projectList}\n\n` +
         "F\u00F6r varje projekt skapas:\n" +
         "\u2022 En kategori med projektnamnet\n" +
-        "\u2022 #allm\u00E4nt \u2014 AI-bot och allm\u00E4n diskussion\n" +
-        "\u2022 #uppgifter \u2014 Uppgiftsnotifikationer\n" +
+        "\u2022 #allm\u00E4nt \u2014 AI-bot, uppgiftsnotiser och allm\u00E4n diskussion\n" +
+        "\u2022 #chatt \u2014 Chatt med AI-bot och medlemmar\n" +
         "\u2022 #filer \u2014 Filuppladdningar\n" +
         "\u2022 #aktivitet \u2014 Anteckningar och statusuppdateringar\n\n" +
         "\u00C4r detta korrekt?"
