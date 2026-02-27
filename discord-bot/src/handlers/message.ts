@@ -90,7 +90,13 @@ export async function handleAIMessage(
         .trim();
 
       // Send typing indicator
-      await channel.sendTyping().catch(() => {});
+      await channel.sendTyping().catch((err) => {
+        const code = (err as { code?: number }).code;
+        // Only log if it's not a common access error
+        if (code !== 50001 && code !== 10003) {
+          console.warn(`[message] sendTyping failed for channel ${channel.id}:`, err);
+        }
+      });
 
       // Process the first image (AI vision typically handles one at a time)
       await handleImageForAI(
@@ -176,11 +182,22 @@ export async function handleAIMessage(
   try {
     // Show typing indicator while waiting for AI
     console.log(`[handleAIMessage] Starting AI call for user ${user.userId}`);
-    await channel.sendTyping().catch(() => {});
+    await channel.sendTyping().catch((err) => {
+      const code = (err as { code?: number }).code;
+      if (code !== 50001 && code !== 10003) {
+        console.warn(`[message] Initial sendTyping failed for channel ${channel.id}:`, err);
+      }
+    });
 
     // Keep typing indicator alive (Discord shows it for 10s, refresh every 8s)
     typingInterval = setInterval(() => {
-      channel.sendTyping().catch(() => {});
+      channel.sendTyping().catch((err) => {
+        const code = (err as { code?: number }).code;
+        // Only log if it's not a common access error (avoid spam)
+        if (code !== 50001 && code !== 10003) {
+          console.warn(`[message] Typing interval failed for channel ${channel.id}:`, err);
+        }
+      });
     }, 8000);
 
     const isDM = !message.guildId;

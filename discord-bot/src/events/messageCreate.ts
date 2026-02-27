@@ -46,7 +46,10 @@ async function isConversationContinuation(
 
     return isBotResponse && wasOriginallyFromSameUser && isBotResponseRecent;
   } catch (error) {
-    console.warn("[shouldHandleMessage] Failed to check conversation continuation:", error);
+    const code = (error as { code?: number }).code;
+    if (code !== 50001 && code !== 10003) {
+      console.warn("[shouldHandleMessage] Failed to check conversation continuation:", error);
+    }
     return false;
   }
 }
@@ -131,7 +134,12 @@ export function registerMessageCreate(client: Client): void {
         const embed = createRateLimitedEmbed(rateCheck.retryAfterSeconds);
         await message
           .reply({ embeds: [embed] })
-          .catch(() => {});
+          .catch((err) => {
+            const code = (err as { code?: number }).code;
+            if (code !== 50001 && code !== 10003 && code !== 50007) {
+              console.warn(`[messageCreate] Failed to send rate limit embed to user ${user.userId}:`, err);
+            }
+          });
         return;
       }
 
@@ -166,7 +174,12 @@ export function registerMessageCreate(client: Client): void {
       // Try to send a generic error reply, silently fail if we can't
       await message
         .reply("\u274C Ett oväntat fel uppstod. Försök igen senare.")
-        .catch(() => {});
+        .catch((err) => {
+          const code = (err as { code?: number }).code;
+          if (code !== 50001 && code !== 10003 && code !== 50007) {
+            console.warn(`[messageCreate] Failed to send error reply to channel ${message.channel.id}:`, err);
+          }
+        });
     }
   });
 }

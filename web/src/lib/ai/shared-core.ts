@@ -62,6 +62,8 @@ export interface ExecuteAIChatOptions {
   onStreamError?: (error: unknown) => void;
   /** Callback when the AI stream finishes (text only). */
   onStreamFinish?: (text: string) => void;
+  /** AbortSignal to cancel the AI request (e.g. from request.signal). */
+  abortSignal?: AbortSignal;
 }
 
 /** RAG source metadata returned alongside the stream. */
@@ -259,7 +261,7 @@ export function buildToolSchemas(context: AIContext, providerKey: ProviderKey) {
     ...(isAnthropicProvider
       ? {
           web_search: anthropic.tools.webSearch_20250305({
-            maxUses: 10,
+            maxUses: isGuildChannel ? 3 : 10,
             blockedDomains: [
               "facebook.com",
               "instagram.com",
@@ -927,6 +929,7 @@ export async function executeAIChat(
     conversationSummary,
     onStreamError,
     onStreamFinish,
+    abortSignal,
   } = options;
 
   const { tenantId, userId, projectId } = context;
@@ -1062,6 +1065,7 @@ export async function executeAIChat(
     messages: modelMessages,
     tools,
     stopWhen: stepCountIs(8),
+    ...(abortSignal && { abortSignal }),
     ...streamOptions,
     onError: ({ error }) => {
       logger.error("AI stream error", {

@@ -187,6 +187,7 @@ export async function POST(req: NextRequest) {
       provider: (provider as ProviderKey | undefined) ?? "CLAUDE_HAIKU",
       conversationSummary,
       ...(imageDataUrls.length > 0 && { inlineImageDataUrls: imageDataUrls }),
+      abortSignal: req.signal,
     });
 
     // Await the full text response (non-streaming for Discord)
@@ -207,6 +208,14 @@ export async function POST(req: NextRequest) {
         tenantId,
         userId,
         projectId: projectId ?? null,
+      }).catch((saveErr) => {
+        logger.error("Discord chat: failed to save assistant message", {
+          conversationId: activeConversationId,
+          userId,
+          tenantId,
+          error: saveErr instanceof Error ? saveErr.message : String(saveErr),
+        });
+        // Don't throw - we still want to return the response to Discord
       });
     }
 
