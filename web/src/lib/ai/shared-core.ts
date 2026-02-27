@@ -74,6 +74,13 @@ export type RagSource = {
   excerpt: string;
 };
 
+/** A file created by a tool during the AI chat (e.g. PDF, Excel, Word). */
+export interface AIChatFile {
+  fileId: string;
+  fileName: string;
+  downloadUrl: string;
+}
+
 /** Result from executeAIChat containing the stream and metadata. */
 export interface AIChatResult {
   /** The Vercel AI SDK streamText result. Use toUIMessageStreamResponse(), toTextStreamResponse(), etc. */
@@ -87,6 +94,12 @@ export interface AIChatResult {
   searchResults: UnifiedSearchResult[];
   /** The system prompt that was used. */
   systemPrompt: string;
+  /**
+   * Files created by tools during the AI chat.
+   * This is a promise that resolves after the stream is fully consumed.
+   * Call `await result.files` after `await result.stream.text` (or equivalent).
+   */
+  files: Promise<AIChatFile[]>;
 }
 
 // ─────────────────────────────────────────
@@ -657,7 +670,11 @@ E-POST: Du kan söka i användarens mail med searchMyEmails. När ett resultat h
 
   // Image display - AI can show images in chat via presigned URL
   const imageDisplayGuidance = `
-VISNING AV BILDER/FILER I CHATTEN: När användaren vill se, visa eller öppna en bild (eller fil), använd getFilePreviewUrl med fileId (och projectId om det är en projektfil). Inkludera sedan bilden i svaret med markdown: ![filnamn eller beskrivning](previewUrl). För icke-bilder kan du returnera previewUrl så användaren kan öppna filen.`;
+VISNING AV BILDER/FILER I CHATTEN: När användaren vill se, visa eller öppna en bild (eller fil), använd getFilePreviewUrl med fileId (och projectId om det är en projektfil). Inkludera sedan bilden i svaret med markdown: ![filnamn eller beskrivning](previewUrl). För icke-bilder kan du returnera previewUrl så användaren kan öppna filen. I Discord visas bilder direkt inline i chatten via markdown-syntax.`;
+
+  // File creation - AI should always include download links for created files
+  const fileCreationGuidance = `
+FILSKAPNING I DISCORD: När du skapar en fil (PDF, Word, Excel) via ett verktyg och verktyget returnerar en downloadUrl, MÅSTE du alltid inkludera denna URL som en markdown-länk i ditt svar på formatet [filnamn](downloadUrl). Discord-botten plockar automatiskt upp länken och bifogar filen direkt i chatten — användaren ska ALDRIG behöva gå till hemsidan för att ladda ner en fil du skapat.`;
 
   // Web search guidance - when and how to use web search
   const webSearchGuidance = `
@@ -703,6 +720,7 @@ Exempel fel: [1] Dokument A | [2] Dokument B`;
     searchStrategy,
     emailSearchGuidance,
     imageDisplayGuidance,
+    fileCreationGuidance,
     webSearchGuidance,
     searchGuidance,
     imageAnalysisInstruction,
@@ -901,6 +919,48 @@ export async function saveAssistantMessage(opts: {
       })
     );
   }
+}
+
+// ─────────────────────────────────────────
+// File Extraction from Tool Results
+// ─────────────────────────────────────────
+
+/**
+ * Extract files created by tools from stream steps.
+ * Looks for tool results with `__fileCreated: true` and extracts file metadata.
+ */
+async function extractFilesFromSteps(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stepsPromise: PromiseLike<Array<any>>
+): Promise<AIChatFile[]> {
+  const files: AIChatFile[] = [];
+  try {
+    const steps = await stepsPromise;
+    for (const step of steps) {
+      for (const result of step.toolResults ?? []) {
+        if (!result) continue;
+        const output = result.output;
+        if (
+          output &&
+          typeof output === "object" &&
+          output.__fileCreated === true &&
+          typeof output.downloadUrl === "string" &&
+          typeof output.fileName === "string"
+        ) {
+          files.push({
+            fileId: output.fileId ?? "",
+            fileName: output.fileName,
+            downloadUrl: output.downloadUrl,
+          });
+        }
+      }
+    }
+  } catch (err) {
+    logger.warn("Failed to extract files from stream steps", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+  return files;
 }
 
 // ─────────────────────────────────────────
@@ -1118,11 +1178,15 @@ export async function executeAIChat(
     ragChunks: ragSources.length,
   });
 
+  // Extract files from tool results (resolves after stream is consumed)
+  const filesPromise = extractFilesFromSteps(stream.steps);
+
   return {
     stream,
     providerKey,
     ragSources,
     searchResults,
     systemPrompt,
+    files: filesPromise,
   };
 }

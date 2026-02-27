@@ -30,6 +30,8 @@ export interface AIResponse {
   text: string;
   conversationId: string;
   provider: string;
+  /** Files created by AI tools during the chat (e.g. PDF, Excel, Word). */
+  files?: Array<{ fileId: string; fileName: string; downloadUrl: string }>;
 }
 
 const API_URL = env.WEB_APP_URL;

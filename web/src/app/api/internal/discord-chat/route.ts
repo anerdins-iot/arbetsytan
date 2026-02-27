@@ -46,6 +46,8 @@ interface DiscordChatResponse {
   text: string;
   conversationId: string;
   provider: string;
+  /** Files created by AI tools during the chat (e.g. PDF, Excel, Word). */
+  files?: Array<{ fileId: string; fileName: string; downloadUrl: string }>;
 }
 
 function validateApiKey(req: NextRequest): boolean {
@@ -194,6 +196,9 @@ export async function POST(req: NextRequest) {
     const { stream, providerKey } = result;
     const fullText = await stream.text;
 
+    // Extract files created by tools (stream must be consumed first)
+    const createdFiles = await result.files;
+
     // Save the assistant response (skip for guest users)
     if (!isGuestUser) {
       const db = tenantDb(tenantId);
@@ -231,6 +236,7 @@ export async function POST(req: NextRequest) {
       text: fullText,
       conversationId: activeConversationId,
       provider: providerKey,
+      ...(createdFiles.length > 0 && { files: createdFiles }),
     };
 
     return NextResponse.json(response);

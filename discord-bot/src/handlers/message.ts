@@ -233,9 +233,21 @@ export async function handleAIMessage(
       return;
     }
 
+    // If AI tools created files, ensure they appear as markdown links in the text
+    // so sendWithThinking can detect and attach them automatically.
+    let responseText = response.text;
+    if (response.files && response.files.length > 0) {
+      for (const file of response.files) {
+        // Only append if the URL isn't already present in the response text
+        if (!responseText.includes(file.downloadUrl)) {
+          responseText += `\n[${file.fileName}](${file.downloadUrl})`;
+        }
+      }
+    }
+
     // Send the response using the edit-pattern (handles long messages via splitting)
     console.log(`[handleAIMessage] Sending response to Discord...`);
-    await sendWithThinking(channel, response.text, message);
+    await sendWithThinking(channel, responseText, message);
     console.log(`[handleAIMessage] Response sent successfully`);
   } catch (error) {
     console.error("AI error:", error);
