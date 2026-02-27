@@ -170,10 +170,18 @@ export async function handleAIMessage(
     }
   }
 
+  // Start typing interval that sends typing every 8 seconds while AI is thinking
+  let typingInterval: NodeJS.Timeout | null = null;
+
   try {
     // Show typing indicator while waiting for AI
     console.log(`[handleAIMessage] Starting AI call for user ${user.userId}`);
     await channel.sendTyping().catch(() => {});
+
+    // Keep typing indicator alive (Discord shows it for 10s, refresh every 8s)
+    typingInterval = setInterval(() => {
+      channel.sendTyping().catch(() => {});
+    }, 8000);
 
     const isDM = !message.guildId;
 
@@ -220,12 +228,20 @@ export async function handleAIMessage(
       (error.message.includes("503") ||
         error.message.includes("timeout") ||
         error.message.includes("ECONNREFUSED") ||
-        error.message.includes("AbortError"));
+        error.message.includes("AbortError") ||
+        (error as any).name === "TimeoutError" ||
+        (error as any).name === "AbortError" ||
+        (error as any).code === 23);
 
     if (isServiceUnavailable) {
       await safeReply(message, { embeds: [createAIUnavailableEmbed()] });
     } else {
       await safeReply(message, { embeds: [createGenericErrorEmbed()] });
+    }
+  } finally {
+    // Stop the typing interval
+    if (typingInterval) {
+      clearInterval(typingInterval);
     }
   }
 }

@@ -69,7 +69,7 @@ export async function callAI(options: AIRequestOptions): Promise<AIResponse> {
         }),
       })),
     }),
-    signal: AbortSignal.timeout(120_000), // 2 min timeout for AI responses
+    signal: AbortSignal.timeout(300_000), // 5 min timeout for AI responses
   });
 
   if (!response.ok) {
