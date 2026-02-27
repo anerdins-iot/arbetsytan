@@ -247,7 +247,7 @@ async function sendProjectHubMessage(
 
     const message = await channel.send({
       embeds: [embed],
-      components: [buttons],
+      components: buttons,
     });
 
     // Pin the hub message so it's always accessible
