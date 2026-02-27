@@ -26,7 +26,7 @@ import type { SyncResult } from "../services/channel-sync.js";
 import { syncProjectsToDiscord } from "../services/channel-sync.js";
 import type { IdentifiedUser } from "../services/user-identification.js";
 import { createTaskButtons, createTimeButtons } from "../components/buttons.js";
-import { createTimeLogModal } from "../components/modals.js";
+import { createTimeLogModal, createTaskModal } from "../components/modals.js";
 
 /**
  * Handle a button interaction.
@@ -82,6 +82,8 @@ export async function handleButton(
     );
   } else if (customId.startsWith("time_log_")) {
     await handleTimeLog(interaction, customId.replace("time_log_", ""));
+  } else if (customId.startsWith("task_create_")) {
+    await handleTaskCreate(interaction, customId.replace("task_create_", ""));
   } else if (customId === "start_onboarding") {
     await handleStartOnboarding(interaction, user.tenantId);
   } else if (customId.startsWith("confirm_sync_")) {
@@ -272,6 +274,17 @@ async function handleTimeLog(
   taskId: string
 ): Promise<void> {
   const modal = createTimeLogModal(taskId);
+  await interaction.showModal(modal);
+}
+
+/**
+ * Show the task creation modal for a project.
+ */
+async function handleTaskCreate(
+  interaction: ButtonInteraction,
+  projectId: string
+): Promise<void> {
+  const modal = createTaskModal(projectId);
   await interaction.showModal(modal);
 }
 

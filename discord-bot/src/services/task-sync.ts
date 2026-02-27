@@ -7,6 +7,7 @@ import type { Client, TextChannel } from "discord.js";
 import { EmbedBuilder } from "discord.js";
 import { prisma } from "../lib/prisma.js";
 import { createTaskEmbed, type TaskEmbedData } from "../components/embeds.js";
+import { createTaskButtons, createTimeButtons, createTaskCreateButton } from "../components/buttons.js";
 
 const COLORS = {
   CREATED: 0x3b82f6, // Blue
@@ -113,7 +114,14 @@ export async function handleTaskCreatedSync(
     .setTitle(`📋 Ny uppgift: ${event.title}`)
     .setTimestamp();
 
-  await channel.send({ embeds: [embed] }).catch((err) => {
+  const taskButtons = createTaskButtons(event.taskId);
+  const secondRow = createTimeButtons(event.taskId);
+  const createRow = createTaskCreateButton(event.projectId);
+
+  await channel.send({
+    embeds: [embed],
+    components: [taskButtons, secondRow, createRow],
+  }).catch((err) => {
     console.error("[task-sync] Failed to send task created embed:", err);
   });
 }
@@ -158,7 +166,12 @@ export async function handleTaskUpdatedSync(
     embed.setFooter({ text: `Uppdaterad av ${event.updatedByName}` });
   }
 
-  await channel.send({ embeds: [embed] }).catch((err) => {
+  const taskButtons = createTaskButtons(event.taskId);
+
+  await channel.send({
+    embeds: [embed],
+    components: [taskButtons],
+  }).catch((err) => {
     console.error("[task-sync] Failed to send task updated embed:", err);
   });
 }
@@ -206,7 +219,12 @@ export async function handleTaskAssignedSync(
     embed.addFields({ name: "Tilldelad till", value: event.assigneeName, inline: true });
   }
 
-  await channel.send({ embeds: [embed] }).catch((err) => {
+  const taskButtons = createTaskButtons(event.taskId);
+
+  await channel.send({
+    embeds: [embed],
+    components: [taskButtons],
+  }).catch((err) => {
     console.error("[task-sync] Failed to send task assigned embed:", err);
   });
 

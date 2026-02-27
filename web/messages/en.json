@@ -1175,12 +1175,15 @@
         "empty": "No active projects found.",
         "sheetDescription": "Manage sync settings and channel links for this project.",
         "noChannels": "No channels linked to this project.",
+        "channelLinksTitle": "Channel links",
         "syncToggle": "Sync",
         "channelIdLabel": "Channel ID",
         "taskNotificationsHelp": "Task notifications are sent here when sync is enabled.",
         "unlink": "Unlink",
         "unlinkConfirm": "Are you sure?",
         "unlinkConfirmButton": "Yes, unlink",
+        "unlinkDialogTitle": "Unlink channel?",
+        "unlinkDialogDescription": "The channel ({channelType}) will remain in Discord but won't be linked to this project. No more notifications will be sent there.",
         "cancelButton": "Cancel",
         "columns": {
           "project": "Project",
@@ -1194,6 +1197,13 @@
           "tasks": "tasks",
           "files": "files",
           "activity": "activity"
+        },
+        "toasts": {
+          "syncAllSuccess": "Syncing all projects started.",
+          "syncProjectSuccess": "Project sync started.",
+          "syncEnabled": "Sync enabled.",
+          "syncDisabled": "Sync disabled.",
+          "unlinkSuccess": "Channel has been unlinked."
         },
         "errors": {
           "syncFailed": "Could not sync projects to Discord.",

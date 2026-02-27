@@ -1186,12 +1186,15 @@
         "empty": "Inga aktiva projekt hittades.",
         "sheetDescription": "Hantera synkronisering och kopplingar för projektets Discord-kanaler.",
         "noChannels": "Inga kanaler kopplade till detta projekt.",
+        "channelLinksTitle": "Kanalkopplingar",
         "syncToggle": "Synk",
         "channelIdLabel": "Kanal-ID",
         "taskNotificationsHelp": "Task-notiser skickas hit när synk är på.",
         "unlink": "Avkoppla",
         "unlinkConfirm": "Är du säker?",
         "unlinkConfirmButton": "Ja, avkoppla",
+        "unlinkDialogTitle": "Avkoppla kanal?",
+        "unlinkDialogDescription": "Kanalen ({channelType}) kommer att finnas kvar i Discord men kopplas bort från detta projekt. Inga fler notiser skickas dit.",
         "cancelButton": "Avbryt",
         "columns": {
           "project": "Projekt",
@@ -1205,6 +1208,13 @@
           "tasks": "uppgifter",
           "files": "filer",
           "activity": "aktivitet"
+        },
+        "toasts": {
+          "syncAllSuccess": "Synkning av alla projekt startad.",
+          "syncProjectSuccess": "Projektsynkning startad.",
+          "syncEnabled": "Synk aktiverad.",
+          "syncDisabled": "Synk inaktiverad.",
+          "unlinkSuccess": "Kanalen har avkopplats."
         },
         "errors": {
           "syncFailed": "Kunde inte synka projekt till Discord.",

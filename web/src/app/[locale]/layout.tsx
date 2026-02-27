@@ -3,6 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { hasLocale } from "next-intl";
 import { notFound } from "next/navigation";
+import { Toaster } from "sonner";
 import { routing } from "@/i18n/routing";
 
 type Props = {
@@ -52,6 +53,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   return (
     <NextIntlClientProvider messages={messages}>
       {children}
+      <Toaster richColors position="bottom-right" />
     </NextIntlClientProvider>
   );
 }

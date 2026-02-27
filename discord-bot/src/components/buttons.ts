@@ -57,6 +57,22 @@ export function createTimeButtons(
 }
 
 /**
+ * Create a "Create task" button for a project.
+ * When clicked, opens the task creation modal.
+ */
+export function createTaskCreateButton(
+  projectId: string
+): ActionRowBuilder<ButtonBuilder> {
+  return new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+      .setCustomId(`task_create_${projectId}`)
+      .setLabel("Skapa uppgift")
+      .setEmoji("\u2795")
+      .setStyle(ButtonStyle.Success)
+  );
+}
+
+/**
  * Create Yes/No confirmation buttons.
  * The actionId is used to identify which action is being confirmed.
  */
