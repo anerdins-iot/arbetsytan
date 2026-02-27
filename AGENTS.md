@@ -75,6 +75,7 @@ Systemet använder en Prisma extension (`createEmitExtension`) för att automati
 | `/workspace/web/scripts/start-server.sh` | Starta server för tester (dödar befintlig process automatiskt) |
 | `/workspace/web/scripts/stop-server.sh` | Stoppa server efter tester |
 | `npx playwright test` (i `web/`) | Köra E2E-tester (kräver att servern körs, t.ex. via start-server.sh) |
+| `npx playwright install` (i `web/`) | Installera Playwright-webbläsare (kör en gång per miljö om E2E säger att executable saknas) |
 | `web/scripts/run-e2e.sh` (i `web/`) | Köra alla E2E (kräver att servern redan körs; använd t.ex. `start-server.sh` först) |
 | `npx prisma migrate dev --name namn` (i web/) | Skapa migration vid schema-ändringar |
 | `npx prisma migrate deploy` (i web/) | Applicera migrationer i produktion |
