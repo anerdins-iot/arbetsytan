@@ -286,6 +286,64 @@ export function createFileEmbed(file: FileEmbedData): EmbedBuilder {
 }
 
 /**
+ * Build a task list embed showing multiple tasks for a project.
+ */
+export function createTaskListEmbed(
+  projectName: string,
+  tasks: TaskEmbedData[],
+  currentPage: number,
+  totalPages: number,
+  totalCount: number
+): EmbedBuilder {
+  const embed = new EmbedBuilder()
+    .setColor(COLORS.TASK)
+    .setTitle(`\u{1F4CB} Uppgifter — ${projectName}`)
+    .setTimestamp();
+
+  if (tasks.length === 0) {
+    embed.setDescription("Inga aktiva uppgifter i detta projekt.");
+    return embed;
+  }
+
+  const lines = tasks.map((t) => {
+    const statusEmoji = STATUS_EMOJI[t.status] ?? "\u26AA";
+    const priorityEmoji = PRIORITY_EMOJI[t.priority] ?? "\u26AA";
+    const assigneeStr =
+      t.assignees && t.assignees.length > 0
+        ? ` — ${t.assignees.join(", ")}`
+        : "";
+    const deadlineStr =
+      t.deadline
+        ? ` | \u{1F4C5} ${(typeof t.deadline === "string" ? new Date(t.deadline) : t.deadline).toLocaleDateString("sv-SE")}`
+        : "";
+    return `${statusEmoji} ${priorityEmoji} **${t.title}**${assigneeStr}${deadlineStr}`;
+  });
+
+  embed.setDescription(lines.join("\n"));
+  embed.setFooter({
+    text: `Sida ${currentPage + 1} av ${totalPages} — ${totalCount} uppgifter totalt`,
+  });
+
+  return embed;
+}
+
+/**
+ * Build a project hub embed — persistent message with project actions.
+ */
+export function createProjectHubEmbed(projectName: string): EmbedBuilder {
+  return new EmbedBuilder()
+    .setColor(COLORS.PROJECT)
+    .setTitle(`\u{1F3E0} ${projectName}`)
+    .setDescription(
+      "Välkommen till projektkanalen! Använd knapparna nedan för att hantera uppgifter.\n\n" +
+        "\u2795 **Skapa uppgift** — Öppna formulär för ny uppgift\n" +
+        "\u{1F4CB} **Lista uppgifter** — Visa alla aktiva uppgifter"
+    )
+    .setFooter({ text: "ArbetsYtan — Projektledning för hantverkare" })
+    .setTimestamp();
+}
+
+/**
  * Build a red error embed.
  */
 export function createErrorEmbed(

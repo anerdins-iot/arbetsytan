@@ -8,6 +8,8 @@ import type { Client, Guild, TextChannel } from "discord.js";
 import { ChannelType, EmbedBuilder } from "discord.js";
 import { prisma } from "../lib/prisma.js";
 import { toChannelName } from "./channel.js";
+import { createProjectHubEmbed } from "../components/embeds.js";
+import { createProjectHubButtons } from "../components/buttons.js";
 
 /** Channel types we create per project */
 const PROJECT_CHANNEL_TYPES = ["general", "tasks", "files", "activity"] as const;
@@ -199,13 +201,19 @@ async function syncSingleProject(
     createdChannels.push({ type: channelType, channelId: channel.id });
 
     // If this is the "general" channel, also set it as project's main discordChannelId
-    if (channelType === "general" && !project.discordChannelId) {
-      await prisma.project.update({
-        where: { id: project.id },
-        data: { discordChannelId: channel.id, discordChannelName: name },
-      }).catch((err: unknown) => {
-        console.error("[channel-sync] Failed to update project.discordChannelId:", err);
-      });
+    // and send a pinned project hub message with action buttons.
+    if (channelType === "general") {
+      if (!project.discordChannelId) {
+        await prisma.project.update({
+          where: { id: project.id },
+          data: { discordChannelId: channel.id, discordChannelName: name },
+        }).catch((err: unknown) => {
+          console.error("[channel-sync] Failed to update project.discordChannelId:", err);
+        });
+      }
+
+      // Send and pin a project hub message with Skapa uppgift + Lista uppgifter
+      await sendProjectHubMessage(channel as TextChannel, project.id, project.name);
     }
   }
 
@@ -222,6 +230,33 @@ async function syncSingleProject(
     categoryId,
     channels: createdChannels,
   };
+}
+
+/**
+ * Send a persistent project hub message with action buttons and pin it.
+ * This gives users a permanent way to create and list tasks in the channel.
+ */
+async function sendProjectHubMessage(
+  channel: TextChannel,
+  projectId: string,
+  projectName: string
+): Promise<void> {
+  try {
+    const embed = createProjectHubEmbed(projectName);
+    const buttons = createProjectHubButtons(projectId);
+
+    const message = await channel.send({
+      embeds: [embed],
+      components: [buttons],
+    });
+
+    // Pin the hub message so it's always accessible
+    await message.pin().catch(() => {
+      console.warn("[channel-sync] Could not pin hub message, missing permission");
+    });
+  } catch (err) {
+    console.error("[channel-sync] Failed to send project hub message:", err);
+  }
 }
 
 /**
