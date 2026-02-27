@@ -207,7 +207,7 @@ export function RoleManager({ mappings }: RoleManagerProps) {
             <DialogTitle>{t("editDialog.title")}</DialogTitle>
             <DialogDescription>
               {t("editDialog.description", {
-                role: t(`systemRoles.${editSystemRole}`),
+                role: editSystemRole ? t(`systemRoles.${editSystemRole}`) : "",
               })}
             </DialogDescription>
           </DialogHeader>
